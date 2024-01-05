@@ -1,9 +1,17 @@
 const express = require("express");
-const http = require("http");
 const app = express();
+const bodyParser = require("body-parser");
+require("dotenv").config();
 
-const route = http.createServer(app);
+const port  = process.env.PORT || 3001;
 
-route.listen(3001, () => {
-    console.log("Listening to port 3001");
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({extended: false}));
+
+app.get('/', (req, res) => {
+    res.status(200).json({message : "Listening"});
 })
+
+app.listen(port, () => {
+    console.log(`server is listening on port ${port}`);
+});
