@@ -1,31 +1,39 @@
-const nodemailer = require("nodemailer");
+require("dotenv").config();
+const nodemailer = require('nodemailer');
 
-let transporter = nodemailer.createTransport({
+// const transporter = nodemailer.createTransport({
+//     host: process.env.NODEMAILERHOST,
+//     port: process.env.NODEMAILERPORT,
+//     auth: {
+//         user: process.env.NODEMAILERUSER,
+//         pass: process.env.NODEMAILERPASS
+//     }
+// });
+
+var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      type: 'OAuth2',
-      user: process.env.MAIL_USERNAME,
-      pass: process.env.MAIL_PASSWORD,
-      clientId: process.env.OAUTH_CLIENTID,
-      clientSecret: process.env.OAUTH_CLIENT_SECRET,
-      refreshToken: process.env.OAUTH_REFRESH_TOKEN
+      user: 'ducanhmc24@gmail.com',
+      pass: 'rcot mgeu ymgg urol'
     }
   });
 
-let mailOptions = {
-    from: "ducanhmc24@gmail.com",
-    to: "ddanh2611@gmail.com",
-    subject: 'Nodemailer Project',
-    text: 'Hi from your nodemailer project'
+const mailOptions = {
+    from: 'Salong Booking App',
+    to: ["ddanh2611@gmail.com", "ducanhmc24@gmail.com"],
+    subject: 'My first Email!!!',
+    text: "This is my first email. I am so excited!"
 };
+
 const sendM = () => {
-    transporter.sendMail(mailOptions, function(err, data) {
-        if (err) {
-            console.log("Error " + err);
-        } else {
-            console.log("Email sent successfully");
+    transporter.sendMail(mailOptions, (err, res) =>{
+        if(err) {
+            console.log(err);
+            return;
         }
-    });
+
+        console.log("sented");
+    })
 }
 
 module.exports = sendM;
