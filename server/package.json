@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "lb": "node lb.js",
     "build": "node build",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -20,6 +21,7 @@
     "nodemailer": "^6.9.8",
     "pg": "^8.11.3",
     "redis": "^4.6.12",
+    "request": "^2.88.2",
     "resend": "^3.1.0",
     "socket.io": "^4.7.4"
   }
