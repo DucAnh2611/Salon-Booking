@@ -39,13 +39,12 @@ class DatabasePG {
         }
 
         const result = await this.conn.query(text, params);
-        return result.fields;
+        return result;
 
     }
 
     async close() {
         this.conn = await this.pool.end();
-        console.log(this.conn);
     }
 
 }
