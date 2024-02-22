@@ -1,4 +1,4 @@
-const DatabasePG = require("../../config/db");
+const DatabasePG = require("../../services/db");
 
 const ClientRouter = require("express").Router();
 

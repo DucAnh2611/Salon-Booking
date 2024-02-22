@@ -1,39 +1,22 @@
-const ServerAPIBuilder = require("./builder/server_builder");
-const ServerAPI = require("./models/server");
 require("dotenv").config();
+const express = require("express");
+const loaders = require("./loaders");
 
 const port = parseInt(process.env.PORT || 3001);
 
-const server1 = new ServerAPI(
-new ServerAPIBuilder()
-    .createApp()
-    .setPort(port)
-    .setServername("Server 1")
-);
+async function StartServer() {
+    var app = express();
 
-const server2 = new ServerAPI(
-new ServerAPIBuilder()
-    .createApp()
-    .setPort(port+1)
-    .setServername("Server 2")
-);
+    app = await loaders({expressApp: app});
 
-const server3 = new ServerAPI(
-new ServerAPIBuilder()
-    .createApp()
-    .setPort(port+2)
-    .setServername("Server 3")
-);
+    app.listen(port, err => {
+        if (err) {
+          console.log(err);
+          return;
+        }
+        console.log(`Server is ready on port: ${port}!`);
+      });
+}
 
-const server4 = new ServerAPI(
-new ServerAPIBuilder()
-    .createApp()
-    .setPort(port+3)
-    .setServername("Server 4")
-);
-
-server1.listen();
-server2.listen();
-server3.listen();
-server4.listen();
+StartServer();
 
