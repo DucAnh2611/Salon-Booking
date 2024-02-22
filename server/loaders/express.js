@@ -36,6 +36,7 @@ module.exports = ({app}) => {
         origin: ["http://localhost:3000", "http://127.0.0.1:3000", "https://salon-booking-client.vercel.app/", "https://salon-booking-employee.vercel.app/"],
     }));
     app.use(compression()); 
+    app.use(require('express-session')({ secret: 'salon booking', resave: true, saveUninitialized: true }));
 
     passport.use(
         new GoogleStrategy(
@@ -44,7 +45,7 @@ module.exports = ({app}) => {
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET,
                 callbackURL: `${host[ENV]}:${process.env.PORT}/${process.env.GOOGLE_AUTH_CALLBACK}`
             },
-            (accessToken, done, profile) => PassportOAuth.googleCallback(accessToken, done, profile)
+            (accessToken, refreshToken, profile) => PassportOAuth.googleCallback(accessToken, refreshToken, profile)
         ));
 
     passport.use(
@@ -52,7 +53,7 @@ module.exports = ({app}) => {
             {
                 clientID: process.env.FACEBOOK_APPID,
                 clientSecret: process.env.FACEEBOOK_SECRET ,
-                callbackURL: process.env.FACEBOOK_AUTH_CALLBACK
+                callbackURL: `${host[ENV]}:${process.env.PORT}/${process.env.FACEBOOK_AUTH_CALLBACK}`
             }
             ,
             (accessToken, done, profile) => PassportOAuth.facebookCallBack(accessToken, done, profile)
