@@ -10,23 +10,7 @@ const AuthRouter = require("../routes/auth");
 const OAuthRouter = require("../routes/OAuth/route");
 const passport = require("passport");
 const PassportOAuth = require("../services/Passport");
-
-const ENV = process.env.NODE_ENV || "development";
-const redirect_uri = {
-    development: {
-        client: process.env.URLREEDIRECTCLIENT_DEV,
-        employee: process.env.URLREEDIRECTEMPLOYEE_DEV        
-    },
-    production: {
-        client: process.env.URLREEDIRECTCLIENT_PRODUCTION,
-        employee: process.env.URLREEDIRECTEMPLOYEE_PRODUCTION        
-    }
-}
-
-const host = {
-    development: process.env.HOST_DEV,
-    production: process.env.HOST_PRODUCTION
-}
+const { host, ENV } = require("./configLoader");
 
 module.exports = ({app}) => {
 
@@ -38,14 +22,29 @@ module.exports = ({app}) => {
     app.use(compression()); 
     app.use(require('express-session')({ secret: 'salon booking', resave: true, saveUninitialized: true }));
 
+    app.use((req, res, next) => {
+        const color = {
+            DELETE: "\x1b[31m",
+            GET: "\x1b[32m",
+            POST: "\x1b[33m",
+            PUT: "\x1b[34m",
+            TEXT: "\x1b[37m"
+        }
+        
+        console.log(color[req.method.toUpperCase()], req.method.toUpperCase(), color.TEXT, req.url);
+        next();
+    })
+    
     passport.use(
         new GoogleStrategy(
             {
                 clientID: process.env.GOOGLE_CLIENTID,
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                callbackURL: `${host[ENV]}:${process.env.PORT}/${process.env.GOOGLE_AUTH_CALLBACK}`
+                callbackURL: `${host[ENV]}/${process.env.GOOGLE_AUTH_CALLBACK}`
             },
-            (accessToken, refreshToken, profile) => PassportOAuth.googleCallback(accessToken, refreshToken, profile)
+            (accessToken, refreshToken, profile, done) => {
+                process.nextTick(PassportOAuth.verifyFunction(accessToken, refreshToken, profile, done))
+            }
         ));
 
     passport.use(
@@ -53,16 +52,26 @@ module.exports = ({app}) => {
             {
                 clientID: process.env.FACEBOOK_APPID,
                 clientSecret: process.env.FACEEBOOK_SECRET ,
-                callbackURL: `${host[ENV]}:${process.env.PORT}/${process.env.FACEBOOK_AUTH_CALLBACK}`
+                callbackURL: `${host[ENV]}/${process.env.FACEBOOK_AUTH_CALLBACK}`,
+                profileFields: ['id', 'email', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified']
+            },
+            (accessToken, refreshToken, profile, done) => {
+                process.nextTick(() => PassportOAuth.verifyFunction(accessToken, refreshToken, profile, done))
             }
-            ,
-            (accessToken, done, profile) => PassportOAuth.facebookCallBack(accessToken, done, profile)
         ));
 
+    passport.serializeUser((user, cb) => {
+        return cb(null, user);
+    })
+
+    passport.deserializeUser((obj, cb) => {
+        return cb(null, obj);
+    })
+    app.use("/", (req, res) => res.json({status: "ok"}));
     app.use("/client", ClientRouter);
     app.use("/emp", EmpRouter);
     app.use("/auth", AuthRouter);
     app.use("/oauth", OAuthRouter);
 
-    return app
+    return app;
 }
