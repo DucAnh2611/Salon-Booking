@@ -11,6 +11,7 @@ const OAuthRouter = require("../routes/OAuth/route");
 const passport = require("passport");
 const PassportOAuth = require("../services/Passport");
 const { host, ENV } = require("./configLoader");
+const InitRouter = require("../routes/route_init/route");
 
 module.exports = ({app}) => {
 
@@ -66,8 +67,9 @@ module.exports = ({app}) => {
 
     passport.deserializeUser((obj, cb) => {
         return cb(null, obj);
-    })
-    app.use("/", (req, res) => res.json({status: "ok"}));
+    });
+
+    app.use("/", InitRouter);
     app.use("/client", ClientRouter);
     app.use("/emp", EmpRouter);
     app.use("/auth", AuthRouter);
