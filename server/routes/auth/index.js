@@ -1,6 +1,11 @@
 const { verifyEmailOTP, sendOTPEmail, login, signup } = require("../../models/user");
+const { jwtAuth } = require("../../services/jwt");
 
 const AuthRouter = require("express").Router();
+
+AuthRouter.get("/test", jwtAuth, (req, res) => {
+    res.json({msg: "ok"});
+})
 
 AuthRouter.post("/login", async (req, res) => {
     const result = await login(req.body);

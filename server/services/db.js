@@ -2,6 +2,7 @@ require("dotenv").config();
 const { Pool } = require('pg');
 const Knex = require('knex');
 const config = require("./knexconfig");
+const { table } = require("../models/config");
 const env = process.env.NODE_ENV || "development";
 
 class DatabasePG {
@@ -39,6 +40,34 @@ class DatabasePG {
     async close() {
         await this.pool.end();
     }
+
 }
 
-module.exports = DatabasePG;
+class InsertService extends DatabasePG {
+    static async insert({trx, table, values, returning, ...props}) {
+        return trx
+            .insert(values, returning)
+            .into(table);
+    }
+}
+
+class SelectService extends DatabasePG {
+    static async select({trx, table, fields, ...props}) {
+        return trx
+            .select(fields)
+            .from(table);
+
+    }
+}
+
+class UpdateServer extends DatabasePG {
+    static async update({trx, table, updates, ...props}) {
+        return trx
+            .update(updates)
+            .updateFrom(table)
+    }
+}
+
+module.exports = {
+    DatabasePG
+};

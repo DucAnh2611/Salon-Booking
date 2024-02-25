@@ -1,9 +1,10 @@
 class ResponseFormat {
     constructor() {
-        this.success = false;
-        this.status = 404;
-        this.body = {};
-        this.message = "";
+        this.resetState();
+    }
+
+    getCurrentResponse() {
+        return this;
     }
 
     setSuccess(success) {
@@ -22,5 +23,29 @@ class ResponseFormat {
         this.message = message;
         return this;
     }
+
+    resetState() {
+        this.success = false;
+        this.status = 404;
+        this.body = {};
+        this.message = "";
+    }
+
+    ServerSuccess200() {
+        this.success = true;
+        this.status = 200;
+
+        return this;
+    }
+    
+    ServerError500() {
+        this.success = false;
+        this.status = 500;
+        this.message = "Something wrong on server!";
+        this.body = {};
+
+        return this;
+    } 
 }
+
 module.exports = ResponseFormat;

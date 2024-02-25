@@ -2,6 +2,7 @@ require("dotenv").config();
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const compression = require("compression");
+const cookieParser = require('cookie-parser');
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const ClientRouter = require("../routes/client");
@@ -22,7 +23,7 @@ module.exports = ({app}) => {
     }));
     app.use(compression()); 
     app.use(require('express-session')({ secret: 'salon booking', resave: true, saveUninitialized: true }));
-
+    app.use(cookieParser());
     app.use((req, res, next) => {
         const color = {
             DELETE: "\x1b[31m",
@@ -41,10 +42,11 @@ module.exports = ({app}) => {
             {
                 clientID: process.env.GOOGLE_CLIENTID,
                 clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-                callbackURL: `${host[ENV]}/${process.env.GOOGLE_AUTH_CALLBACK}`
+                callbackURL: `${host[ENV]}/${process.env.GOOGLE_AUTH_CALLBACK}`,
+                passReqToCallback: true
             },
-            (accessToken, refreshToken, profile, done) => {
-                process.nextTick(PassportOAuth.verifyFunction(accessToken, refreshToken, profile, done))
+            (req, accessToken, refreshToken, profile, done) => {
+                process.nextTick(() => PassportOAuth.verifyFunction(req, accessToken, refreshToken, profile, done))
             }
         ));
 
@@ -54,10 +56,13 @@ module.exports = ({app}) => {
                 clientID: process.env.FACEBOOK_APPID,
                 clientSecret: process.env.FACEEBOOK_SECRET ,
                 callbackURL: `${host[ENV]}/${process.env.FACEBOOK_AUTH_CALLBACK}`,
-                profileFields: ['id', 'email', 'gender', 'link', 'locale', 'name', 'timezone', 'updated_time', 'verified']
+                
+                profileFields: ['id', 'emails', 'name']
             },
             (accessToken, refreshToken, profile, done) => {
-                process.nextTick(() => PassportOAuth.verifyFunction(accessToken, refreshToken, profile, done))
+                process.nextTick(
+                    () => PassportOAuth.verifyFunction(accessToken, refreshToken, profile, done)
+                );
             }
         ));
 
@@ -74,6 +79,8 @@ module.exports = ({app}) => {
     app.use("/emp", EmpRouter);
     app.use("/auth", AuthRouter);
     app.use("/oauth", OAuthRouter);
+
+    app.set('trust proxy', 1);
 
     return app;
 }
