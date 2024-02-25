@@ -1,4 +1,4 @@
-const DatabasePG = require("../services/db");
+const { DatabasePG } = require("../services/db");
 const RedisInit = require("./redis");
 const experssLoader = require("./express");
 const socketLoader = require('./socket');

@@ -1,4 +1,4 @@
-const Redis = require("../services/redis");
+const { Redis } = require("../services/redis");
 
 module.exports = async () => {
     let redis = null;

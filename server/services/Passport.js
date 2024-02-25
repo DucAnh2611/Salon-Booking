@@ -1,20 +1,40 @@
 const passport = require("passport");
 const { ENV, redirect_uri } = require("../loaders/configLoader");
-const { signup } = require("../models/user");
-const defaultFailureRedirect = `${redirect_uri[ENV]}`;
-
+const { login } = require("../routes/auth/service");
+const { generateToken } = require("./jwt");
+const { setCookies } = require("./cookies");
 require("dotenv").config();
+
+const defaultFailureRedirect = `${redirect_uri[ENV]}`;
 const DEFAULT_PASS_USER = (id) => process.env.DEFAULT_PASSWORD.replace("id", id);
+
+const OAUTH_CONFIG = {
+    ROLE_CLIENT: {
+        id: 1,
+        type: "CLIENT"
+    }
+} 
 
 class PassportOAuth {
     constructor() {}
 
-    static verifyFunction(accessToken, refreshtoken, profile, done) {
-        console.log(profile);
-        const user = JSON.parse(JSON.stringify(profile._json));
-        user.password = DEFAULT_PASS_USER(user.id);
+    static async verifyFunction(req, accessToken, refreshtoken, profile, done) {
+        const user = {
+            ...JSON.parse(JSON.stringify(profile._json)),
+            password: DEFAULT_PASS_USER(profile.id),
+            roleid: OAUTH_CONFIG.ROLE_CLIENT.id
+        };
 
-        done(null, profile);
+        let responseSignup = await login({
+                email: user.email,
+                password: user.password
+            }, 
+            user
+        );
+
+        req.isLogin = responseSignup;
+
+        done(null, responseSignup);
         //signup
     }
 
@@ -39,8 +59,14 @@ class PassportOAuth {
             (req, res, next) => passport.authenticate(provider, { failureRedirect: `${defaultFailureRedirect}${failureRedirect}` })(req, res, next),
             async (req, res, next) => {
                 // if(req.isAuthenticated()) {
+                    const { body } = req.isLogin;
                     const { state } = req.query;
                     const { redirect_url, hash } = JSON.parse(new Buffer.from(state, 'base64').toString());
+
+                    await setCookies({
+                        res: res, 
+                        data: generateToken(body) 
+                    });
 
                     return res.redirect(redirect_url);
                 // }
