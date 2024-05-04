@@ -1,14 +1,13 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { PermissionEntity } from '../../permission/entity/permission.entity';
 import { RoleEntity } from '../../role/enitty/role.entity';
 
 @Entity('role_permission')
-export class RolePermissionEntity extends ModifyEntity {
-  @PrimaryColumn({ name: 'roleId' })
+export class RolePermissionEntity {
+  @PrimaryColumn()
   roleId: string;
 
-  @PrimaryColumn({ name: 'permissionId' })
+  @PrimaryColumn()
   permissionId: string;
 
   @ManyToOne(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.rolePermission)

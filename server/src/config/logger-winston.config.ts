@@ -5,21 +5,11 @@ import 'winston-daily-rotate-file';
 import { DailyRotateFileTransportOptions } from 'winston-daily-rotate-file';
 import * as Transport from 'winston-transport';
 import { ConsoleTransportOptions } from 'winston/lib/winston/transports';
+import { winstonColorConsole } from '../common/constant/logger.constant';
 import { WinstonLoggerConfigType } from '../common/type/logger-winston.type';
-import { WinstonPrintfForma } from '../common/util/winston-print.utils';
+import { WinstonPrintfFormat } from '../common/util/winston-print.utils';
 
 const env = dotenv.config().parsed;
-
-const wistonColorConsole = (...args) => ({
-  black: `\x1b[30m${args.join(' ')}\x1b[37m`,
-  red: `\x1b[31m${args.join(' ')}\x1b[37m`,
-  green: `\x1b[32m${args.join(' ')}\x1b[37m`,
-  yellow: `\x1b[33m${args.join(' ')}\x1b[37m`,
-  blue: `\x1b[34m${args.join(' ')}\x1b[37m`,
-  magenta: `\x1b[35m${args.join(' ')}\x1b[37m`,
-  cyan: `\x1b[36m${args.join(' ')}\x1b[37m`,
-  white: `\x1b[37m${args.join(' ')}\x1b[37m`,
-});
 
 export const winstonLoggerFileConfig = {
   maxSize: env.LOGGER_WINSTON_MAXSIZE,
@@ -64,12 +54,12 @@ export const winstonLoggerTransport = (config: WinstonLoggerConfigType): Transpo
       format: winston.format.combine(
         winston.format.splat(),
         winston.format.timestamp({
-          format: 'YYYY-MM-DD, HH:mm:ss.SSS',
+          format: 'YYYY/MM/DD, HH:mm:ss.SSS',
         }),
         winston.format.printf((info: winston.Logform.TransformableInfo) => {
           const level: string = info.level.toUpperCase();
-          const tag = (info.tags || 'APP').toUpperCase();
-          return WinstonPrintfForma({ tag, timestamp: info.timestamp, level, name: info.name, message: info.message });
+          const tag = (info.tag || 'APP').toUpperCase();
+          return WinstonPrintfFormat({ tag, timestamp: info.timestamp, level, name: info.name, message: info.message });
         }),
       ),
     },
@@ -79,16 +69,16 @@ export const winstonLoggerTransport = (config: WinstonLoggerConfigType): Transpo
       format: winston.format.combine(
         winston.format.splat(),
         winston.format.timestamp({
-          format: 'YYYY-MM-DD, HH:mm:ss.SSS',
+          format: 'YYYY/MM/DD, HH:mm:ss.SSS',
         }),
         winston.format.printf((info: winston.Logform.TransformableInfo) => {
           const level: string = info.level.toUpperCase();
-          const tag = (info.tags || 'APP').toUpperCase();
-          return WinstonPrintfForma({
-            tag: wistonColorConsole(tag).green,
-            timestamp: info.timestamp,
-            level: wistonColorConsole(level).blue,
-            name: wistonColorConsole(info.name).yellow,
+          const tag = (info.tag || 'APP').toUpperCase();
+          return WinstonPrintfFormat({
+            tag: winstonColorConsole(tag).green,
+            timestamp: winstonColorConsole(info.timestamp).red,
+            level: winstonColorConsole(level).blue,
+            name: winstonColorConsole(info.name).yellow,
             message: info.message,
           });
         }),

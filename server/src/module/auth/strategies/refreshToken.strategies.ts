@@ -18,7 +18,7 @@ export class RefreshTokenStragy extends PassportStrategy(Strategy, JWT_CONSTANT.
 
   validate(req: Request, payload: JwtPayload) {
     const refreshToken: string = RefreshTokenStragy.extractFromCookies(req);
-    if (!refreshToken) throw new Forbidden({ response: RequestErrorCodeEnum.FORBIDDEN });
+    if (!refreshToken) throw new Forbidden({ requestCode: RequestErrorCodeEnum.FORBIDDEN });
     return { ...payload, refreshToken };
   }
 

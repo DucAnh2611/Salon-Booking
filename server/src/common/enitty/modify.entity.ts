@@ -1,6 +1,7 @@
 import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { BaseEntity } from './base.entity';
 
-export abstract class ModifyEntity {
+export abstract class ModifyEntity extends BaseEntity {
   @Column('uuid', { name: 'updatedBy' })
   updatedBy: string;
 

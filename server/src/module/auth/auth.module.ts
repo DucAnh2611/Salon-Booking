@@ -2,12 +2,13 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
+import { CookieUtil } from './utils/cookie.utils';
 import { HashPasswordUtil } from './utils/hash-password.utils';
 import { JwtTokenUtil } from './utils/token.utils';
 
 @Module({
   imports: [JwtModule.register({})],
   controllers: [AuthController],
-  providers: [AuthService, JwtTokenUtil, HashPasswordUtil],
+  providers: [AuthService, JwtTokenUtil, HashPasswordUtil, CookieUtil],
 })
 export class AuthModule {}

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { CookieUtil } from './utils/cookie.utils';
 import { HashPasswordUtil } from './utils/hash-password.utils';
 import { JwtTokenUtil } from './utils/token.utils';
 
@@ -7,6 +8,7 @@ export class AuthService {
   constructor(
     private readonly jwtTokenUtil: JwtTokenUtil,
     private readonly hashPasswordUtil: HashPasswordUtil,
+    private readonly cookieUtil: CookieUtil,
   ) {}
 
   signup() {

@@ -1,13 +1,10 @@
-import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany, PrimaryColumn } from 'typeorm';
+import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
 
 @Entity('permission')
 export class PermissionEntity extends ModifyEntity {
-  @PrimaryColumn('integer')
-  id: number;
-
   @Column('text')
   title: string;
 
@@ -25,6 +22,6 @@ export class PermissionEntity extends ModifyEntity {
   userCreate: EmployeeEntity;
 
   @ManyToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.updatePermisison)
-  @JoinColumn({ name: 'createdBy' })
+  @JoinColumn({ name: 'updatedBy' })
   userUpdate: EmployeeEntity;
 }

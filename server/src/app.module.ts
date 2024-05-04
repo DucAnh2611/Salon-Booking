@@ -10,7 +10,7 @@ import { AppExceptionFilter } from './shared/exception';
 
 import { AppLoggerModule } from './module/logger/logger.module';
 import { AppLoggerService } from './module/logger/logger.service';
-import { AppResponseInterceptor } from './shared/interceptor/response.interceptor';
+import { AppResponseInterceptor } from './shared/interceptor';
 
 @Module({
   imports: [ConfigModule, RedisModule, DatabaseModule, AppLoggerModule, AuthModule],

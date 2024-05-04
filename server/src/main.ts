@@ -27,7 +27,7 @@ async function bootstrap() {
   app.use(CookieParser());
 
   app.listen(configs.app.port).then(() => {
-    new AppLoggerService('Main').info(`Backend server is running on port: ${configs.app.port}`);
+    new AppLoggerService('Main', 'Main').info(`Backend server is running on port: ${configs.app.port}`);
   });
 }
 bootstrap();

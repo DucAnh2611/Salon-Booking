@@ -24,3 +24,13 @@ export class BadRequest extends AppExceptionBase {
     super({ status: HttpStatus.BAD_REQUEST, requestCode: RequestErrorCodeEnum.BAD_REQUEST, message: message });
   }
 }
+
+export class InternalServer extends AppExceptionBase {
+  constructor({ message }: Partial<AppExceptionType>) {
+    super({
+      status: HttpStatus.INTERNAL_SERVER_ERROR,
+      requestCode: RequestErrorCodeEnum.INTERNAL_SERVER_ERROR,
+      message: message,
+    });
+  }
+}
