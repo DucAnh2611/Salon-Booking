@@ -1,9 +1,8 @@
 import { CallHandler, ExecutionContext, HttpStatus, Injectable, NestInterceptor } from '@nestjs/common';
 import { Request, Response } from 'express';
-import { catchError, map, Observable } from 'rxjs';
+import { map, Observable } from 'rxjs';
 import { LOGGER_CONSTANT_NAME } from '../../common/constant/logger.constant';
 import { AppLoggerService } from '../../module/logger/logger.service';
-import { InternalServer } from '../exception/error.exception';
 import { AppBaseResponse } from './base.response';
 
 @Injectable()
@@ -50,9 +49,6 @@ export class AppResponseInterceptor implements NestInterceptor {
 
         response.status(status);
         return { status, result };
-      }),
-      catchError(() => {
-        throw new InternalServer({ message: 'Internal Server Error' });
       }),
     );
   }

@@ -9,4 +9,5 @@ export const databaseConfig = {
   user: env.DB_USER,
   password: env.DB_PASSWORD,
   name: env.DB_NAME,
+  defaultPassword: env.DEFAULT_PASSWORD,
 };

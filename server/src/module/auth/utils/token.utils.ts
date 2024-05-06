@@ -6,9 +6,18 @@ import { AccessTokenPayload, RefreshTokenPayload } from '../../../common/interfa
 export class JwtTokenUtil {
   constructor(private readonly jwtService: JwtService) {}
 
-  generateToken(payload: AccessTokenPayload | RefreshTokenPayload, key: string, options: JwtSignOptions) {
-    return this.jwtService.signAsync(payload, {
+  generateToken({
+    payload,
+    key,
+    options,
+  }: {
+    payload: AccessTokenPayload | RefreshTokenPayload;
+    key: string;
+    options?: JwtSignOptions;
+  }) {
+    return this.jwtService.sign(payload, {
       secret: key,
+      algorithm: 'RS256',
       ...options,
     });
   }

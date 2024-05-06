@@ -7,7 +7,7 @@ export interface AppReponseBase {
 }
 
 export interface AppExceptionType extends AppReponseBase {
-  message: string | AppDetailMessage;
+  message: string | AppDetailMessage | DataErrorCodeEnum;
   requestCode: RequestErrorCodeEnum;
 }
 

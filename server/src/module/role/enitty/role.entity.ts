@@ -2,11 +2,15 @@ import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany } fr
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
+import { UserEntity } from '../../user/entities/user.entity';
 
 @Entity('role')
 export class RoleEntity extends ModifyEntity {
   @Column('text', { nullable: false })
   title: string;
+
+  @Column('boolean', { nullable: false, default: false })
+  deletable: boolean;
 
   @DeleteDateColumn()
   deletedAt: Date;
@@ -14,14 +18,17 @@ export class RoleEntity extends ModifyEntity {
   @OneToMany(() => RolePermissionEntity, (rolePermissionEntity: RolePermissionEntity) => rolePermissionEntity.role)
   rolePermission: RolePermissionEntity[];
 
-  @OneToMany(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.role)
-  userRole: EmployeeEntity[];
+  @OneToMany(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.eRole)
+  empRole: EmployeeEntity[];
 
-  @ManyToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.createRole)
+  @OneToMany(() => UserEntity, (userEntity: UserEntity) => userEntity.role)
+  userRole: UserEntity[];
+
+  @ManyToOne(() => EmployeeEntity, (employeeEnitty: EmployeeEntity) => employeeEnitty.createRole)
   @JoinColumn({ name: 'createdBy' })
   userCreate: EmployeeEntity;
 
-  @ManyToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.updateRole)
+  @ManyToOne(() => EmployeeEntity, (employeeEnitty: EmployeeEntity) => employeeEnitty.updateRole)
   @JoinColumn({ name: 'updatedBy' })
   userUpdate: EmployeeEntity;
 }

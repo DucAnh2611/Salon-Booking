@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { AttrbuteEntity } from '../../attribute/entity/attribute.entity';
-import { PermissionEntity } from '../../permission/entity/permission.entity';
+import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
 import { RoleEntity } from '../../role/enitty/role.entity';
 import { UserEntity } from '../../user/entities/user.entity';
 
@@ -13,26 +13,22 @@ export class EmployeeEntity extends ModifyEntity {
   @Column('uuid', { name: 'userId' })
   userId: string;
 
-  @Column('integer')
-  roleId: number;
+  @Column('uuid')
+  eRoleId: string;
 
-  @ManyToOne(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.userRole)
-  @JoinColumn({ name: 'roleId' })
-  role: RoleEntity;
+  @ManyToOne(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.userRole, { nullable: true })
+  @JoinColumn({ name: 'eRoleId' })
+  eRole: RoleEntity;
 
-  @ManyToOne(() => EmployeeEntity, (employeeEnitty: EmployeeEntity) => employeeEnitty.createEmployee)
+  @ManyToOne(() => EmployeeEntity, (employeeEnitty: EmployeeEntity) => employeeEnitty.createEmployee, {
+    nullable: true,
+  })
   @JoinColumn({ name: 'createdBy' })
   userCreate: EmployeeEntity;
 
   @ManyToOne(() => EmployeeEntity, (employeeEnitty: EmployeeEntity) => employeeEnitty.updateEmployee)
   @JoinColumn({ name: 'updatedBy' })
   userUpdate: EmployeeEntity;
-
-  @OneToMany(() => PermissionEntity, (permissionEntity: PermissionEntity) => permissionEntity.userCreate)
-  createPermisison: PermissionEntity[];
-
-  @OneToMany(() => PermissionEntity, (permissionEntity: PermissionEntity) => permissionEntity.userUpdate)
-  updatePermisison: PermissionEntity[];
 
   @OneToMany(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.userCreate)
   createRole: RoleEntity[];
@@ -51,6 +47,18 @@ export class EmployeeEntity extends ModifyEntity {
 
   @OneToMany(() => AttrbuteEntity, (attributeEntity: AttrbuteEntity) => attributeEntity.userUpdate)
   updateAttribute: AttrbuteEntity[];
+
+  @OneToMany(
+    () => RolePermissionEntity,
+    (rolePermisisonEntity: RolePermissionEntity) => rolePermisisonEntity.userCreate,
+  )
+  createRolePermission: RolePermissionEntity[];
+
+  @OneToMany(
+    () => RolePermissionEntity,
+    (rolePermisisonEntity: RolePermissionEntity) => rolePermisisonEntity.userUpdate,
+  )
+  updateRolePermission: RolePermissionEntity[];
 
   @OneToOne(() => UserEntity, (userEntity: UserEntity) => userEntity.employee)
   @JoinColumn({ name: 'userId' })

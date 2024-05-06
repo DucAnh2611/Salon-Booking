@@ -21,6 +21,8 @@ export class AppExceptionFilter extends BaseExceptionFilter {
     let response: string | object | AppExceptionResponseType;
     let status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
+    console.log(caughtExeption);
+
     if (caughtExeption instanceof RangeError) {
       response = {
         status: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -40,6 +42,13 @@ export class AppExceptionFilter extends BaseExceptionFilter {
     } else if (caughtExeption instanceof AppExceptionBase) {
       response = caughtExeption.getResponse();
       status = caughtExeption.getStatus();
+    } else {
+      status = HttpStatus.INTERNAL_SERVER_ERROR;
+      response = {
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        code: RequestErrorCodeEnum.INTERNAL_SERVER_ERROR,
+        message: 'Internal Server Error',
+      };
     }
 
     this.logger.error({

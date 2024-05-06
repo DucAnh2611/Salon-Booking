@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { CookieOptions, Response } from 'express';
 
 @Injectable()
-export class CookieUtil {
+export class CookieService {
   constructor() {}
 
   setCookie(res: Response, name: string, data: string, options: CookieOptions) {

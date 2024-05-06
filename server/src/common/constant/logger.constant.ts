@@ -23,6 +23,7 @@ export const LOGGER_CONSTANT_NAME = {
   request: 'Request',
   response: 'Response',
   exception: 'Exception',
+  seed: 'Seed',
 };
 
 export const LOGGER_CONSTANT_LEVEL = {

@@ -18,7 +18,7 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
       database: databaseConfig.name,
       entities: ['src/module/*/**/*.entity.ts'],
       synchronize: true,
-      dropSchema: true,
+      dropSchema: false,
     };
   }
 }

@@ -12,6 +12,8 @@
     "start:dev": "nodemon --exec ts-node ./src/main.ts --watch",
     "start:debug": "nest start --debug --watch",
     "start:prod": "node dist/main",
+    "seed:create": "hygen seeds create",
+    "seed:run": "ts-node -r tsconfig-paths/register ./src/module/database/seeds/run-seed.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
     "test:watch": "jest --watch",
