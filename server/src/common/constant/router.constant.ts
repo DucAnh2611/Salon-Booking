@@ -1,6 +1,7 @@
 export const ROUTER = {
     AUTH: 'auth',
     ROLE: 'role',
+    ROLE_PERMISSION: 'role-permission',
 };
 
 export const AUTH_ROUTE = {
@@ -20,4 +21,11 @@ export const ROLE_ROUTE = {
     ROLE_UPDATE: ':id',
     ROLE_DELETE_ONE: ':id',
     ROLE_DELETE_MANY: '',
+};
+
+export const ROLE_PERMISSION_ROUTE = {
+    ADD: '',
+    INFO: ':roleId',
+    ROLE_PERMISISON_UPDATE: ':roleId',
+    DELETE: ':roleId',
 };

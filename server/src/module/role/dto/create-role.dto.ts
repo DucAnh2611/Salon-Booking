@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsString } from 'class-validator';
 
 export class CreateRoleDto {
     @IsString()
@@ -10,8 +10,4 @@ export class CreateRoleDto {
 export class AddNewRoleDto {
     @IsString()
     title: string;
-
-    @IsNotEmpty()
-    @IsUUID('all', { each: true })
-    permissions: string[];
 }

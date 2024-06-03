@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
+import { TargetActionType } from '../../shared/decorator/permission.decorator';
 import { InternalServer } from '../../shared/exception/error.exception';
 import { PermissionService } from '../permission/permission.service';
 import { GetPermissionTargetDto } from './dto/get.dto';
@@ -29,14 +30,15 @@ export class RolePermissionService {
     }
 
     async getRolePermissionsByRoleId(roleId: string) {
-        return this.rolePermissionRepository.findBy({ roleId });
+        const querybuilder = await this.rolePermissionRepository
+            .createQueryBuilder('role_permission')
+            .leftJoinAndSelect('role_permission.permission', 'permission')
+            .select(['role_permission.roleId', 'permission', 'permission.id', 'permission.target', 'permission.action'])
+            .where('role_permission.roleId = :roleId', { roleId })
+            .getMany();
+
+        return querybuilder;
     }
-
-    delete() {}
-
-    deleteMany() {}
-
-    deleteByRole() {}
 
     async attach({ roleId, permissions, userId }: { roleId: string; permissions: string[]; userId: string }) {
         let isExist = await this.getRolePermissionsByRoleId(roleId);
@@ -74,5 +76,17 @@ export class RolePermissionService {
         if (!deletePer || !updatePer) {
             throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
         }
+    }
+
+    groupPermission(list: RolePermissionEntity[]) {
+        return list.reduce((acc: TargetActionType[], curr: RolePermissionEntity) => {
+            const index = acc.findIndex(item => item.target === curr.permission.target);
+            if (index !== -1) {
+                acc[index].action.push(curr.permission.action);
+            } else {
+                acc.push({ target: curr.permission.target, action: [curr.permission.action] });
+            }
+            return acc;
+        }, []);
     }
 }
