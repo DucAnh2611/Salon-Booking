@@ -11,18 +11,18 @@ import { DatabaseConfigService } from '../database-factory.module';
 import { SeedService } from './seed.service';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useClass: DatabaseConfigService,
-      dataSourceFactory: async options => {
-        return new DataSource(options).initialize();
-      },
-    }),
-    TypeOrmModule.forFeature([UserEntity, EmployeeEntity, RoleEntity, PermissionEntity, RolePermissionEntity]),
-  ],
-  providers: [SeedService],
-  exports: [SeedService],
+    imports: [
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useClass: DatabaseConfigService,
+            dataSourceFactory: async options => {
+                return new DataSource(options).initialize();
+            },
+        }),
+        TypeOrmModule.forFeature([UserEntity, EmployeeEntity, RoleEntity, PermissionEntity, RolePermissionEntity]),
+    ],
+    providers: [SeedService],
+    exports: [SeedService],
 })
 export class SeedModule {}

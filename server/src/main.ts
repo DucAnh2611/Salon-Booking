@@ -7,27 +7,27 @@ import { AppLoggerService } from './module/logger/logger.service';
 import { AppClassValidatorException } from './shared/exception/class-validator.exception';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+    const app = await NestFactory.create(AppModule);
 
-  app.setGlobalPrefix(configs.app.prefix);
+    app.setGlobalPrefix(configs.app.prefix);
 
-  app.enableCors({
-    origin: '*',
-    methods: ['POST', 'PUT', 'DELETE', 'PATCH', 'GET', 'OPTIONS'],
-  });
+    app.enableCors({
+        origin: '*',
+        methods: ['POST', 'PUT', 'DELETE', 'PATCH', 'GET', 'OPTIONS'],
+    });
 
-  app.useGlobalPipes(
-    new ValidationPipe({
-      whitelist: true,
-      transform: true,
-      exceptionFactory: AppClassValidatorException,
-    }),
-  );
+    app.useGlobalPipes(
+        new ValidationPipe({
+            whitelist: true,
+            transform: true,
+            exceptionFactory: AppClassValidatorException,
+        }),
+    );
 
-  app.use(CookieParser());
+    app.use(CookieParser());
 
-  app.listen(configs.app.port).then(() => {
-    new AppLoggerService('Main', 'Main').info(`Backend server is running on port: ${configs.app.port}`);
-  });
+    app.listen(configs.app.port).then(() => {
+        new AppLoggerService('Main', 'Main').info(`Backend server is running on port: ${configs.app.port}`);
+    });
 }
 bootstrap();

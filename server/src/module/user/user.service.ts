@@ -6,29 +6,29 @@ import { UserEntity } from './entities/user.entity';
 
 @Injectable()
 export class UserService {
-  constructor(@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>) {}
+    constructor(@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>) {}
 
-  async create(user: CreateUserDto) {
-    const newUser = this.userRepository.create(user);
+    async create(user: CreateUserDto) {
+        const newUser = this.userRepository.create(user);
 
-    await this.userRepository.save(newUser);
+        await this.userRepository.save(newUser);
 
-    return newUser;
-  }
+        return newUser;
+    }
 
-  findAll() {
-    return `This action returns all user`;
-  }
+    findAll() {
+        return `This action returns all user`;
+    }
 
-  findOneById(id: string) {
-    return this.userRepository.findOneBy({ id: id });
-  }
+    findOneById(id: string) {
+        return this.userRepository.findOneBy({ id: id });
+    }
 
-  update(id: number) {
-    return `This action updates a #${id} user`;
-  }
+    update(id: number) {
+        return `This action updates a #${id} user`;
+    }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
+    remove(id: number) {
+        return `This action removes a #${id} user`;
+    }
 }

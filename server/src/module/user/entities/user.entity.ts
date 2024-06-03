@@ -8,38 +8,38 @@ import { RoleEntity } from '../../role/enitty/role.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
-  @Column('date', { nullable: false, default: DEFAULT_VALUE_ENTITY.birthday })
-  birthday: Date;
+    @Column('date', { nullable: false, default: DEFAULT_VALUE_ENTITY.birthday })
+    birthday: Date;
 
-  @Column('enum', { nullable: false, enum: GenderEnum })
-  gender: GenderEnum;
+    @Column('enum', { nullable: false, enum: GenderEnum })
+    gender: GenderEnum;
 
-  @Column('varchar', { length: 320, nullable: false })
-  email: string;
+    @Column('varchar', { length: 320, nullable: false })
+    email: string;
 
-  @Column('text', { nullable: false })
-  password: string;
+    @Column('text', { nullable: false })
+    password: string;
 
-  @Column('varchar', { length: 100, nullable: false })
-  firstname: string;
+    @Column('varchar', { length: 100, nullable: false })
+    firstname: string;
 
-  @Column('varchar', { length: 100, nullable: false })
-  lastname: string;
+    @Column('varchar', { length: 100, nullable: false })
+    lastname: string;
 
-  @Column('uuid', { nullable: false })
-  roleId: string;
+    @Column('uuid', { nullable: false })
+    roleId: string;
 
-  @OneToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.userBase, { nullable: true })
-  employee: EmployeeEntity;
+    @OneToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.userBase, { nullable: true })
+    employee: EmployeeEntity;
 
-  //TODO - Add client relationShip
+    //TODO - Add client relationShip
 
-  @ManyToOne(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.userRole, { nullable: true })
-  @JoinColumn({ name: 'roleId' })
-  role: RoleEntity;
+    @ManyToOne(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.userRole, { nullable: true })
+    @JoinColumn({ name: 'roleId' })
+    role: RoleEntity;
 
-  @BeforeInsert()
-  async hashPassword() {
-    this.password = await HashPasswordUtil.hashPassword(this.password);
-  }
+    @BeforeInsert()
+    async hashPassword() {
+        this.password = await HashPasswordUtil.hashPassword(this.password);
+    }
 }

@@ -4,7 +4,7 @@ import { CreateUserDto } from '../../user/dto/create-user.dto';
 export class CreateAuthDto {}
 
 export class CreateEmpDto extends CreateUserDto {
-  @IsNotEmpty()
-  @IsString()
-  username: string;
+    @IsNotEmpty()
+    @IsString()
+    username: string;
 }

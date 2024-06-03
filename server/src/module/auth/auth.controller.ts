@@ -11,45 +11,43 @@ import { CreateEmpDto } from './dto/create-auth.dto';
 
 @Controller(ROUTER.AUTH)
 export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly cookieService: CookieService,
-  ) {}
+    constructor(
+        private readonly authService: AuthService,
+        private readonly cookieService: CookieService,
+    ) {}
 
-  @Post(AUTH_ROUTE.EMP_LOGIN)
-  async empLogin(@Body() authEmp: LoginEmpDto, @Res({ passthrough: true }) res: Response) {
-    const { accessToken, refreshToken } = await this.authService.empLogin(authEmp);
+    @Post(AUTH_ROUTE.EMP_LOGIN)
+    async empLogin(@Body() authEmp: LoginEmpDto, @Res({ passthrough: true }) res: Response) {
+        const { accessToken, refreshToken } = await this.authService.empLogin(authEmp);
 
-    console.log(TimeUtil.toMilisecond({ time: jwtConfig.refresh.expire }));
+        this.cookieService.setCookie(
+            res,
+            cookieConfig.accesstoken.name,
+            accessToken,
+            cookieConfig.options({
+                maxAge: TimeUtil.toMilisecond({ time: jwtConfig.access.expire }),
+            }),
+        );
 
-    this.cookieService.setCookie(
-      res,
-      cookieConfig.refreshtoken.name,
-      accessToken,
-      cookieConfig.options({
-        maxAge: TimeUtil.toMilisecond({ time: jwtConfig.refresh.expire }),
-      }),
-    );
+        this.cookieService.setCookie(
+            res,
+            cookieConfig.refreshtoken.name,
+            refreshToken,
+            cookieConfig.options({
+                maxAge: TimeUtil.toMilisecond({ time: jwtConfig.refresh.expire }),
+            }),
+        );
 
-    this.cookieService.setCookie(
-      res,
-      cookieConfig.accesstoken.name,
-      refreshToken,
-      cookieConfig.options({
-        maxAge: TimeUtil.toMilisecond({ time: jwtConfig.access.expire }),
-      }),
-    );
+        return { accessToken, refreshToken };
+    }
 
-    return { accessToken, refreshToken };
-  }
+    @Post(AUTH_ROUTE.EMP_REGISTER)
+    clientRegister(@Body() newEmp: CreateEmpDto) {
+        return this.authService.empSignup(newEmp);
+    }
 
-  @Post(AUTH_ROUTE.EMP_REGISTER)
-  clientRegister(@Body() newEmp: CreateEmpDto) {
-    return this.authService.empSignup(newEmp);
-  }
-
-  @Get(AUTH_ROUTE.REFRESH_TOKEN)
-  refreshToken() {
-    return 'ok';
-  }
+    @Get(AUTH_ROUTE.REFRESH_TOKEN)
+    refreshToken() {
+        return 'ok';
+    }
 }

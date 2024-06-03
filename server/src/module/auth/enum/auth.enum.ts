@@ -1,4 +1,4 @@
 export enum ETypeExistAuth {
-  CLIENT = 'client',
-  EMPLOYEE = 'employee',
+    CLIENT = 'client',
+    EMPLOYEE = 'employee',
 }

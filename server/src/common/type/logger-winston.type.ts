@@ -1,6 +1,6 @@
 export type WinstonLoggerConfigType = {
-  level: string;
-  filename: string;
-  maxFile: string;
-  maxSize: string;
+    level: string;
+    filename: string;
+    maxFile: string;
+    maxSize: string;
 };

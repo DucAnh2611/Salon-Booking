@@ -5,18 +5,18 @@ import { RolePermissionEntity } from '../../role-permission/entity/role-permissi
 
 @Entity('permission')
 export class PermissionEntity extends BaseEntity {
-  @Column('enum', { enum: PermissionTargetEnum })
-  target: PermissionTargetEnum;
+    @Column('enum', { enum: PermissionTargetEnum })
+    target: PermissionTargetEnum;
 
-  @Column('enum', { enum: PermissionActionEnum })
-  action: PermissionActionEnum;
+    @Column('enum', { enum: PermissionActionEnum })
+    action: PermissionActionEnum;
 
-  @DeleteDateColumn({ nullable: true })
-  deletedAt: Date;
+    @DeleteDateColumn({ nullable: true })
+    deletedAt: Date;
 
-  @OneToMany(
-    () => RolePermissionEntity,
-    (rolePermissionEntity: RolePermissionEntity) => rolePermissionEntity.permission,
-  )
-  rolePermission: RolePermissionEntity[];
+    @OneToMany(
+        () => RolePermissionEntity,
+        (rolePermissionEntity: RolePermissionEntity) => rolePermissionEntity.permission,
+    )
+    rolePermission: RolePermissionEntity[];
 }

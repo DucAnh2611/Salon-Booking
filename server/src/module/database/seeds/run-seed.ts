@@ -3,11 +3,11 @@ import { SeedModule } from './seed.module';
 import { SeedService } from './seed.service';
 
 const runSeed = async () => {
-  const app = await NestFactory.create(SeedModule);
+    const app = await NestFactory.create(SeedModule);
 
-  await app.get(SeedService).run();
+    await app.get(SeedService).run();
 
-  await app.close();
+    await app.close();
 };
 
 void runSeed();
