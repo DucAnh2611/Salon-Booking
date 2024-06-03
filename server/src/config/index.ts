@@ -8,12 +8,12 @@ import { oauthConfig } from './oauth.config';
 import { redisConfig } from './redis.config';
 
 export const configs = {
-  app: appConfig,
-  db: databaseConfig,
-  jwt: jwtConfig,
-  cookie: cookieConfig,
-  redis: redisConfig,
-  winstonLogger: winstonLoggerConfig,
-  mailer: mailerConfig,
-  oauth: oauthConfig,
+    app: appConfig,
+    db: databaseConfig,
+    jwt: jwtConfig,
+    cookie: cookieConfig,
+    redis: redisConfig,
+    winstonLogger: winstonLoggerConfig,
+    mailer: mailerConfig,
+    oauth: oauthConfig,
 };

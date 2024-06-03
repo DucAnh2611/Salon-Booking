@@ -5,15 +5,15 @@ import { DataSource } from 'typeorm';
 import { DatabaseConfigService } from './database-factory.module';
 
 @Module({
-  imports: [
-    TypeOrmModule.forRootAsync({
-      imports: [ConfigModule],
-      inject: [ConfigService],
-      useClass: DatabaseConfigService,
-      dataSourceFactory: async options => {
-        return new DataSource(options).initialize();
-      },
-    }),
-  ],
+    imports: [
+        TypeOrmModule.forRootAsync({
+            imports: [ConfigModule],
+            inject: [ConfigService],
+            useClass: DatabaseConfigService,
+            dataSourceFactory: async options => {
+                return new DataSource(options).initialize();
+            },
+        }),
+    ],
 })
 export class DatabaseModule {}

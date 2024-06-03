@@ -1,9 +1,14 @@
 export interface AccessTokenPayload {
-  id: string;
-  name: string;
-  email: string;
+    userId: string;
+    employeeId?: string;
+    clientId?: string;
+    email: string;
+    uRoleId: string;
+    eRoleId?: string;
 }
 
 export interface RefreshTokenPayload {
-  id: string;
+    userId: string;
+    employeeId?: string;
+    clientId?: string;
 }

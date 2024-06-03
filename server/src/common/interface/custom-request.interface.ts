@@ -1,3 +1,6 @@
+import { AccessTokenPayload, RefreshTokenPayload } from './auth.interface';
+
 export interface AppRequest extends Request {
-  payload?: any;
+    accessPayload: AccessTokenPayload;
+    refreshPayload: RefreshTokenPayload;
 }

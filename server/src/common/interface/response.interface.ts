@@ -6,14 +6,14 @@ export type ResponseStatusType = number;
 export type ResponseMessageType = number | ResponseMessageFailType;
 
 export type AppResponseBaseType = {
-  status: ResponseStatusType;
-  message: string;
+    status: ResponseStatusType;
+    message: string;
 };
 
 export type AppResponseSuccessType = AppResponseBaseType & {
-  result: Array<object> | object;
+    result: Array<object> | object;
 };
 
 export type AppReponseFailType = AppResponseBaseType & {
-  code: RequestErrorCodeEnum;
+    code: RequestErrorCodeEnum;
 };

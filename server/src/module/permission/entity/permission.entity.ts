@@ -1,27 +1,22 @@
-import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { ModifyEntity } from '../../../common/enitty/modify.entity';
-import { EmployeeEntity } from '../../employee/entity/employee.entity';
+import { Column, DeleteDateColumn, Entity, OneToMany } from 'typeorm';
+import { BaseEntity } from '../../../common/enitty/base.entity';
+import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
 
 @Entity('permission')
-export class PermissionEntity extends ModifyEntity {
-  @Column('text')
-  title: string;
+export class PermissionEntity extends BaseEntity {
+    @Column('enum', { enum: PermissionTargetEnum })
+    target: PermissionTargetEnum;
 
-  @DeleteDateColumn({ nullable: true })
-  deletedAt: Date;
+    @Column('enum', { enum: PermissionActionEnum })
+    action: PermissionActionEnum;
 
-  @OneToMany(
-    () => RolePermissionEntity,
-    (rolePermissionEntity: RolePermissionEntity) => rolePermissionEntity.permission,
-  )
-  rolePermission: RolePermissionEntity[];
+    @DeleteDateColumn({ nullable: true })
+    deletedAt: Date;
 
-  @ManyToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.createPermisison)
-  @JoinColumn({ name: 'createdBy' })
-  userCreate: EmployeeEntity;
-
-  @ManyToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.updatePermisison)
-  @JoinColumn({ name: 'updatedBy' })
-  userUpdate: EmployeeEntity;
+    @OneToMany(
+        () => RolePermissionEntity,
+        (rolePermissionEntity: RolePermissionEntity) => rolePermissionEntity.permission,
+    )
+    rolePermission: RolePermissionEntity[];
 }
