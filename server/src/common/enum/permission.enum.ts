@@ -6,6 +6,7 @@ export enum PermissionTargetEnum {
     USER = 'USER',
     CLIENT = 'CLIENT',
     PERMISSION = 'PERMISISON',
+    ROLE_PERMISSION = 'ROLE_PERMISSION',
 }
 
 export enum PermissionActionEnum {

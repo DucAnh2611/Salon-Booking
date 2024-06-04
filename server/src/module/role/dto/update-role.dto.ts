@@ -1,11 +1,7 @@
-import { IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 export class UpdateRoleDto {
     @IsOptional()
     @IsString()
     title?: string;
-
-    @IsOptional()
-    @IsUUID('all', { each: true })
-    permissions?: string[];
 }

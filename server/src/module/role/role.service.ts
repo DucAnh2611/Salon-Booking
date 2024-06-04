@@ -6,8 +6,6 @@ import { Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { RequestErrorCodeEnum } from '../../common/enum/request-error-code.enum';
 import { BadRequest, InternalServer } from '../../shared/exception/error.exception';
-import { PermissionService } from '../permission/permission.service';
-import { RolePermissionService } from '../role-permission/role-permission.service';
 import { AddNewRoleDto } from './dto/create-role.dto';
 import { FindRoleDto } from './dto/get-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -19,8 +17,6 @@ export class RoleService {
     constructor(
         @InjectRepository(RoleEntity) private readonly roleRepository: Repository<RoleEntity>,
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
-        private readonly rolePermissionService: RolePermissionService,
-        private readonly permissionService: PermissionService,
     ) {}
 
     async getById(roleId: string) {
@@ -55,13 +51,7 @@ export class RoleService {
     }
 
     async create(newRole: AddNewRoleDto, userId: string) {
-        const { title, permissions } = newRole;
-
-        const isValidPermission = await this.permissionService.isValidPermissions(permissions);
-        if (!isValidPermission)
-            throw new BadRequest({
-                requestCode: RequestErrorCodeEnum.BAD_REQUEST,
-            });
+        const { title } = newRole;
 
         const instanceRole = this.roleRepository.create({
             title,
@@ -73,25 +63,11 @@ export class RoleService {
         const addRole = await this.roleRepository.save(instanceRole);
         if (!addRole) throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
 
-        if (permissions.length > 0) {
-            await this.rolePermissionService.attach({
-                roleId: addRole.id,
-                permissions,
-                userId,
-            });
-        }
-
         return addRole;
     }
 
     async update(roleId: string, newRole: UpdateRoleDto, userId: string) {
-        const { title, permissions } = newRole;
-
-        const isValidPermission = await this.permissionService.isValidPermissions(permissions);
-        if (!isValidPermission)
-            throw new BadRequest({
-                requestCode: RequestErrorCodeEnum.BAD_REQUEST,
-            });
+        const { title } = newRole;
 
         const role = await this.getRole({ id: roleId });
         if (!role)
@@ -102,14 +78,6 @@ export class RoleService {
 
         const updateRole = await this.roleRepository.save({ ...role, title: title || role.title, updatedBy: userId });
         if (!updateRole) throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
-
-        if (permissions.length > 0) {
-            await this.rolePermissionService.attach({
-                roleId: roleId,
-                permissions,
-                userId,
-            });
-        }
 
         return updateRole;
     }

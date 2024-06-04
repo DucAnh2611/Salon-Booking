@@ -11,6 +11,8 @@ import { AppExceptionFilter } from './shared/exception';
 import { I18nAppModule } from './module/i18n/i18n.module';
 import { AppLoggerModule } from './module/logger/logger.module';
 import { AppLoggerService } from './module/logger/logger.service';
+import { PermissionModule } from './module/permission/permission.module';
+import { RolePermissionModule } from './module/role-permission/role-permission.module';
 import { RoleModule } from './module/role/role.module';
 import { AppResponseInterceptor } from './shared/interceptor';
 
@@ -26,6 +28,8 @@ import { AppResponseInterceptor } from './shared/interceptor';
 
         AuthModule,
         RoleModule,
+        RolePermissionModule,
+        PermissionModule,
     ],
     controllers: [],
     providers: [

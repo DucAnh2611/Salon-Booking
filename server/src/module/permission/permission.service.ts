@@ -19,4 +19,8 @@ export class PermissionService {
             return false;
         }
     }
+
+    getAll() {
+        return this.permissionRepository.findBy({});
+    }
 }
