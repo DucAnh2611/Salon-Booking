@@ -4,7 +4,6 @@ import { Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { TargetActionType } from '../../shared/decorator/permission.decorator';
 import { InternalServer } from '../../shared/exception/error.exception';
-import { PermissionService } from '../permission/permission.service';
 import { GetPermissionTargetDto } from './dto/get.dto';
 import { RolePermissionEntity } from './entity/role-permission.entity';
 
@@ -13,7 +12,6 @@ export class RolePermissionService {
     constructor(
         @InjectRepository(RolePermissionEntity)
         private readonly rolePermissionRepository: Repository<RolePermissionEntity>,
-        private readonly permisisonService: PermissionService,
     ) {}
 
     async getPermisisonTarget(query: GetPermissionTargetDto) {

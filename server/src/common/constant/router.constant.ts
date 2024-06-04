@@ -2,6 +2,7 @@ export const ROUTER = {
     AUTH: 'auth',
     ROLE: 'role',
     ROLE_PERMISSION: 'role-permission',
+    PERMISSION: 'permission',
 };
 
 export const AUTH_ROUTE = {
@@ -26,6 +27,9 @@ export const ROLE_ROUTE = {
 export const ROLE_PERMISSION_ROUTE = {
     ADD: '',
     INFO: ':roleId',
-    ROLE_PERMISISON_UPDATE: ':roleId',
-    DELETE: ':roleId',
+    UPDATE: '',
+};
+
+export const PERMISSION_ROUTE = {
+    ALL: 'all',
 };
