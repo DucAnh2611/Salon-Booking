@@ -3,11 +3,15 @@ export const ROUTER = {
     ROLE: 'role',
     ROLE_PERMISSION: 'role-permission',
     PERMISSION: 'permission',
+
+    EMPLOYEE: 'employee',
+    SERVICE: 'service',
+    PRODUCT: 'product',
+    TRACKING: 'tracking',
 };
 
 export const AUTH_ROUTE = {
     EMP_LOGIN: 'emp-login',
-    EMP_REGISTER: 'emp-register',
 
     CLIENT_LOGIN: 'client-login',
     CLIENT_REGISTER: 'client-register',
@@ -32,4 +36,13 @@ export const ROLE_PERMISSION_ROUTE = {
 
 export const PERMISSION_ROUTE = {
     ALL: 'all',
+};
+
+export const EMPLOYEE_ROUTE = {
+    ADD: '',
+    FIND: 'find',
+    INFO: ':id',
+    UPDATE: ':id',
+    DELETE_ONE: ':id',
+    DELETE_MANY: '',
 };

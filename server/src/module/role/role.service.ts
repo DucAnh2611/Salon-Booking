@@ -19,6 +19,9 @@ export class RoleService {
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     ) {}
 
+    async getAll() {
+        return this.roleRepository.find();
+    }
     async getById(roleId: string) {
         const role = await this.roleRepository.findOneBy({ id: roleId });
         if (!role)
@@ -51,13 +54,15 @@ export class RoleService {
     }
 
     async create(newRole: AddNewRoleDto, userId: string) {
-        const { title } = newRole;
+        const { title, level, description } = newRole;
 
         const instanceRole = this.roleRepository.create({
             title,
             createdBy: userId,
             updatedBy: userId,
             deletable: true,
+            level,
+            description,
         });
 
         const addRole = await this.roleRepository.save(instanceRole);
@@ -67,7 +72,7 @@ export class RoleService {
     }
 
     async update(roleId: string, newRole: UpdateRoleDto, userId: string) {
-        const { title } = newRole;
+        const { title, level, description } = newRole;
 
         const role = await this.getRole({ id: roleId });
         if (!role)
@@ -76,7 +81,15 @@ export class RoleService {
                 message: DataErrorCodeEnum.NOT_EXIST,
             });
 
-        const updateRole = await this.roleRepository.save({ ...role, title: title || role.title, updatedBy: userId });
+        const newRoleInfo: RoleEntity = {
+            ...role,
+            title: title || role.title,
+            updatedBy: userId,
+            level: level || role.level,
+            description: description || role.description,
+        };
+
+        const updateRole = await this.roleRepository.save(newRoleInfo);
         if (!updateRole) throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
 
         return updateRole;
@@ -85,8 +98,12 @@ export class RoleService {
     async softDelete(roleIds: string[]) {
         const exist = await Promise.all(roleIds.map(roleId => this.getById(roleId)));
 
-        const remove = exist.map(role => {
-            this.roleRepository.softDelete(role.id);
+        if (exist.findIndex(role => !role.deletable) !== -1) {
+            throw new BadRequest({ message: DataErrorCodeEnum.CAN_NOT_DO_ACTION });
+        }
+
+        const remove = exist.map(async role => {
+            await this.roleRepository.softDelete(role.id);
         });
 
         return remove;
@@ -94,6 +111,10 @@ export class RoleService {
 
     async hardDelete(roleIds: string[]) {
         const exist = await Promise.all(roleIds.map(roleId => this.getById(roleId)));
+
+        if (exist.findIndex(role => !role.deletable) !== -1) {
+            throw new BadRequest({ message: DataErrorCodeEnum.CAN_NOT_DO_ACTION });
+        }
 
         const remove = exist.map(role => {
             this.roleRepository.delete(role.id);

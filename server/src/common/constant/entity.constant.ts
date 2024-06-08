@@ -4,6 +4,7 @@ export const DEFAULT_VALUE_ENTITY = {
 
 export const DEFAULT_VALUE_VALIDATOR = {
     string: '',
+    array: [],
     page: 1,
     limit: 10,
     sort: -1,

@@ -8,6 +8,7 @@ import { RedisModule } from './module/redis/redis.module';
 
 import { AppExceptionFilter } from './shared/exception';
 
+import { EmployeeModule } from './module/employee/employee.module';
 import { I18nAppModule } from './module/i18n/i18n.module';
 import { AppLoggerModule } from './module/logger/logger.module';
 import { AppLoggerService } from './module/logger/logger.service';
@@ -30,6 +31,7 @@ import { AppResponseInterceptor } from './shared/interceptor';
         RoleModule,
         RolePermissionModule,
         PermissionModule,
+        EmployeeModule,
     ],
     controllers: [],
     providers: [

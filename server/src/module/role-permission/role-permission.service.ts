@@ -74,6 +74,8 @@ export class RolePermissionService {
         if (!deletePer || !updatePer) {
             throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
         }
+
+        return 'ok';
     }
 
     groupPermission(list: RolePermissionEntity[]) {

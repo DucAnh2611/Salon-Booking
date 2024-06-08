@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { AccessTokenPayload, RefreshTokenPayload } from '../../common/interface/auth.interface';
 import { jwtConfig } from '../../config/jwt.config';
@@ -10,10 +9,8 @@ import { HashPasswordUtil } from '../../shared/utils/hash-password.utils';
 import { EmployeeEntity } from '../employee/entity/employee.entity';
 import { MailService } from '../mail/mail.service';
 import { RoleService } from '../role/role.service';
-import { UserEntity } from '../user/entities/user.entity';
 import { UserService } from '../user/user.service';
 import { LoginEmpDto } from './dto/auth-login.dto';
-import { CreateEmpDto } from './dto/create-auth.dto';
 import { ETypeExistAuth } from './enum/auth.enum';
 import { TExistAuth } from './type/auth.type';
 import { JwtTokenUtil } from './utils/token.utils';
@@ -27,33 +24,6 @@ export class AuthService {
         private readonly mailService: MailService,
         @InjectRepository(EmployeeEntity) private readonly employeeRepository: Repository<EmployeeEntity>,
     ) {}
-
-    async empSignup(emp: CreateEmpDto) {
-        const { username, ...userData } = emp;
-
-        const exist = await this.IsExist({
-            query: { username },
-            type: ETypeExistAuth.EMPLOYEE,
-        });
-        if (exist) throw new BadRequest({ message: DataErrorCodeEnum.EXIST });
-
-        const roleStaff = await this.roleService.getRole({ title: ROLE_TITLE.staff, deletable: false });
-        const roleEmployee = await this.roleService.getRole({ title: ROLE_TITLE.employee, deletable: false });
-
-        const user: UserEntity = await this.userService.create({ ...userData, roleId: roleStaff.id });
-
-        const newEmp = this.employeeRepository.create({
-            eRoleId: roleEmployee.id,
-            username,
-            userId: user.id,
-        });
-
-        const empInserted = await this.employeeRepository.save(newEmp);
-
-        await this.mailService.signupSuccess({ email: user.email });
-
-        return { empInserted, user };
-    }
 
     async empLogin(emp: LoginEmpDto): Promise<{ accessToken: string; refreshToken: string }> {
         const exist = await this.IsExist({

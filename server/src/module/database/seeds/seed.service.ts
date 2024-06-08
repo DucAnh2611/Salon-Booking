@@ -102,11 +102,15 @@ export class SeedService {
     }
 
     async roleSeeder(data: CreateRoleDto[]) {
-        const datas = data.map(d => this.roleRepository.create(d));
+        const datas = data.map(d => {
+            const newRole = this.roleRepository.create(d);
 
-        await this.roleRepository.save(datas);
+            return newRole;
+        });
 
-        return datas;
+        const save = await this.roleRepository.save(datas);
+
+        return save;
     }
 
     async permissionSeeder(data: CreatePermissionDto[]) {

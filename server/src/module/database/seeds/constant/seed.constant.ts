@@ -18,7 +18,28 @@ export const SEED_DATA: TSeedData = {
             eRole: ROLE_TITLE.admin,
         },
     ],
-    role: Object.values(ROLE_TITLE).map((title: string) => ({ deletable: false, title })),
+    role: [
+        {
+            title: ROLE_TITLE.admin,
+            level: 1,
+            deletable: false,
+        },
+        {
+            title: ROLE_TITLE.client,
+            level: 2,
+            deletable: false,
+        },
+        {
+            title: ROLE_TITLE.staff,
+            level: 2,
+            deletable: false,
+        },
+        {
+            title: ROLE_TITLE.employee,
+            level: 3,
+            deletable: false,
+        },
+    ],
     permission: Object.values(PermissionActionEnum).reduce((prev: CreatePermissionDto[], action) => {
         Object.values(PermissionTargetEnum).forEach(target => {
             prev.push({ action, target });

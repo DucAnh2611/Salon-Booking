@@ -9,11 +9,17 @@ export class RoleEntity extends ModifyEntity {
     @Column('text', { nullable: false })
     title: string;
 
+    @Column('text', { nullable: true, default: '' })
+    description: string;
+
     @Column('boolean', { nullable: false, default: false })
     deletable: boolean;
 
     @DeleteDateColumn()
     deletedAt: Date;
+
+    @Column('integer', { nullable: false })
+    level: number;
 
     @OneToMany(() => RolePermissionEntity, (rolePermissionEntity: RolePermissionEntity) => rolePermissionEntity.role)
     rolePermission: RolePermissionEntity[];

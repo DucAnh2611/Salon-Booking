@@ -7,7 +7,6 @@ import { CookieService } from '../../shared/global/cookie/cookie.service';
 import { TimeUtil } from '../../shared/utils/parse-time.util';
 import { AuthService } from './auth.service';
 import { LoginEmpDto } from './dto/auth-login.dto';
-import { CreateEmpDto } from './dto/create-auth.dto';
 
 @Controller(ROUTER.AUTH)
 export class AuthController {
@@ -38,12 +37,7 @@ export class AuthController {
             }),
         );
 
-        return { accessToken, refreshToken };
-    }
-
-    @Post(AUTH_ROUTE.EMP_REGISTER)
-    clientRegister(@Body() newEmp: CreateEmpDto) {
-        return this.authService.empSignup(newEmp);
+        return 'ok';
     }
 
     @Get(AUTH_ROUTE.REFRESH_TOKEN)

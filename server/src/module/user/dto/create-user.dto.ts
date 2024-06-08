@@ -1,4 +1,4 @@
-import { IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 import { GenderEnum } from '../../../common/enum/gender.enum';
 
 export class CreateUserDto {
@@ -6,9 +6,9 @@ export class CreateUserDto {
     @IsDate()
     birthday?: Date;
 
-    @IsNotEmpty()
-    // @IsEnum(GenderEnum)
-    gender: GenderEnum;
+    @IsOptional()
+    @IsEnum(GenderEnum)
+    gender: GenderEnum = GenderEnum.OTHER;
 
     @IsNotEmpty()
     // @IsEmail()
