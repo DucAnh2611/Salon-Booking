@@ -1,6 +1,0 @@
-class MiddlewareForRoute { 
-    constructor() {
-
-
-    }
-}
