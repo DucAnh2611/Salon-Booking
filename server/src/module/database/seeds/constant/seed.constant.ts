@@ -9,7 +9,7 @@ export const SEED_DATA: TSeedData = {
         {
             birthday: new Date(),
             gender: GenderEnum.MALE,
-            email: 'admin@slbooking.com',
+            phone: '0987654321',
             password: '1',
             firstname: 'Duc',
             lastname: 'Anh',

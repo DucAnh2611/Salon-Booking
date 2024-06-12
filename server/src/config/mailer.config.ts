@@ -11,3 +11,5 @@ export const mailerConfig = {
     password: env.EMAIL_PASSWORD,
     defaultTemplate: __dirname + '/../module/mail/mail-templates/default.hbs',
 };
+
+export const TEMPLATE_PATH = __dirname + '/../module/mail/mail-templates/';

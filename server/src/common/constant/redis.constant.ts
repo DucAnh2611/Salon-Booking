@@ -19,3 +19,10 @@ export const RedisOptions: CacheModuleAsyncOptions = {
 export const REDIS_KEY = {
     ROLE_PERMISSION: 'ROLE_PERMISSION',
 };
+export const REDIS_OTP_FORMAT = {
+    USER_ID: 'USER_ID',
+    CLIENT_ID: 'CLIENT_ID',
+    EMAIL: 'EMAIL',
+};
+
+export const REDIS_EMAIL_OTP_FORMAT = 'otp_email_<USER_ID>_<CLIENT_ID>_<EMAIL>';

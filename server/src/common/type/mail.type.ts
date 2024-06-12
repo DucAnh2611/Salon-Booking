@@ -1,7 +1,7 @@
 import { SendMailOptions } from 'nodemailer';
 
-export type TSendMail = {
+export type TSendMail<T extends object> = {
     templatePath: string;
-    context: object;
+    context: T;
     options: SendMailOptions;
 };

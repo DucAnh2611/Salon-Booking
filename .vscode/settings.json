@@ -9,5 +9,18 @@
   "workbench.view.alwaysShowHeaderActions": true,
   "breadcrumbs.enabled": true,
   "editor.mouseWheelZoom": false,
-  "window.zoomLevel": -0.5
+  "window.zoomLevel": -0.5,
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.codeActionsOnSave": {
+      "source.fixAll": "always",
+      "source.organizeImports": "always",
+      "source.sortMembers": "never"
+  },
 }

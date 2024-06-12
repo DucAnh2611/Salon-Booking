@@ -24,6 +24,8 @@ export class AppExceptionFilter extends BaseExceptionFilter {
         let response: string | object | AppExceptionResponseType;
         let status: HttpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
 
+        console.log(exception);
+
         if (caughtExeption instanceof RangeError) {
             response = {
                 status: HttpStatus.INTERNAL_SERVER_ERROR,

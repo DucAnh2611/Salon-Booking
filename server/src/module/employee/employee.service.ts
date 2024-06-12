@@ -6,12 +6,12 @@ import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { ConvertOperator } from '../../common/util/convert-operator.utils';
 import { Forbidden, InternalServer } from '../../shared/exception/error.exception';
 import { trimStringInObject } from '../../shared/utils/trim-object.utils';
-import { EmployeeEntity } from '../role/entity/employee.entity';
 import { RoleService } from '../role/role.service';
 import { UserService } from '../user/user.service';
 import { CreateEmployeeDto } from './dto/create-emplotee.dto';
 import { FindEmployeeQueryDto } from './dto/get-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { EmployeeEntity } from './entity/employee.entity';
 import { TQueryExistEmployee } from './type/is-exist.type';
 
 @Injectable()

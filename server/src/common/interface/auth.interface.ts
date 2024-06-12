@@ -2,7 +2,8 @@ export interface AccessTokenPayload {
     userId: string;
     employeeId?: string;
     clientId?: string;
-    email: string;
+    email?: string;
+    phone?: string;
     uRoleId: string;
     eRoleId?: string;
 }

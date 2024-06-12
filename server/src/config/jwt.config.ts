@@ -12,4 +12,7 @@ export const jwtConfig = {
         secret: env.REFRESHTOKEN_SECRET,
         expire: env.REFRESHTOKEN_EXPIRE,
     },
+    otp: {
+        secret: env.TOKEN_OTP_SECRET,
+    },
 };

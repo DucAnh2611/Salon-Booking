@@ -9,11 +9,15 @@ export class RedisService {
         this.redisStore = cacheManager.store;
     }
 
-    async set(name: string) {
-        this.redisStore.set(name, 'new name');
+    async set(name: string, data: any, ttl?: number) {
+        return this.redisStore.set(name, data, ttl || 0);
     }
 
     async get(name: string) {
-        this.redisStore.get(name);
+        return this.redisStore.get(name);
+    }
+
+    async del(name: string) {
+        return this.redisStore.del(name);
     }
 }

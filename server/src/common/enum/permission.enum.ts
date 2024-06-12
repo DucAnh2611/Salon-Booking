@@ -1,10 +1,15 @@
 export enum PermissionTargetEnum {
+    VOUCHER = 'VOUCHER',
+
     PRODUCT = 'PRODUCT',
+
     SERVICE = 'SERVICE',
+
     EMPLOYEE = 'EMPLOYEE',
-    ROLE = 'ROLE',
     USER = 'USER',
     CLIENT = 'CLIENT',
+
+    ROLE = 'ROLE',
     PERMISSION = 'PERMISISON',
     ROLE_PERMISSION = 'ROLE_PERMISSION',
 }

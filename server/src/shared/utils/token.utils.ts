@@ -12,4 +12,14 @@ export class JwtTokenUtil {
             ...options,
         });
     }
+
+    decodeToken<T extends object>({ token, key }: { token: string; key: string }) {
+        try {
+            const verify = this.jwtService.verify(token, { secret: key });
+
+            return verify as T;
+        } catch (err) {
+            return null;
+        }
+    }
 }

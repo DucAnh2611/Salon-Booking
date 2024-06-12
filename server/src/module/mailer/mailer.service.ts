@@ -4,7 +4,7 @@ import Handlebars from 'handlebars';
 import * as nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
 import { TSendMail } from '../../common/type/mail.type';
-import { mailerConfig } from '../../config/mailer.config';
+import { mailerConfig, TEMPLATE_PATH } from '../../config/mailer.config';
 
 @Injectable()
 export class MailerService {
@@ -35,8 +35,8 @@ export class MailerService {
         return this;
     }
 
-    async sendMail({ templatePath, context, options }: TSendMail): Promise<MailerService> {
-        const template = this.readHbs({ src: templatePath });
+    async sendMail<T extends object>({ templatePath, context, options }: TSendMail<T>): Promise<MailerService> {
+        const template = this.readHbs({ src: TEMPLATE_PATH + templatePath });
         const html = Handlebars.compile(template, {
             strict: true,
         })(context);
