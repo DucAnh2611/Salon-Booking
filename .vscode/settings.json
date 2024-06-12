@@ -1,0 +1,26 @@
+{
+  "workbench.activityBar.location": "top",
+  "workbench.editor.decorations.colors": true,
+  "workbench.iconTheme": "vs-seti",
+  "workbench.sideBar.location": "left",
+  "workbench.statusBar.visible": true,
+  "workbench.tips.enabled": true,
+  "workbench.tree.enableStickyScroll": true,
+  "workbench.view.alwaysShowHeaderActions": true,
+  "breadcrumbs.enabled": true,
+  "editor.mouseWheelZoom": false,
+  "window.zoomLevel": -0.5,
+  "[typescript]": {
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "[typescriptreact]": {
+      "editor.formatOnSave": true,
+      "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
+  "editor.codeActionsOnSave": {
+      "source.fixAll": "always",
+      "source.organizeImports": "always",
+      "source.sortMembers": "never"
+  },
+}
