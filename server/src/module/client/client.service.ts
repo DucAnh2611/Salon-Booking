@@ -5,6 +5,7 @@ import { OTP_EXPIRE } from '../../common/constant/otp.constant';
 import { REDIS_EMAIL_OTP_FORMAT, REDIS_OTP_FORMAT } from '../../common/constant/redis.constant';
 import { CLIENT_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
+import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { appConfig } from '../../config/app.config';
 import { jwtConfig } from '../../config/jwt.config';
 import { BadRequest } from '../../shared/exception/error.exception';
@@ -154,7 +155,7 @@ export class ClientService {
             }),
         ]);
 
-        return 'ok';
+        return DataSuccessCodeEnum.OK;
     }
 
     async getUserAndClientInfoByEmail(email: string) {

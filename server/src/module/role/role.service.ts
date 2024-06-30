@@ -9,7 +9,7 @@ import { BadRequest, InternalServer } from '../../shared/exception/error.excepti
 import { AddNewRoleDto } from './dto/create-role.dto';
 import { FindRoleDto } from './dto/get-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
-import { RoleEntity } from './enitty/role.entity';
+import { RoleEntity } from './entity/role.entity';
 import { TRoleGetRoleQuery } from './type/role.type';
 
 @Injectable()
@@ -19,13 +19,15 @@ export class RoleService {
         @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
     ) {}
 
+    async getCacheRole() {}
+
     async getAll() {
         return this.roleRepository.find();
     }
+
     async getById(roleId: string) {
         const role = await this.roleRepository.findOneBy({ id: roleId });
-        if (!role)
-            throw new BadRequest({ requestCode: RequestErrorCodeEnum.NOT_FOUND, message: DataErrorCodeEnum.NOT_EXIST });
+        if (!role) throw new BadRequest({ message: DataErrorCodeEnum.INVALID_ROLE });
 
         return role;
     }

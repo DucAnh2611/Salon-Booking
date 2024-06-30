@@ -8,10 +8,13 @@ import { RedisModule } from './module/redis/redis.module';
 
 import { AppExceptionFilter } from './shared/exception';
 
+import { AttributeModule } from './module/attribute/attribute.module';
+import { CategoryModule } from './module/category/category.module';
 import { EmployeeModule } from './module/employee/employee.module';
 import { I18nAppModule } from './module/i18n/i18n.module';
 import { AppLoggerModule } from './module/logger/logger.module';
 import { AppLoggerService } from './module/logger/logger.service';
+import { MediaModule } from './module/media/media.module';
 import { PermissionModule } from './module/permission/permission.module';
 import { RolePermissionModule } from './module/role-permission/role-permission.module';
 import { RoleModule } from './module/role/role.module';
@@ -27,11 +30,16 @@ import { AppResponseInterceptor } from './shared/interceptor';
 
         AppLoggerModule,
 
+        MediaModule,
+
         AuthModule,
         RoleModule,
         RolePermissionModule,
         PermissionModule,
         EmployeeModule,
+
+        AttributeModule,
+        CategoryModule,
     ],
     controllers: [],
     providers: [

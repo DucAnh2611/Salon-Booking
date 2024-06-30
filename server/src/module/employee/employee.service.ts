@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
-import { ConvertOperator } from '../../common/util/convert-operator.utils';
+import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { Forbidden, InternalServer } from '../../shared/exception/error.exception';
 import { trimStringInObject } from '../../shared/utils/trim-object.utils';
 import { RoleService } from '../role/role.service';
@@ -32,18 +32,18 @@ export class EmployeeService {
 
         querybuilder.leftJoinAndSelect('employee.eRole', 'role').select(['employee', 'employee.*', 'role', 'role.*']);
 
-        filter.forEach(({ field, operator, value }, id) => {
-            const convertedQuery = ConvertOperator({ field, operator, value });
-            if (id === 0) {
-                querybuilder.where(convertedQuery.where, { [convertedQuery.field]: convertedQuery.value });
-            } else querybuilder.andWhere(convertedQuery.where, { [convertedQuery.field]: convertedQuery.value });
-        });
+        // filter.forEach(({ field, operator, value }, id) => {
+        //     const convertedQuery = ConvertOperator({ field, operator, value });
+        //     if (id === 0) {
+        //         querybuilder.where(convertedQuery.where, { [convertedQuery.field]: convertedQuery.value });
+        //     } else querybuilder.andWhere(convertedQuery.where, { [convertedQuery.field]: convertedQuery.value });
+        // });
 
-        sort.forEach(({ field, sort }, id) => {
-            if (id === 0) {
-                querybuilder.orderBy(field, sort);
-            } else querybuilder.addOrderBy(field, sort);
-        });
+        // sort.forEach(({ field, sort }, id) => {
+        //     if (id === 0) {
+        //         querybuilder.orderBy(field, sort);
+        //     } else querybuilder.addOrderBy(field, sort);
+        // });
 
         if (sort.length) {
             querybuilder.groupBy('employee.id, role.id');
@@ -134,6 +134,6 @@ export class EmployeeService {
             throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
         }
 
-        return 'ok';
+        return DataSuccessCodeEnum.OK;
     }
 }

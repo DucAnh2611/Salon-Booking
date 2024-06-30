@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, DeleteDateColumn, UpdateDateColumn } from 'typeorm';
 import { BaseEntity } from './base.entity';
 
 export abstract class ModifyEntity extends BaseEntity {
@@ -13,6 +13,9 @@ export abstract class ModifyEntity extends BaseEntity {
 
     @UpdateDateColumn({ default: new Date() })
     updatedAt: Date;
+
+    @DeleteDateColumn({ nullable: true })
+    deletedAt: Date;
 }
 
 export abstract class ModifyOnlyEntity {
@@ -27,4 +30,7 @@ export abstract class ModifyOnlyEntity {
 
     @UpdateDateColumn({ default: new Date() })
     updatedAt: Date;
+
+    @DeleteDateColumn({ nullable: true })
+    deletedAt: Date;
 }

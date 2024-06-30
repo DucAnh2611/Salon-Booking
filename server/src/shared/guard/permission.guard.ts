@@ -1,9 +1,9 @@
 import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { RequestErrorCodeEnum } from '../../common/enum/request-error-code.enum';
+import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { AppRequest } from '../../common/interface/custom-request.interface';
 import { RolePermissionService } from '../../module/role-permission/role-permission.service';
-import { RoleEntity } from '../../module/role/enitty/role.entity';
+import { RoleEntity } from '../../module/role/entity/role.entity';
 import { RoleService } from '../../module/role/role.service';
 import { TargetActionRequire, TargetActionType } from '../decorator/permission.decorator';
 import { BadRequest, Forbidden } from '../exception/error.exception';
@@ -18,6 +18,10 @@ export class PermissionGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext) {
         const targetActionRequires = this.reflector.get(TargetActionRequire, context.getHandler());
+        if (!targetActionRequires.length) {
+            return true;
+        }
+
         const request: AppRequest = context.switchToHttp().getRequest();
 
         const { accessPayload } = request;
@@ -31,7 +35,11 @@ export class PermissionGuard implements CanActivate {
         }
 
         if (!tempRole) {
-            throw new BadRequest({ requestCode: RequestErrorCodeEnum.BAD_REQUEST });
+            throw new BadRequest({
+                message: accessPayload.eRoleId
+                    ? DataErrorCodeEnum.INVALID_STAFF_ROLE
+                    : DataErrorCodeEnum.INVALID_CLIENT_ROLE,
+            });
         }
 
         const { isValid, userTargetAction } = await this.checkActionForTarget({
@@ -45,7 +53,6 @@ export class PermissionGuard implements CanActivate {
                     require: targetActionRequires,
                     userPermission: userTargetAction,
                 },
-                requestCode: RequestErrorCodeEnum.BAD_PERMISSION,
             });
         }
         return isValid;

@@ -1,8 +1,9 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
-import { AttrbuteEntity } from '../../attribute/entity/attribute.entity';
+import { AttributeEntity } from '../../attribute/entity/attribute.entity';
+import { CategoryEntity } from '../../category/entity/category.entity';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
-import { RoleEntity } from '../../role/enitty/role.entity';
+import { RoleEntity } from '../../role/entity/role.entity';
 import { UserEntity } from '../../user/entities/user.entity';
 
 @Entity('employee')
@@ -42,11 +43,11 @@ export class EmployeeEntity extends ModifyEntity {
     @OneToMany(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.userUpdate)
     updateEmployee: EmployeeEntity[];
 
-    @OneToMany(() => AttrbuteEntity, (attributeEntity: AttrbuteEntity) => attributeEntity.userCreate)
-    createAttribute: AttrbuteEntity[];
+    @OneToMany(() => AttributeEntity, (attributeEntity: AttributeEntity) => attributeEntity.employeeCreate)
+    createAttribute: AttributeEntity[];
 
-    @OneToMany(() => AttrbuteEntity, (attributeEntity: AttrbuteEntity) => attributeEntity.userUpdate)
-    updateAttribute: AttrbuteEntity[];
+    @OneToMany(() => AttributeEntity, (attributeEntity: AttributeEntity) => attributeEntity.employeeUpdate)
+    updateAttribute: AttributeEntity[];
 
     @OneToMany(
         () => RolePermissionEntity,
@@ -54,7 +55,13 @@ export class EmployeeEntity extends ModifyEntity {
     )
     createRolePermission: RolePermissionEntity[];
 
-    @OneToOne(() => UserEntity, (userEntity: UserEntity) => userEntity.employee)
+    @OneToMany(() => CategoryEntity, (categoryEntity: CategoryEntity) => categoryEntity.userCreate)
+    createCategory: CategoryEntity[];
+
+    @OneToMany(() => CategoryEntity, (categoryEntity: CategoryEntity) => categoryEntity.userUpdate)
+    updateCategory: CategoryEntity[];
+
+    @OneToOne(() => UserEntity, (userEntity: UserEntity) => userEntity.employee, { eager: true })
     @JoinColumn({ name: 'userId' })
     userBase: UserEntity;
 }

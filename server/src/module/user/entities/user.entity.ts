@@ -1,11 +1,12 @@
-import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToOne } from 'typeorm';
+import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { DEFAULT_VALUE_ENTITY } from '../../../common/constant/entity.constant';
 import { BaseEntity } from '../../../common/enitty/base.entity';
 import { GenderEnum } from '../../../common/enum/gender.enum';
 import { HashPasswordUtil } from '../../../shared/utils/hash-password.utils';
 import { ClientEntity } from '../../client/entity/client.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
-import { RoleEntity } from '../../role/enitty/role.entity';
+import { MediaEntity } from '../../media/entity/media.entity';
+import { RoleEntity } from '../../role/entity/role.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -36,8 +37,13 @@ export class UserEntity extends BaseEntity {
     @OneToOne(() => ClientEntity, (clientEntity: ClientEntity) => clientEntity.userBase, { nullable: true })
     client: ClientEntity;
 
-    //TODO - Add client relationShip
+    @OneToMany(() => MediaEntity, (mediaEntity: MediaEntity) => mediaEntity.userCreate, { nullable: true })
+    createMedia: MediaEntity[];
 
+    @OneToMany(() => MediaEntity, (mediaEntity: MediaEntity) => mediaEntity.userUpdate, { nullable: true })
+    updateMedia: MediaEntity[];
+
+    //TODO - Add client relationShip
     @ManyToOne(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.userRole, { nullable: true })
     @JoinColumn({ name: 'roleId' })
     role: RoleEntity;

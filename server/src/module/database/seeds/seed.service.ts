@@ -8,7 +8,7 @@ import { CreatePermissionDto } from '../../permission/dto/create-permission.dto'
 import { PermissionEntity } from '../../permission/entity/permission.entity';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
 import { CreateRoleDto } from '../../role/dto/create-role.dto';
-import { RoleEntity } from '../../role/enitty/role.entity';
+import { RoleEntity } from '../../role/entity/role.entity';
 import { UserEntity } from '../../user/entities/user.entity';
 import { SEED_DATA } from './constant/seed.constant';
 import { TSeedEmployee, TSeedEmployeeData, TSeedRolePermissionData } from './type/seed.type';

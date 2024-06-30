@@ -1,5 +1,5 @@
-import { OperatorEnum } from '../enum/query.enum';
-import { TFilterBy } from '../type/query.type';
+import { OperatorEnum } from '../../common/enum/query.enum';
+import { TFilterBy } from '../../common/type/query.type';
 
 export function ConvertOperator({ field, operator, value }: TFilterBy) {
     const res = {

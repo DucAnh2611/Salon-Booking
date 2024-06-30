@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
+import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { TargetActionType } from '../../shared/decorator/permission.decorator';
 import { InternalServer } from '../../shared/exception/error.exception';
 import { GetPermissionTargetDto } from './dto/get.dto';
@@ -75,7 +76,7 @@ export class RolePermissionService {
             throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
         }
 
-        return 'ok';
+        return DataSuccessCodeEnum.OK;
     }
 
     groupPermission(list: RolePermissionEntity[]) {

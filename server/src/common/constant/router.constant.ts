@@ -1,4 +1,6 @@
 export const ROUTER = {
+    MEDIA: 'media',
+
     AUTH: 'auth',
     OAUTH: 'oauth',
     ROLE: 'role',
@@ -9,8 +11,13 @@ export const ROUTER = {
 
     CLIENT: 'client',
 
+    ATTRIBUTE: 'attribute',
+    ATTRIBUTE_VALUE: 'attribute-value',
+    CATEGORY: 'category',
+
     SERVICE: 'service',
     PRODUCT: 'product',
+
     TRACKING: 'tracking',
 };
 
@@ -61,4 +68,32 @@ export const OAUTH_ROUTE = {
 export const CLIENT_ROUTE = {
     VERIFY_EMAIL: 'verify-email',
     VERIFY_EMAIL_OTP: 'verify-email-otp',
+};
+
+export const MEDIA_ROUTE = {
+    GET_MEDIA: '*',
+};
+
+export const ATTRIBUTE_ROUTE = {
+    FIND: 'find',
+    CREATE: '',
+    UPDATE: ':id',
+    DELETE_ONE: ':id',
+    DELETE_MANY: '',
+};
+
+export const ATTRIBUTE_VALUE_ROUTE = {
+    FIND: 'find',
+    CREATE: '',
+    UPDATE: ':id',
+    DELETE_ONE: ':id',
+    DELETE_MANY: '',
+};
+
+export const CATEGORY_ROUTE = {
+    FIND: 'find',
+    CREATE: '',
+    UPDATE: ':id',
+    DELETE_ONE: ':id',
+    DELETE_MANY: '',
 };

@@ -12,6 +12,10 @@ export enum PermissionTargetEnum {
     ROLE = 'ROLE',
     PERMISSION = 'PERMISISON',
     ROLE_PERMISSION = 'ROLE_PERMISSION',
+
+    ATTRIBUTE = 'ATTRIBUTE',
+    ATTRIBUTE_VALUE = 'ATTRIBUTE_VALUE',
+    CATEGORY = 'CATEGORY',
 }
 
 export enum PermissionActionEnum {
