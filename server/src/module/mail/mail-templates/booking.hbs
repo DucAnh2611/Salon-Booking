@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            color: #333;
+        }
+        td {
+            padding: 10px;
+            border: none;
+        }
+        .button {
+            margin-top: 20px;
+            margin-bottom: 20px;
+            background-color: #4CAF50;
+            padding: 15px 30px;
+            color: white;
+            text-align: center;
+            border: none;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 18px;
+            border-radius: 5px;
+        }
+        .mailHeader, .mailBody {
+            width: 100%;
+            max-width: 600px;
+            margin: 20px auto;
+            border-collapse: collapse;
+        }
+        .orderId {
+            text-align: left;
+            padding: 10px 0;
+            margin-top: 20px;
+            font-size: 16px;
+            color: #999999;
+        }
+        .header {
+            text-align: left;
+            font-size: 30px;
+            font-weight: bold;
+        }
+        .subheader {
+            text-align: left;
+            font-size: 20px;
+            margin-bottom: 20px;
+        }
+        .footer {
+            text-align: center;
+            padding: 10px 0;
+            margin-top: 20px;
+            font-size: 12px;
+            color: #999999;
+        }
+        @media (max-width: 600px) {
+            td {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <table class="mailHeader">
+        <tr>
+            <td class="header">
+                {{app_name}}
+            </td>
+        </tr>
+        <tr>
+            <td class="subheader">
+                Booking Confirmed
+            </td>
+        </tr>
+    </table>
+    <table class="mailBody">
+        <tr>
+            <td>
+                Hi {{name}},<br>
+                Your nail appointment has been successfully booked.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <strong style="font-size: 18px;">Booking Details:</strong><br><br>
+                Date and Time: {{booking_time}}<br>
+                Booked by: {{name}}
+            </td>
+        </tr>
+        <tr>
+            <td style="text-align:center">
+                <a href="{{bookingDetailsURL}}" class="button">View Booking Details</a>
+            </td>
+        </tr>
+        <tr>
+            <td>
+                If you have any questions, please visit our <a href="{{websiteURL}}">official website</a> for further assistance.
+            </td>
+        </tr>
+        <tr>
+            <td>
+                <div class="footer">
+                    <p>&copy; 2024 {{app_name}}. All rights reserved.</p>
+                </div>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
