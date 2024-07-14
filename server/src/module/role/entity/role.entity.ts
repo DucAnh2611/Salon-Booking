@@ -2,7 +2,7 @@ import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany } fr
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
-import { UserEntity } from '../../user/entities/user.entity';
+import { UserEntity } from '../../user/entity/user.entity';
 
 @Entity('role')
 export class RoleEntity extends ModifyEntity {
@@ -30,11 +30,11 @@ export class RoleEntity extends ModifyEntity {
     @OneToMany(() => UserEntity, (userEntity: UserEntity) => userEntity.role)
     userRole: UserEntity[];
 
-    @ManyToOne(() => EmployeeEntity, (employeeEnitty: EmployeeEntity) => employeeEnitty.createRole)
+    @ManyToOne(() => EmployeeEntity, (employeeEnitty: EmployeeEntity) => employeeEnitty.createRole, { eager: true })
     @JoinColumn({ name: 'createdBy' })
     userCreate: EmployeeEntity;
 
-    @ManyToOne(() => EmployeeEntity, (employeeEnitty: EmployeeEntity) => employeeEnitty.updateRole)
+    @ManyToOne(() => EmployeeEntity, (employeeEnitty: EmployeeEntity) => employeeEnitty.updateRole, { eager: true })
     @JoinColumn({ name: 'updatedBy' })
     userUpdate: EmployeeEntity;
 }

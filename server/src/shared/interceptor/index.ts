@@ -48,6 +48,7 @@ export class AppResponseInterceptor implements NestInterceptor {
                 });
 
                 response.status(status);
+
                 return { status, result };
             }),
         );

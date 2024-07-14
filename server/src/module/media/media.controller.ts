@@ -1,7 +1,11 @@
-import { Controller, Get, Param, Res } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Res, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { createReadStream } from 'fs';
 import { MEDIA_ROUTE, ROUTER } from '../../common/constant/router.constant';
+import { multerOptions } from '../../config/multer.configs';
+import { AccessTokenGuard } from '../../shared/guard/accessToken.guard';
+import { CreateTempMediaDto } from './dto/media-create.dto';
 import { MediaService } from './media.service';
 
 @Controller(ROUTER.MEDIA)
@@ -17,5 +21,12 @@ export class MediaController {
 
         const readStream = createReadStream(path);
         readStream.pipe(res);
+    }
+
+    @Post(MEDIA_ROUTE.TEMP_UPLOAD)
+    @UseGuards(AccessTokenGuard)
+    @UseInterceptors(FileInterceptor('file', multerOptions))
+    tempUpload(@UploadedFile() file: Express.Multer.File, @Body() body: CreateTempMediaDto) {
+        return this.mediaService.saveToTemp(file, body);
     }
 }

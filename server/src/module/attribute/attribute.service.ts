@@ -13,6 +13,9 @@ export class AttributeService {
     constructor(@InjectRepository(AttributeEntity) private readonly attributeRepository: Repository<AttributeEntity>) {}
 
     async find(query: DynamicQuery) {}
+    async isValid(id: string) {
+        return this.attributeRepository.findOne({ where: { id }, loadEagerRelations: false });
+    }
 
     async create(employeeId: string, newAttr: CreateAttributeDto) {
         const { name, description } = newAttr;

@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
-import { Forbidden, InternalServer } from '../../shared/exception/error.exception';
+import { BadRequest, Forbidden, InternalServer } from '../../shared/exception/error.exception';
 import { trimStringInObject } from '../../shared/utils/trim-object.utils';
 import { RoleService } from '../role/role.service';
 import { UserService } from '../user/user.service';
@@ -59,12 +59,7 @@ export class EmployeeService {
     }
 
     async isExist({ username }: TQueryExistEmployee) {
-        const querybuilder = this.employeeRepository.createQueryBuilder('employee');
-
-        const employee = await querybuilder
-            .innerJoinAndSelect('employee.eRole', 'role')
-            .where('employee.username = :username', { username })
-            .getOne();
+        const employee = await this.employeeRepository.findOneBy({ username });
 
         return employee;
     }
@@ -86,10 +81,18 @@ export class EmployeeService {
 
     async createEmployee(employeeId: string, newEmployee: CreateEmployeeDto) {
         const { username, eRoleId, ...userInfo } = trimStringInObject<CreateEmployeeDto>(newEmployee);
-        const { id: roleId } = await this.roleService.getRole({ title: ROLE_TITLE.staff });
+        const [{ id: roleId }, eRole, clientRole] = await Promise.all([
+            this.roleService.getRole({ title: ROLE_TITLE.staff }),
+            this.roleService.getById(eRoleId),
+            this.roleService.getRole({ title: ROLE_TITLE.client }),
+        ]);
+
+        if (!eRole || eRoleId === clientRole.id) {
+            throw new BadRequest({ message: DataErrorCodeEnum.INVALID_STAFF_ROLE });
+        }
 
         const createdUser = await this.userService.create({ ...userInfo, roleId });
-        if (!createdUser) throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
+        if (!createdUser) throw new InternalServer();
 
         const { id: createdUserId } = createdUser;
 
@@ -101,7 +104,7 @@ export class EmployeeService {
             updatedBy: employeeId,
         });
         const createdEmployee = await this.employeeRepository.save(newEmployeeInstance);
-        if (!createdEmployee) throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
+        if (!createdEmployee) throw new InternalServer();
 
         return createdEmployee;
     }
@@ -120,18 +123,29 @@ export class EmployeeService {
             throw new Forbidden({ message: DataErrorCodeEnum.CAN_NOT_DO_ACTION });
         }
 
-        //TODO - When have background of employee add method for it
-        // const { lastname, firstname, gender } = newInfo;
+        const { lastname, firstname, gender, avatar, phone, birthday, ...employee } = newInfo;
         const employeeInfo = await this.getById(targetEmployeeId);
 
-        const newEmployeeInfo = {
-            ...employeeInfo,
-            // ...newInfo,
-        };
+        if (!employeeInfo) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_EMPLOYEE });
+        }
 
-        const updateEmployee = await this.employeeRepository.save(newEmployeeInfo);
-        if (!updateEmployee) {
-            throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
+        const updateUser = await this.userService.update(employeeInfo.userId, {
+            lastname,
+            firstname,
+            gender,
+            avatar,
+            phone,
+            birthday,
+        });
+
+        if (employee && updateUser) {
+            const newEmployeeInfo = {
+                ...employeeInfo,
+                ...employee,
+            };
+
+            const updateEmployee = await this.employeeRepository.save(newEmployeeInfo);
         }
 
         return DataSuccessCodeEnum.OK;

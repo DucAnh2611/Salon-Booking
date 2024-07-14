@@ -3,7 +3,7 @@ import { EmployeeEntity } from '../../../employee/entity/employee.entity';
 import { CreatePermissionDto } from '../../../permission/dto/create-permission.dto';
 import { CreateRoleDto } from '../../../role/dto/create-role.dto';
 import { CreateUserDto } from '../../../user/dto/create-user.dto';
-import { UserEntity } from '../../../user/entities/user.entity';
+import { UserEntity } from '../../../user/entity/user.entity';
 
 export type TSeedData = {
     employee: Array<TSeedEmployeeData>;

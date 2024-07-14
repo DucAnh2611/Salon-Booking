@@ -1,5 +1,4 @@
-import { Transform } from 'class-transformer';
-import { IsOptional, IsString } from 'class-validator';
+import { IsInt, IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
 import { DEFAULT_VALUE_VALIDATOR } from '../constant/entity.constant';
 import { SortByEnum } from '../enum/query.enum';
 
@@ -11,16 +10,20 @@ export abstract class PaginationQuery {
             limit: 10    
     */
     @IsOptional()
-    @Transform(({ value }: { value: number }) => Number(value))
+    @IsNumber()
+    @IsInt()
+    @IsPositive()
     page: number = DEFAULT_VALUE_VALIDATOR.page;
 
     @IsOptional()
-    @Transform(({ value }: { value: number }) => Number(value))
+    @IsNumber()
+    @IsInt()
+    @IsPositive()
     limit: number = DEFAULT_VALUE_VALIDATOR.limit;
 }
 export abstract class DynamicQuery extends PaginationQuery {
     /*
-        @format: /<path>?filter=<field>:<value>&&sort=<field>_<desc|asc>&&page=<page>&&limit=<limit>
+        @format: /<path>?filter=<field>:<value>&&sort=<"+"|"-"><field>&&page=<page>&&limit=<limit>
         @default:
             filter: '',
             sort: '',

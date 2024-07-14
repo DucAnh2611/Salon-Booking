@@ -14,6 +14,6 @@ import { AttributeEntity } from './entity/attribute.entity';
     imports: [TypeOrmModule.forFeature([AttributeEntity, RoleEntity]), RoleModule, RolePermissionModule],
     controllers: [AttributeController],
     providers: [AttributeService, UserTypeGuard, AccessTokenGuard, PermissionGuard],
-    exports: [],
+    exports: [AttributeService],
 })
 export class AttributeModule {}

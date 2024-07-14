@@ -1,10 +1,16 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
+import { EmployeeStatusEnum } from '../../../common/enum/employee.enum';
 import { AttributeEntity } from '../../attribute/entity/attribute.entity';
 import { CategoryEntity } from '../../category/entity/category.entity';
+import { ClassificationEntity } from '../../classification/entity/classification.entity';
+import { ProductBaseEntity } from '../../product-base/entity/product-base.entity';
+import { ProductTypesEntity } from '../../product-types/entity/product-types.entity';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
 import { RoleEntity } from '../../role/entity/role.entity';
-import { UserEntity } from '../../user/entities/user.entity';
+import { UserEntity } from '../../user/entity/user.entity';
+import { VoucherClassificationEntity } from '../../voucher-classification/entity/voucher-classification.entity';
+import { VoucherEntity } from '../../voucher/entity/voucher.entity';
 
 @Entity('employee')
 export class EmployeeEntity extends ModifyEntity {
@@ -16,6 +22,9 @@ export class EmployeeEntity extends ModifyEntity {
 
     @Column('uuid')
     eRoleId: string;
+
+    @Column('enum', { enum: EmployeeStatusEnum, nullable: true })
+    status: string;
 
     @ManyToOne(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.userRole, { nullable: true })
     @JoinColumn({ name: 'eRoleId' })
@@ -57,6 +66,42 @@ export class EmployeeEntity extends ModifyEntity {
 
     @OneToMany(() => CategoryEntity, (categoryEntity: CategoryEntity) => categoryEntity.userCreate)
     createCategory: CategoryEntity[];
+
+    @OneToMany(() => VoucherEntity, (voucherEntity: VoucherEntity) => voucherEntity.userCreate)
+    createVoucher: VoucherEntity[];
+
+    @OneToMany(() => VoucherEntity, (voucherEntity: VoucherEntity) => voucherEntity.userUpdate)
+    updateVoucher: VoucherEntity[];
+
+    @OneToMany(
+        () => ClassificationEntity,
+        (classificationEntity: ClassificationEntity) => classificationEntity.userCreate,
+    )
+    createClassification: ClassificationEntity[];
+
+    @OneToMany(
+        () => ClassificationEntity,
+        (classificationEntity: ClassificationEntity) => classificationEntity.userUpdate,
+    )
+    updateClassification: ClassificationEntity[];
+
+    @OneToMany(
+        () => VoucherClassificationEntity,
+        (voucherClassificationEntity: VoucherClassificationEntity) => voucherClassificationEntity.userCreate,
+    )
+    createVoucherClassification: VoucherClassificationEntity[];
+
+    @OneToMany(() => ProductBaseEntity, (productBaseEntity: ProductBaseEntity) => productBaseEntity.userCreate)
+    createProduct: ProductBaseEntity[];
+
+    @OneToMany(() => ProductBaseEntity, (productBaseEntity: ProductBaseEntity) => productBaseEntity.userUpdate)
+    updateProduct: ProductBaseEntity[];
+
+    @OneToMany(() => ProductTypesEntity, (productTypesEntity: ProductTypesEntity) => productTypesEntity.userCreate)
+    createProductTypes: ProductTypesEntity[];
+
+    @OneToMany(() => ProductTypesEntity, (productTypesEntity: ProductTypesEntity) => productTypesEntity.userUpdate)
+    updateProductTypes: ProductTypesEntity[];
 
     @OneToMany(() => CategoryEntity, (categoryEntity: CategoryEntity) => categoryEntity.userUpdate)
     updateCategory: CategoryEntity[];

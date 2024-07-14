@@ -2,6 +2,7 @@ import { ArgumentsHost, Catch, HttpException, HttpStatus } from '@nestjs/common'
 import { BaseExceptionFilter } from '@nestjs/core';
 import { Request, Response } from 'express';
 import { LOGGER_CONSTANT_NAME } from '../../common/constant/logger.constant';
+import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { RequestErrorCodeEnum } from '../../common/enum/request-error-code.enum';
 import { AppExceptionResponseType } from '../../common/interface/exception.interface';
 import { AppLoggerService } from '../../module/logger/logger.service';
@@ -30,7 +31,7 @@ export class AppExceptionFilter extends BaseExceptionFilter {
             response = {
                 status: HttpStatus.INTERNAL_SERVER_ERROR,
                 code: RequestErrorCodeEnum.INTERNAL_SERVER_ERROR,
-                message: 'Internal Server Error',
+                message: DataErrorCodeEnum.INTERNAL,
             };
         } else if (caughtExeption instanceof HttpException) {
             const rawException = caughtExeption.getResponse();
@@ -50,7 +51,7 @@ export class AppExceptionFilter extends BaseExceptionFilter {
             response = {
                 status: HttpStatus.INTERNAL_SERVER_ERROR,
                 code: RequestErrorCodeEnum.INTERNAL_SERVER_ERROR,
-                message: 'Internal Server Error',
+                message: DataErrorCodeEnum.INTERNAL,
             };
         }
 
@@ -63,6 +64,7 @@ export class AppExceptionFilter extends BaseExceptionFilter {
                 param: request.params,
             },
             error: response,
+            detail: exception,
         });
 
         responseException.status(status).send(response);

@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { MediaEntity } from '../../media/entity/media.entity';
+import { ProductBaseEntity } from '../../product-base/entity/product-base.entity';
 
 @Entity('category')
 export class CategoryEntity extends ModifyEntity {
@@ -31,8 +32,13 @@ export class CategoryEntity extends ModifyEntity {
     image: MediaEntity;
 
     @ManyToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.createCategory, { eager: true })
+    @JoinColumn({ name: 'createdBy' })
     userCreate: EmployeeEntity;
 
     @ManyToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.updateCategory, { eager: true })
+    @JoinColumn({ name: 'updatedBy' })
     userUpdate: EmployeeEntity;
+
+    @OneToMany(() => ProductBaseEntity, (productBaseEntity: ProductBaseEntity) => productBaseEntity.category)
+    productCategory: ProductBaseEntity[];
 }

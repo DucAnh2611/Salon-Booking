@@ -2,7 +2,7 @@ import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { Inject, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Cache } from 'cache-manager';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { RequestErrorCodeEnum } from '../../common/enum/request-error-code.enum';
 import { BadRequest, InternalServer } from '../../shared/exception/error.exception';
@@ -42,15 +42,13 @@ export class RoleService {
     }
 
     async find(query: FindRoleDto) {
-        const queryBuilder = this.roleRepository
-            .createQueryBuilder('role')
-            .where('role.title LIKE :title ', { title: `%${query.title}%` });
         const [items, count] = await Promise.all([
-            queryBuilder
-                .take(query.limit)
-                .skip((query.page - 1) * query.limit)
-                .getMany(),
-            queryBuilder.getCount(),
+            this.roleRepository.find({
+                where: { title: Like(`%${query.title}%`) },
+                take: query.limit,
+                skip: (query.page - 1) * query.limit,
+            }),
+            this.roleRepository.countBy({ title: Like(`%${query.title}%`) }),
         ]);
         return { page: query.page, limit: query.limit, count, items };
     }
@@ -68,7 +66,7 @@ export class RoleService {
         });
 
         const addRole = await this.roleRepository.save(instanceRole);
-        if (!addRole) throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
+        if (!addRole) throw new InternalServer();
 
         return addRole;
     }
@@ -92,7 +90,7 @@ export class RoleService {
         };
 
         const updateRole = await this.roleRepository.save(newRoleInfo);
-        if (!updateRole) throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
+        if (!updateRole) throw new InternalServer();
 
         return updateRole;
     }

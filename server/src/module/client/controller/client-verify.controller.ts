@@ -1,15 +1,15 @@
 import { Body, Controller, Get, Post, Query, Request, Response, UseGuards } from '@nestjs/common';
-import { ROLE_TITLE } from '../../common/constant/role.constant';
-import { CLIENT_ROUTE, ROUTER } from '../../common/constant/router.constant';
-import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
-import { AppRequest } from '../../common/interface/custom-request.interface';
-import { appConfig } from '../../config/app.config';
-import { UserType } from '../../shared/decorator/user-types.decorator';
-import { BadRequest } from '../../shared/exception/error.exception';
-import { AccessTokenGuard } from '../../shared/guard/accessToken.guard';
-import { UserTypeGuard } from '../../shared/guard/user-type.guard';
-import { ClientService } from './client.service';
-import { ClientOTPDto, ClientOTPTokenDto } from './dto/client-otp.dto';
+import { ROLE_TITLE } from '../../../common/constant/role.constant';
+import { CLIENT_ROUTE, ROUTER } from '../../../common/constant/router.constant';
+import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
+import { AppRequest } from '../../../common/interface/custom-request.interface';
+import { appConfig } from '../../../config/app.config';
+import { UserType } from '../../../shared/decorator/user-types.decorator';
+import { BadRequest } from '../../../shared/exception/error.exception';
+import { AccessTokenGuard } from '../../../shared/guard/accessToken.guard';
+import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
+import { ClientService } from '../client.service';
+import { ClientOTPDto, ClientOTPTokenDto } from '../dto/client-otp.dto';
 
 @Controller(ROUTER.CLIENT)
 export class ClientVerifyController {

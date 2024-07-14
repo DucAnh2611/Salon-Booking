@@ -1,6 +1,7 @@
-import { Column, Entity, JoinColumn, OneToOne } from 'typeorm';
+import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { BaseEntity } from '../../../common/enitty/base.entity';
-import { UserEntity } from '../../user/entities/user.entity';
+import { ClientVoucherEnity } from '../../client-voucher/entity/client-voucher.entity';
+import { UserEntity } from '../../user/entity/user.entity';
 
 @Entity('client')
 export class ClientEntity extends BaseEntity {
@@ -16,7 +17,10 @@ export class ClientEntity extends BaseEntity {
     @Column('uuid', { name: 'userId' })
     userId: string;
 
-    @OneToOne(() => UserEntity, (userEntity: UserEntity) => userEntity.employee)
+    @OneToOne(() => UserEntity, (userEntity: UserEntity) => userEntity.employee, { eager: true })
     @JoinColumn({ name: 'userId' })
     userBase: UserEntity;
+
+    @OneToMany(() => ClientVoucherEnity, (clientVoucherEntity: ClientVoucherEnity) => clientVoucherEntity.client)
+    clientVoucher: ClientVoucherEnity[];
 }

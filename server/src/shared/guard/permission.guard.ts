@@ -18,7 +18,7 @@ export class PermissionGuard implements CanActivate {
 
     async canActivate(context: ExecutionContext) {
         const targetActionRequires = this.reflector.get(TargetActionRequire, context.getHandler());
-        if (!targetActionRequires.length) {
+        if (!targetActionRequires || !targetActionRequires.length) {
             return true;
         }
 

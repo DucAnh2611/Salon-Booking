@@ -1,3 +1,4 @@
+import { Exclude, Expose } from 'class-transformer';
 import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { DEFAULT_VALUE_ENTITY } from '../../../common/constant/entity.constant';
 import { BaseEntity } from '../../../common/enitty/base.entity';
@@ -16,6 +17,8 @@ export class UserEntity extends BaseEntity {
     @Column('enum', { nullable: false, enum: GenderEnum })
     gender: GenderEnum;
 
+    @Expose({ groups: ['auth'] })
+    @Exclude()
     @Column('text', { nullable: false })
     password: string;
 
@@ -30,6 +33,9 @@ export class UserEntity extends BaseEntity {
 
     @Column('text', { nullable: false })
     phone: string;
+
+    @Column('uuid', { nullable: true })
+    avatar: string;
 
     @OneToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.userBase, { nullable: true })
     employee: EmployeeEntity;
@@ -47,6 +53,10 @@ export class UserEntity extends BaseEntity {
     @ManyToOne(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.userRole, { nullable: true })
     @JoinColumn({ name: 'roleId' })
     role: RoleEntity;
+
+    @ManyToOne(() => MediaEntity, (mediaEntity: MediaEntity) => mediaEntity.userAvatar)
+    @JoinColumn({ name: 'avatar' })
+    userAvatar: MediaEntity;
 
     @BeforeInsert()
     async hashPassword() {

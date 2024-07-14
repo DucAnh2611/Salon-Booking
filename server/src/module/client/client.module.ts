@@ -6,9 +6,9 @@ import { MailModule } from '../mail/mail.module';
 import { RedisModule } from '../redis/redis.module';
 import { RoleModule } from '../role/role.module';
 import { UserModule } from '../user/user.module';
-import { ClientVerifyController } from './client-verify.controller';
-import { ClientController } from './client.controller';
 import { ClientService } from './client.service';
+import { ClientVerifyController } from './controller/client-verify.controller';
+import { ClientController } from './controller/client.controller';
 import { ClientEntity } from './entity/client.entity';
 
 @Module({

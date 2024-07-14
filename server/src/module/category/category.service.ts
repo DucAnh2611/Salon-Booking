@@ -33,7 +33,7 @@ export class CategoryService {
                 return;
         }
 
-        return this.categoryRepository.findOneBy(query);
+        return this.categoryRepository.findOne({ where: query, loadEagerRelations: false });
     }
 
     async find(query: DynamicQuery) {
@@ -43,7 +43,6 @@ export class CategoryService {
             where: filter,
             skip: (page - 1) * limit,
             order: sort,
-            loadEagerRelations: true,
         });
 
         return findCategory;
@@ -56,7 +55,7 @@ export class CategoryService {
             const checkParentCategory = await this.categoryRepository.count({ where: { id: parentId } });
 
             if (!checkParentCategory) {
-                throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_CATEGORRY });
+                throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_CATEGORY });
             }
         }
 
@@ -88,7 +87,7 @@ export class CategoryService {
             const checkParentCategory = await this.categoryRepository.count({ where: { id: parentId } });
 
             if (!checkParentCategory) {
-                throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_CATEGORRY });
+                throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_CATEGORY });
             }
         }
 

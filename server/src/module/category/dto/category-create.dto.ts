@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID } from 'class-validator';
 
 export class CreateCategoryDto {
@@ -6,6 +7,7 @@ export class CreateCategoryDto {
     title: string;
 
     @IsNotEmpty()
+    @Type(() => Number)
     @IsNumber()
     @IsInt()
     @IsPositive()

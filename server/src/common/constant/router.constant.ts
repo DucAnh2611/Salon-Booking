@@ -18,7 +18,13 @@ export const ROUTER = {
     SERVICE: 'service',
     PRODUCT: 'product',
 
+    VOUCHER: 'voucher',
+
     TRACKING: 'tracking',
+
+    PRODUCT_BASE: 'product-base',
+    PRODUCT_DETAIL: 'product-detail',
+    PRODUCT_TYPES: 'product-types',
 };
 
 export const AUTH_ROUTE = {
@@ -72,6 +78,8 @@ export const CLIENT_ROUTE = {
 
 export const MEDIA_ROUTE = {
     GET_MEDIA: '*',
+    TEMP_UPLOAD: 'temp-upload',
+    UPLOAD: 'upload',
 };
 
 export const ATTRIBUTE_ROUTE = {
@@ -94,6 +102,33 @@ export const CATEGORY_ROUTE = {
     FIND: 'find',
     CREATE: '',
     UPDATE: ':id',
+    DELETE_ONE: ':id',
+    DELETE_MANY: '',
+};
+
+export const VOUCHER_ROUTE = {
+    FIND: 'find',
+    CREATE: '',
+    UPDATE: ':id',
+    DELETE_ONE: ':id',
+    DELETE_MANY: '',
+};
+
+export const PRODUCT_BASE_ROUTE = {
+    CREATE: '',
+    UPDATE: ':id',
+    DELETE_ONE: ':id',
+};
+
+export const PRODUCT_DETAIL_ROUTE = {
+    CREATE: '',
+    UPDATE: '',
+    DELETE_ONE: ':id',
+};
+
+export const PRODUCT_TYPES_ROUTE = {
+    CREATE: '',
+    UPDATE: '',
     DELETE_ONE: ':id',
     DELETE_MANY: '',
 };

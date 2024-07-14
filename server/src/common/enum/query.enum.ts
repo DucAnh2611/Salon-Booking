@@ -4,11 +4,14 @@ export enum SortByEnum {
 }
 
 export enum OperatorEnum {
-    IN = 'in',
-    CONTAINS = 'contains',
-    GREATER_OR_EQUAL = '>=',
-    GREATER = '>',
-    SAME = '=',
-    SMALLER = '<',
-    SMALLER_OR_EQUAL = '<=',
+    IN = 'IN',
+    GTE = 'GTE',
+    GT = 'GT',
+    E = 'E',
+    NE = 'NE',
+    L = 'L',
+    LE = 'LE',
+    STW = 'STW',
+    EW = 'EW',
+    CT = 'CT',
 }

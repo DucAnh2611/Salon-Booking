@@ -4,7 +4,7 @@ import { Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { TargetActionType } from '../../shared/decorator/permission.decorator';
-import { InternalServer } from '../../shared/exception/error.exception';
+import { BadRequest, InternalServer } from '../../shared/exception/error.exception';
 import { GetPermissionTargetDto } from './dto/get.dto';
 import { RolePermissionEntity } from './entity/role-permission.entity';
 
@@ -25,6 +25,10 @@ export class RolePermissionService {
             .where('role_permission.roleId = :roleId AND permission.target = :target', { roleId, target })
             .getMany();
 
+        if (!data.length) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ROLE_PERMISSION });
+        }
+
         return data;
     }
 
@@ -35,6 +39,10 @@ export class RolePermissionService {
             .select(['role_permission.roleId', 'permission', 'permission.id', 'permission.target', 'permission.action'])
             .where('role_permission.roleId = :roleId', { roleId })
             .getMany();
+
+        if (!querybuilder.length) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ROLE_PERMISSION });
+        }
 
         return querybuilder;
     }
@@ -73,7 +81,7 @@ export class RolePermissionService {
         ]);
 
         if (!deletePer || !updatePer) {
-            throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
+            throw new InternalServer();
         }
 
         return DataSuccessCodeEnum.OK;

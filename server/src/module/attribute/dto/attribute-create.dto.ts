@@ -1,9 +1,9 @@
-import { IsNotEmpty, IsOptional, IsString, Length } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, MaxLength } from 'class-validator';
 
 export class CreateAttributeDto {
     @IsNotEmpty()
     @IsString()
-    @Length(50)
+    @MaxLength(50)
     name: string;
 
     @IsOptional()

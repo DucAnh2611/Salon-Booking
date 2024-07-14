@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Request, Res, SerializeOptions, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { AUTH_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
@@ -11,7 +11,7 @@ import { TimeUtil } from '../../shared/utils/parse-time.util';
 import { RegisterClientDto } from '../client/dto/client-create.dto';
 import { AuthService } from './auth.service';
 import { LoginClientDto, LoginEmpDto } from './dto/auth-login.dto';
-
+@SerializeOptions({ groups: ['auth'] })
 @Controller(ROUTER.AUTH)
 export class AuthController {
     constructor(

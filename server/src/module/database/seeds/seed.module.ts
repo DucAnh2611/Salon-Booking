@@ -6,7 +6,7 @@ import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { PermissionEntity } from '../../permission/entity/permission.entity';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
 import { RoleEntity } from '../../role/entity/role.entity';
-import { UserEntity } from '../../user/entities/user.entity';
+import { UserEntity } from '../../user/entity/user.entity';
 import { DatabaseConfigService } from '../database-factory.module';
 import { SeedService } from './seed.service';
 

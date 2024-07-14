@@ -2,6 +2,8 @@ export enum PermissionTargetEnum {
     VOUCHER = 'VOUCHER',
 
     PRODUCT = 'PRODUCT',
+    PRODUCT_DETAIL = 'PRODUCT_DETAIL',
+    PRODUCT_TYPE = 'PRODUCT_TYPE',
 
     SERVICE = 'SERVICE',
 

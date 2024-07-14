@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 import { CreateUserDto } from '../../user/dto/create-user.dto';
 
 export class CreateEmployeeDto extends CreateUserDto {
@@ -9,4 +9,8 @@ export class CreateEmployeeDto extends CreateUserDto {
     @IsNotEmpty()
     @IsUUID('all')
     eRoleId: string;
+
+    @IsOptional()
+    @IsUUID('all')
+    avatar?: string;
 }

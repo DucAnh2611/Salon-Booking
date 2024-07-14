@@ -1,11 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { mkdir, readFile, stat, unlink, writeFile } from 'fs/promises';
+import * as mime from 'mime-types';
 import { extname, join } from 'path';
 import { Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
+import { FileFormatEnum } from '../../common/enum/files.enum';
 import { multerBaseDir, multerConfig } from '../../config/multer.configs';
 import { BadRequest, InternalServer } from '../../shared/exception/error.exception';
+import { CreateTempMediaDto } from './dto/media-create.dto';
 import { MediaUpdateDto } from './dto/media-update.dto';
 import { MediaEntity } from './entity/media.entity';
 import { MediaTypesEnum } from './enum/media-types.enum';
@@ -14,6 +17,46 @@ import { TSaveMutipleMedia } from './type/media-save.type';
 @Injectable()
 export class MediaService {
     constructor(@InjectRepository(MediaEntity) private readonly mediaRepository: Repository<MediaEntity>) {}
+
+    isValid(id: string) {
+        return this.mediaRepository.findOne({ where: { id }, loadEagerRelations: false });
+    }
+
+    fileType(file: Express.Multer.File) {
+        const { image, video } = multerConfig.acceptedFile;
+        let type = '';
+
+        const sample = {
+            [MediaTypesEnum.IMAGE]: image,
+            [MediaTypesEnum.VIDEO]: video,
+        };
+
+        Object.entries(sample).forEach(([kind, list]: [kind: MediaTypesEnum, list: string[]]) => {
+            const isMatch = list.includes(extname(file.originalname).replace('.', ''));
+            if (isMatch) {
+                type = kind;
+            }
+        });
+
+        return type;
+    }
+
+    async isValidWithType(id: string, type: MediaTypesEnum) {
+        const image = await this.isValid(id);
+
+        if (!image) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_IMAGE });
+        } else if (image.type !== type) {
+            throw new BadRequest({ message: DataErrorCodeEnum.INVALID_MEDIA_TYPE });
+        }
+
+        return image;
+    }
+
+    async isMatchType(file: Express.Multer.File, type: MediaTypesEnum) {
+        const listAccepted = multerConfig.acceptedFile[type.toLocaleLowerCase()];
+        return listAccepted.includes(extname(file.originalname).replace('.', ''));
+    }
 
     async getMedia(mediaId: string) {
         const getMediaInfo = await this.mediaRepository.findOneBy({ id: mediaId });
@@ -34,35 +77,32 @@ export class MediaService {
             if (!fileStats) {
                 throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_IMAGE });
             }
-
-            const fileExtension = extname(path).toLowerCase();
-            let contentType = 'application/octet-stream';
-
-            if (multerConfig.acceptedFile.image.includes(fileExtension)) {
-                contentType = `image/${fileExtension.slice(1)}`;
-            } else if (multerConfig.acceptedFile.video.includes(fileExtension)) {
-                contentType = `video/${fileExtension.slice(1)}`;
-            }
             const fileBuffer = await readFile(fullPath);
+
+            const mimetype = mime.lookup(fullPath);
+            if (!mimetype) {
+                throw new InternalServer();
+            }
+
             const file: Express.Multer.File = {
                 buffer: fileBuffer,
                 originalname: path.split('/').pop() || '',
                 encoding: '7bit',
-                mimetype: contentType,
+                mimetype: mimetype,
                 size: fileStats.size,
                 destination: '',
-                filename: '',
+                filename: path.split('/').pop() || '',
                 path: fullPath,
                 fieldname: '',
                 stream: null,
             };
 
-            return { path: fullPath, contentType, file };
+            return { path: fullPath, file };
         } catch (error) {
             if (error.code === 'ENOENT') {
                 throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_IMAGE });
             }
-            throw error;
+            return null;
         }
     }
 
@@ -74,10 +114,6 @@ export class MediaService {
     }
 
     async save(userId: string, file: Express.Multer.File, path: string, newFileName: string) {
-        if (!userId) {
-            throw new BadRequest({ message: DataErrorCodeEnum.MISSING_DATA });
-        }
-
         const fileName = file.filename;
         const getMedia = await this.getTempMedia(fileName);
         const newNameWithExt = `${newFileName}${extname(file.originalname)}`;
@@ -90,16 +126,15 @@ export class MediaService {
         if (!deletedTemp || !savedMulter) {
             throw new InternalServer();
         }
-        const pathUploads = savedMulter
-            .replace(new RegExp(`^.*?\\\\${multerConfig.dest}\\\\`, 'g'), `${multerConfig.dest}/`)
-            .replace(/\\/g, '/');
 
         const { image } = multerConfig.acceptedFile;
-        const fileType = image.includes(extname(pathUploads)) ? MediaTypesEnum.IMAGE : MediaTypesEnum.VIDEO;
+        const fileType = image.includes(extname(savedMulter).replace('.', ''))
+            ? MediaTypesEnum.IMAGE
+            : MediaTypesEnum.VIDEO;
 
         const mediaInstance = this.mediaRepository.create({
             title: newFileName,
-            path: pathUploads,
+            path: savedMulter,
             type: fileType,
             createdBy: userId,
             updatedBy: userId,
@@ -148,14 +183,37 @@ export class MediaService {
     }
 
     async saveMedia(path: string, filename: string, file: Express.Multer.File) {
-        const valid = await this.ensureDirectoryExists(join(path));
+        const valid = await this.ensureDirectoryExists(join(multerBaseDir, path));
         if (valid) {
-            const pathName = join(path, filename);
+            const pathName = join(multerBaseDir, path, filename);
             await writeFile(pathName, file.buffer);
 
-            return pathName;
+            return pathName.replace(new RegExp(`^.*?\\\\${multerConfig.dest}\\\\`, 'g'), ``).replace(/\\/g, '/');
         }
         return null;
+    }
+
+    async saveToTemp(file: Express.Multer.File, tempFileCreate: CreateTempMediaDto) {
+        const { context, sessionId } = tempFileCreate;
+        const tempFile = await this.getTempMedia(file.filename);
+        if (!tempFile) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_MEDIA });
+        }
+
+        const fileType = this.fileType(file);
+        const fileName = multerConfig.format.temp
+            .replace(FileFormatEnum.MEDIA_TYPE, fileType)
+            .replace(FileFormatEnum.CONTEXT, context)
+            .replace(FileFormatEnum.SESSION_ID, sessionId);
+
+        const newNameWithExt = `${fileName}${extname(file.originalname)}`;
+
+        const [tempUrl, _] = await Promise.all([
+            this.saveMedia(multerConfig.temp, newNameWithExt, tempFile),
+            this.deleteTempMedia(file.filename),
+        ]);
+
+        return { url: tempUrl, context, sessionId };
     }
 
     async findImage(image: string) {
@@ -168,13 +226,19 @@ export class MediaService {
         return imageExists;
     }
 
-    async getTempMedia(imageName: string) {
-        const filePath = join(multerBaseDir, multerConfig.temp, imageName);
+    async getTempMedia(mediaName: string) {
+        const filePath = join(multerBaseDir, multerConfig.temp, mediaName);
         const fileBuffer = await readFile(filePath);
+
+        const mimetype = mime.lookup(filePath);
+        if (!mimetype) {
+            throw new InternalServer();
+        }
+
         const file: Express.Multer.File = {
             buffer: fileBuffer,
-            originalname: imageName,
-            mimetype: 'image/jpeg',
+            originalname: mediaName,
+            mimetype: mimetype,
             size: fileBuffer.length,
             destination: '',
             filename: '',
@@ -183,6 +247,7 @@ export class MediaService {
             encoding: '7bit',
             stream: null,
         };
+
         return file;
     }
 

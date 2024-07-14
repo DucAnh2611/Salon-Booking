@@ -70,7 +70,7 @@ export class CategoryController {
                 file,
                 multerConfig.category,
                 multerConfig.format.category
-                    .replace(FileFormatEnum.USER_ID, userId)
+                    .replace(FileFormatEnum.STAFF_ID, employeeId)
                     .replace(FileFormatEnum.MEDIA_TYPE, MediaTypesEnum.IMAGE),
             );
             body.imageId = saveImage.id;
@@ -98,7 +98,7 @@ export class CategoryController {
                 file,
                 multerConfig.category,
                 multerConfig.format.category
-                    .replace(FileFormatEnum.USER_ID, userId)
+                    .replace(FileFormatEnum.STAFF_ID, employeeId)
                     .replace(FileFormatEnum.MEDIA_TYPE, MediaTypesEnum.IMAGE),
             );
             body.imageId = saveImage.id;

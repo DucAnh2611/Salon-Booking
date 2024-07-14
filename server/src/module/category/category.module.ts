@@ -8,12 +8,13 @@ import { MediaModule } from '../media/media.module';
 import { RolePermissionModule } from '../role-permission/role-permission.module';
 import { RoleModule } from '../role/role.module';
 import { CategoryController } from './category.controller';
+import { CategoryService } from './category.service';
 import { CategoryEntity } from './entity/category.entity';
 
 @Module({
     imports: [TypeOrmModule.forFeature([CategoryEntity, MediaEntity]), RoleModule, RolePermissionModule, MediaModule],
     controllers: [CategoryController],
-    providers: [AccessTokenGuard, UserTypeGuard, PermissionGuard],
-    exports: [],
+    providers: [CategoryService, AccessTokenGuard, UserTypeGuard, PermissionGuard],
+    exports: [CategoryService],
 })
 export class CategoryModule {}
