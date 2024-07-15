@@ -3,7 +3,6 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
-import { FileFormatEnum } from '../../common/enum/files.enum';
 import { multerConfig } from '../../config/multer.configs';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { AttributeService } from '../attribute/attribute.service';
@@ -45,11 +44,6 @@ export class ProductTypesAttributeService {
                 userId,
                 getFile.file,
                 `${multerConfig.product.base}/${productId}/${multerConfig.product.typesAttribute}`,
-                multerConfig.format.product.typesAttribute
-                    .replace(FileFormatEnum.PRODUCT_ID, productId)
-                    .replace(FileFormatEnum.TYPE_ID, typeId)
-                    .replace(FileFormatEnum.ATTRIBUTE_ID, attrId)
-                    .replace(FileFormatEnum.MEDIA_TYPE, this.mediaService.fileType(getFile.file)),
             );
             return saveMedia.id;
         }

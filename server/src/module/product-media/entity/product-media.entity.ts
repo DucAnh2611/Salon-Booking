@@ -2,7 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { MediaEntity } from '../../media/entity/media.entity';
 import { ProductBaseEntity } from '../../product-base/entity/product-base.entity';
 
-@Entity('product_image')
+@Entity('product_media')
 export class ProductMediaEntity {
     @PrimaryColumn('uuid')
     mediaId: string;

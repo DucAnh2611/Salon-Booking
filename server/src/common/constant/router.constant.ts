@@ -114,6 +114,13 @@ export const VOUCHER_ROUTE = {
     DELETE_MANY: '',
 };
 
+export const PRODUCT_ROUTE = {
+    CREATE: '',
+    UPDATE: '',
+    DELETE_ONE: ':id',
+    DELETE_MANY: '',
+};
+
 export const PRODUCT_BASE_ROUTE = {
     CREATE: '',
     UPDATE: ':id',
@@ -127,6 +134,13 @@ export const PRODUCT_DETAIL_ROUTE = {
 };
 
 export const PRODUCT_TYPES_ROUTE = {
+    CREATE: '',
+    UPDATE: '',
+    DELETE_ONE: ':id',
+    DELETE_MANY: '',
+};
+
+export const SERVICE_ROUTE = {
     CREATE: '',
     UPDATE: '',
     DELETE_ONE: ':id',

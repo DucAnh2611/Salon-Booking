@@ -3,6 +3,7 @@ import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { MediaEntity } from '../../media/entity/media.entity';
 import { ProductBaseEntity } from '../../product-base/entity/product-base.entity';
+import { ServiceEntity } from '../../service-base/entity/service.entity';
 
 @Entity('category')
 export class CategoryEntity extends ModifyEntity {
@@ -41,4 +42,7 @@ export class CategoryEntity extends ModifyEntity {
 
     @OneToMany(() => ProductBaseEntity, (productBaseEntity: ProductBaseEntity) => productBaseEntity.category)
     productCategory: ProductBaseEntity[];
+
+    @OneToMany(() => ServiceEntity, (serviceEntity: ServiceEntity) => serviceEntity.category)
+    serviceCategory: ServiceEntity[];
 }

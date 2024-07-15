@@ -14,7 +14,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { FORMDATA_FIELD_MEDIA } from '../../../common/constant/file.constants';
 import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { ROUTER, VOUCHER_ROUTE } from '../../../common/constant/router.constant';
-import { FileFormatEnum } from '../../../common/enum/files.enum';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { appConfig } from '../../../config/app.config';
@@ -24,7 +23,6 @@ import { UserType } from '../../../shared/decorator/user-types.decorator';
 import { AccessTokenGuard } from '../../../shared/guard/accessToken.guard';
 import { PermissionGuard } from '../../../shared/guard/permission.guard';
 import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
-import { MediaTypesEnum } from '../../media/enum/media-types.enum';
 import { MediaService } from '../../media/media.service';
 import { CreateVoucherDto } from '../dto/voucher-create.dto';
 import { DeleteManyVoucherDto } from '../dto/voucher-delete.dto';
@@ -57,14 +55,7 @@ export class VoucherAdminController {
         const { employeeId, userId } = req.accessPayload;
 
         if (file) {
-            const saveImage = await this.mediaService.save(
-                userId,
-                file,
-                multerConfig.voucher,
-                multerConfig.format.voucher
-                    .replace(FileFormatEnum.STAFF_ID, employeeId)
-                    .replace(FileFormatEnum.MEDIA_TYPE, MediaTypesEnum.IMAGE),
-            );
+            const saveImage = await this.mediaService.save(userId, file, multerConfig.voucher);
             body.imageId = saveImage.id;
         }
 
@@ -89,14 +80,7 @@ export class VoucherAdminController {
         const { id: voucherId } = param;
 
         if (file) {
-            const saveImage = await this.mediaService.save(
-                userId,
-                file,
-                multerConfig.voucher,
-                multerConfig.format.voucher
-                    .replace(FileFormatEnum.STAFF_ID, employeeId)
-                    .replace(FileFormatEnum.MEDIA_TYPE, MediaTypesEnum.IMAGE),
-            );
+            const saveImage = await this.mediaService.save(userId, file, multerConfig.voucher);
             body.imageId = saveImage.id;
         }
 

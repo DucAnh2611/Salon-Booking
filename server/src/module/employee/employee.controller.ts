@@ -17,7 +17,6 @@ import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { EMPLOYEE_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
-import { FileFormatEnum } from '../../common/enum/files.enum';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../common/enum/permission.enum';
 import { AppRequest } from '../../common/interface/custom-request.interface';
 import { multerConfig, multerOptions } from '../../config/multer.configs';
@@ -27,7 +26,6 @@ import { BadRequest } from '../../shared/exception/error.exception';
 import { AccessTokenGuard } from '../../shared/guard/accessToken.guard';
 import { PermissionGuard } from '../../shared/guard/permission.guard';
 import { UserTypeGuard } from '../../shared/guard/user-type.guard';
-import { MediaTypesEnum } from '../media/enum/media-types.enum';
 import { MediaService } from '../media/media.service';
 import { CreateEmployeeDto } from './dto/create-emplotee.dto';
 import { FindEmployeeQueryDto, GetEmployeeParamDto } from './dto/get-employee.dto';
@@ -75,14 +73,7 @@ export class EmployeeController {
         }
 
         if (file) {
-            const saveImage = await this.mediaService.save(
-                userId,
-                file,
-                multerConfig.voucher,
-                multerConfig.format.user.avatar
-                    .replace(FileFormatEnum.USER_ID, userId)
-                    .replace(FileFormatEnum.MEDIA_TYPE, MediaTypesEnum.IMAGE),
-            );
+            const saveImage = await this.mediaService.save(userId, file, `${multerConfig.staff}/${userId}`);
             body.avatar = saveImage.id;
         }
 
@@ -112,10 +103,7 @@ export class EmployeeController {
             const saveImage = await this.mediaService.save(
                 isExist.userId,
                 file,
-                multerConfig.voucher,
-                multerConfig.format.user.avatar
-                    .replace(FileFormatEnum.USER_ID, isExist.userId)
-                    .replace(FileFormatEnum.MEDIA_TYPE, MediaTypesEnum.IMAGE),
+                `${multerConfig.staff}/${isExist.userId}`,
             );
             body.avatar = saveImage.id;
         }

@@ -15,7 +15,6 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { FORMDATA_FIELD_MEDIA } from '../../common/constant/file.constants';
 import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { CATEGORY_ROUTE, ROUTER } from '../../common/constant/router.constant';
-import { FileFormatEnum } from '../../common/enum/files.enum';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../common/enum/permission.enum';
 import { AppRequest } from '../../common/interface/custom-request.interface';
 import { DynamicQuery } from '../../common/type/query.type';
@@ -25,7 +24,6 @@ import { UserType } from '../../shared/decorator/user-types.decorator';
 import { AccessTokenGuard } from '../../shared/guard/accessToken.guard';
 import { PermissionGuard } from '../../shared/guard/permission.guard';
 import { UserTypeGuard } from '../../shared/guard/user-type.guard';
-import { MediaTypesEnum } from '../media/enum/media-types.enum';
 import { MediaService } from '../media/media.service';
 import { CategoryService } from './category.service';
 import { CreateCategoryDto } from './dto/category-create.dto';
@@ -65,14 +63,7 @@ export class CategoryController {
         const { employeeId, userId } = req.accessPayload;
 
         if (file) {
-            const saveImage = await this.mediaService.save(
-                userId,
-                file,
-                multerConfig.category,
-                multerConfig.format.category
-                    .replace(FileFormatEnum.STAFF_ID, employeeId)
-                    .replace(FileFormatEnum.MEDIA_TYPE, MediaTypesEnum.IMAGE),
-            );
+            const saveImage = await this.mediaService.save(userId, file, multerConfig.category);
             body.imageId = saveImage.id;
         }
 
@@ -93,14 +84,7 @@ export class CategoryController {
         const { employeeId, userId } = req.accessPayload;
 
         if (file) {
-            const saveImage = await this.mediaService.save(
-                userId,
-                file,
-                multerConfig.category,
-                multerConfig.format.category
-                    .replace(FileFormatEnum.STAFF_ID, employeeId)
-                    .replace(FileFormatEnum.MEDIA_TYPE, MediaTypesEnum.IMAGE),
-            );
+            const saveImage = await this.mediaService.save(userId, file, multerConfig.category);
             body.imageId = saveImage.id;
         }
 

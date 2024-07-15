@@ -24,10 +24,11 @@ export const multerConfig = {
         user: {
             avatar: 'user_avatar_<USER_ID>_<MEDIA_TYPE>',
         },
-        service: 'service_<SERVICE_ID>_<MEDIA_TYPE>',
+        service: {
+            base: 'service_<SERVICE_ID>_<MEDIA_TYPE>',
+        },
         product: {
             base: 'product_<PRODUCT_ID>_<MEDIA_TYPE>',
-            thumbnail: 'product_thumbnail_<PRODUCT_BASE_ID>_<MEDIA_TYPE>',
             typesAttribute: 'product_types_attribute_<PRODUCT_ID>_<TYPE_ID>_<ATTRIBUTE_ID>_<MEDIA_TYPE>',
         },
         staff: { avatar: 'staff_avatar_<STAFF_ID>' },

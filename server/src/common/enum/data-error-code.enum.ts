@@ -1,4 +1,4 @@
-// Current Index = 45
+// Current Index = 51
 
 export enum DataErrorCodeEnum {
     // Internal error
@@ -17,6 +17,8 @@ export enum DataErrorCodeEnum {
     EXISTED_PRODUCT_DETAIL_KEY = 'DE006',
     EXISTED_PRODUCT = 'DE0039',
     EXISTED_PRODUCT_TYPE = 'DE0040',
+    EXISTED_SERVICE = 'DE048',
+    EXISTED_SERVICE_STEP = 'DE049',
 
     // Nonexistence errors
     NOT_EXIST = 'DE007',
@@ -33,6 +35,9 @@ export enum DataErrorCodeEnum {
     NOT_EXIST_ROLE = 'DE042',
     NOT_EXIST_ROLE_PERMISSION = 'DE043',
     NOT_EXIST_PERMISSION = 'DE044',
+    NOT_EXIST_SERVICE_PARENT = 'DE051',
+    NOT_EXIST_SERVICE = 'DE046',
+    NOT_EXIST_SERVICE_STEP = 'DE047',
 
     // Invalid input errors
     INVALID_ATTRIBUTE_VALUE = 'DE018',
@@ -48,6 +53,7 @@ export enum DataErrorCodeEnum {
     INVALID_USER_ROLE = 'DE028',
     INVALID_USER_TYPE = 'DE029',
     INVALID_MEDIA_TYPE = 'DE030',
+    INVALID_SERVICE_STEP_LEVEL = 'DE050',
 
     // Missing data errors
     MISSING_DATA = 'DE031',

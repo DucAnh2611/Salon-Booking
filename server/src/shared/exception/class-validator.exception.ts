@@ -6,7 +6,7 @@ import { BadRequest } from './error.exception';
 export const AppClassValidatorException = (errors: ValidationError[]) => {
     const errorMessage: AppDetailMessage = errors.reduce((acc: AppDetailMessage, curr: ValidationError) => {
         if (!acc[curr.property]) {
-            acc[curr.property] = [DataErrorCodeEnum.WRONG_FORMAT];
+            acc[curr.property] = DataErrorCodeEnum.WRONG_FORMAT;
         }
 
         return acc;

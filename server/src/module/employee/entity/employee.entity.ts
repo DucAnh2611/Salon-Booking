@@ -8,6 +8,9 @@ import { ProductBaseEntity } from '../../product-base/entity/product-base.entity
 import { ProductTypesEntity } from '../../product-types/entity/product-types.entity';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
 import { RoleEntity } from '../../role/entity/role.entity';
+import { ServiceEntity } from '../../service-base/entity/service.entity';
+import { ServiceEmpleeEntity } from '../../service-employee/entity/service-employee.entity';
+import { ServiceStepEntity } from '../../service-step/entity/service-step.entity.entity';
 import { UserEntity } from '../../user/entity/user.entity';
 import { VoucherClassificationEntity } from '../../voucher-classification/entity/voucher-classification.entity';
 import { VoucherEntity } from '../../voucher/entity/voucher.entity';
@@ -102,6 +105,36 @@ export class EmployeeEntity extends ModifyEntity {
 
     @OneToMany(() => ProductTypesEntity, (productTypesEntity: ProductTypesEntity) => productTypesEntity.userUpdate)
     updateProductTypes: ProductTypesEntity[];
+
+    @OneToMany(() => ServiceEntity, (serviceEntity: ServiceEntity) => serviceEntity.userCreate)
+    createService: ServiceEntity[];
+
+    @OneToMany(() => ServiceEntity, (serviceEntity: ServiceEntity) => serviceEntity.userUpdate)
+    updateService: ServiceEntity[];
+
+    @OneToMany(
+        () => ServiceEmpleeEntity,
+        (serviceEmployeeEntity: ServiceEmpleeEntity) => serviceEmployeeEntity.userCreate,
+    )
+    createServiceEmployee: ServiceEmpleeEntity[];
+
+    @OneToMany(
+        () => ServiceEmpleeEntity,
+        (serviceEmployeeEntity: ServiceEmpleeEntity) => serviceEmployeeEntity.userUpdate,
+    )
+    updateServiceEmployee: ServiceEmpleeEntity[];
+
+    @OneToMany(
+        () => ServiceEmpleeEntity,
+        (serviceEmployeeEntity: ServiceEmpleeEntity) => serviceEmployeeEntity.employee,
+    )
+    serviceEmployee: ServiceEmpleeEntity[];
+
+    @OneToMany(() => ServiceStepEntity, (serviceStepEntity: ServiceStepEntity) => serviceStepEntity.userCreate)
+    createServiceStep: ServiceStepEntity[];
+
+    @OneToMany(() => ServiceStepEntity, (serviceStepEntity: ServiceStepEntity) => serviceStepEntity.userUpdate)
+    updateServiceStep: ServiceStepEntity[];
 
     @OneToMany(() => CategoryEntity, (categoryEntity: CategoryEntity) => categoryEntity.userUpdate)
     updateCategory: CategoryEntity[];

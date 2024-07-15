@@ -4,6 +4,7 @@ import { mkdir, readFile, stat, unlink, writeFile } from 'fs/promises';
 import * as mime from 'mime-types';
 import { extname, join } from 'path';
 import { Repository } from 'typeorm';
+import { v4 as uuidv4 } from 'uuid';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { FileFormatEnum } from '../../common/enum/files.enum';
 import { multerBaseDir, multerConfig } from '../../config/multer.configs';
@@ -107,15 +108,14 @@ export class MediaService {
     }
 
     async saveMutiples(userId: string, medias: TSaveMutipleMedia[]) {
-        const saves = await Promise.all(
-            medias.map(media => this.save(userId, media.file, media.path, media.fileName || media.file.filename)),
-        );
+        const saves = await Promise.all(medias.map(media => this.save(userId, media.file, media.path)));
         return saves;
     }
 
-    async save(userId: string, file: Express.Multer.File, path: string, newFileName: string) {
+    async save(userId: string, file: Express.Multer.File, path: string) {
         const fileName = file.filename;
         const getMedia = await this.getTempMedia(fileName);
+        const newFileName = uuidv4();
         const newNameWithExt = `${newFileName}${extname(file.originalname)}`;
 
         const [deletedTemp, savedMulter] = await Promise.all([

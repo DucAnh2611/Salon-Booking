@@ -4,6 +4,8 @@ import { CategoryEntity } from '../../category/entity/category.entity';
 import { ClassificationEntity } from '../../classification/entity/classification.entity';
 import { ProductMediaEntity } from '../../product-media/entity/product-media.entity';
 import { ProductTypesAttributeEntity } from '../../product-types-attribute/entity/product-types-attribute.entity';
+import { ServiceMediaEntity } from '../../service-media/entity/service-media.entity';
+import { ServiceStepEntity } from '../../service-step/entity/service-step.entity.entity';
 import { UserEntity } from '../../user/entity/user.entity';
 import { VoucherEntity } from '../../voucher/entity/voucher.entity';
 import { MediaTypesEnum } from '../enum/media-types.enum';
@@ -47,4 +49,10 @@ export class MediaEntity extends ModifyEntity {
         (productTypesAttributeEntity: ProductTypesAttributeEntity) => productTypesAttributeEntity.thumbnail,
     )
     productTypesAttributeThumbnail: ProductTypesAttributeEntity[];
+
+    @OneToMany(() => ServiceMediaEntity, (serviceMediaEntity: ServiceMediaEntity) => serviceMediaEntity.media)
+    serviceMedia: ServiceMediaEntity[];
+
+    @OneToMany(() => ServiceStepEntity, (serviceStepEntity: ServiceStepEntity) => serviceStepEntity.thumbnail)
+    stepThumbnail: ServiceStepEntity[];
 }

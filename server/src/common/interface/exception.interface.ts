@@ -13,7 +13,7 @@ export interface AppExceptionType extends AppReponseBase {
 }
 
 export interface AppDetailMessage {
-    [key: string]: DataErrorCodeEnum[];
+    [key: string]: DataErrorCodeEnum[] | DataErrorCodeEnum | string;
 }
 
 export interface PermissionRequireMessage {

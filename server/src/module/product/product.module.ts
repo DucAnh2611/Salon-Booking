@@ -6,6 +6,8 @@ import { ProductTypesAttributeModule } from '../product-types-attribute/product-
 import { ProductTypesModule } from '../product-types/product-types.module';
 import { RolePermissionModule } from '../role-permission/role-permission.module';
 import { RoleModule } from '../role/role.module';
+import { ProductAdminController } from './controller/product-admin.controller';
+import { ProductService } from './product.service';
 
 @Module({
     imports: [
@@ -17,5 +19,8 @@ import { RoleModule } from '../role/role.module';
         RoleModule,
         RolePermissionModule,
     ],
+    controllers: [ProductAdminController],
+    providers: [ProductService],
+    exports: [ProductService],
 })
 export class ProductModule {}

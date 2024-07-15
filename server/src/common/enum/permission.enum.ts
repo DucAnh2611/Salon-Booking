@@ -6,6 +6,8 @@ export enum PermissionTargetEnum {
     PRODUCT_TYPE = 'PRODUCT_TYPE',
 
     SERVICE = 'SERVICE',
+    SERVICE_STEP = 'SERVICE_STEP',
+    SERVICE_EMPLOYEE = 'SERVICE_EMPLOYEE',
 
     EMPLOYEE = 'EMPLOYEE',
     USER = 'USER',

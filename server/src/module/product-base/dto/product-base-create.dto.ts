@@ -19,7 +19,7 @@ export class CreateProductBaseDto {
     @IsOptional()
     @ValidateNested({ each: true })
     @Type(() => ProductBaseMediaURLDto)
-    thumbnailUrls: ProductBaseMediaURLDto[];
+    thumbnailUrls?: ProductBaseMediaURLDto[];
 
     @IsOptional()
     @IsNumber()
@@ -41,8 +41,7 @@ export class CreateProductBaseDto {
     @IsString()
     brand: string;
 
-    @IsOptional()
-    // @IsNotEmpty()
+    @IsNotEmpty()
     @IsUUID('all')
     categoryId: string;
 }
