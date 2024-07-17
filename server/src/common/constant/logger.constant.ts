@@ -24,6 +24,7 @@ export const LOGGER_CONSTANT_NAME = {
     response: 'Response',
     exception: 'Exception',
     seed: 'Seed',
+    order: 'Order',
 };
 
 export const LOGGER_CONSTANT_LEVEL = {

@@ -8,13 +8,13 @@ export abstract class ModifyEntity extends BaseEntity {
     @Column('uuid', { name: 'createdBy', nullable: true })
     createdBy: string;
 
-    @CreateDateColumn({ default: new Date() })
+    @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: Date;
 
-    @UpdateDateColumn({ default: new Date() })
+    @UpdateDateColumn({ type: 'timestamp with time zone' })
     updatedAt: Date;
 
-    @DeleteDateColumn({ nullable: true })
+    @DeleteDateColumn({ nullable: true, type: 'timestamp with time zone' })
     deletedAt: Date;
 }
 
@@ -25,10 +25,10 @@ export abstract class ModifyOnlyEntity {
     @Column('uuid', { name: 'createdBy', nullable: true })
     createdBy: string;
 
-    @CreateDateColumn({ default: new Date() })
+    @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: Date;
 
-    @UpdateDateColumn({ default: new Date() })
+    @UpdateDateColumn({ type: 'timestamp with time zone' })
     updatedAt: Date;
 
     @DeleteDateColumn({ nullable: true })

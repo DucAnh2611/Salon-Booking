@@ -25,6 +25,18 @@ export const ROUTER = {
     PRODUCT_BASE: 'product-base',
     PRODUCT_DETAIL: 'product-detail',
     PRODUCT_TYPES: 'product-types',
+
+    WORKING_HOUR: 'working-hour',
+    SHIFT: 'shift',
+    SHIFT_EMPLOYEE: 'shift-employee',
+
+    CART: 'cart',
+    CART_PRODUCT: 'cart-product',
+    CART_SERVICE: 'cart-service',
+
+    ORDER: 'order',
+    ORDER_PRODUCT: 'order-product',
+    ORDER_SERVICE: 'order-service',
 };
 
 export const AUTH_ROUTE = {
@@ -145,4 +157,53 @@ export const SERVICE_ROUTE = {
     UPDATE: '',
     DELETE_ONE: ':id',
     DELETE_MANY: '',
+};
+
+export const WORKING_HOUR_ROUTE = {
+    CREATE: '',
+    DETAIL: ':id',
+    UPDATE: '',
+    DELETE_ONE: ':id',
+    DELETE_MANY: '',
+    TOGGLE_OFF: 'toggle-off/:id',
+};
+
+export const SHIFT_ROUTE = {
+    CREATE: '',
+    UPDATE: '',
+    DELETE_ONE: ':id',
+    DELETE_MANY: '',
+};
+
+export const SHIFT_EMPLOYEE_ROUTE = {
+    CREATE: '',
+    UPDATE_STATUS: '',
+    DELETE_ONE: '',
+    DELETE_MANY: '',
+};
+
+export const CART_ROUTE = {
+    CREATE: '',
+    UPDATE_STATUS: '',
+    DELETE_ONE: '',
+    DELETE_MANY: '',
+};
+
+export const CART_PRODUCT_ROUTE = {
+    GET: 'me',
+    ADD: '',
+    UPDATE: '',
+    DELETE: ':id',
+};
+
+export const CART_SERVICE_ROUTE = {
+    GET: 'me',
+    ADD: '',
+    DELETE: ':id',
+};
+
+export const ORDER_ROUTE = {
+    TRACKING: 'tracking/:id',
+    PRODUCT: 'order-product',
+    SERVICE: 'order-service',
 };

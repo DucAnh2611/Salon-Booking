@@ -26,6 +26,10 @@ export class EmployeeService {
         return this.employeeRepository.findOneBy({ id });
     }
 
+    getSnapshot(id: string) {
+        return this.employeeRepository.findOne({ where: { id }, loadEagerRelations: false });
+    }
+
     async findEmployee(query: FindEmployeeQueryDto) {
         const { filter, limit, page, sort } = query;
         const querybuilder = this.employeeRepository.createQueryBuilder('employee');
@@ -62,6 +66,10 @@ export class EmployeeService {
         const employee = await this.employeeRepository.findOneBy({ username });
 
         return employee;
+    }
+
+    async isExistById(id: string) {
+        return this.employeeRepository.findOne({ where: { id }, loadEagerRelations: false });
     }
 
     async checkPiority({

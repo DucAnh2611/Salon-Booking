@@ -21,5 +21,6 @@ import { EmployeeEntity } from './entity/employee.entity';
     ],
     controllers: [EmployeeController],
     providers: [EmployeeService, RoleService, RolePermissionService, PermissionGuard],
+    exports: [EmployeeService],
 })
 export class EmployeeModule {}

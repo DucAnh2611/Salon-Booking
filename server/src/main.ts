@@ -1,6 +1,6 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import * as CookieParser from 'cookie-parser';
+import CookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { configs } from './config';
 import { AppLoggerService } from './module/logger/logger.service';
@@ -12,8 +12,10 @@ async function bootstrap() {
     app.setGlobalPrefix(configs.app.prefix);
 
     app.enableCors({
+        // origin: [appConfig.clientUrl, appConfig.employeeUrl],
         origin: '*',
         methods: ['POST', 'PUT', 'DELETE', 'PATCH', 'GET', 'OPTIONS'],
+        // credentials: true,
     });
 
     app.useGlobalPipes(

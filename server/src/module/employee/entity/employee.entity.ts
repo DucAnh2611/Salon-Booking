@@ -3,7 +3,7 @@ import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { EmployeeStatusEnum } from '../../../common/enum/employee.enum';
 import { AttributeEntity } from '../../attribute/entity/attribute.entity';
 import { CategoryEntity } from '../../category/entity/category.entity';
-import { ClassificationEntity } from '../../classification/entity/classification.entity';
+import { OrderServiceItemEntity } from '../../order-service-item/entity/order-service-item.entity';
 import { ProductBaseEntity } from '../../product-base/entity/product-base.entity';
 import { ProductTypesEntity } from '../../product-types/entity/product-types.entity';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
@@ -11,9 +11,10 @@ import { RoleEntity } from '../../role/entity/role.entity';
 import { ServiceEntity } from '../../service-base/entity/service.entity';
 import { ServiceEmpleeEntity } from '../../service-employee/entity/service-employee.entity';
 import { ServiceStepEntity } from '../../service-step/entity/service-step.entity.entity';
+import { ShiftEmployeeEntity } from '../../shift-employee/entity/shift-employee.entity';
+import { ShiftEntity } from '../../shift/entity/shift.entity';
 import { UserEntity } from '../../user/entity/user.entity';
-import { VoucherClassificationEntity } from '../../voucher-classification/entity/voucher-classification.entity';
-import { VoucherEntity } from '../../voucher/entity/voucher.entity';
+import { WorkingHourEntity } from '../../working-hour/entity/working-hour.entity';
 
 @Entity('employee')
 export class EmployeeEntity extends ModifyEntity {
@@ -70,30 +71,6 @@ export class EmployeeEntity extends ModifyEntity {
     @OneToMany(() => CategoryEntity, (categoryEntity: CategoryEntity) => categoryEntity.userCreate)
     createCategory: CategoryEntity[];
 
-    @OneToMany(() => VoucherEntity, (voucherEntity: VoucherEntity) => voucherEntity.userCreate)
-    createVoucher: VoucherEntity[];
-
-    @OneToMany(() => VoucherEntity, (voucherEntity: VoucherEntity) => voucherEntity.userUpdate)
-    updateVoucher: VoucherEntity[];
-
-    @OneToMany(
-        () => ClassificationEntity,
-        (classificationEntity: ClassificationEntity) => classificationEntity.userCreate,
-    )
-    createClassification: ClassificationEntity[];
-
-    @OneToMany(
-        () => ClassificationEntity,
-        (classificationEntity: ClassificationEntity) => classificationEntity.userUpdate,
-    )
-    updateClassification: ClassificationEntity[];
-
-    @OneToMany(
-        () => VoucherClassificationEntity,
-        (voucherClassificationEntity: VoucherClassificationEntity) => voucherClassificationEntity.userCreate,
-    )
-    createVoucherClassification: VoucherClassificationEntity[];
-
     @OneToMany(() => ProductBaseEntity, (productBaseEntity: ProductBaseEntity) => productBaseEntity.userCreate)
     createProduct: ProductBaseEntity[];
 
@@ -135,6 +112,33 @@ export class EmployeeEntity extends ModifyEntity {
 
     @OneToMany(() => ServiceStepEntity, (serviceStepEntity: ServiceStepEntity) => serviceStepEntity.userUpdate)
     updateServiceStep: ServiceStepEntity[];
+
+    @OneToMany(() => WorkingHourEntity, (workingHourEntity: WorkingHourEntity) => workingHourEntity.userCreate)
+    createWorkingHour: WorkingHourEntity[];
+
+    @OneToMany(() => WorkingHourEntity, (workingHourEntity: WorkingHourEntity) => workingHourEntity.userUpdate)
+    updateWorkingHour: WorkingHourEntity[];
+
+    @OneToMany(() => ShiftEntity, (shiftEntity: ShiftEntity) => shiftEntity.userCreate)
+    createShift: ShiftEntity[];
+
+    @OneToMany(() => ShiftEntity, (shiftEntity: ShiftEntity) => shiftEntity.userUpdate)
+    updateShift: ShiftEntity[];
+
+    @OneToMany(() => ShiftEmployeeEntity, (shiftEmployeeEntity: ShiftEmployeeEntity) => shiftEmployeeEntity.userCreate)
+    createShiftEmployee: ShiftEmployeeEntity[];
+
+    @OneToMany(() => ShiftEmployeeEntity, (shiftEmployeeEntity: ShiftEmployeeEntity) => shiftEmployeeEntity.userUpdate)
+    updateShiftEmployee: ShiftEmployeeEntity[];
+
+    @OneToMany(() => ShiftEmployeeEntity, (shiftEmployeeEntity: ShiftEmployeeEntity) => shiftEmployeeEntity.employee)
+    assignShiftEmployee: ShiftEmployeeEntity[];
+
+    @OneToMany(
+        () => OrderServiceItemEntity,
+        (orderServiceItemEntity: OrderServiceItemEntity) => orderServiceItemEntity.employee,
+    )
+    orderServiceItems: OrderServiceItemEntity[];
 
     @OneToMany(() => CategoryEntity, (categoryEntity: CategoryEntity) => categoryEntity.userUpdate)
     updateCategory: CategoryEntity[];

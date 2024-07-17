@@ -18,7 +18,8 @@
         "forceConsistentCasingInFileNames": false,
         "noFallthroughCasesInSwitch": false,
         "resolveJsonModule": true,
-        "paths": {}
+        "paths": {},
+        "esModuleInterop": true
     },
     "exclude": [
         "node_modules",

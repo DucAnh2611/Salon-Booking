@@ -20,6 +20,13 @@ export enum PermissionTargetEnum {
     ATTRIBUTE = 'ATTRIBUTE',
     ATTRIBUTE_VALUE = 'ATTRIBUTE_VALUE',
     CATEGORY = 'CATEGORY',
+
+    WORKING_HOUR = 'WORKING_HOUR',
+    SHIFT = 'SHIFT',
+    SHIFT_EMPLOYEE = 'SHIFT_EMPLOYEE',
+
+    ORDER_SERVICE = 'ORDER_SERVICE',
+    ORDER_PRODUCT = 'ORDER_PRODUCT',
 }
 
 export enum PermissionActionEnum {

@@ -21,6 +21,10 @@ export class ServiceBaseService {
         return this.seriviceBaseRepository.findOne({ where: { id: serviceId }, loadEagerRelations: false });
     }
 
+    getSnapshot(id: string) {
+        return this.seriviceBaseRepository.findOne({ where: { id }, loadEagerRelations: false });
+    }
+
     async save(userId: string, employeeId: string, body: CreateServiceBaseDto) {
         const { categoryId, parentId, medias, ...props } = body;
 

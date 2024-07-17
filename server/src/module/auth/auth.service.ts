@@ -82,6 +82,7 @@ export class AuthService {
                 email: findClient.email,
                 uRoleId: userInfo.roleId,
                 userId: findClient.userId,
+                clientId: findClient.id,
             },
             key: jwtConfig.access.secret,
             options: { expiresIn: jwtConfig.access.expire },

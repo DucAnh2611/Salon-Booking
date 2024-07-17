@@ -1,7 +1,9 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
+import { CartServiceItemEntity } from '../../cart-service-item/entity/cart-service-item.entity';
 import { CategoryEntity } from '../../category/entity/category.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
+import { OrderServiceItemEntity } from '../../order-service-item/entity/order-service-item.entity';
 import { ServiceEmpleeEntity } from '../../service-employee/entity/service-employee.entity';
 import { ServiceMediaEntity } from '../../service-media/entity/service-media.entity';
 import { ServiceStepEntity } from '../../service-step/entity/service-step.entity.entity';
@@ -37,6 +39,18 @@ export class ServiceEntity extends ModifyEntity {
 
     @OneToMany(() => ServiceStepEntity, (serviceStepEntity: ServiceStepEntity) => serviceStepEntity.service)
     steps: ServiceStepEntity[];
+
+    @OneToMany(
+        () => CartServiceItemEntity,
+        (cartServiceItemEntity: CartServiceItemEntity) => cartServiceItemEntity.service,
+    )
+    cartServiceItems: CartServiceItemEntity[];
+
+    @OneToMany(
+        () => OrderServiceItemEntity,
+        (orderServiceItemEntity: OrderServiceItemEntity) => orderServiceItemEntity.service,
+    )
+    orderServiceItems: OrderServiceItemEntity[];
 
     @ManyToOne(() => ServiceEntity, (serviceEntity: ServiceEntity) => serviceEntity.children)
     @JoinColumn({ name: 'parentId' })

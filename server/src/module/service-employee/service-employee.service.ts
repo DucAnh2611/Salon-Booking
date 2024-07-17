@@ -39,6 +39,11 @@ export class ServiceEmployeeService {
     async save(employeeId: string, serviceId: string, serviceEmployee: ServiceEmployeeDto) {
         const { employeeId: sEmployeeId, experience } = serviceEmployee;
 
+        const isExist = await this.isExist(serviceId, sEmployeeId);
+        if (isExist) {
+            return isExist;
+        }
+
         const instance = this.serviceEmployeeRepository.create({
             employeeId: sEmployeeId,
             serviceId,

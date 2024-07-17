@@ -1,6 +1,8 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
+import { CartProductItemEntity } from '../../cart-product-item/entity/cart-product-item.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
+import { OrderProductItemEntity } from '../../order-product-item/entity/order-product-item.entity';
 import { ProductBaseEntity } from '../../product-base/entity/product-base.entity';
 import { ProductTypesAttributeEntity } from '../../product-types-attribute/entity/product-types-attribute.entity';
 
@@ -40,4 +42,16 @@ export class ProductTypesEntity extends ModifyEntity {
         { eager: true },
     )
     productTypesAttribute: ProductTypesAttributeEntity[];
+
+    @OneToMany(
+        () => CartProductItemEntity,
+        (cartProductItemEntity: CartProductItemEntity) => cartProductItemEntity.productType,
+    )
+    cartProductItems: CartProductItemEntity[];
+
+    @OneToMany(
+        () => OrderProductItemEntity,
+        (orderProductItemEntity: OrderProductItemEntity) => orderProductItemEntity.productType,
+    )
+    orderProductItems: OrderProductItemEntity[];
 }
