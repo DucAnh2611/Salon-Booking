@@ -1,21 +1,24 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsDate, IsNotEmpty, IsOptional } from 'class-validator';
+import { IsBoolean, IsDate, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateWorkingHourDto {
     @IsNotEmpty()
     @IsDate()
     @Transform(({ value }) => new Date(value))
-    date: Date;
+    dateFrom: Date;
 
     @IsNotEmpty()
     @IsDate()
     @Transform(({ value }) => new Date(value))
-    start: Date;
+    dateEnd: Date;
 
     @IsNotEmpty()
-    @IsDate()
-    @Transform(({ value }) => new Date(value))
-    end: Date;
+    @IsString()
+    start: string;
+
+    @IsNotEmpty()
+    @IsString()
+    end: string;
 
     @IsOptional()
     @IsBoolean()

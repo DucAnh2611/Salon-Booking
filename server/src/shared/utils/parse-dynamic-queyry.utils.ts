@@ -6,7 +6,7 @@ export const ParseDynamicQuery = (query: DynamicQuery): TParsedQuery => {
 
     const format = {
         filter: /^(\w+):(.+)$/,
-        sort: /^(-|\+)(\w+)$/,
+        sort: /^(d|a)_(\w+)$/,
     };
 
     const parsedQuery: TParsedQuery = { filter: {}, limit, page, sort: {} };
@@ -22,7 +22,7 @@ export const ParseDynamicQuery = (query: DynamicQuery): TParsedQuery => {
         const [type, split, ...parials] = sort.split('');
         const field = parials.join('');
 
-        const sortBy: SortByEnum = (type === '+' ? SortByEnum.ASC : SortByEnum.DESC) || SortByEnum.ASC;
+        const sortBy: SortByEnum = (type === 'a' ? SortByEnum.ASC : SortByEnum.DESC) || SortByEnum.ASC;
 
         parsedQuery.sort = {
             [field]: sortBy,
@@ -43,6 +43,30 @@ export type TParsedFilter<T> = {
 
 export type TParsedSort<T> = {
     [key in keyof T]: SortByEnum;
+};
+
+export const ParseFilterString = (filter: string) => {
+    const format = /^(\w+):(.+)$/;
+
+    const [ops, splitValue] = filter.split(':');
+
+    return {
+        operator: OperatorEnum[ops.toUpperCase()] || OperatorEnum.E,
+        value: splitValue,
+    };
+};
+
+export const ParseOrderString = (order: string) => {
+    const format = /^(d|a)_(\w+)$/;
+
+    const match = order.match(format);
+    if (match) {
+        const [word, op, field] = match;
+
+        return { [field]: op === 'a' ? SortByEnum.ASC : SortByEnum.DESC };
+    }
+
+    return '';
 };
 
 export const ParseFilterQuery = <T>(filter: object) => {
@@ -67,14 +91,14 @@ export const ParseFilterQuery = <T>(filter: object) => {
 };
 
 export const ParseSortQuery = <T>(sort: string[]) => {
-    const format = /^([-+])(\w+)$/;
+    const format = /^(d|a)_(\w+)$/;
 
     const mappedSort: TParsedSort<Partial<T>> = sort.reduce(
         (acc, curr: string) => {
             const match = curr.match(format);
             if (match) {
                 const [word, op, field] = match;
-                acc[field] = op === '+' ? SortByEnum.ASC : SortByEnum.DESC;
+                acc[field] = op === 'a' ? SortByEnum.ASC : SortByEnum.DESC;
             }
 
             return acc;

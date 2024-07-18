@@ -1,15 +1,9 @@
-import { IsInt, IsNumber, IsOptional, IsPositive, IsString, IsUUID } from 'class-validator';
+import { IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UpdateCategoryDto {
     @IsOptional()
     @IsString()
     title?: string;
-
-    @IsOptional()
-    @IsNumber()
-    @IsInt()
-    @IsPositive()
-    level?: number;
 
     @IsOptional()
     @IsUUID('all')

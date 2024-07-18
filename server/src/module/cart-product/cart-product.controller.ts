@@ -11,12 +11,12 @@ import { UpdateCartProductItemDto } from '../cart-product-item/dto/cart-product-
 import { CartProductService } from './cart-product.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard)
-@UserType(ROLE_TITLE.client)
 @Controller(ROUTER.CART_PRODUCT)
 export class CartProductController {
     constructor(private readonly cartProductService: CartProductService) {}
 
     @Get(CART_PRODUCT_ROUTE.GET)
+    @UserType(ROLE_TITLE.client)
     get(@Req() req: AppRequest) {
         const { clientId } = req.accessPayload;
 
@@ -24,12 +24,14 @@ export class CartProductController {
     }
 
     @Post(CART_PRODUCT_ROUTE.ADD)
+    @UserType(ROLE_TITLE.client)
     add(@Req() req: AppRequest, @Body() body: CreateCartProductItemDto) {
         const { clientId } = req.accessPayload;
         return this.cartProductService.add(clientId, body);
     }
 
     @Put(CART_PRODUCT_ROUTE.UPDATE)
+    @UserType(ROLE_TITLE.client)
     update(@Req() req: AppRequest, @Body() body: UpdateCartProductItemDto) {
         const { clientId } = req.accessPayload;
 
@@ -37,6 +39,7 @@ export class CartProductController {
     }
 
     @Delete(CART_PRODUCT_ROUTE.DELETE)
+    @UserType(ROLE_TITLE.client)
     delete(@Req() req: AppRequest, @Param() param: GetCartProductParamDto) {
         const { clientId } = req.accessPayload;
         const { id } = param;

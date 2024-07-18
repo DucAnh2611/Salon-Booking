@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, Res, SerializeOptions, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, SerializeOptions, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { AUTH_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
@@ -76,7 +76,7 @@ export class AuthController {
 
     @Get(AUTH_ROUTE.REFRESH_TOKEN)
     @UseGuards(RefreshTokenGuard)
-    async refreshToken(@Request() req: AppRequest, @Res({ passthrough: true }) res: Response) {
+    async refreshToken(@Req() req: AppRequest, @Res({ passthrough: true }) res: Response) {
         const { refreshPayload } = req;
         const { accessToken, refreshToken } = await this.authService.refreshTokens(refreshPayload);
 

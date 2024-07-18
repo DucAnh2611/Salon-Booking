@@ -4,7 +4,9 @@ import { Repository } from 'typeorm';
 import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest, Forbidden, InternalServer } from '../../shared/exception/error.exception';
+import { ParseOrderString } from '../../shared/utils/parse-dynamic-queyry.utils';
 import { trimStringInObject } from '../../shared/utils/trim-object.utils';
 import { RoleService } from '../role/role.service';
 import { UserService } from '../user/user.service';
@@ -30,34 +32,49 @@ export class EmployeeService {
         return this.employeeRepository.findOne({ where: { id }, loadEagerRelations: false });
     }
 
-    async findEmployee(query: FindEmployeeQueryDto) {
-        const { filter, limit, page, sort } = query;
-        const querybuilder = this.employeeRepository.createQueryBuilder('employee');
-
-        querybuilder.leftJoinAndSelect('employee.eRole', 'role').select(['employee', 'employee.*', 'role', 'role.*']);
-
-        // filter.forEach(({ field, operator, value }, id) => {
-        //     const convertedQuery = ConvertOperator({ field, operator, value });
-        //     if (id === 0) {
-        //         querybuilder.where(convertedQuery.where, { [convertedQuery.field]: convertedQuery.value });
-        //     } else querybuilder.andWhere(convertedQuery.where, { [convertedQuery.field]: convertedQuery.value });
-        // });
-
-        // sort.forEach(({ field, sort }, id) => {
-        //     if (id === 0) {
-        //         querybuilder.orderBy(field, sort);
-        //     } else querybuilder.addOrderBy(field, sort);
-        // });
-
-        if (sort.length) {
-            querybuilder.groupBy('employee.id, role.id');
+    async detail(id: string): Promise<Promise<EmployeeEntity>> {
+        const employee = await this.employeeRepository.findOne({
+            where: { id },
+            loadEagerRelations: false,
+        });
+        if (!employee) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_EMPLOYEE });
         }
 
-        const count = await querybuilder.getCount();
-        const items = await querybuilder
+        const user = await this.userService.getDetailUser(employee.userId);
+
+        return {
+            ...employee,
+            userBase: user,
+        };
+    }
+
+    async findEmployee(query: FindEmployeeQueryDto) {
+        const { key = '', orderBy, limit, page } = query;
+
+        const queryBuilder = this.employeeRepository.createQueryBuilder('emp');
+
+        const q = queryBuilder
+            .leftJoinAndSelect('emp.userBase', 'user')
+            .leftJoinAndSelect('emp.userCreate', 'employeeCreate')
+            .leftJoinAndSelect('emp.userUpdate', 'employeeUpdate')
+            .leftJoinAndSelect('emp.eRole', 'role')
+            .select(['emp', 'employeeCreate', 'employeeUpdate', 'user', 'role'])
+            .where(`emp.username LIKE :key`, { key: `%${key}%` })
+            .orWhere(`user.firstname LIKE :key`, { key: `%${key}%` })
+            .orWhere(`user.lastname LIKE :key`, { key: `%${key}%` });
+
+        const order = orderBy ? ParseOrderString(orderBy) : { ['emp.createdAt']: SortByEnum.ASC };
+        Object.entries(order).forEach(([field, type]: [field: string, type: SortByEnum]) => {
+            q.orderBy(field, type);
+        });
+
+        const items = await q
             .take(limit)
             .skip((page - 1) * limit)
             .getMany();
+
+        const count = await q.getCount();
 
         return { items, page, limit, count };
     }

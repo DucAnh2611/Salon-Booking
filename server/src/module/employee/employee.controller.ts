@@ -6,7 +6,8 @@ import {
     Param,
     Post,
     Put,
-    Request,
+    Query,
+    Req,
     UploadedFile,
     UseGuards,
     UseInterceptors,
@@ -40,30 +41,26 @@ export class EmployeeController {
         private readonly mediaService: MediaService,
     ) {}
 
-    @Get(EMPLOYEE_ROUTE.INFO)
-    @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.READ] }])
+    @Get(EMPLOYEE_ROUTE.FIND)
     @UserType(ROLE_TITLE.staff)
-    info(@Param() param: GetEmployeeParamDto) {
-        const { id } = param;
-        return { data: id };
-    }
-
-    @Post(EMPLOYEE_ROUTE.FIND)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.READ] }])
-    @UserType(ROLE_TITLE.staff)
-    find(@Body() query: FindEmployeeQueryDto) {
+    find(@Query() query: FindEmployeeQueryDto) {
         return this.employeeService.findEmployee(query);
     }
 
+    @Get(EMPLOYEE_ROUTE.INFO)
+    @UserType(ROLE_TITLE.staff)
+    @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.READ] }])
+    info(@Param() param: GetEmployeeParamDto) {
+        const { id } = param;
+        return this.employeeService.detail(id);
+    }
+
     @Post(EMPLOYEE_ROUTE.ADD)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.CREATE] }])
     @UseInterceptors(FileInterceptor(FORMDATA_FIELD_MEDIA.IMAGE, multerOptions))
-    @UserType(ROLE_TITLE.staff)
-    async create(
-        @Request() req: AppRequest,
-        @Body() body: CreateEmployeeDto,
-        @UploadedFile() file?: Express.Multer.File,
-    ) {
+    async create(@Req() req: AppRequest, @Body() body: CreateEmployeeDto, @UploadedFile() file?: Express.Multer.File) {
         const { employeeId, userId } = req.accessPayload;
 
         const isExist = await this.employeeService.isExist({ username: body.username });
@@ -81,11 +78,11 @@ export class EmployeeController {
     }
 
     @Put(EMPLOYEE_ROUTE.UPDATE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.UPDATE] }])
     @UseInterceptors(FileInterceptor(FORMDATA_FIELD_MEDIA.IMAGE, multerOptions))
-    @UserType(ROLE_TITLE.staff)
     async update(
-        @Request() req: AppRequest,
+        @Req() req: AppRequest,
         @Param() param: GetEmployeeParamDto,
         @Body() body: UpdateEmployeeDto,
         @UploadedFile() file?: Express.Multer.File,
@@ -112,16 +109,16 @@ export class EmployeeController {
     }
 
     @Delete(EMPLOYEE_ROUTE.DELETE_ONE)
-    @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.DELETE] }])
     @UserType(ROLE_TITLE.staff)
+    @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.DELETE] }])
     deleteOne(@Param() param: GetEmployeeParamDto) {
         const { id } = param;
         return { id };
     }
 
     @Delete(EMPLOYEE_ROUTE.DELETE_MANY)
-    @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.DELETE] }])
     @UserType(ROLE_TITLE.staff)
+    @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.DELETE] }])
     deleteMany() {
         return DataSuccessCodeEnum.OK;
     }

@@ -1,15 +1,13 @@
 import { Transform } from 'class-transformer';
 import { IsDate, IsNotEmpty, IsUUID } from 'class-validator';
 
-export class GetShiftParamDto {
+export class GetServiceShiftEmployeeDto {
     @IsNotEmpty()
     @IsUUID('all')
-    id: string;
-}
+    serviceId: string;
 
-export class GetShiftFromBookingTimeDto {
     @IsNotEmpty()
     @Transform(({ value }) => new Date(value))
     @IsDate()
-    bookingDate: Date;
+    bookingTime: Date;
 }

@@ -23,6 +23,35 @@ export class CartProductItemService {
         return this.cartProductItemRepository.findOne({ where: { id }, loadEagerRelations: false });
     }
 
+    async getTotalAmount(cartProductId: string) {
+        const itemLists = await this.cartProductItemRepository.find({
+            where: { cartProductId },
+            loadEagerRelations: false,
+            relations: {
+                product: true,
+                productType: true,
+            },
+        });
+
+        const sum = itemLists.reduce((acc, item) => {
+            const { product, productType } = item;
+
+            let unitPrice = product.price;
+            if (productType) {
+                unitPrice = productType.price;
+            }
+
+            return (acc += unitPrice * item.quantity);
+        }, 0);
+
+        return sum;
+    }
+
+    async removeAll(cartProductId: string) {
+        const deleted = await this.cartProductItemRepository.delete({ cartProductId });
+        return deleted;
+    }
+
     async isExistProduct(cartProductId: string, productId: string, productTypeId?: string) {
         const cartProduct = await this.cartProductItemRepository.find({
             where: { cartProductId: cartProductId, productId },
@@ -40,7 +69,8 @@ export class CartProductItemService {
         return cartProduct.find(p => !p.productTypeId);
     }
 
-    async isValidProduct(productId: string, productTypeId?: string) {
+    async isValidProduct(item: CreateCartProductItemDto) {
+        const { productId, quantity, productTypeId } = item;
         if (productTypeId) {
             const productType = await this.productTypesRepository.findOne({
                 where: { id: productTypeId },
@@ -48,6 +78,10 @@ export class CartProductItemService {
             });
             if (!productType) {
                 throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PRODUCT_TYPE });
+            }
+
+            if (productType.quantity <= quantity) {
+                throw new BadRequest({ message: DataErrorCodeEnum.PRODUCT_TYPES_OUT_OF_STOCK });
             }
 
             if (productType.productId !== productId) {
@@ -74,20 +108,31 @@ export class CartProductItemService {
             throw new BadRequest({ message: DataErrorCodeEnum.PRODUCT_TYPE_REQUIRE });
         }
 
+        if (product.quantity <= quantity) {
+            throw new BadRequest({ message: DataErrorCodeEnum.PRODUCT_OUT_OF_STOCK });
+        }
+
         return true;
     }
 
     get(cartProductId: string) {
-        const querybuilder = this.cartProductItemRepository.createQueryBuilder('pc');
-
-        const query = querybuilder
-            .withDeleted()
-            .leftJoinAndSelect('pc.product', 'product')
-            .leftJoinAndSelect('pc.productType', 'product_type')
-            .where(['pc', 'pc.product', 'pc.productType'])
-            .where('pc.cartProductId :id', { id: cartProductId });
-
-        return query.getMany();
+        return this.cartProductItemRepository.find({
+            where: { cartProductId },
+            loadEagerRelations: false,
+            relations: {
+                product: {
+                    productMedia: {
+                        media: true,
+                    },
+                    category: true,
+                },
+                productType: {
+                    productTypesAttribute: {
+                        thumbnail: true,
+                    },
+                },
+            },
+        });
     }
 
     async add(cartProductId: string, body: CreateCartProductItemDto) {
@@ -121,7 +166,7 @@ export class CartProductItemService {
             productTypeId,
         });
 
-        await this.isValidProduct(isExist.productId, productTypeId);
+        await this.isValidProduct({ productId: isExist.productId, productTypeId, quantity });
 
         const isExistProduct = await this.isExistProduct(cartProductId, isExist.productId, productTypeId);
         if (isExistProduct) {

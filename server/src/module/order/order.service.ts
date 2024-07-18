@@ -2,6 +2,8 @@ import { Injectable } from '@nestjs/common';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { OrderPaymentTypeEnum, OrderStatusEnum } from '../../common/enum/order.enum';
 import { BadRequest, Forbidden } from '../../shared/exception/error.exception';
+import { CartProductService } from '../cart-product/cart-product.service';
+import { CartServiceService } from '../cart-service/cart-service.service';
 import { OrderBaseService } from '../order-base/order-base.service';
 import { OrderProductItemService } from '../order-product-item/order-product-item.service';
 import { OrderServiceItemService } from '../order-service-item/order-service-item.service';
@@ -15,11 +17,9 @@ export class OrderService {
         private readonly orderProductItemService: OrderProductItemService,
         private readonly orderServiceItemService: OrderServiceItemService,
         private readonly orderTransactionService: OrderTransactionService,
+        private readonly cartProductService: CartProductService,
+        private readonly cartServiceService: CartServiceService,
     ) {}
-
-    async test() {
-        return this.orderTransactionService.test();
-    }
 
     async createOrderProduct(clientId: string, body: CreateOrderProductDto) {
         const { contact, paymentType, products } = body;
@@ -38,12 +38,18 @@ export class OrderService {
         const insertProductItems = await this.orderProductItemService.create(newOrder.id, products);
 
         if (paymentType === OrderPaymentTypeEnum.BANK) {
-            const { paymentUrl } = await this.orderTransactionService.createTransactionOrderProduct(newOrder.id);
+            const { paymentUrl } = await this.orderTransactionService.createTransactionOrderProduct(
+                newOrder.id,
+                parseInt(newOrder.code),
+                totalAmount,
+            );
 
             return {
                 paymentUrl,
             };
         }
+
+        const removeCart = await this.cartProductService.removeCart(clientId);
 
         return newOrder;
     }
@@ -65,12 +71,16 @@ export class OrderService {
         const insertServiceItem = await this.orderServiceItemService.add(newOrder.id, services);
 
         if (paymentType === OrderPaymentTypeEnum.BANK) {
-            const { paymentUrl } = await this.orderTransactionService.createTransactionOrderProduct(newOrder.id);
+            // const { paymentUrl } = await this.orderTransactionService.createTransactionOrderProduct(newOrder.id);
 
             return {
-                paymentUrl,
+                paymentUrl: '',
             };
         }
+
+        const removeCart = await this.cartServiceService.removeCart(clientId);
+
+        return newOrder;
     }
 
     updateOrderStatus(clientId: string, orderId: string, status: OrderStatusEnum) {}

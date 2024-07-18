@@ -4,7 +4,6 @@ import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { AuthModule } from './module/auth/auth.module';
 import { DatabaseModule } from './module/database/database.module';
-import { RedisModule } from './module/redis/redis.module';
 
 import { AppExceptionFilter } from './shared/exception';
 
@@ -32,7 +31,7 @@ import { AppResponseInterceptor } from './shared/interceptor';
         CronModule.forRoot(),
         I18nAppModule,
 
-        RedisModule,
+        // RedisModule,
         DatabaseModule,
 
         AppLoggerModule,

@@ -20,6 +20,14 @@ export class ServiceMediaService {
         return this.serviceMediaRepository.find({ where: { serviceId }, loadEagerRelations: false });
     }
 
+    getListByService(serviceId: string) {
+        return this.serviceMediaRepository.find({
+            where: { serviceId },
+            loadEagerRelations: false,
+            relations: { media: true },
+        });
+    }
+
     async prepareMedia(userId: string, employeeId: string, serviceId: string, id?: string, url?: string) {
         if (id) {
             const isExist = await this.mediaService.isValid(id);
@@ -77,7 +85,7 @@ export class ServiceMediaService {
     async updateMany(userId: string, employeeId: string, body: BodyUpdateServiceMediaDto) {
         const { medias, serviceId } = body;
 
-        if (!medias.find(item => item.isThumbnail)) {
+        if (!medias.find(item => item.isThumbnail) && medias.length) {
             medias[0].isThumbnail = true;
         }
 

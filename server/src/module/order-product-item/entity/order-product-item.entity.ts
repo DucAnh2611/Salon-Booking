@@ -16,10 +16,10 @@ export class OrderProductItemEntity extends BaseEntity {
     productTypeId: string;
 
     @Column('jsonb')
-    productSnapshot: object;
+    productSnapshot: ProductBaseEntity;
 
     @Column('jsonb', { nullable: true })
-    productTypeSnapshot: object;
+    productTypeSnapshot: ProductTypesEntity;
 
     @Column('integer')
     quantity: number;
@@ -36,7 +36,7 @@ export class OrderProductItemEntity extends BaseEntity {
 
     @ManyToOne(() => ProductBaseEntity, (productBaseEntity: ProductBaseEntity) => productBaseEntity.orderProductItems)
     @JoinColumn({ name: 'productId' })
-    product: OrderEntity;
+    product: ProductBaseEntity;
 
     @ManyToOne(
         () => ProductTypesEntity,

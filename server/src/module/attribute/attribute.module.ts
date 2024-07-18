@@ -6,13 +6,13 @@ import { UserTypeGuard } from '../../shared/guard/user-type.guard';
 import { RolePermissionModule } from '../role-permission/role-permission.module';
 import { RoleEntity } from '../role/entity/role.entity';
 import { RoleModule } from '../role/role.module';
-import { AttributeController } from './attribute.controller';
 import { AttributeService } from './attribute.service';
+import { AttributeAdminController } from './controller/attribute-admin.controller';
 import { AttributeEntity } from './entity/attribute.entity';
 
 @Module({
     imports: [TypeOrmModule.forFeature([AttributeEntity, RoleEntity]), RoleModule, RolePermissionModule],
-    controllers: [AttributeController],
+    controllers: [AttributeAdminController],
     providers: [AttributeService, UserTypeGuard, AccessTokenGuard, PermissionGuard],
     exports: [AttributeService],
 })

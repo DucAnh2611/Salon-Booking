@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
@@ -16,6 +16,10 @@ export class ProductDetailService {
         private readonly productDetailRepository: Repository<ProductDetailEntity>,
         private readonly productBaseService: ProductBaseService,
     ) {}
+
+    getByProduct(productId: string) {
+        return this.productDetailRepository.find({ where: { productId }, loadEagerRelations: false });
+    }
 
     isExistByKey(key: string, productId: string) {
         return this.productDetailRepository.findOne({ where: { key, productId }, loadEagerRelations: false });
@@ -47,8 +51,8 @@ export class ProductDetailService {
     async saveMany(body: CreateProductDetailDto) {
         const { details, productId } = body;
 
-        await Promise.all(details.map(detail => this.save(productId, detail)));
-        return DataSuccessCodeEnum.OK;
+        const saved = await Promise.all(details.map(detail => this.save(productId, detail)));
+        return saved;
     }
 
     async save(productId: string, detail: ProductDetailDto) {
@@ -76,14 +80,16 @@ export class ProductDetailService {
 
         const [updateList, deleteList, createList] = await Promise.all([
             Promise.all(details.map(detail => this.update(detail))),
-            Promise.all(listDetail.filter(d => !details.find(dt => d.id === dt.id)).map(d => this.deleteOne(d.id))),
+            this.productDetailRepository.delete({
+                id: In(listDetail.filter(d => !details.find(dt => d.id === dt.id)).map(d => d.id)),
+            }),
             this.saveMany({
                 productId,
                 details: details.filter(d => !d.id).map(d => ({ key: d.key, value: d.value })),
             }),
         ]);
 
-        return DataSuccessCodeEnum.OK;
+        return [...updateList, ...createList];
     }
 
     async update(detail: ProductDetailExistDto) {

@@ -13,12 +13,12 @@ import { UpdateProductTypesDto } from '../dto/product-types-update.dto';
 import { ProductTypesService } from '../product-types.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
-@UserType(ROLE_TITLE.staff)
 @Controller(ROUTER.PRODUCT_TYPES)
 export class ProductTypesAdminController {
     constructor(private readonly productTypesService: ProductTypesService) {}
 
     @Post(PRODUCT_TYPES_ROUTE.CREATE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.PRODUCT,
@@ -37,6 +37,7 @@ export class ProductTypesAdminController {
     }
 
     @Put(PRODUCT_TYPES_ROUTE.UPDATE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.PRODUCT,

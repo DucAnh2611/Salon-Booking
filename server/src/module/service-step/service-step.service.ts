@@ -27,6 +27,16 @@ export class ServiceStepService {
         return this.serviceStepRepository.find({ where: { serviceId }, loadEagerRelations: false });
     }
 
+    getStepDetailService(serviceId: string) {
+        return this.serviceStepRepository.find({
+            where: { serviceId },
+            loadEagerRelations: false,
+            relations: {
+                thumbnail: true,
+            },
+        });
+    }
+
     isDistinctStepLevel<T extends CreateSeviceStepDto>(list: T[]) {
         const listLevel = list.map(item => item.step);
         const set = new Set(listLevel);

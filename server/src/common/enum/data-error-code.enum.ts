@@ -1,4 +1,4 @@
-// Next Index = 83
+// Next Index = 84
 
 export enum DataErrorCodeEnum {
     // Internal error
@@ -69,6 +69,7 @@ export enum DataErrorCodeEnum {
     INVALID_TIME_RANGE = 'DE053',
     INVALID_SHIFT_TIMES = 'DE054',
     INVALID_SERVICE_EMPLOYEE = 'DE079',
+    INVALID_TIME_FORMAT = 'DE083',
 
     // Missing data errors
     MISSING_DATA = 'DE055',
@@ -110,4 +111,6 @@ export enum DataErrorCodeEnum {
 
     // Order
     ORDER_FORBIDDEN = 'DE082',
+    PRODUCT_OUT_OF_STOCK = 'DE084',
+    PRODUCT_TYPES_OUT_OF_STOCK = 'DE085',
 }

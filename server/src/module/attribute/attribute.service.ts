@@ -1,10 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
-import { DynamicQuery } from '../../common/type/query.type';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest, NotFound, ServerInternal } from '../../shared/exception/error.exception';
+import { ParseOrderString } from '../../shared/utils/parse-dynamic-queyry.utils';
 import { CreateAttributeDto } from './dto/attribute-create.dto';
+import { FindAttributeAdminDto } from './dto/attribute-get.dto';
 import { UpdateAttributeDto } from './dto/attribute-update.dto';
 import { AttributeEntity } from './entity/attribute.entity';
 
@@ -12,7 +14,35 @@ import { AttributeEntity } from './entity/attribute.entity';
 export class AttributeService {
     constructor(@InjectRepository(AttributeEntity) private readonly attributeRepository: Repository<AttributeEntity>) {}
 
-    async find(query: DynamicQuery) {}
+    async findAdmin(query: FindAttributeAdminDto) {
+        const { key, limit, page, orderBy } = query;
+
+        const order = orderBy ? ParseOrderString(orderBy) : { createdAt: SortByEnum.DESC };
+
+        const list = await this.attributeRepository.find({
+            where: { name: Like(`%${key || ''}%`) },
+            loadEagerRelations: false,
+            order: {
+                ...order,
+            },
+            relations: {
+                employeeCreate: true,
+                employeeUpdate: true,
+            },
+            take: limit,
+            skip: (page - 1) * limit,
+        });
+
+        const count = await this.attributeRepository.countBy({ name: Like(`%${key || ''}%`) });
+
+        return {
+            limit,
+            page,
+            items: list,
+            count,
+        };
+    }
+
     async isValid(id: string) {
         return this.attributeRepository.findOne({ where: { id }, loadEagerRelations: false });
     }

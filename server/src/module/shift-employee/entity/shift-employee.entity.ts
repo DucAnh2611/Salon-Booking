@@ -14,7 +14,7 @@ export class ShiftEmployeeEntity extends ModifyOnlyEntity {
     employeeId: string;
 
     @Column('enum', { enum: ShiftEmployeeStatusEnum })
-    status: string;
+    status: ShiftEmployeeStatusEnum;
 
     @ManyToOne(() => ShiftEntity, (shiftEntity: ShiftEntity) => shiftEntity.shiftEmployee)
     @JoinColumn({ name: 'shiftId' })

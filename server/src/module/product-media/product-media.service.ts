@@ -19,6 +19,16 @@ export class ProductMediaService {
         return this.productMediaRepository.findBy({ productId: id });
     }
 
+    getListDetailForProduct(productId: string) {
+        return this.productMediaRepository.find({
+            where: { productId },
+            loadEagerRelations: false,
+            relations: {
+                media: true,
+            },
+        });
+    }
+
     async saveMany(medias: CreateProductMediaDto[]) {
         if (!medias.length) {
             return [];

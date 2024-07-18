@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { FindProductBaseAdminDto, FindProductBaseDto } from '../product-base/dto/product-base-get.dto';
 import { ProductBaseService } from '../product-base/product-base.service';
 import { ProductDetailService } from '../product-detail/product-detail.service';
 import { ProductTypesService } from '../product-types/product-types.service';
@@ -13,6 +14,42 @@ export class ProductService {
         private readonly productTypesService: ProductTypesService,
     ) {}
 
+    async detail(id: string) {
+        const productBaseDetail = await this.productBaseService.detail(id);
+
+        const productDetail = await this.productDetailService.getByProduct(id);
+
+        const productTypes = await this.productTypesService.getTypesForProduct(id);
+
+        return {
+            base: productBaseDetail,
+            details: productDetail,
+            types: productTypes,
+        };
+    }
+
+    async findAdmin(query: FindProductBaseAdminDto) {
+        const productList = await this.productBaseService.findAdmin(query);
+        productList.items = await Promise.all(
+            productList.items.map(async product => {
+                const types = await this.productTypesService.getTypesForProduct(product.id);
+
+                return {
+                    ...product,
+                    types,
+                };
+            }),
+        );
+
+        return productList;
+    }
+
+    async find(query: FindProductBaseDto) {
+        const productList = await this.productBaseService.find(query);
+
+        return productList;
+    }
+
     async create(userId: string, employeeId: string, body: CreateProductDto) {
         const { base, details, types } = body;
         const savedProduct = await this.productBaseService.save(userId, employeeId, base);
@@ -23,7 +60,7 @@ export class ProductService {
         ]);
 
         return {
-            ...savedTypes,
+            ...savedProduct,
             productTypes: savedTypes,
             details: savedDetails,
         };
@@ -40,9 +77,13 @@ export class ProductService {
         ]);
 
         return {
-            ...savedTypes,
+            ...savedProduct,
             productTypes: savedTypes,
             details: savedDetails,
         };
+    }
+
+    async delete(ids: string[]) {
+        return this.productBaseService.deleteMany({ ids });
     }
 }

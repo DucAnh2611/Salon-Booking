@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { ROUTER, SHIFT_ROUTE } from '../../../common/constant/router.constant';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
@@ -14,12 +14,21 @@ import { UpdateShiftDto } from '../dto/shift-update.dto';
 import { ShiftService } from '../shift.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
-@UserType(ROLE_TITLE.staff)
 @Controller(ROUTER.SHIFT)
 export class ShiftAdminController {
     constructor(private readonly shiftService: ShiftService) {}
 
+    @Get(SHIFT_ROUTE.DETAIL)
+    @UserType(ROLE_TITLE.staff)
+    @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT, action: [PermissionActionEnum.READ] }])
+    detail(@Req() req: AppRequest, @Param() param: GetShiftParamDto) {
+        const { id } = param;
+
+        return this.shiftService.detail(id);
+    }
+
     @Post(SHIFT_ROUTE.CREATE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT, action: [PermissionActionEnum.CREATE] }])
     create(@Req() req: AppRequest, @Body() body: CreateShiftDto) {
         const { employeeId } = req.accessPayload;
@@ -28,6 +37,7 @@ export class ShiftAdminController {
     }
 
     @Put(SHIFT_ROUTE.UPDATE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT, action: [PermissionActionEnum.UPDATE] }])
     update(@Req() req: AppRequest, @Body() body: UpdateShiftDto) {
         const { employeeId } = req.accessPayload;
@@ -36,6 +46,7 @@ export class ShiftAdminController {
     }
 
     @Delete(SHIFT_ROUTE.DELETE_ONE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT, action: [PermissionActionEnum.DELETE] }])
     deleteOne(@Req() req: AppRequest, @Param() param: GetShiftParamDto) {
         const { id: shiftId } = param;

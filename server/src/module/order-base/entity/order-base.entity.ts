@@ -1,4 +1,3 @@
-import * as crypto from 'crypto';
 import { BeforeInsert, Column, CreateDateColumn, Entity, OneToMany, UpdateDateColumn } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { OrderPaymentTypeEnum, OrderStatusEnum } from '../../../common/enum/order.enum';
@@ -7,9 +6,15 @@ import { OrderServiceItemEntity } from '../../order-service-item/entity/order-se
 import { OrderTransactionEntity } from '../../order-transaction/entity/order-transaction.entity';
 
 function generateOrderCode() {
-    const timestamp = Date.now().toString(36);
-    const randomString = crypto.randomBytes(4).toString('hex');
-    return `${timestamp}${randomString}`.toUpperCase();
+    const timestamp = Date.now();
+
+    const timestampPart = timestamp.toString().slice(-5);
+
+    const randomPart = Math.floor(10000 + Math.random() * 90000);
+
+    const orderCode = `${timestampPart}${randomPart}`;
+
+    return orderCode;
 }
 
 @Entity('order')

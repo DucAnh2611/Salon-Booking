@@ -6,60 +6,61 @@ import {
     Post,
     Put,
     Query,
-    Request,
+    Req,
     UploadedFile,
     UseGuards,
     UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FORMDATA_FIELD_MEDIA } from '../../common/constant/file.constants';
-import { ROLE_TITLE } from '../../common/constant/role.constant';
-import { CATEGORY_ROUTE, ROUTER } from '../../common/constant/router.constant';
-import { PermissionActionEnum, PermissionTargetEnum } from '../../common/enum/permission.enum';
-import { AppRequest } from '../../common/interface/custom-request.interface';
-import { DynamicQuery } from '../../common/type/query.type';
-import { multerConfig, multerOptions } from '../../config/multer.configs';
-import { TargetActionRequire } from '../../shared/decorator/permission.decorator';
-import { UserType } from '../../shared/decorator/user-types.decorator';
-import { AccessTokenGuard } from '../../shared/guard/accessToken.guard';
-import { PermissionGuard } from '../../shared/guard/permission.guard';
-import { UserTypeGuard } from '../../shared/guard/user-type.guard';
-import { MediaService } from '../media/media.service';
-import { CategoryService } from './category.service';
-import { CreateCategoryDto } from './dto/category-create.dto';
-import { DeleteManyCategoryDto } from './dto/category-delete.dto';
-import { GetParamCategoryDto } from './dto/category-get.dto';
-import { UpdateCategoryDto } from './dto/category-update.dto';
+import { FORMDATA_FIELD_MEDIA } from '../../../common/constant/file.constants';
+import { ROLE_TITLE } from '../../../common/constant/role.constant';
+import { CATEGORY_ROUTE, ROUTER } from '../../../common/constant/router.constant';
+import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
+import { AppRequest } from '../../../common/interface/custom-request.interface';
+import { multerConfig, multerOptions } from '../../../config/multer.configs';
+import { TargetActionRequire } from '../../../shared/decorator/permission.decorator';
+import { UserType } from '../../../shared/decorator/user-types.decorator';
+import { AccessTokenGuard } from '../../../shared/guard/accessToken.guard';
+import { PermissionGuard } from '../../../shared/guard/permission.guard';
+import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
+import { MediaService } from '../../media/media.service';
+import { CategoryService } from '../category.service';
+import { CreateCategoryDto } from '../dto/category-create.dto';
+import { DeleteManyCategoryDto } from '../dto/category-delete.dto';
+import { FindCategoryAdminDto, GetParamCategoryDto } from '../dto/category-get.dto';
+import { UpdateCategoryDto } from '../dto/category-update.dto';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
+// @Controller({ path: ROUTER.CATEGORY, host: appConfig.employeeUrl })
 @Controller(ROUTER.CATEGORY)
-export class CategoryController {
+export class CategoryAdminController {
     constructor(
         private readonly categoryService: CategoryService,
         private readonly mediaService: MediaService,
     ) {}
 
     @Get(CATEGORY_ROUTE.FIND)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.CATEGORY,
             action: [PermissionActionEnum.READ],
         },
     ])
-    find(@Query() query: DynamicQuery) {
-        return this.categoryService.find(query);
+    find(@Query() query: FindCategoryAdminDto) {
+        return this.categoryService.findAdmin(query);
     }
 
     @Post(CATEGORY_ROUTE.CREATE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.CATEGORY,
             action: [PermissionActionEnum.CREATE],
         },
     ])
-    @UserType(ROLE_TITLE.staff)
     @UseInterceptors(FileInterceptor(FORMDATA_FIELD_MEDIA.IMAGE, multerOptions))
-    async add(@Request() req: AppRequest, @Body() body: CreateCategoryDto, @UploadedFile() file: Express.Multer.File) {
+    async add(@Req() req: AppRequest, @Body() body: CreateCategoryDto, @UploadedFile() file?: Express.Multer.File) {
         const { employeeId, userId } = req.accessPayload;
 
         if (file) {
@@ -71,11 +72,11 @@ export class CategoryController {
     }
 
     @Put(CATEGORY_ROUTE.UPDATE)
-    @TargetActionRequire([{ target: PermissionTargetEnum.CATEGORY, action: [PermissionActionEnum.UPDATE] }])
     @UserType(ROLE_TITLE.staff)
+    @TargetActionRequire([{ target: PermissionTargetEnum.CATEGORY, action: [PermissionActionEnum.UPDATE] }])
     @UseInterceptors(FileInterceptor(FORMDATA_FIELD_MEDIA.IMAGE, multerOptions))
     async update(
-        @Request() req: AppRequest,
+        @Req() req: AppRequest,
         @Param() param: GetParamCategoryDto,
         @Body() body: UpdateCategoryDto,
         @UploadedFile() file?: Express.Multer.File,
@@ -92,9 +93,10 @@ export class CategoryController {
     }
 
     @Put(CATEGORY_ROUTE.DELETE_ONE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.CATEGORY, action: [PermissionActionEnum.DELETE] }])
     @UserType(ROLE_TITLE.staff)
-    deleteOne(@Request() req: AppRequest, @Param() param: GetParamCategoryDto) {
+    deleteOne(@Req() req: AppRequest, @Param() param: GetParamCategoryDto) {
         const { id: categoryId } = param;
         const { employeeId } = req.accessPayload;
 
@@ -102,9 +104,10 @@ export class CategoryController {
     }
 
     @Put(CATEGORY_ROUTE.DELETE_ONE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.CATEGORY, action: [PermissionActionEnum.DELETE] }])
     @UserType(ROLE_TITLE.staff)
-    deleteMany(@Request() req: AppRequest, @Body() body: DeleteManyCategoryDto) {
+    deleteMany(@Req() req: AppRequest, @Body() body: DeleteManyCategoryDto) {
         const { ids: categoryIds } = body;
         const { employeeId } = req.accessPayload;
 

@@ -20,6 +20,22 @@ export class ProductTypesService {
         private readonly productBaseService: ProductBaseService,
         private readonly productTypesAttributeService: ProductTypesAttributeService,
     ) {}
+
+    async getTypesForProduct(productId: string) {
+        const list = await this.productTypesRepository.find({ where: { productId }, loadEagerRelations: false });
+        const mapTypesAttribute = await Promise.all(
+            list.map(async item => {
+                const typesAttr = await this.productTypesAttributeService.getAttributeDetailForType(item.id);
+                return {
+                    ...item,
+                    productTypesAttribute: typesAttr,
+                };
+            }),
+        );
+
+        return mapTypesAttribute;
+    }
+
     isValid(id: string) {
         return this.productTypesRepository.findOne({ where: { id }, loadEagerRelations: false });
     }
@@ -58,7 +74,7 @@ export class ProductTypesService {
     async saveList(userId: string, employeeId: string, body: CreateProductTypesDto) {
         const { productTypes, productId } = body;
 
-        const deleteTypes = await this.deleteTypeBeforeInsert(productId);
+        // const deleteTypes = await this.deleteTypeBeforeInsert(productId);
 
         return Promise.all(productTypes.map(productType => this.save(userId, employeeId, productId, productType)));
     }
@@ -128,14 +144,15 @@ export class ProductTypesService {
         const existList: ProductTypesExistDto[] = productTypes.filter(t => !!t.productTypesId);
 
         const deleteList = listTypes.reduce((acc: ProductTypesEntity[], curr) => {
-            const find = bodyTypesById.find(t => t.productTypesId);
+            const find = bodyTypesById.find(t => t.productTypesId === curr.id);
             if (!find) {
                 acc.push(curr);
             }
             return acc;
         }, []);
+
         const [softDeleteList, createList, updateList] = await Promise.all([
-            Promise.all(deleteList.map(type => this.archive(type.id))),
+            this.productTypesRepository.softDelete({ id: In(deleteList.map(type => type.id)) }),
             this.saveList(userId, employeeId, {
                 productId,
                 productTypes: productTypes.filter(t => !t.productTypesId),
@@ -143,11 +160,7 @@ export class ProductTypesService {
             Promise.all(existList.map(productType => this.update(userId, employeeId, productId, productType))),
         ]);
 
-        return this.productTypesRepository.find({
-            where: { productId },
-            loadEagerRelations: false,
-            relations: { productTypesAttribute: true, userCreate: false, userUpdate: false },
-        });
+        return [...createList, ...updateList];
     }
 
     async update(userId: string, employeeId: string, productId: string, producType: ProductTypesExistDto) {

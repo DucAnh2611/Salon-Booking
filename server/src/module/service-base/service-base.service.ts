@@ -1,10 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
+import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
+import { ParseOrderString } from '../../shared/utils/parse-dynamic-queyry.utils';
 import { CategoryService } from '../category/category.service';
 import { ServiceMediaService } from '../service-media/service-media.service';
+import { FindServiceAdminDto } from '../service/dto/service-get.dto';
 import { CreateServiceBaseDto } from './dto/service-base-create.dto';
 import { UpdateServiceBaseDto } from './dto/service-base-update.dto';
 import { ServiceEntity } from './entity/service.entity';
@@ -23,6 +27,82 @@ export class ServiceBaseService {
 
     getSnapshot(id: string) {
         return this.seriviceBaseRepository.findOne({ where: { id }, loadEagerRelations: false });
+    }
+
+    async detail(id: string) {
+        const service = await this.seriviceBaseRepository.findOne({
+            where: { id },
+            loadEagerRelations: false,
+            relations: {
+                userUpdate: {
+                    userBase: true,
+                },
+                category: true,
+                userCreate: {
+                    userBase: true,
+                },
+            },
+        });
+
+        if (!service) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_SERVICE });
+        }
+
+        const media = await this.serviceMediaService.getListByService(id);
+
+        return {
+            ...service,
+            media,
+        };
+    }
+
+    async findAdmin(query: FindServiceAdminDto) {
+        const { key, limit, orderBy, page } = query;
+
+        const order = orderBy ? ParseOrderString(orderBy) : { createdAt: SortByEnum.ASC };
+        const list = await this.seriviceBaseRepository.find({
+            where: {
+                name: Like(`%${key}%`),
+            },
+            loadEagerRelations: false,
+            order: {
+                ...order,
+            },
+            relations: {
+                userCreate: {
+                    userBase: true,
+                },
+                userUpdate: {
+                    userBase: true,
+                },
+                category: true,
+                media: false,
+                steps: false,
+            },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+
+        return list;
+    }
+
+    async find(query: FindServiceAdminDto) {
+        const { key, limit, orderBy, page } = query;
+
+        const order = orderBy ? ParseOrderString(orderBy) : { createdAt: SortByEnum.ASC };
+        const list = await this.seriviceBaseRepository.find({
+            where: {
+                name: Like(`%${key}%`),
+            },
+            loadEagerRelations: false,
+            order: {
+                ...order,
+            },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
+
+        return list;
     }
 
     async save(userId: string, employeeId: string, body: CreateServiceBaseDto) {
@@ -92,5 +172,10 @@ export class ServiceBaseService {
         const saved = await this.seriviceBaseRepository.save(instance);
 
         return { ...saved, media: updateMedia };
+    }
+
+    async deleteMany(ids: string[]) {
+        const deleted = await this.seriviceBaseRepository.softDelete({ id: In(ids) });
+        return DataSuccessCodeEnum.OK;
     }
 }

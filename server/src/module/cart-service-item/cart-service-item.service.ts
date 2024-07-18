@@ -20,6 +20,25 @@ export class CartServiceItemService {
         return this.cartServiceItemRepository.findOne({ where: { id }, loadEagerRelations: false });
     }
 
+    async getTotalAmount(cartServiceId: string) {
+        const items = await this.cartServiceItemRepository.find({
+            where: { cartServiceId },
+            loadEagerRelations: false,
+            relations: { service: true },
+        });
+
+        return items.reduce((acc, item) => {
+            const { service } = item;
+
+            return acc + service.price;
+        }, 0);
+    }
+
+    async removeAll(cartServiceId: string) {
+        const deleted = await this.cartServiceItemRepository.delete({ cartServiceId });
+        return deleted;
+    }
+
     async isExistService(cartServiceId: string, serviceId: string) {
         const find = await this.cartServiceItemRepository.find({
             where: {
@@ -33,14 +52,23 @@ export class CartServiceItemService {
     }
 
     async get(cartServiceId: string) {
-        const querybuilder = this.cartServiceItemRepository.createQueryBuilder('cs');
-        const query = querybuilder
-            .withDeleted()
-            .leftJoinAndSelect('cs.service', 'service')
-            .select(['cs', 'cs.product'])
-            .where('cs.cartId = :id', { id: cartServiceId });
-
-        return query.getMany();
+        return this.cartServiceItemRepository.find({
+            where: { cartServiceId },
+            loadEagerRelations: false,
+            relations: {
+                service: {
+                    media: {
+                        media: true,
+                    },
+                    category: true,
+                    children: {
+                        media: {
+                            media: true,
+                        },
+                    },
+                },
+            },
+        });
     }
 
     async isValidService(serviceId: string) {

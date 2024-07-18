@@ -14,12 +14,12 @@ import { UpdateProductBaseDto } from '../dto/product-base-update.dto';
 import { ProductBaseService } from '../product-base.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
-@UserType(ROLE_TITLE.staff)
 @Controller(ROUTER.PRODUCT_BASE)
 export class ProductBaseAdminController {
     constructor(private readonly productBaseService: ProductBaseService) {}
 
     @Post(PRODUCT_BASE_ROUTE.CREATE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.PRODUCT,
@@ -35,6 +35,7 @@ export class ProductBaseAdminController {
     }
 
     @Put(PRODUCT_BASE_ROUTE.UPDATE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.PRODUCT,

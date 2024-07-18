@@ -19,7 +19,8 @@ export class OrderProductItemService {
         private readonly productTypesRepository: Repository<ProductTypesEntity>,
     ) {}
 
-    async isValidProduct(productId: string, productTypeId?: string) {
+    async isValidProduct(item: CreateOrderProductItemDto) {
+        const { productId, quantity, productTypeId } = item;
         if (productTypeId) {
             const productType = await this.productTypesRepository.findOne({
                 where: { id: productTypeId },
@@ -27,6 +28,10 @@ export class OrderProductItemService {
             });
             if (!productType) {
                 throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PRODUCT_TYPE });
+            }
+
+            if (productType.quantity <= quantity) {
+                throw new BadRequest({ message: DataErrorCodeEnum.PRODUCT_TYPES_OUT_OF_STOCK });
             }
 
             if (productType.productId !== productId) {
@@ -42,6 +47,10 @@ export class OrderProductItemService {
         });
         if (!product) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PRODUCT });
+        }
+
+        if (product.quantity <= quantity) {
+            throw new BadRequest({ message: DataErrorCodeEnum.PRODUCT_OUT_OF_STOCK });
         }
 
         const productTypes = await this.productTypesRepository.find({
@@ -73,7 +82,15 @@ export class OrderProductItemService {
                     userUpdate: false,
                 },
             }),
-            this.productTypesRepository.findOne({ where: { id: productTypeId }, loadEagerRelations: false }),
+            this.productTypesRepository.findOne({
+                where: { id: productTypeId },
+                loadEagerRelations: false,
+                relations: {
+                    productTypesAttribute: {
+                        attribute: true,
+                    },
+                },
+            }),
         ]);
 
         return [product, productType];
@@ -83,11 +100,7 @@ export class OrderProductItemService {
         if (!list.length) {
             throw new BadRequest({ message: DataErrorCodeEnum.NO_ORDER_ITEM });
         }
-        await Promise.all(
-            list.map(({ productId, productTypeId }: CreateOrderProductItemDto) =>
-                this.isValidProduct(productId, productTypeId),
-            ),
-        );
+        await Promise.all(list.map((item: CreateOrderProductItemDto) => this.isValidProduct(item)));
 
         return true;
     }
@@ -122,6 +135,24 @@ export class OrderProductItemService {
         return list;
     }
 
+    async updateProductQuantity(item: CreateOrderProductItemDto) {
+        const { productId, quantity, productTypeId } = item;
+        if (productTypeId) {
+            const productType = await this.productTypesRepository.findOne({
+                where: { id: productTypeId },
+                loadEagerRelations: false,
+            });
+
+            return this.productTypesRepository.save({ ...productType, quantity: productType.quantity - quantity });
+        }
+        const product = await this.productBaseRepository.findOne({
+            where: { id: productId },
+            loadEagerRelations: false,
+        });
+
+        return this.productBaseRepository.save({ ...product, quantity: product.quantity - quantity });
+    }
+
     async create(orderId: string, list: CreateOrderProductItemDto[]) {
         await this.checkValidListProduct(list);
 
@@ -129,7 +160,7 @@ export class OrderProductItemService {
             list.map(item => this.getProductSnapshot(item.productId, item.productTypeId)),
         );
 
-        return this.orderProductItemRepository.save(
+        const savedList = await this.orderProductItemRepository.save(
             list.map(item => {
                 const [product, productType] = snapShotList.find(([p, pt]) => {
                     const sameProduct = p.id === item.productId;
@@ -152,5 +183,9 @@ export class OrderProductItemService {
                 });
             }),
         );
+
+        const updateQuantity = await Promise.all(list.map(item => this.updateProductQuantity(item)));
+
+        return savedList;
     }
 }

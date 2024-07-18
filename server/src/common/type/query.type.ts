@@ -13,17 +13,17 @@ export abstract class PaginationQuery {
     @IsNumber()
     @IsInt()
     @IsPositive()
-    page: number = DEFAULT_VALUE_VALIDATOR.page;
+    page?: number = DEFAULT_VALUE_VALIDATOR.page;
 
     @IsOptional()
     @IsNumber()
     @IsInt()
     @IsPositive()
-    limit: number = DEFAULT_VALUE_VALIDATOR.limit;
+    limit?: number = DEFAULT_VALUE_VALIDATOR.limit;
 }
 export abstract class DynamicQuery extends PaginationQuery {
     /*
-        @format: /<path>?filter=<field>:<value>&&sort=<"+"|"-"><field>&&page=<page>&&limit=<limit>
+        @format: /<path>?filter=<field>:<value>&&sort=<"d"|"a"><field>&&page=<page>&&limit=<limit>
         @default:
             filter: '',
             sort: '',
@@ -32,11 +32,11 @@ export abstract class DynamicQuery extends PaginationQuery {
     */
     @IsOptional()
     @IsString()
-    sort: string = DEFAULT_VALUE_VALIDATOR.string;
+    sort: string;
 
     @IsOptional()
     @IsString()
-    filter: string = DEFAULT_VALUE_VALIDATOR.string;
+    filter: string;
 }
 
 export type TParsedQuery = {

@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Param, Post, Put, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { ROLE_PERMISSION_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../common/enum/permission.enum';
@@ -30,7 +30,7 @@ export class RolePermissionController {
     @Post(ROLE_PERMISSION_ROUTE.ADD)
     @TargetActionRequire([{ target: PermissionTargetEnum.ROLE_PERMISSION, action: [PermissionActionEnum.CREATE] }])
     @UserType(ROLE_TITLE.staff)
-    attach(@Body() rolePermisison: AttachPermissionDto, @Request() req: AppRequest) {
+    attach(@Body() rolePermisison: AttachPermissionDto, @Req() req: AppRequest) {
         const { accessPayload } = req;
         const { permissionIds, roleId } = rolePermisison;
 
@@ -49,7 +49,7 @@ export class RolePermissionController {
         },
     ])
     @UserType(ROLE_TITLE.staff)
-    update(@Body() rolePermisison: AttachPermissionDto, @Request() req: AppRequest) {
+    update(@Body() rolePermisison: AttachPermissionDto, @Req() req: AppRequest) {
         const { accessPayload } = req;
         const { permissionIds, roleId } = rolePermisison;
 

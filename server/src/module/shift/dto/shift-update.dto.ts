@@ -1,5 +1,4 @@
-import { Transform } from 'class-transformer';
-import { IsDate, IsNotEmpty, IsUUID } from 'class-validator';
+import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
 
 export class UpdateShiftDto {
     @IsNotEmpty()
@@ -7,22 +6,18 @@ export class UpdateShiftDto {
     shiftId: string;
 
     @IsNotEmpty()
-    @IsDate()
-    @Transform(({ value }) => new Date(value))
-    start: Date;
+    @IsString()
+    start: string;
 
     @IsNotEmpty()
-    @IsDate()
-    @Transform(({ value }) => new Date(value))
-    end: Date;
+    @IsString()
+    end: string;
 
     @IsNotEmpty()
-    @IsDate()
-    @Transform(({ value }) => new Date(value))
-    bookingStart: Date;
+    @IsString()
+    bookingStart: string;
 
     @IsNotEmpty()
-    @IsDate()
-    @Transform(({ value }) => new Date(value))
-    bookingEnd: Date;
+    @IsString()
+    bookingEnd: string;
 }

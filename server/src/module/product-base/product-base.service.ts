@@ -1,16 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { multerConfig } from '../../config/multer.configs';
 import { BadRequest } from '../../shared/exception/error.exception';
+import { ParseOrderString } from '../../shared/utils/parse-dynamic-queyry.utils';
 import { CategoryService } from '../category/category.service';
 import { MediaService } from '../media/media.service';
 import { CreateProductMediaDto } from '../product-media/dto/product-media-create.dto';
 import { ProductMediaService } from '../product-media/product-media.service';
 import { ProductTypesEntity } from '../product-types/entity/product-types.entity';
 import { CreateProductBaseDto } from './dto/product-base-create.dto';
+import { DeleteProductBaseDto } from './dto/product-base-delete.dto';
+import { FindProductBaseAdminDto, FindProductBaseDto } from './dto/product-base-get.dto';
 import { ProductBaseMediaIdDto, ProductBaseMediaURLDto } from './dto/product-base-media.dto';
 import { UpdateProductBaseDto } from './dto/product-base-update.dto';
 import { ProductBaseEntity } from './entity/product-base.entity';
@@ -24,6 +28,119 @@ export class ProductBaseService {
         private readonly mediaService: MediaService,
         private readonly productMediaService: ProductMediaService,
     ) {}
+
+    async detail(id: string) {
+        const product = await this.productBaseRepository.findOne({
+            where: { id },
+            loadEagerRelations: false,
+            relations: {
+                userCreate: {
+                    userBase: true,
+                },
+                userUpdate: {
+                    userBase: true,
+                },
+                category: true,
+            },
+        });
+
+        if (!product) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PRODUCT });
+        }
+
+        const media = await this.productMediaService.getListDetailForProduct(id);
+
+        return {
+            ...product,
+            media,
+        };
+    }
+
+    async findAdmin(query: FindProductBaseAdminDto) {
+        const { key, limit, page, orderBy } = query;
+        const queryBuilder = this.productBaseRepository.createQueryBuilder('p');
+
+        const q = queryBuilder
+            .leftJoinAndSelect('p.userCreate', 'empC')
+            .leftJoinAndSelect('p.userUpdate', 'empU')
+            .leftJoin('p.types', 'type')
+            .select(['p', 'empC', 'empU'])
+            .where('p.name LIKE :name', { name: `%${key}%` })
+            .orWhere('p.sku LIKE :sku', { sku: `%${key}%` })
+            .orWhere('type.sku LIKE :sku', { sku: `%${key}%` });
+
+        q.orderBy();
+        orderBy.forEach(o => {
+            const parse = ParseOrderString(o);
+            if (parse) {
+                Object.entries(parse).forEach(od => {
+                    q.addOrderBy(od[0], od[1]);
+                });
+            }
+        });
+
+        const [items, count] = await q
+            .skip((page - 1) * limit)
+            .take(limit)
+            .getManyAndCount();
+
+        const mapMedia = await Promise.all(
+            items.map(async item => {
+                const media = await this.productMediaService.getListDetailForProduct(item.id);
+                return {
+                    ...item,
+                    productMedia: media,
+                };
+            }),
+        );
+        return {
+            items: mapMedia,
+            count,
+            limit,
+            page,
+        };
+    }
+
+    async find(query: FindProductBaseDto) {
+        const { key = '', limit, page, orderBy, price, categoryIds } = query;
+        const queryBuilder = this.productBaseRepository.createQueryBuilder('p');
+
+        const q = queryBuilder
+            .where('p.name LIKE :name', { name: `%${key}%` })
+            .andWhere(`p.price >= :from ${price.to ? 'AND p.price <= :to ' : ''}`, price)
+            .orWhere(`p.price >= :from ${price.to ? 'AND p.price <= :to ' : ''}`, price);
+
+        if (categoryIds && categoryIds.length) {
+            q.andWhere('p.categoryId IN :...ids', { ids: categoryIds });
+        }
+
+        const order = orderBy ? ParseOrderString(orderBy) : { createdAt: SortByEnum.ASC };
+        Object.entries(order).forEach(([field, type]: [field: string, type: SortByEnum]) => {
+            q.orderBy(`p.${field}`, type);
+        });
+
+        const [items, count] = await q
+            .skip((page - 1) * limit)
+            .take(limit)
+            .getManyAndCount();
+
+        const mapMedia = await Promise.all(
+            items.map(async item => {
+                const media = await this.productMediaService.getListDetailForProduct(item.id);
+                return {
+                    ...item,
+                    productMedia: media,
+                };
+            }),
+        );
+        return {
+            items: mapMedia,
+            count,
+            limit,
+            page,
+        };
+    }
+
     isValid(id: string) {
         return this.productBaseRepository.findOne({ where: { id }, loadEagerRelations: false });
     }
@@ -195,6 +312,14 @@ export class ProductBaseService {
         }
 
         const archive = await this.productBaseRepository.softDelete({ id: productBaseId });
+
+        return DataSuccessCodeEnum.OK;
+    }
+
+    async deleteMany(body: DeleteProductBaseDto) {
+        const { ids } = body;
+
+        const deleted = await this.productBaseRepository.softDelete({ id: In(ids) });
 
         return DataSuccessCodeEnum.OK;
     }

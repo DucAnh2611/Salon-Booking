@@ -1,4 +1,5 @@
-import { Body, Controller, Get, Post, Query, Request, Response, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Response } from 'express';
 import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { CLIENT_ROUTE, ROUTER } from '../../../common/constant/router.constant';
 import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
@@ -18,7 +19,7 @@ export class ClientVerifyController {
     @Get(CLIENT_ROUTE.VERIFY_EMAIL)
     @UserType(ROLE_TITLE.client)
     @UseGuards(AccessTokenGuard, UserTypeGuard)
-    async verifyEmail(@Request() req: AppRequest) {
+    async verifyEmail(@Req() req: AppRequest) {
         const { email } = req.accessPayload;
         if (!email) {
             throw new BadRequest({ message: DataErrorCodeEnum.INVALID_EMAIL });
@@ -29,7 +30,7 @@ export class ClientVerifyController {
     @Post(CLIENT_ROUTE.VERIFY_EMAIL_OTP)
     @UserType(ROLE_TITLE.client)
     @UseGuards(AccessTokenGuard, UserTypeGuard)
-    async verifyOTPEmail(@Body() body: ClientOTPDto, @Request() req: AppRequest) {
+    async verifyOTPEmail(@Body() body: ClientOTPDto, @Req() req: AppRequest) {
         const { otp } = body;
         const { email } = req.accessPayload;
 
@@ -44,7 +45,7 @@ export class ClientVerifyController {
     }
 
     @Get(CLIENT_ROUTE.VERIFY_EMAIL_OTP)
-    async getOTPToken(@Query() query: ClientOTPTokenDto, @Response() res) {
+    async getOTPToken(@Query() query: ClientOTPTokenDto, @Res() res: Response) {
         const { token } = query;
         if (!token) {
             throw new BadRequest({ message: DataErrorCodeEnum.NO_OTP_TOKEN });

@@ -1,14 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
-import { DynamicQuery } from '../../common/type/query.type';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest, InternalServer } from '../../shared/exception/error.exception';
-import { ParseDynamicQuery } from '../../shared/utils/parse-dynamic-queyry.utils';
+import { ParseOrderString } from '../../shared/utils/parse-dynamic-queyry.utils';
 import { MediaEntity } from '../media/entity/media.entity';
 import { MediaTypesEnum } from '../media/enum/media-types.enum';
 import { CreateCategoryDto } from './dto/category-create.dto';
+import { FindCategoryAdminDto, FindCategoryDto } from './dto/category-get.dto';
 import { UpdateCategoryDto } from './dto/category-update.dto';
 import { CategoryEntity } from './entity/category.entity';
 
@@ -36,23 +37,61 @@ export class CategoryService {
         return this.categoryRepository.findOne({ where: query, loadEagerRelations: false });
     }
 
-    async find(query: DynamicQuery) {
-        const { filter, limit, page, sort } = ParseDynamicQuery(query);
+    async findAdmin(query: FindCategoryAdminDto) {
+        const { page, limit, key, orderBy } = query;
+
+        const order = orderBy ? ParseOrderString(orderBy) : { createdAt: SortByEnum.ASC };
 
         const findCategory = await this.categoryRepository.find({
-            where: filter,
+            where: {
+                title: Like(`%${key || ''}%`),
+            },
             skip: (page - 1) * limit,
-            order: sort,
+            loadEagerRelations: false,
+            relations: {
+                userCreate: {
+                    userBase: true,
+                },
+                userUpdate: {
+                    userBase: true,
+                },
+            },
+            order: { ...order },
+        });
+
+        const count = await this.categoryRepository.count({
+            where: { title: Like(`%${key || ''}%`) },
+            loadEagerRelations: false,
+        });
+
+        return { limit, page, items: findCategory, count };
+    }
+
+    async find(query: FindCategoryDto) {
+        const { key } = query;
+
+        const findCategory = await this.categoryRepository.find({
+            where: {
+                title: Like(`%${key || ''}%`),
+            },
+            loadEagerRelations: false,
+            order: {
+                createdAt: SortByEnum.DESC,
+            },
         });
 
         return findCategory;
     }
 
     async create(employeeId: string, body: CreateCategoryDto) {
-        const { title, imageId, level, parentId } = body;
+        const { title, imageId, parentId } = body;
 
+        let checkParentCategory = null;
         if (parentId) {
-            const checkParentCategory = await this.categoryRepository.count({ where: { id: parentId } });
+            checkParentCategory = await this.categoryRepository.findOne({
+                where: { id: parentId },
+                loadEagerRelations: false,
+            });
 
             if (!checkParentCategory) {
                 throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_CATEGORY });
@@ -70,7 +109,7 @@ export class CategoryService {
         const categoryInstance = this.categoryRepository.create({
             parentId,
             title,
-            level,
+            level: (checkParentCategory?.level || 0) + 1,
             imageId,
             createdBy: employeeId,
             updatedBy: employeeId,
@@ -81,10 +120,14 @@ export class CategoryService {
 
     async update(employeeId: string, categoryId: string, body: UpdateCategoryDto) {
         const isExist = await this.isExist(categoryId, 'id');
-        const { title = isExist.title, imageId, level = isExist.level, parentId } = body;
+        const { imageId, parentId } = body;
 
-        if (parentId && parentId !== isExist.parentId) {
-            const checkParentCategory = await this.categoryRepository.count({ where: { id: parentId } });
+        let checkParentCategory = null;
+        if (parentId) {
+            checkParentCategory = await this.categoryRepository.findOne({
+                where: { id: parentId },
+                loadEagerRelations: false,
+            });
 
             if (!checkParentCategory) {
                 throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_CATEGORY });
@@ -101,6 +144,7 @@ export class CategoryService {
 
         return this.categoryRepository.save({
             ...isExist,
+            level: (checkParentCategory?.level || 0) + 1,
             updatedBy: employeeId,
             ...body,
         });

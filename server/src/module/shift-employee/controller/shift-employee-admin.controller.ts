@@ -14,12 +14,12 @@ import { UpdateShiftEmployeeDto } from '../dto/shift-employee-update.dto';
 import { ShiftEmployeeService } from '../shift-employee.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
-@UserType(ROLE_TITLE.staff)
 @Controller(ROUTER.SHIFT_EMPLOYEE)
 export class ShiftEmployeeAdminController {
     constructor(private readonly shiftEmployeeService: ShiftEmployeeService) {}
 
     @Post(SHIFT_EMPLOYEE_ROUTE.CREATE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT_EMPLOYEE, action: [PermissionActionEnum.CREATE] }])
     create(@Req() req: AppRequest, @Body() body: BodyCreateShiftEmployeeDto) {
         const { employeeId } = req.accessPayload;
@@ -28,6 +28,7 @@ export class ShiftEmployeeAdminController {
     }
 
     @Put(SHIFT_EMPLOYEE_ROUTE.UPDATE_STATUS)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT_EMPLOYEE, action: [PermissionActionEnum.UPDATE] }])
     updateStatus(@Req() req: AppRequest, @Body() body: UpdateShiftEmployeeDto) {
         const { employeeId } = req.accessPayload;
@@ -36,12 +37,14 @@ export class ShiftEmployeeAdminController {
     }
 
     @Delete(SHIFT_EMPLOYEE_ROUTE.DELETE_ONE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT_EMPLOYEE, action: [PermissionActionEnum.DELETE] }])
     deleteOne(@Req() req: AppRequest, @Body() { employeeId, shiftId }: DeleteOneShiftEmployeeDto) {
         return this.shiftEmployeeService.deleteOne(shiftId, employeeId);
     }
 
     @Delete(SHIFT_EMPLOYEE_ROUTE.DELETE_MANY)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT_EMPLOYEE, action: [PermissionActionEnum.DELETE] }])
     deleteMany(@Req() req: AppRequest, @Body() body: DeleteShiftEmployeeDto) {
         return this.shiftEmployeeService.deleteMany(body);

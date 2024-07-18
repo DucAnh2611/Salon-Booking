@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
+import { EmployeeService } from '../employee/employee.service';
 import { ServiceBaseService } from '../service-base/service-base.service';
 import { BodyCreateServiceEmployeeDto, ServiceEmployeeDto } from './dto/service-employee-create.dto';
 import { BodyUpdateServiceEmployeeDto } from './dto/service-employee-update.dto';
@@ -14,6 +15,7 @@ export class ServiceEmployeeService {
         @InjectRepository(ServiceEmpleeEntity)
         private readonly serviceEmployeeRepository: Repository<ServiceEmpleeEntity>,
         private readonly serviceBaseService: ServiceBaseService,
+        private readonly employeeService: EmployeeService,
     ) {}
 
     isExist(serviceId: string, employeeId: string) {
@@ -22,6 +24,26 @@ export class ServiceEmployeeService {
 
     listByServiceId(serviceId: string) {
         return this.serviceEmployeeRepository.find({ where: { serviceId }, loadEagerRelations: false });
+    }
+
+    async detailByServiceId(serviceId: string) {
+        const serviceEmployees = await this.serviceEmployeeRepository.find({
+            where: { serviceId },
+            loadEagerRelations: false,
+        });
+
+        const list = await Promise.all(
+            serviceEmployees.map(async serviceEmployee => {
+                const employeeInfo = await this.employeeService.detail(serviceEmployee.employeeId);
+
+                return {
+                    ...serviceEmployee,
+                    employee: employeeInfo,
+                };
+            }),
+        );
+
+        return list;
     }
 
     async saveMany(employeeId: string, body: BodyCreateServiceEmployeeDto) {

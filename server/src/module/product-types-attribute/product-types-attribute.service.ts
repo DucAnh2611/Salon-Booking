@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { multerConfig } from '../../config/multer.configs';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { AttributeService } from '../attribute/attribute.service';
@@ -19,6 +20,20 @@ export class ProductTypesAttributeService {
         private readonly attributeService: AttributeService,
         private readonly mediaService: MediaService,
     ) {}
+
+    getAttributeDetailForType(productTypesId: string) {
+        return this.productTypesAttributeRepository.find({
+            where: { productTypesId },
+            loadEagerRelations: false,
+            relations: {
+                thumbnail: true,
+                attribute: true,
+            },
+            order: {
+                level: SortByEnum.ASC,
+            },
+        });
+    }
 
     async getThumbnailId(
         userId: string,

@@ -14,12 +14,12 @@ import { UpdateProductDetailDto } from '../dto/product-detail-update.dto';
 import { ProductDetailService } from '../product-detail.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
-@UserType(ROLE_TITLE.staff)
 @Controller(ROUTER.PRODUCT_DETAIL)
 export class ProductDetailAdminController {
     constructor(private readonly productDetailService: ProductDetailService) {}
 
     @Post(PRODUCT_DETAIL_ROUTE.CREATE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.PRODUCT,
@@ -35,6 +35,7 @@ export class ProductDetailAdminController {
     }
 
     @Put(PRODUCT_DETAIL_ROUTE.UPDATE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.PRODUCT,
@@ -50,6 +51,7 @@ export class ProductDetailAdminController {
     }
 
     @Put(PRODUCT_DETAIL_ROUTE.DELETE_ONE)
+    @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.PRODUCT,

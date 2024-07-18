@@ -37,6 +37,7 @@ export const ROUTER = {
     ORDER: 'order',
     ORDER_PRODUCT: 'order-product',
     ORDER_SERVICE: 'order-service',
+    ORDER_TRANSACTION: 'order-transaction',
 };
 
 export const AUTH_ROUTE = {
@@ -127,6 +128,8 @@ export const VOUCHER_ROUTE = {
 };
 
 export const PRODUCT_ROUTE = {
+    FIND: '',
+    DETAIL: ':id',
     CREATE: '',
     UPDATE: '',
     DELETE_ONE: ':id',
@@ -153,6 +156,8 @@ export const PRODUCT_TYPES_ROUTE = {
 };
 
 export const SERVICE_ROUTE = {
+    GET: '',
+    DETAIL: ':id',
     CREATE: '',
     UPDATE: '',
     DELETE_ONE: ':id',
@@ -160,8 +165,9 @@ export const SERVICE_ROUTE = {
 };
 
 export const WORKING_HOUR_ROUTE = {
-    CREATE: '',
+    FIND: '',
     DETAIL: ':id',
+    CREATE: '',
     UPDATE: '',
     DELETE_ONE: ':id',
     DELETE_MANY: '',
@@ -169,6 +175,8 @@ export const WORKING_HOUR_ROUTE = {
 };
 
 export const SHIFT_ROUTE = {
+    FIND: '',
+    DETAIL: ':id',
     CREATE: '',
     UPDATE: '',
     DELETE_ONE: ':id',
@@ -179,7 +187,7 @@ export const SHIFT_EMPLOYEE_ROUTE = {
     CREATE: '',
     UPDATE_STATUS: '',
     DELETE_ONE: '',
-    DELETE_MANY: '',
+    DELETE_MANY: 'many',
 };
 
 export const CART_ROUTE = {

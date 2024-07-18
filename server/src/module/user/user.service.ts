@@ -17,8 +17,12 @@ export class UserService {
         return createdUser;
     }
 
-    findAll() {
-        return `This action returns all user`;
+    getDetailUser(id: string) {
+        return this.userRepository.findOne({
+            where: { id },
+            loadEagerRelations: false,
+            relations: { userAvatar: true },
+        });
     }
 
     findOneById(id: string) {

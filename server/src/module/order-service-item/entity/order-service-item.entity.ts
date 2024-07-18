@@ -16,10 +16,10 @@ export class OrderServiceItemEntity extends BaseEntity {
     employeeId: string;
 
     @Column('jsonb')
-    serviceSnapshot: object;
+    serviceSnapshot: ServiceEntity;
 
     @Column('jsonb')
-    employeeSnapShot: object;
+    employeeSnapShot: EmployeeEntity;
 
     @Column('timestamp with time zone')
     bookingDate: Date;

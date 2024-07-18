@@ -10,12 +10,12 @@ import { GetCartServiceItemParamDto } from '../cart-service-item/dto/cart-servic
 import { CartServiceService } from './cart-service.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard)
-@UserType(ROLE_TITLE.client)
 @Controller(ROUTER.CART_SERVICE)
 export class CartServiceController {
     constructor(private readonly cartServiceService: CartServiceService) {}
 
     @Get(CART_SERVICE_ROUTE.GET)
+    @UserType(ROLE_TITLE.client)
     get(@Req() req: AppRequest) {
         const { clientId } = req.accessPayload;
 
@@ -23,6 +23,7 @@ export class CartServiceController {
     }
 
     @Post(CART_SERVICE_ROUTE.ADD)
+    @UserType(ROLE_TITLE.client)
     add(@Req() req: AppRequest, @Body() body: CreateCartServiceItemDto) {
         const { clientId } = req.accessPayload;
 
@@ -30,6 +31,7 @@ export class CartServiceController {
     }
 
     @Delete(CART_SERVICE_ROUTE.DELETE)
+    @UserType(ROLE_TITLE.client)
     deleteOne(@Req() req: AppRequest, @Param() param: GetCartServiceItemParamDto) {
         const { clientId } = req.accessPayload;
         const { id } = param;

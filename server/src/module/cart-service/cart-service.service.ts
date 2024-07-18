@@ -3,9 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
-import { BadRequest, Forbidden } from '../../shared/exception/error.exception';
+import { Forbidden } from '../../shared/exception/error.exception';
 import { CartServiceItemService } from '../cart-service-item/cart-service-item.service';
 import { CreateCartServiceItemDto } from '../cart-service-item/dto/cart-service-item-create.dto';
+import { TAX_RATE } from '../order-base/order-base.service';
 import { CartServiceEntity } from './entity/cart-service.entity';
 
 @Injectable()
@@ -19,12 +20,12 @@ export class CartServiceService {
         return this.cartServiceRepository.findOne({ where: { id }, loadEagerRelations: false });
     }
 
-    async isCartActive(id: string) {
-        const cart = await this.isExist(id);
-        if (!cart) {
-            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_CART });
-        }
-        return cart.isActive;
+    async removeCart(clientId: string) {
+        const cart = await this.cartServiceRepository.findOne({ where: { clientId }, loadEagerRelations: false });
+
+        const deletedCart = await this.cartServiceItemService.removeAll(cart.id);
+
+        return DataSuccessCodeEnum.OK;
     }
 
     async isOwnCart(clientId: string, cartServiceId: string) {
@@ -39,7 +40,7 @@ export class CartServiceService {
     }
 
     async getClientCart(clientId: string) {
-        let cartProduct = await this.getCartActive(clientId);
+        let cartProduct = await this.cartServiceRepository.findOne({ where: { clientId }, loadEagerRelations: false });
         if (!cartProduct) {
             const instance = this.cartServiceRepository.create({
                 clientId,
@@ -50,16 +51,17 @@ export class CartServiceService {
         return cartProduct;
     }
 
-    getCartActive(clientId: string) {
-        return this.cartServiceRepository.findOne({ where: { clientId, isActive: true }, loadEagerRelations: false });
-    }
-
     async get(clientId: string) {
         const cart = await this.getClientCart(clientId);
+        const cartDetail = await this.cartServiceItemService.get(cart.id);
 
         await this.isOwnCart(clientId, cart.id);
 
-        return this.cartServiceItemService.get(cart.id);
+        const total = await this.cartServiceItemService.getTotalAmount(cart.id);
+        const tax = TAX_RATE;
+        const taxAmount = Math.round(total * (1 + tax));
+
+        return { ...cart, services: cartDetail, tax, taxAmount, total };
     }
 
     async add(clientId: string, body: CreateCartServiceItemDto) {

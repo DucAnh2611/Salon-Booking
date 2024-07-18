@@ -8,9 +8,6 @@ export class CartServiceEntity extends BaseEntity {
     @Column('uuid')
     clientId: string;
 
-    @Column('boolean', { default: true })
-    isActive: boolean;
-
     @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: Date;
 

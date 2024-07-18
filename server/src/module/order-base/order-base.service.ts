@@ -5,7 +5,7 @@ import { OrderPaymentTypeEnum, OrderStatusEnum } from '../../common/enum/order.e
 import { CreateOrderBaseDto } from './dto/order-base-create.dto';
 import { OrderEntity } from './entity/order-base.entity';
 
-const TAX_RATE = 0.08;
+export const TAX_RATE = 0.08;
 
 @Injectable()
 export class OrderBaseService {

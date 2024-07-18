@@ -15,8 +15,8 @@ export class PermissionController {
     constructor(private readonly permissionService: PermissionService) {}
 
     @Get(PERMISSION_ROUTE.ALL)
-    @TargetActionRequire([{ target: PermissionTargetEnum.PERMISSION, action: [PermissionActionEnum.READ] }])
     @UserType(ROLE_TITLE.staff)
+    @TargetActionRequire([{ target: PermissionTargetEnum.PERMISSION, action: [PermissionActionEnum.READ] }])
     async getAll() {
         const items = await this.permissionService.getAll();
         return { items };

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Request, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { ROLE_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../common/enum/permission.enum';
@@ -48,7 +48,7 @@ export class RoleController {
         },
     ])
     @UserType(ROLE_TITLE.staff)
-    add(@Request() req: AppRequest, @Body() newRole: AddNewRoleDto) {
+    add(@Req() req: AppRequest, @Body() newRole: AddNewRoleDto) {
         const { accessPayload } = req;
         return this.roleService.create(newRole, accessPayload.employeeId);
     }
@@ -61,7 +61,7 @@ export class RoleController {
         },
     ])
     @UserType(ROLE_TITLE.staff)
-    update(@Request() req: AppRequest, @Param() param: GetOneRoleDto, @Body() newRole: UpdateRoleDto) {
+    update(@Req() req: AppRequest, @Param() param: GetOneRoleDto, @Body() newRole: UpdateRoleDto) {
         const { accessPayload } = req;
         return this.roleService.update(param.id, newRole, accessPayload.employeeId);
     }

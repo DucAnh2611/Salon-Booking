@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import PayOS from '@payos/node';
 import { LessThanOrEqual, Repository } from 'typeorm';
+import { CRON_EXPRESSION } from '../../common/constant/cron.constant';
 import { LOGGER_CONSTANT_NAME } from '../../common/constant/logger.constant';
+import { ROUTER } from '../../common/constant/router.constant';
 import { OrderPaymentStatusEnum } from '../../common/enum/order.enum';
+import { appConfig } from '../../config/app.config';
 import { payosConfig } from '../../config/payos.config';
 import { AppLoggerService } from '../logger/logger.service';
 import { OrderBaseService } from '../order-base/order-base.service';
@@ -26,23 +30,100 @@ export class OrderTransactionService {
         this.payos = new PayOS(payosConfig.CLIENT_ID, payosConfig.API_KEY, payosConfig.CHECKSUM_KEY);
     }
 
-    async createTransactionOrderProduct(orderId: string) {
+    async createTransactionOrderProduct(orderId: string, orderCode: number, amount: number) {
         const items = await this.orderProductItemService.getProductByOrder(orderId);
 
         const contact = await this.orderBaseService.get(orderId);
 
-        const instance = this.orderTransactionRepository.create({});
-        return { paymentUrl: '' };
+        const payment = await this.payos.createPaymentLink({
+            orderCode,
+            amount,
+            description: `TT DON HANG ${orderCode}`,
+            cancelUrl: `${appConfig.url}/${appConfig.prefix}/${ROUTER.ORDER_TRANSACTION}/ok/${orderId}`,
+            returnUrl: `${appConfig.url}/${appConfig.prefix}/${ROUTER.ORDER_TRANSACTION}/cancel/${orderId}`,
+            items: items.map(item => {
+                let price = item.productSnapshot.price;
+                let name = item.productSnapshot.name;
+
+                if (item.productTypeId) {
+                    price = item.productTypeSnapshot.price;
+                    const addedName = `${name} - ${item.productTypeSnapshot.productTypesAttribute.reduce(
+                        (acc, curr) => {
+                            return `${acc} - ${curr.attribute.name}`;
+                        },
+                        '',
+                    )}`;
+                    name = addedName;
+                }
+                return {
+                    quantity: item.quantity,
+                    price: price,
+                    name: name,
+                };
+            }),
+            buyerAddress: contact.address,
+            buyerName: contact.name,
+            buyerPhone: contact.phone,
+        });
+
+        const instance = this.orderTransactionRepository.create({
+            accountName: payment.accountName,
+            accountNumber: payment.accountNumber,
+            description: payment.description,
+            orderAmount: amount,
+            orderId,
+            orderCode: orderCode.toString(),
+            paymentUrl: payment.checkoutUrl,
+            paymentId: payment.paymentLinkId,
+            status: OrderPaymentStatusEnum.PENDING,
+        });
+
+        const saved = await this.orderTransactionRepository.save(instance);
+
+        return { paymentUrl: payment.checkoutUrl };
     }
 
-    async createTransactionOrderService(orderId: string) {
+    async createTransactionOrderService(orderId: string, orderCode: number, amount: number) {
         const items = await this.orderServiceItemService.getServiceOrder(orderId);
 
         const contact = await this.orderBaseService.get(orderId);
 
-        const instance = this.orderTransactionRepository.create({});
+        const payment = await this.payos.createPaymentLink({
+            orderCode,
+            amount,
+            description: `TT DON HANG ${orderCode}`,
+            cancelUrl: `${appConfig.url}/${appConfig.prefix}/${ROUTER.ORDER_TRANSACTION}/ok/${orderId}`,
+            returnUrl: `${appConfig.url}/${appConfig.prefix}/${ROUTER.ORDER_TRANSACTION}/cancel/${orderId}`,
+            items: items.map(item => {
+                const name = item.serviceSnapshot.name;
+                const price = item.serviceSnapshot.price;
 
-        return { paymentUrl: '' };
+                return {
+                    quantity: 1,
+                    price: price,
+                    name: name,
+                };
+            }),
+            buyerAddress: contact.address,
+            buyerName: contact.name,
+            buyerPhone: contact.phone,
+        });
+
+        const instance = this.orderTransactionRepository.create({
+            accountName: payment.accountName,
+            accountNumber: payment.accountNumber,
+            description: payment.description,
+            orderAmount: amount,
+            orderId,
+            orderCode: orderCode.toString(),
+            paymentUrl: payment.checkoutUrl,
+            paymentId: payment.paymentLinkId,
+            status: OrderPaymentStatusEnum.PENDING,
+        });
+
+        const saved = await this.orderTransactionRepository.save(instance);
+
+        return { paymentUrl: payment.checkoutUrl };
     }
 
     getTransactionByOrderAdmin(orderId: string) {
@@ -61,17 +142,7 @@ export class OrderTransactionService {
         return orderTransaction;
     }
 
-    test() {
-        return this.payos.createPaymentLink({
-            amount: 100000,
-            cancelUrl: 'http://localhost:3000/cancel',
-            returnUrl: 'http://localhost:3000/ok',
-            orderCode: 1231232,
-            description: 'DESC',
-        });
-    }
-
-    // @Cron(CRON_EXPRESSION.EVERY_1_MINUTES)
+    @Cron(CRON_EXPRESSION.EVERY_1_MINUTES)
     async expireTransaction() {
         const findExpireTransaction = await this.orderTransactionRepository.find({
             where: {
