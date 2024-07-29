@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Repository } from 'typeorm';
 import { OTP_EXPIRE } from '../../common/constant/otp.constant';
 import { REDIS_EMAIL_OTP_FORMAT, REDIS_OTP_FORMAT } from '../../common/constant/redis.constant';
+import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { CLIENT_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
@@ -41,7 +42,22 @@ export class ClientService {
     }
 
     async findOneBy(query: FindOptionsWhere<ClientEntity>) {
-        return this.clientRepository.findOneBy(query);
+        return this.clientRepository.findOne({
+            where: {
+                ...query,
+                userBase: {
+                    role: {
+                        title: ROLE_TITLE.client,
+                    },
+                },
+            },
+            loadEagerRelations: false,
+            relations: {
+                userBase: {
+                    role: true,
+                },
+            },
+        });
     }
 
     async findByEmail(email: string) {

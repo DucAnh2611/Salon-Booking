@@ -1,9 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import PayOS from '@payos/node';
 import { LessThanOrEqual, Repository } from 'typeorm';
-import { CRON_EXPRESSION } from '../../common/constant/cron.constant';
 import { LOGGER_CONSTANT_NAME } from '../../common/constant/logger.constant';
 import { ROUTER } from '../../common/constant/router.constant';
 import { OrderPaymentStatusEnum } from '../../common/enum/order.enum';
@@ -142,7 +140,7 @@ export class OrderTransactionService {
         return orderTransaction;
     }
 
-    @Cron(CRON_EXPRESSION.EVERY_1_MINUTES)
+    // @Cron(CRON_EXPRESSION.EVERY_1_MINUTES)
     async expireTransaction() {
         const findExpireTransaction = await this.orderTransactionRepository.find({
             where: {

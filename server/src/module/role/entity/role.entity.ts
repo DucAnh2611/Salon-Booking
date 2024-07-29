@@ -15,11 +15,21 @@ export class RoleEntity extends ModifyEntity {
     @Column('boolean', { nullable: false, default: false })
     deletable: boolean;
 
+    @Column('integer', { nullable: false, default: 1 })
+    level: number;
+
     @DeleteDateColumn()
     deletedAt: Date;
 
-    @Column('integer', { nullable: false })
-    level: number;
+    @Column('uuid', { nullable: true })
+    parentId: string;
+
+    @OneToMany(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.parent)
+    childrens: RoleEntity[];
+
+    @ManyToOne(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.childrens, { nullable: true })
+    @JoinColumn({ name: 'parentId' })
+    parent: RoleEntity;
 
     @OneToMany(() => RolePermissionEntity, (rolePermissionEntity: RolePermissionEntity) => rolePermissionEntity.role)
     rolePermission: RolePermissionEntity[];

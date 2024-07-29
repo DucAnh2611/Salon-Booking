@@ -1,28 +1,44 @@
-import { IsDate, IsEnum, IsOptional, IsPhoneNumber, IsString, IsUUID } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID } from 'class-validator';
 import { GenderEnum } from '../../../common/enum/gender.enum';
 
 export class UpdateEmployeeDto {
-    @IsOptional()
+    @IsNotEmpty()
     @IsEnum(GenderEnum)
-    gender?: GenderEnum = GenderEnum.OTHER;
+    gender: GenderEnum = GenderEnum.OTHER;
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsString()
-    lastname?: string;
+    lastname: string;
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsString()
-    firstname?: string;
+    firstname: string;
 
-    @IsOptional()
+    @IsNotEmpty()
     @IsPhoneNumber('VN')
-    phone?: string;
+    phone: string;
 
     @IsOptional()
     @IsUUID('all')
     avatar?: string;
 
-    @IsOptional()
+    @IsNotEmpty()
+    @Transform(({ value }) => new Date(value))
     @IsDate()
-    birthday?: Date;
+    birthday: Date;
+
+    @IsNotEmpty()
+    @IsUUID('all')
+    eRoleId: string;
+}
+
+export class ResetEmployeePasswordDto {
+    @IsNotEmpty()
+    @IsUUID('all')
+    id: string;
+
+    @IsNotEmpty()
+    @IsString()
+    password: string;
 }

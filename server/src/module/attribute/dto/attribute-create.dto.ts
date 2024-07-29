@@ -8,5 +8,5 @@ export class CreateAttributeDto {
 
     @IsOptional()
     @IsString()
-    description: string;
+    description?: string;
 }

@@ -1,27 +1,19 @@
-import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class CreateRoleDto {
     @IsNotEmpty()
     @IsString()
     title: string;
 
-    deletable: boolean;
-
     @IsNotEmpty()
-    @IsNumber()
-    level: number;
-}
-
-export class AddNewRoleDto {
-    @IsString()
-    title: string;
-
-    @IsNotEmpty()
-    @IsPositive()
-    @IsInt()
-    level: number;
+    @IsUUID('all')
+    parentId: string;
 
     @IsOptional()
     @IsString()
     description: string;
+
+    @IsNotEmpty()
+    @IsUUID('all', { each: true })
+    permissionIds: string[];
 }

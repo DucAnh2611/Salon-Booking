@@ -4,7 +4,7 @@ import { In, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { multerConfig } from '../../config/multer.configs';
 import { BadRequest } from '../../shared/exception/error.exception';
-import { MediaService } from '../media/media.service';
+import { MediaService } from '../media/service/media.service';
 import { BodyCreateServiceMediaDto, ServiceMediaDto } from './dto/service-media-create.dto';
 import { BodyUpdateServiceMediaDto } from './dto/service-media-update.dto';
 import { ServiceMediaEntity } from './entity/service-media.entity';

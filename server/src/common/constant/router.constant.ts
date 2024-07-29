@@ -47,6 +47,7 @@ export const AUTH_ROUTE = {
     CLIENT_REGISTER: 'client-register',
 
     REFRESH_TOKEN: 'refresh-token',
+    LOG_OUT: 'logout',
 };
 
 export const ROLE_ROUTE = {
@@ -70,8 +71,10 @@ export const PERMISSION_ROUTE = {
 
 export const EMPLOYEE_ROUTE = {
     ADD: '',
+    ME: 'me',
     FIND: 'find',
     INFO: ':id',
+    RESET_PW: 'reset-password',
     UPDATE: ':id',
     DELETE_ONE: ':id',
     DELETE_MANY: '',
@@ -85,6 +88,7 @@ export const OAUTH_ROUTE = {
 };
 
 export const CLIENT_ROUTE = {
+    ME: 'me',
     VERIFY_EMAIL: 'verify-email',
     VERIFY_EMAIL_OTP: 'verify-email-otp',
 };
@@ -92,7 +96,12 @@ export const CLIENT_ROUTE = {
 export const MEDIA_ROUTE = {
     GET_MEDIA: '*',
     TEMP_UPLOAD: 'temp-upload',
+    TEMP_UPLOADS: 'temp-uploads',
     UPLOAD: 'upload',
+
+    FIND: 'find',
+    UPDATE: ':id',
+    DELETE: '',
 };
 
 export const ATTRIBUTE_ROUTE = {

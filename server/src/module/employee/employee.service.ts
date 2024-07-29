@@ -1,18 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { EmployeeStatusEnum } from '../../common/enum/employee.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
-import { BadRequest, Forbidden, InternalServer } from '../../shared/exception/error.exception';
+import { BadRequest, InternalServer } from '../../shared/exception/error.exception';
 import { ParseOrderString } from '../../shared/utils/parse-dynamic-queyry.utils';
 import { trimStringInObject } from '../../shared/utils/trim-object.utils';
 import { RoleService } from '../role/role.service';
 import { UserService } from '../user/user.service';
 import { CreateEmployeeDto } from './dto/create-emplotee.dto';
 import { FindEmployeeQueryDto } from './dto/get-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { ResetEmployeePasswordDto, UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeeEntity } from './entity/employee.entity';
 import { TQueryExistEmployee } from './type/is-exist.type';
 
@@ -23,6 +24,18 @@ export class EmployeeService {
         private readonly roleService: RoleService,
         private readonly userService: UserService,
     ) {}
+
+    getMyInfo(id: string) {
+        return this.employeeRepository.findOne({
+            where: { id },
+            loadEagerRelations: false,
+            relations: {
+                userBase: {
+                    userAvatar: true,
+                },
+            },
+        });
+    }
 
     async getById(id: string) {
         return this.employeeRepository.findOneBy({ id });
@@ -36,6 +49,21 @@ export class EmployeeService {
         const employee = await this.employeeRepository.findOne({
             where: { id },
             loadEagerRelations: false,
+            relations: {
+                userCreate: {
+                    userBase: {
+                        userAvatar: true,
+                    },
+                    eRole: true,
+                },
+                userUpdate: {
+                    userBase: {
+                        userAvatar: true,
+                    },
+                    eRole: true,
+                },
+                eRole: true,
+            },
         });
         if (!employee) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_EMPLOYEE });
@@ -50,58 +78,40 @@ export class EmployeeService {
     }
 
     async findEmployee(query: FindEmployeeQueryDto) {
-        const { key = '', orderBy, limit, page } = query;
+        const { key, orderBy, page, limit } = query;
 
-        const queryBuilder = this.employeeRepository.createQueryBuilder('emp');
+        const order = orderBy ? ParseOrderString(orderBy) : { createdBy: SortByEnum.ASC };
 
-        const q = queryBuilder
-            .leftJoinAndSelect('emp.userBase', 'user')
-            .leftJoinAndSelect('emp.userCreate', 'employeeCreate')
-            .leftJoinAndSelect('emp.userUpdate', 'employeeUpdate')
-            .leftJoinAndSelect('emp.eRole', 'role')
-            .select(['emp', 'employeeCreate', 'employeeUpdate', 'user', 'role'])
-            .where(`emp.username LIKE :key`, { key: `%${key}%` })
-            .orWhere(`user.firstname LIKE :key`, { key: `%${key}%` })
-            .orWhere(`user.lastname LIKE :key`, { key: `%${key}%` });
-
-        const order = orderBy ? ParseOrderString(orderBy) : { ['emp.createdAt']: SortByEnum.ASC };
-        Object.entries(order).forEach(([field, type]: [field: string, type: SortByEnum]) => {
-            q.orderBy(field, type);
+        const [items, count] = await this.employeeRepository.findAndCount({
+            where: [
+                { username: Like(`%${key}%`) },
+                { userBase: { firstname: Like(`%${key}%`) } },
+                { userBase: { lastname: Like(`%${key}%`) } },
+            ],
+            loadEagerRelations: false,
+            relations: {
+                userCreate: true,
+                userUpdate: true,
+                userBase: {
+                    userAvatar: true,
+                },
+                eRole: true,
+            },
+            order: {
+                ...order,
+            },
         });
-
-        const items = await q
-            .take(limit)
-            .skip((page - 1) * limit)
-            .getMany();
-
-        const count = await q.getCount();
-
         return { items, page, limit, count };
     }
 
     async isExist({ username }: TQueryExistEmployee) {
-        const employee = await this.employeeRepository.findOneBy({ username });
+        const employee = await this.employeeRepository.findOne({ where: { username }, loadEagerRelations: false });
 
         return employee;
     }
 
     async isExistById(id: string) {
         return this.employeeRepository.findOne({ where: { id }, loadEagerRelations: false });
-    }
-
-    async checkPiority({
-        requestEmployeeId,
-        targetEmployeeId,
-    }: {
-        requestEmployeeId: string;
-        targetEmployeeId: string;
-    }) {
-        const [requestEmployee, targetEmployee] = await Promise.all([
-            this.getById(requestEmployeeId),
-            this.getById(targetEmployeeId),
-        ]);
-
-        return requestEmployee.eRole.level <= targetEmployee.eRole.level;
     }
 
     async createEmployee(employeeId: string, newEmployee: CreateEmployeeDto) {
@@ -116,6 +126,9 @@ export class EmployeeService {
             throw new BadRequest({ message: DataErrorCodeEnum.INVALID_STAFF_ROLE });
         }
 
+        // check is eRoleId is employee id (level lower than level of staff)
+        await this.roleService.isValidParent(eRoleId);
+
         const createdUser = await this.userService.create({ ...userInfo, roleId });
         if (!createdUser) throw new InternalServer();
 
@@ -127,7 +140,9 @@ export class EmployeeService {
             userId: createdUserId,
             createdBy: employeeId,
             updatedBy: employeeId,
+            status: EmployeeStatusEnum.AVAILABLE,
         });
+
         const createdEmployee = await this.employeeRepository.save(newEmployeeInstance);
         if (!createdEmployee) throw new InternalServer();
 
@@ -143,35 +158,101 @@ export class EmployeeService {
         targetEmployeeId: string;
         newInfo: UpdateEmployeeDto;
     }) {
-        const validForUpdate = await this.checkPiority({ requestEmployeeId, targetEmployeeId });
-        if (!validForUpdate) {
-            throw new Forbidden({ message: DataErrorCodeEnum.CAN_NOT_DO_ACTION });
-        }
-
         const { lastname, firstname, gender, avatar, phone, birthday, ...employee } = newInfo;
         const employeeInfo = await this.getById(targetEmployeeId);
-
         if (!employeeInfo) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_EMPLOYEE });
+        }
+
+        const [employeeRole, roleAdmin] = await Promise.all([
+            this.employeeRepository.findOne({
+                where: { id: targetEmployeeId },
+                loadEagerRelations: false,
+                relations: {
+                    eRole: true,
+                },
+            }),
+            this.roleService.getRole({ title: ROLE_TITLE.admin }),
+        ]);
+
+        if (employeeRole.eRole.id === roleAdmin.id && employee.eRoleId !== roleAdmin.id) {
+            throw new BadRequest({ message: DataErrorCodeEnum.CAN_NOT_CHANGE_ADMIN_ROLE });
+        } else if (employeeRole.eRole.id !== roleAdmin.id) {
+            // check is eRoleId is employee roleid (level lower than level of staff)
+            await this.roleService.isValidParent(employee.eRoleId);
         }
 
         const updateUser = await this.userService.update(employeeInfo.userId, {
             lastname,
             firstname,
             gender,
-            avatar,
+            avatar: avatar || null,
             phone,
             birthday,
         });
 
-        if (employee && updateUser) {
-            const newEmployeeInfo = {
-                ...employeeInfo,
-                ...employee,
-            };
+        const newEmployeeInfo: EmployeeEntity = {
+            ...employeeInfo,
+            ...employee,
+            updatedBy: requestEmployeeId,
+        };
 
-            const updateEmployee = await this.employeeRepository.save(newEmployeeInfo);
+        const updateEmployee = await this.employeeRepository.save(newEmployeeInfo);
+
+        return {
+            ...updateEmployee,
+            userBase: updateUser,
+        };
+    }
+
+    async delete(employeeId: string, ids: string[]) {
+        const exist = await this.employeeRepository.find({
+            where: { id: In(ids) },
+            loadEagerRelations: false,
+            relations: { eRole: true },
+        });
+        if (!exist.length) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_EMPLOYEE });
         }
+        if (exist.some(emp => emp.id === employeeId)) {
+            throw new BadRequest({ message: DataErrorCodeEnum.SELF_DELETE_EMPLOYEE });
+        }
+
+        if (exist.some(emp => emp.eRole.title === ROLE_TITLE.admin)) {
+            throw new BadRequest({ message: DataErrorCodeEnum.DELETE_ADMIN });
+        }
+
+        await this.employeeRepository.softDelete({ id: In(ids) });
+        return DataSuccessCodeEnum.OK;
+    }
+
+    async resetEmpPassword(requestId: string, body: ResetEmployeePasswordDto) {
+        const { password, id: targetId } = body;
+
+        const [employeeRole, target, roleAdmin] = await Promise.all([
+            this.employeeRepository.findOne({
+                where: { id: requestId },
+                loadEagerRelations: false,
+                relations: {
+                    eRole: true,
+                },
+            }),
+            this.employeeRepository.findOne({
+                where: { id: targetId },
+                loadEagerRelations: false,
+            }),
+            this.roleService.getRole({ title: ROLE_TITLE.admin }),
+        ]);
+
+        if (!target) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_EMPLOYEE });
+        }
+
+        if (employeeRole.eRole.id !== roleAdmin.id) {
+            throw new BadRequest({ message: DataErrorCodeEnum.CAN_NOT_DO_ACTION });
+        }
+
+        const update = await this.userService.update(target.userId, { password });
 
         return DataSuccessCodeEnum.OK;
     }

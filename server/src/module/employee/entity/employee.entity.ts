@@ -28,7 +28,7 @@ export class EmployeeEntity extends ModifyEntity {
     eRoleId: string;
 
     @Column('enum', { enum: EmployeeStatusEnum, nullable: true })
-    status: string;
+    status: EmployeeStatusEnum;
 
     @ManyToOne(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.userRole, { nullable: true })
     @JoinColumn({ name: 'eRoleId' })

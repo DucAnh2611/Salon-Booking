@@ -26,4 +26,5 @@ export enum FileFormatEnum {
     PRODUCT_BASE_ID = '<PRODUCT_BASE_ID>',
     SESSION_ID = '<SESSION_ID>',
     CONTEXT = '<CONTEXT>',
+    SESSION_EXPIRE = '<SESSION_EXPIRE>',
 }

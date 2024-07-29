@@ -8,7 +8,7 @@ import { UserType } from '../../shared/decorator/user-types.decorator';
 import { AccessTokenGuard } from '../../shared/guard/accessToken.guard';
 import { PermissionGuard } from '../../shared/guard/permission.guard';
 import { UserTypeGuard } from '../../shared/guard/user-type.guard';
-import { AddNewRoleDto } from './dto/create-role.dto';
+import { CreateRoleDto } from './dto/create-role.dto';
 import { DeleteManyRoleDtop } from './dto/delete-role.dto';
 import { FindRoleDto, GetOneRoleDto } from './dto/get-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -28,7 +28,7 @@ export class RoleController {
     ])
     @UserType(ROLE_TITLE.staff)
     async get(@Query() query: FindRoleDto) {
-        const data = await this.roleService.find(query);
+        const data = await this.roleService.findAdmin(query);
         return data;
     }
 
@@ -37,7 +37,7 @@ export class RoleController {
     @UserType(ROLE_TITLE.staff)
     async info(@Param() param: GetOneRoleDto) {
         const { id } = param;
-        return this.roleService.getById(id);
+        return this.roleService.detail(id);
     }
 
     @Post(ROLE_ROUTE.ROLE_ADD)
@@ -48,7 +48,7 @@ export class RoleController {
         },
     ])
     @UserType(ROLE_TITLE.staff)
-    add(@Req() req: AppRequest, @Body() newRole: AddNewRoleDto) {
+    add(@Req() req: AppRequest, @Body() newRole: CreateRoleDto) {
         const { accessPayload } = req;
         return this.roleService.create(newRole, accessPayload.employeeId);
     }

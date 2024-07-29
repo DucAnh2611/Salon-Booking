@@ -3,6 +3,8 @@ export const FORMDATA_FIELD_MEDIA = {
     IMAGES: 'images',
     VIDEO: 'video',
     VIDEOS: 'videos',
+    MEDIA: 'media',
+    MEDIAS: 'medias',
 };
 
 export const Bytes = 1024;

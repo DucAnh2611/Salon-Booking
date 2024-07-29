@@ -7,9 +7,6 @@ import { ServiceEntity } from '../../service-base/entity/service.entity';
 
 @Entity('category')
 export class CategoryEntity extends ModifyEntity {
-    @Column('integer', { nullable: false, default: 1 })
-    level: number;
-
     @Column('text', { nullable: false })
     title: string;
 
@@ -22,9 +19,7 @@ export class CategoryEntity extends ModifyEntity {
     @OneToMany(() => CategoryEntity, (categoryEntity: CategoryEntity) => categoryEntity.parent, { eager: true })
     childrens: CategoryEntity[];
 
-    @ManyToOne(() => CategoryEntity, (categoryEntity: CategoryEntity) => categoryEntity.childrens, {
-        nullable: true,
-    })
+    @ManyToOne(() => CategoryEntity, (categoryEntity: CategoryEntity) => categoryEntity.childrens)
     @JoinColumn({ name: 'parentId' })
     parent: CategoryEntity;
 

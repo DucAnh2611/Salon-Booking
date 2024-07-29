@@ -26,7 +26,7 @@ export class FindProductBaseAdminDto extends PaginationQuery {
 
     @IsOptional()
     @IsString({ each: true })
-    orderBy?: string[] = DEFAULT_VALUE_VALIDATOR.array;
+    orderBy?: string = DEFAULT_VALUE_VALIDATOR.string;
 }
 
 export class FindProductBaseDto extends PaginationQuery {

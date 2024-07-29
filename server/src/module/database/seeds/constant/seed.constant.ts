@@ -21,23 +21,23 @@ export const SEED_DATA: TSeedData = {
     role: [
         {
             title: ROLE_TITLE.admin,
-            level: 1,
+            parent: null,
             deletable: false,
         },
         {
             title: ROLE_TITLE.client,
-            level: 2,
+            parent: null,
             deletable: false,
         },
         {
             title: ROLE_TITLE.staff,
-            level: 2,
+            parent: ROLE_TITLE.admin,
             deletable: false,
         },
         {
             title: ROLE_TITLE.employee,
-            level: 3,
-            deletable: false,
+            parent: ROLE_TITLE.staff,
+            deletable: true,
         },
     ],
     permission: Object.values(PermissionActionEnum).reduce((prev: CreatePermissionDto[], action) => {

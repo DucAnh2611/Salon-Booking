@@ -20,6 +20,7 @@ export const multerConfig = {
     rate: process.env.MULTER_RATE_DEST,
     category: process.env.MULTER_CATEGORY_DEST,
     voucher: process.env.MULTER_VOUCHER_DEST,
+    common: process.env.MULTER_COMMON_DEST,
     format: {
         user: {
             avatar: 'user_avatar_<USER_ID>_<MEDIA_TYPE>',
@@ -35,12 +36,13 @@ export const multerConfig = {
         rate: 'rating_<MEDIA_TYPE>_<ORDER_ID>_<CLIENT_ID>',
         category: 'category_<STAFF_ID>_<MEDIA_TYPE>',
         voucher: 'voucher_<STAFF_ID>_<MEDIA_TYPE>',
-        temp: '<SESSION_ID>_<CONTEXT>_<MEDIA_TYPE>',
+        temp: '<SESSION_ID>_<SESSION_EXPIRE>_<CONTEXT>_<MEDIA_TYPE>',
     },
     maxSize: {
-        size: 5,
+        size: 10,
         unit: FILE_UNIT.MB,
     },
+    maxFile: 10,
     acceptedFile: {
         image: ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'],
         video: ['mp4', 'mov', 'avi', 'mkv', 'flv', 'webm'],
@@ -66,5 +68,8 @@ export const multerOptions: MulterOptions = {
             cb(new BadRequest({ message: DataErrorCodeEnum.INVALID_FILE_TYPE }), false);
         }
     },
-    limits: { fileSize: convertToBytes(multerConfig.maxSize.size, multerConfig.maxSize.unit) },
+    limits: {
+        fileSize: convertToBytes(multerConfig.maxSize.size, multerConfig.maxSize.unit),
+        files: multerConfig.maxFile,
+    },
 };

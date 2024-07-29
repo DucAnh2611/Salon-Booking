@@ -5,7 +5,7 @@ import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { multerConfig } from '../../config/multer.configs';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { MediaEntity } from '../media/entity/media.entity';
-import { MediaService } from '../media/media.service';
+import { MediaService } from '../media/service/media.service';
 import { ServiceBaseService } from '../service-base/service-base.service';
 import { BodyCreateServiceStepDto, CreateSeviceStepDto } from './dto/service-step-create.dto';
 import { BodyUpdateServiceStepDto, UpdateSeviceStepDto } from './dto/service-step-update-dto';

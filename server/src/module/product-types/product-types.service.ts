@@ -134,22 +134,18 @@ export class ProductTypesService {
         const { productTypes, productId } = body;
 
         const listTypes = await this.listByProductId(productId);
-        const bodyTypesById = productTypes.reduce((acc: ProductTypesExistDto[], curr) => {
-            if (curr.productTypesId) {
-                acc.push(curr);
-            }
-            return acc;
-        }, []);
 
-        const existList: ProductTypesExistDto[] = productTypes.filter(t => !!t.productTypesId);
+        const existList: ProductTypesExistDto[] = [];
+        const deleteList = [];
 
-        const deleteList = listTypes.reduce((acc: ProductTypesEntity[], curr) => {
-            const find = bodyTypesById.find(t => t.productTypesId === curr.id);
-            if (!find) {
-                acc.push(curr);
+        listTypes.forEach(type => {
+            const uType = productTypes.find(uType => uType.productTypesId === type.id);
+            if (uType) {
+                existList.push(uType);
+            } else {
+                deleteList.push(type);
             }
-            return acc;
-        }, []);
+        });
 
         const [softDeleteList, createList, updateList] = await Promise.all([
             this.productTypesRepository.softDelete({ id: In(deleteList.map(type => type.id)) }),
@@ -186,13 +182,13 @@ export class ProductTypesService {
             const skuProductExist = await this.productBaseService.findBySku(sku);
 
             if (skuProductExist) {
-                throw new BadRequest({ message: DataErrorCodeEnum.EXISTED_PRODUCT });
+                throw new BadRequest({ message: DataErrorCodeEnum.EXISTED_PRODUCT_BY_SKU });
             }
 
             typeInstance.sku = sku;
         }
 
-        await this.productTypesAttributeService.saveMany(
+        await this.productTypesAttributeService.updateMany(
             userId,
             productId,
             types.map(type => ({ ...type, productTypesId }) as CreateProductTypesAttributeDto),

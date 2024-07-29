@@ -20,6 +20,33 @@ export class CategoryService {
         @InjectRepository(MediaEntity) private readonly mediaRepository: Repository<MediaEntity>,
     ) {}
 
+    async isNested(id: string, parentId: string) {
+        const isNested = await this.categoryRepository.findOne({
+            where: {
+                id,
+            },
+            loadEagerRelations: false,
+            relations: {
+                childrens: true,
+            },
+        });
+
+        if (!isNested) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_CATEGORY });
+        }
+
+        if (!isNested.childrens.length) {
+            return false;
+        }
+
+        if (isNested.childrens.some(cate => cate.id === parentId)) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NESTED_CATEGORY });
+        }
+        await Promise.all(isNested.childrens.map(cate => this.isNested(cate.id, parentId)));
+
+        return false;
+    }
+
     async isExist(value: string, type: 'title' | 'id') {
         let query = {};
 
@@ -46,14 +73,21 @@ export class CategoryService {
             where: {
                 title: Like(`%${key || ''}%`),
             },
+            take: limit,
             skip: (page - 1) * limit,
             loadEagerRelations: false,
             relations: {
+                image: true,
+                parent: true,
                 userCreate: {
-                    userBase: true,
+                    userBase: {
+                        userAvatar: true,
+                    },
                 },
                 userUpdate: {
-                    userBase: true,
+                    userBase: {
+                        userAvatar: true,
+                    },
                 },
             },
             order: { ...order },
@@ -109,7 +143,6 @@ export class CategoryService {
         const categoryInstance = this.categoryRepository.create({
             parentId,
             title,
-            level: (checkParentCategory?.level || 0) + 1,
             imageId,
             createdBy: employeeId,
             updatedBy: employeeId,
@@ -132,6 +165,10 @@ export class CategoryService {
             if (!checkParentCategory) {
                 throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_CATEGORY });
             }
+            if (parentId === categoryId) {
+                throw new BadRequest({ message: DataErrorCodeEnum.SELF_LINK_CATEGORY });
+            }
+            await this.isNested(categoryId, parentId);
         }
 
         if (imageId && imageId !== isExist.imageId) {
@@ -144,7 +181,8 @@ export class CategoryService {
 
         return this.categoryRepository.save({
             ...isExist,
-            level: (checkParentCategory?.level || 0) + 1,
+            imageId: imageId ? imageId : null,
+            parentId: parentId ? parentId : null,
             updatedBy: employeeId,
             ...body,
         });

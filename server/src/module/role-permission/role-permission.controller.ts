@@ -37,7 +37,7 @@ export class RolePermissionController {
         return this.rolePermissionService.attach({
             userId: accessPayload.employeeId,
             roleId,
-            permissions: permissionIds,
+            permissionIds: permissionIds,
         });
     }
 
@@ -56,7 +56,7 @@ export class RolePermissionController {
         return this.rolePermissionService.attach({
             userId: accessPayload.employeeId,
             roleId,
-            permissions: permissionIds,
+            permissionIds: permissionIds,
         });
     }
 }

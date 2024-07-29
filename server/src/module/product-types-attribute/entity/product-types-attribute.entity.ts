@@ -1,11 +1,12 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { BaseEntity } from '../../../common/enitty/base.entity';
 import { AttributeEntity } from '../../attribute/entity/attribute.entity';
 import { MediaEntity } from '../../media/entity/media.entity';
 import { ProductTypesEntity } from '../../product-types/entity/product-types.entity';
 
 @Index(['productTypesId', 'attributeId'])
 @Entity('product_types_attribute')
-export class ProductTypesAttributeEntity {
+export class ProductTypesAttributeEntity extends BaseEntity {
     @PrimaryColumn('uuid')
     productTypesId: string;
 

@@ -22,7 +22,7 @@ export class ProductBaseEntity extends ModifyEntity {
     @Column('float', { nullable: true })
     price: number;
 
-    @Column('varchar', { nullable: true, unique: true })
+    @Column('varchar', { nullable: true })
     sku: string;
 
     @Column('text')

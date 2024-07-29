@@ -41,7 +41,9 @@ export class AuthController {
             }),
         );
 
-        return DataSuccessCodeEnum.OK;
+        return {
+            accessToken,
+        };
     }
 
     @Post(AUTH_ROUTE.CLIENT_REGISTER)
@@ -98,6 +100,14 @@ export class AuthController {
             }),
         );
 
+        return DataSuccessCodeEnum.OK;
+    }
+
+    @Get(AUTH_ROUTE.LOG_OUT)
+    @UseGuards(RefreshTokenGuard)
+    async logout(@Req() req: AppRequest, @Res({ passthrough: true }) res: Response) {
+        res.clearCookie(cookieConfig.refreshtoken.name);
+        res.clearCookie(cookieConfig.accesstoken.name);
         return DataSuccessCodeEnum.OK;
     }
 }

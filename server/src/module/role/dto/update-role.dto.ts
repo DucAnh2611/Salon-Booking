@@ -1,16 +1,19 @@
-import { IsInt, IsOptional, IsPositive, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class UpdateRoleDto {
-    @IsOptional()
+    @IsNotEmpty()
     @IsString()
-    title?: string;
+    title: string;
 
-    @IsOptional()
-    @IsPositive()
-    @IsInt()
-    level?: number;
+    @IsNotEmpty()
+    @IsUUID('all')
+    parentId: string;
 
     @IsOptional()
     @IsString()
     description?: string;
+
+    @IsNotEmpty()
+    @IsUUID('all', { each: true })
+    permissionIds: string[];
 }

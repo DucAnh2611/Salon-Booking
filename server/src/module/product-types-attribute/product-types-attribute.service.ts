@@ -7,7 +7,7 @@ import { SortByEnum } from '../../common/enum/query.enum';
 import { multerConfig } from '../../config/multer.configs';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { AttributeService } from '../attribute/attribute.service';
-import { MediaService } from '../media/media.service';
+import { MediaService } from '../media/service/media.service';
 import { CreateProductTypesAttributeDto } from './dto/product-types-attribute-create.dto';
 import { UpdateProductTypesAttributeDto } from './dto/product-types-attribute-update.dto';
 import { ProductTypesAttributeEntity } from './entity/product-types-attribute.entity';
@@ -66,15 +66,24 @@ export class ProductTypesAttributeService {
     }
 
     async isValid(productTypesId: string, attrId: string) {
-        const [validAttr] = await Promise.all([this.attributeService.isValid(attrId)]);
+        const [validAttr, productTypeAttr] = await Promise.all([
+            this.attributeService.isValid(attrId),
+            this.productTypesAttributeRepository.findOne({
+                where: { productTypesId, attributeId: attrId },
+                loadEagerRelations: false,
+            }),
+        ]);
         if (!validAttr) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ATTRIBUTE });
         }
-        return { validAttr };
+        return { validAttr, productTypeAttr };
     }
 
     async isExist(productTypesId: string, attrId: string) {
-        const exist = await this.productTypesAttributeRepository.findOneBy({ productTypesId, attributeId: attrId });
+        const exist = await this.productTypesAttributeRepository.findOne({
+            where: { productTypesId, attributeId: attrId },
+            loadEagerRelations: false,
+        });
         if (!exist) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST });
         }
@@ -124,7 +133,10 @@ export class ProductTypesAttributeService {
             value: value || exist.value,
         };
 
-        return this.productTypesAttributeRepository.save(newProductTypesAttr);
+        return this.productTypesAttributeRepository.update(
+            { productTypesId, attributeId: attrId },
+            newProductTypesAttr,
+        );
     }
 
     async deleteOne(productTypesId: string, attributeId: string) {

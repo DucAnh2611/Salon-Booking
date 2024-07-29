@@ -1,3 +1,4 @@
+import { Type } from 'class-transformer';
 import { IsInt, IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
 import { DEFAULT_VALUE_VALIDATOR } from '../constant/entity.constant';
 import { SortByEnum } from '../enum/query.enum';
@@ -10,12 +11,14 @@ export abstract class PaginationQuery {
             limit: 10    
     */
     @IsOptional()
+    @Type(() => Number)
     @IsNumber()
     @IsInt()
     @IsPositive()
     page?: number = DEFAULT_VALUE_VALIDATOR.page;
 
     @IsOptional()
+    @Type(() => Number)
     @IsNumber()
     @IsInt()
     @IsPositive()

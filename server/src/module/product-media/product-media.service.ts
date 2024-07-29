@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { BadRequest, InternalServer } from '../../shared/exception/error.exception';
-import { MediaService } from '../media/media.service';
+import { MediaService } from '../media/service/media.service';
 import { CreateProductMediaDto } from './dto/product-media-create.dto';
 import { ProductMediaEntity } from './entity/product-media.entity';
 
@@ -94,6 +94,11 @@ export class ProductMediaService {
             throw new InternalServer();
         }
 
+        return DataSuccessCodeEnum.OK;
+    }
+
+    async deleteIdsNotInList(ids: string[], productId: string) {
+        await this.productMediaRepository.delete({ productId, mediaId: Not(In(ids)) });
         return DataSuccessCodeEnum.OK;
     }
 }

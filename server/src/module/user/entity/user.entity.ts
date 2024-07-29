@@ -1,5 +1,5 @@
 import { Exclude, Expose } from 'class-transformer';
-import { BeforeInsert, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
+import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
 import { DEFAULT_VALUE_ENTITY } from '../../../common/constant/entity.constant';
 import { BaseEntity } from '../../../common/enitty/base.entity';
 import { GenderEnum } from '../../../common/enum/gender.enum';
@@ -59,7 +59,10 @@ export class UserEntity extends BaseEntity {
     userAvatar: MediaEntity;
 
     @BeforeInsert()
+    @BeforeUpdate()
     async hashPassword() {
-        this.password = await HashPasswordUtil.hashPassword(this.password);
+        if (this.password) {
+            this.password = await HashPasswordUtil.hashPassword(this.password);
+        }
     }
 }

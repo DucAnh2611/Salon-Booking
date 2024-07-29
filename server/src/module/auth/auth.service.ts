@@ -171,7 +171,22 @@ export class AuthService {
                 break;
 
             case ETypeExistAuth.EMPLOYEE:
-                isExist = await this.employeeRepository.findOneBy(query);
+                isExist = await this.employeeRepository.findOne({
+                    where: {
+                        ...query,
+                        userBase: {
+                            role: {
+                                title: ROLE_TITLE.staff,
+                            },
+                        },
+                    },
+                    loadEagerRelations: false,
+                    relations: {
+                        userBase: {
+                            role: true,
+                        },
+                    },
+                });
                 break;
 
             default:

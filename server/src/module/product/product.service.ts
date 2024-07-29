@@ -30,16 +30,6 @@ export class ProductService {
 
     async findAdmin(query: FindProductBaseAdminDto) {
         const productList = await this.productBaseService.findAdmin(query);
-        productList.items = await Promise.all(
-            productList.items.map(async product => {
-                const types = await this.productTypesService.getTypesForProduct(product.id);
-
-                return {
-                    ...product,
-                    types,
-                };
-            }),
-        );
 
         return productList;
     }

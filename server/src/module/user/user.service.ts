@@ -29,16 +29,16 @@ export class UserService {
         return this.userRepository.findOneBy({ id: id });
     }
 
-    async update(id: string, body: any) {
+    async update(id: string, body: Partial<UserEntity>) {
         const user = await this.findOneById(id);
         if (!user) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_USER });
         }
 
-        const newUserInfo: UserEntity = {
+        const newUserInfo: UserEntity = this.userRepository.create({
             ...user,
             ...body,
-        };
+        });
 
         const updatedUser = await this.userRepository.save(newUserInfo);
 

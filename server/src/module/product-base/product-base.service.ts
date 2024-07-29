@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Like, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
@@ -8,7 +8,7 @@ import { multerConfig } from '../../config/multer.configs';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { ParseOrderString } from '../../shared/utils/parse-dynamic-queyry.utils';
 import { CategoryService } from '../category/category.service';
-import { MediaService } from '../media/media.service';
+import { MediaService } from '../media/service/media.service';
 import { CreateProductMediaDto } from '../product-media/dto/product-media-create.dto';
 import { ProductMediaService } from '../product-media/product-media.service';
 import { ProductTypesEntity } from '../product-types/entity/product-types.entity';
@@ -35,10 +35,16 @@ export class ProductBaseService {
             loadEagerRelations: false,
             relations: {
                 userCreate: {
-                    userBase: true,
+                    userBase: {
+                        userAvatar: true,
+                    },
+                    eRole: true,
                 },
                 userUpdate: {
-                    userBase: true,
+                    userBase: {
+                        userAvatar: true,
+                    },
+                    eRole: true,
                 },
                 category: true,
             },
@@ -58,31 +64,25 @@ export class ProductBaseService {
 
     async findAdmin(query: FindProductBaseAdminDto) {
         const { key, limit, page, orderBy } = query;
-        const queryBuilder = this.productBaseRepository.createQueryBuilder('p');
 
-        const q = queryBuilder
-            .leftJoinAndSelect('p.userCreate', 'empC')
-            .leftJoinAndSelect('p.userUpdate', 'empU')
-            .leftJoin('p.types', 'type')
-            .select(['p', 'empC', 'empU'])
-            .where('p.name LIKE :name', { name: `%${key}%` })
-            .orWhere('p.sku LIKE :sku', { sku: `%${key}%` })
-            .orWhere('type.sku LIKE :sku', { sku: `%${key}%` });
+        const order = orderBy ? ParseOrderString(orderBy) : { createdAt: SortByEnum.ASC };
 
-        q.orderBy();
-        orderBy.forEach(o => {
-            const parse = ParseOrderString(o);
-            if (parse) {
-                Object.entries(parse).forEach(od => {
-                    q.addOrderBy(od[0], od[1]);
-                });
-            }
+        const [items, count] = await this.productBaseRepository.findAndCount({
+            where: [
+                { name: Like(`%${key}%`) },
+                { sku: Like(`%${key}%`) },
+                {
+                    types: {
+                        sku: Like(`%${key}%`),
+                    },
+                },
+            ],
+            loadEagerRelations: false,
+            relations: {
+                types: true,
+            },
+            order: { ...order },
         });
-
-        const [items, count] = await q
-            .skip((page - 1) * limit)
-            .take(limit)
-            .getManyAndCount();
 
         const mapMedia = await Promise.all(
             items.map(async item => {
@@ -160,6 +160,11 @@ export class ProductBaseService {
             }),
         );
 
+        await this.productMediaService.deleteIdsNotInList(
+            thumbnailIds.map(id => id.id),
+            productId,
+        );
+
         return mutipleMedia;
     }
 
@@ -216,7 +221,8 @@ export class ProductBaseService {
         let mutipleMedia: CreateProductMediaDto[] = [];
         if (thumbnailIds && thumbnailIds.length) {
             mutipleMedia = await this.insertMediaWithIds(thumbnailIds, productId);
-        } else if (thumbnailUrls && thumbnailUrls.length) {
+        }
+        if (thumbnailUrls && thumbnailUrls.length) {
             mutipleMedia = await this.insertMediaWithUrls(thumbnailUrls, productId, userId);
         }
 

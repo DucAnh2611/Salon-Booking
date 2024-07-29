@@ -1,6 +1,7 @@
 import {
     Body,
     Controller,
+    Delete,
     Get,
     Param,
     Post,
@@ -23,7 +24,7 @@ import { UserType } from '../../../shared/decorator/user-types.decorator';
 import { AccessTokenGuard } from '../../../shared/guard/accessToken.guard';
 import { PermissionGuard } from '../../../shared/guard/permission.guard';
 import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
-import { MediaService } from '../../media/media.service';
+import { MediaService } from '../../media/service/media.service';
 import { CategoryService } from '../category.service';
 import { CreateCategoryDto } from '../dto/category-create.dto';
 import { DeleteManyCategoryDto } from '../dto/category-delete.dto';
@@ -31,7 +32,6 @@ import { FindCategoryAdminDto, GetParamCategoryDto } from '../dto/category-get.d
 import { UpdateCategoryDto } from '../dto/category-update.dto';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
-// @Controller({ path: ROUTER.CATEGORY, host: appConfig.employeeUrl })
 @Controller(ROUTER.CATEGORY)
 export class CategoryAdminController {
     constructor(
@@ -92,7 +92,7 @@ export class CategoryAdminController {
         return this.categoryService.update(employeeId, categoryId, body);
     }
 
-    @Put(CATEGORY_ROUTE.DELETE_ONE)
+    @Delete(CATEGORY_ROUTE.DELETE_ONE)
     @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.CATEGORY, action: [PermissionActionEnum.DELETE] }])
     @UserType(ROLE_TITLE.staff)
@@ -103,7 +103,7 @@ export class CategoryAdminController {
         return this.categoryService.delete(employeeId, categoryId);
     }
 
-    @Put(CATEGORY_ROUTE.DELETE_ONE)
+    @Delete(CATEGORY_ROUTE.DELETE_MANY)
     @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.CATEGORY, action: [PermissionActionEnum.DELETE] }])
     @UserType(ROLE_TITLE.staff)

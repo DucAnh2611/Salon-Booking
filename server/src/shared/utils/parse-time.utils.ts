@@ -44,3 +44,8 @@ export const combineDateAndTime = (datetime: Date, time: string) => {
 
     return date;
 };
+
+export const getDatePlusMinutes = (minutes: number) => {
+    const now = new Date();
+    return new Date(now.getTime() + minutes * 60000);
+};

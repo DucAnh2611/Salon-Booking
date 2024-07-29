@@ -17,7 +17,6 @@ import { FORMDATA_FIELD_MEDIA } from '../../common/constant/file.constants';
 import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { EMPLOYEE_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
-import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../common/enum/permission.enum';
 import { AppRequest } from '../../common/interface/custom-request.interface';
 import { multerConfig, multerOptions } from '../../config/multer.configs';
@@ -27,10 +26,11 @@ import { BadRequest } from '../../shared/exception/error.exception';
 import { AccessTokenGuard } from '../../shared/guard/accessToken.guard';
 import { PermissionGuard } from '../../shared/guard/permission.guard';
 import { UserTypeGuard } from '../../shared/guard/user-type.guard';
-import { MediaService } from '../media/media.service';
+import { MediaService } from '../media/service/media.service';
 import { CreateEmployeeDto } from './dto/create-emplotee.dto';
+import { DeleteEmployeeDto } from './dto/delete-employee.dto';
 import { FindEmployeeQueryDto, GetEmployeeParamDto } from './dto/get-employee.dto';
-import { UpdateEmployeeDto } from './dto/update-employee.dto';
+import { ResetEmployeePasswordDto, UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeeService } from './employee.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
@@ -40,6 +40,14 @@ export class EmployeeController {
         private readonly employeeService: EmployeeService,
         private readonly mediaService: MediaService,
     ) {}
+
+    @Get(EMPLOYEE_ROUTE.ME)
+    @UserType(ROLE_TITLE.staff)
+    @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.READ] }])
+    me(@Req() req: AppRequest) {
+        const { employeeId } = req.accessPayload;
+        return this.employeeService.getMyInfo(employeeId);
+    }
 
     @Get(EMPLOYEE_ROUTE.FIND)
     @UserType(ROLE_TITLE.staff)
@@ -76,6 +84,14 @@ export class EmployeeController {
 
         return this.employeeService.createEmployee(employeeId, body);
     }
+    @Put(EMPLOYEE_ROUTE.RESET_PW)
+    @UserType(ROLE_TITLE.staff)
+    @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.UPDATE] }])
+    async resetPw(@Req() req: AppRequest, @Body() body: ResetEmployeePasswordDto) {
+        const { employeeId: requestEmployeeId } = req.accessPayload;
+
+        return this.employeeService.resetEmpPassword(requestEmployeeId, body);
+    }
 
     @Put(EMPLOYEE_ROUTE.UPDATE)
     @UserType(ROLE_TITLE.staff)
@@ -111,15 +127,20 @@ export class EmployeeController {
     @Delete(EMPLOYEE_ROUTE.DELETE_ONE)
     @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.DELETE] }])
-    deleteOne(@Param() param: GetEmployeeParamDto) {
-        const { id } = param;
-        return { id };
+    deleteOne(@Req() req: AppRequest, @Param() param: GetEmployeeParamDto) {
+        const { id: deleteId } = param;
+        const { employeeId } = req.accessPayload;
+
+        return this.employeeService.delete(employeeId, [deleteId]);
     }
 
     @Delete(EMPLOYEE_ROUTE.DELETE_MANY)
     @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.DELETE] }])
-    deleteMany() {
-        return DataSuccessCodeEnum.OK;
+    deleteMany(@Req() req: AppRequest, @Body() body: DeleteEmployeeDto) {
+        const { ids } = body;
+        const { employeeId } = req.accessPayload;
+
+        return this.employeeService.delete(employeeId, ids);
     }
 }
