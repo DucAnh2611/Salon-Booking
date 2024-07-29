@@ -82,6 +82,7 @@ export class AuthService {
                 email: findClient.email,
                 uRoleId: userInfo.roleId,
                 userId: findClient.userId,
+                clientId: findClient.id,
             },
             key: jwtConfig.access.secret,
             options: { expiresIn: jwtConfig.access.expire },
@@ -106,14 +107,14 @@ export class AuthService {
         const { id: roleId } = await this.roleService.getRole({ title: ROLE_TITLE.client });
 
         const user = await this.userService.create({ ...userInfo, roleId });
-        if (!user) throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
+        if (!user) throw new InternalServer();
 
         const newClient = await this.clientService.create({
             email,
             userId: user.id,
         });
 
-        if (!newClient) throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
+        if (!newClient) throw new InternalServer();
 
         return newClient;
     }
@@ -170,11 +171,26 @@ export class AuthService {
                 break;
 
             case ETypeExistAuth.EMPLOYEE:
-                isExist = await this.employeeRepository.findOneBy(query);
+                isExist = await this.employeeRepository.findOne({
+                    where: {
+                        ...query,
+                        userBase: {
+                            role: {
+                                title: ROLE_TITLE.staff,
+                            },
+                        },
+                    },
+                    loadEagerRelations: false,
+                    relations: {
+                        userBase: {
+                            role: true,
+                        },
+                    },
+                });
                 break;
 
             default:
-                throw new InternalServer({ message: DataErrorCodeEnum.INTERNAL });
+                throw new InternalServer();
         }
 
         return !!isExist;

@@ -5,10 +5,10 @@ import { RolePermissionEntity } from '../../role-permission/entity/role-permissi
 
 @Entity('permission')
 export class PermissionEntity extends BaseEntity {
-    @Column('enum', { enum: PermissionTargetEnum })
+    @Column('enum', { nullable: false, enum: PermissionTargetEnum })
     target: PermissionTargetEnum;
 
-    @Column('enum', { enum: PermissionActionEnum })
+    @Column('enum', { nullable: false, enum: PermissionActionEnum })
     action: PermissionActionEnum;
 
     @DeleteDateColumn({ nullable: true })

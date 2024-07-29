@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Request, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Req, Res, SerializeOptions, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { AUTH_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
@@ -11,7 +11,7 @@ import { TimeUtil } from '../../shared/utils/parse-time.util';
 import { RegisterClientDto } from '../client/dto/client-create.dto';
 import { AuthService } from './auth.service';
 import { LoginClientDto, LoginEmpDto } from './dto/auth-login.dto';
-
+@SerializeOptions({ groups: ['auth'] })
 @Controller(ROUTER.AUTH)
 export class AuthController {
     constructor(
@@ -41,7 +41,9 @@ export class AuthController {
             }),
         );
 
-        return DataSuccessCodeEnum.OK;
+        return {
+            accessToken,
+        };
     }
 
     @Post(AUTH_ROUTE.CLIENT_REGISTER)
@@ -76,7 +78,7 @@ export class AuthController {
 
     @Get(AUTH_ROUTE.REFRESH_TOKEN)
     @UseGuards(RefreshTokenGuard)
-    async refreshToken(@Request() req: AppRequest, @Res({ passthrough: true }) res: Response) {
+    async refreshToken(@Req() req: AppRequest, @Res({ passthrough: true }) res: Response) {
         const { refreshPayload } = req;
         const { accessToken, refreshToken } = await this.authService.refreshTokens(refreshPayload);
 
@@ -98,6 +100,14 @@ export class AuthController {
             }),
         );
 
+        return DataSuccessCodeEnum.OK;
+    }
+
+    @Get(AUTH_ROUTE.LOG_OUT)
+    @UseGuards(RefreshTokenGuard)
+    async logout(@Req() req: AppRequest, @Res({ passthrough: true }) res: Response) {
+        res.clearCookie(cookieConfig.refreshtoken.name);
+        res.clearCookie(cookieConfig.accesstoken.name);
         return DataSuccessCodeEnum.OK;
     }
 }

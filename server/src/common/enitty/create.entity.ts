@@ -5,7 +5,7 @@ export abstract class CreateEntity extends BaseEntity {
     @Column('uuid')
     createdBy: string;
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: Date;
 }
 
@@ -13,6 +13,6 @@ export abstract class CreateOnlyEntity {
     @Column('uuid')
     createdBy: string;
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: Date;
 }

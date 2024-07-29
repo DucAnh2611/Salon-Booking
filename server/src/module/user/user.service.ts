@@ -1,8 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
+import { BadRequest } from '../../shared/exception/error.exception';
 import { CreateUserDto } from './dto/create-user.dto';
-import { UserEntity } from './entities/user.entity';
+import { UserEntity } from './entity/user.entity';
 
 @Injectable()
 export class UserService {
@@ -15,16 +17,32 @@ export class UserService {
         return createdUser;
     }
 
-    findAll() {
-        return `This action returns all user`;
+    getDetailUser(id: string) {
+        return this.userRepository.findOne({
+            where: { id },
+            loadEagerRelations: false,
+            relations: { userAvatar: true },
+        });
     }
 
     findOneById(id: string) {
         return this.userRepository.findOneBy({ id: id });
     }
 
-    update(id: number) {
-        return `This action updates a #${id} user`;
+    async update(id: string, body: Partial<UserEntity>) {
+        const user = await this.findOneById(id);
+        if (!user) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_USER });
+        }
+
+        const newUserInfo: UserEntity = this.userRepository.create({
+            ...user,
+            ...body,
+        });
+
+        const updatedUser = await this.userRepository.save(newUserInfo);
+
+        return updatedUser;
     }
 
     remove(id: number) {

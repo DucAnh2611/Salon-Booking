@@ -1,7 +1,15 @@
-import { IsNotEmpty, IsUUID } from 'class-validator';
-import { DynamicQuery } from '../../../common/type/query.type';
+import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { PaginationQuery } from '../../../common/type/query.type';
 
-export class FindEmployeeQueryDto extends DynamicQuery {}
+export class FindEmployeeQueryDto extends PaginationQuery {
+    @IsOptional()
+    @IsString()
+    key?: string;
+
+    @IsOptional()
+    @IsString()
+    orderBy?: string;
+}
 
 export class GetEmployeeParamDto {
     @IsNotEmpty()

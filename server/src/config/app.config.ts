@@ -10,4 +10,5 @@ export const appConfig = {
     prefix: env.APP_PREFIX,
     clientUrl: env.APP_CLIENT_URL,
     employeeUrl: env.APP_EMPLOYEE_URL,
+    baseDir: __dirname + '../../../',
 };

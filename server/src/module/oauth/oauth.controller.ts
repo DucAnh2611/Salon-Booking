@@ -1,4 +1,4 @@
-import { Controller, Get, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { OAUTH_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { AppRequestOAuth } from '../../common/interface/custom-request.interface';
 import { FacebookOAuthGuard } from '../../shared/guard/facebook-oauth.guard';
@@ -16,7 +16,7 @@ export class OAuthController {
 
     @Get(OAUTH_ROUTE.GOOGLE_REDIRECT)
     @UseGuards(GoogleOAuthGuard)
-    async googleCallback(@Request() req: AppRequestOAuth) {
+    async googleCallback(@Req() req: AppRequestOAuth) {
         const { user } = req;
 
         return { data: user };
@@ -30,7 +30,7 @@ export class OAuthController {
 
     @Get(OAUTH_ROUTE.FACEBOOK_REDIRECT)
     @UseGuards(FacebookOAuthGuard)
-    async facebookCallback(@Request() req: AppRequestOAuth) {
+    async facebookCallback(@Req() req: AppRequestOAuth) {
         const { user } = req;
 
         return { data: 'Feature on maintaining!' };

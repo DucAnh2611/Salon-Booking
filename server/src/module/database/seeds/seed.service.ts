@@ -7,11 +7,10 @@ import { AppLoggerService } from '../../logger/logger.service';
 import { CreatePermissionDto } from '../../permission/dto/create-permission.dto';
 import { PermissionEntity } from '../../permission/entity/permission.entity';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
-import { CreateRoleDto } from '../../role/dto/create-role.dto';
-import { RoleEntity } from '../../role/enitty/role.entity';
-import { UserEntity } from '../../user/entities/user.entity';
+import { RoleEntity } from '../../role/entity/role.entity';
+import { UserEntity } from '../../user/entity/user.entity';
 import { SEED_DATA } from './constant/seed.constant';
-import { TSeedEmployee, TSeedEmployeeData, TSeedRolePermissionData } from './type/seed.type';
+import { TSeedEmployee, TSeedEmployeeData, TSeedRole, TSeedRolePermissionData } from './type/seed.type';
 
 @Injectable()
 export class SeedService {
@@ -101,16 +100,25 @@ export class SeedService {
         return datas;
     }
 
-    async roleSeeder(data: CreateRoleDto[]) {
-        const datas = data.map(d => {
-            const newRole = this.roleRepository.create(d);
+    async roleSeeder(data: TSeedRole[]) {
+        const list: RoleEntity[] = [];
 
-            return newRole;
-        });
+        for (const role of data) {
+            const { parent, ...info } = role;
+            let parentFound = null;
+            if (parent) {
+                parentFound = list.find(item => item.title === parent) || null;
+            }
+            const newRole = await this.roleRepository.save({
+                ...info,
+                parentId: parentFound ? parentFound.id : null,
+                level: parentFound ? parentFound.level + 1 : 1,
+            });
 
-        const save = await this.roleRepository.save(datas);
+            list.push(newRole);
+        }
 
-        return save;
+        return list;
     }
 
     async permissionSeeder(data: CreatePermissionDto[]) {

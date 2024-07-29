@@ -20,7 +20,7 @@ export class DatabaseConfigService implements TypeOrmOptionsFactory {
             entities: [__dirname + '/../*/**/*.entity.ts'],
             synchronize: databaseConfig.synchronize,
             dropSchema: false,
-            logging: appConfig.env !== 'production',
+            logging: appConfig.env === 'production',
             extra: {
                 max: databaseConfig.maxConnection,
             },

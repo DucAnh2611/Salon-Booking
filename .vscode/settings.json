@@ -9,7 +9,7 @@
   "workbench.view.alwaysShowHeaderActions": true,
   "breadcrumbs.enabled": true,
   "editor.mouseWheelZoom": false,
-  "window.zoomLevel": -0.5,
+  "window.zoomLevel": 0,
   "[typescript]": {
     "editor.formatOnSave": true,
     "editor.defaultFormatter": "esbenp.prettier-vscode"

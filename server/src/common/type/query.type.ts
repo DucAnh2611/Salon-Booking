@@ -1,45 +1,50 @@
-import { Transform, Type } from 'class-transformer';
-import { IsEnum, IsOptional, IsString, ValidateNested } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsInt, IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
 import { DEFAULT_VALUE_VALIDATOR } from '../constant/entity.constant';
-import { OperatorEnum, SortByEnum } from '../enum/query.enum';
-
-export class TFilterBy {
-    @IsString()
-    field: string;
-
-    @IsEnum(OperatorEnum)
-    operator: OperatorEnum;
-
-    @IsString()
-    value: string;
-}
-
-export class TSortBy {
-    @IsString()
-    field: string;
-
-    @IsEnum(SortByEnum)
-    sort: SortByEnum;
-}
+import { SortByEnum } from '../enum/query.enum';
 
 export abstract class PaginationQuery {
+    /*
+        @format : /<path>?page=<page>&&limit=<limit>
+        @default:
+            page: 1,
+            limit: 10    
+    */
     @IsOptional()
-    @Transform(({ value }: { value: number }) => Number(value))
-    page: number = DEFAULT_VALUE_VALIDATOR.page;
+    @Type(() => Number)
+    @IsNumber()
+    @IsInt()
+    @IsPositive()
+    page?: number = DEFAULT_VALUE_VALIDATOR.page;
 
     @IsOptional()
-    @Transform(({ value }: { value: number }) => Number(value))
-    limit: number = DEFAULT_VALUE_VALIDATOR.limit;
+    @Type(() => Number)
+    @IsNumber()
+    @IsInt()
+    @IsPositive()
+    limit?: number = DEFAULT_VALUE_VALIDATOR.limit;
 }
-
 export abstract class DynamicQuery extends PaginationQuery {
+    /*
+        @format: /<path>?filter=<field>:<value>&&sort=<"d"|"a"><field>&&page=<page>&&limit=<limit>
+        @default:
+            filter: '',
+            sort: '',
+            page: 1,
+            limit: 10    
+    */
     @IsOptional()
-    @ValidateNested({ each: true })
-    @Type(() => TSortBy)
-    sort: TSortBy[] = DEFAULT_VALUE_VALIDATOR.array;
+    @IsString()
+    sort: string;
 
     @IsOptional()
-    @ValidateNested({ each: true })
-    @Type(() => TFilterBy)
-    filter: TFilterBy[] = DEFAULT_VALUE_VALIDATOR.array;
+    @IsString()
+    filter: string;
 }
+
+export type TParsedQuery = {
+    page: number;
+    limit: number;
+    sort: { [key: string]: SortByEnum };
+    filter: { [key: string]: string };
+};

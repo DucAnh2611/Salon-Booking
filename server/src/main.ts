@@ -1,8 +1,9 @@
 import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import * as CookieParser from 'cookie-parser';
+import CookieParser from 'cookie-parser';
 import { AppModule } from './app.module';
 import { configs } from './config';
+import { appConfig } from './config/app.config';
 import { AppLoggerService } from './module/logger/logger.service';
 import { AppClassValidatorException } from './shared/exception/class-validator.exception';
 
@@ -12,8 +13,10 @@ async function bootstrap() {
     app.setGlobalPrefix(configs.app.prefix);
 
     app.enableCors({
-        origin: '*',
+        // origin: '*',
+        origin: [appConfig.clientUrl, appConfig.employeeUrl],
         methods: ['POST', 'PUT', 'DELETE', 'PATCH', 'GET', 'OPTIONS'],
+        credentials: true,
     });
 
     app.useGlobalPipes(
@@ -27,7 +30,7 @@ async function bootstrap() {
     app.use(CookieParser());
 
     app.listen(configs.app.port).then(() => {
-        new AppLoggerService('Main', 'Main').info(`Backend server is running on port: ${configs.app.port}`);
+        new AppLoggerService('Main', 'Start Server').info(`Backend server is running on port: ${configs.app.port}`);
     });
 }
 bootstrap();

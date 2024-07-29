@@ -1,4 +1,5 @@
 import { HttpStatus } from '@nestjs/common';
+import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { RequestErrorCodeEnum } from '../../common/enum/request-error-code.enum';
 import { AppExceptionType } from '../../common/interface/exception.interface';
 import { AppExceptionBase } from './base.exception';
@@ -19,6 +20,15 @@ export class Forbidden extends AppExceptionBase {
     }
 }
 
+export class NotFound extends AppExceptionBase {
+    constructor() {
+        super({
+            status: HttpStatus.NOT_FOUND,
+            requestCode: RequestErrorCodeEnum.FORBIDDEN,
+            message: DataErrorCodeEnum.NOT_EXIST,
+        });
+    }
+}
 export class BadRequest extends AppExceptionBase {
     constructor({ message }: Partial<AppExceptionType>) {
         super({ status: HttpStatus.BAD_REQUEST, requestCode: RequestErrorCodeEnum.BAD_REQUEST, message: message });
@@ -26,11 +36,11 @@ export class BadRequest extends AppExceptionBase {
 }
 
 export class InternalServer extends AppExceptionBase {
-    constructor({ message }: Partial<AppExceptionType>) {
+    constructor() {
         super({
             status: HttpStatus.INTERNAL_SERVER_ERROR,
             requestCode: RequestErrorCodeEnum.INTERNAL_SERVER_ERROR,
-            message: message,
+            message: DataErrorCodeEnum.INTERNAL,
         });
     }
 }
