@@ -55,6 +55,7 @@ export const productReducer = (
                 return {
                     ...state,
                     ...newState,
+                    deleteItems: [],
                     isCalling: false,
                     isFailure: false,
                     reload: false,
@@ -150,6 +151,7 @@ export const productReducer = (
             if (isFailedApiCall(action)) {
                 return {
                     ...state,
+                    deleteItems: [],
                     isDeleting: false,
                     isFailure: true,
                 };

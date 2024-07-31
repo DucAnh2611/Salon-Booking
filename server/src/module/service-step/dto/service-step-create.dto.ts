@@ -17,11 +17,11 @@ export class CreateSeviceStepDto {
     step: number;
 
     @IsOptional()
-    @IsUUID('all')
+    @IsString()
     thumbnailId?: string;
 
     @IsOptional()
-    @IsUUID('all')
+    @IsString()
     thumbnailUrl?: string;
 }
 

@@ -57,7 +57,7 @@ export class ServiceMediaService {
     async saveMany(userId: string, employeeId: string, body: BodyCreateServiceMediaDto) {
         const { medias, serviceId } = body;
 
-        if (!medias.find(item => item.isThumbnail)) {
+        if (!medias.find(item => item.isThumbnail) && medias.length) {
             medias[0].isThumbnail = true;
         }
 

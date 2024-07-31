@@ -35,6 +35,20 @@ export interface IMediaProductTempBase {
     isThumbnail: boolean;
 }
 
+export interface IMediaServiceTempBase {
+    id: string;
+    isThumbnail: boolean;
+}
+export interface IMediaServiceUpdateTempUrl {
+    id?: string;
+    isThumbnail: boolean;
+    url: string;
+    tempId?: string;
+}
+
+export interface IMediaServiceTempUrl extends IMediaServiceTempBase {
+    url: string;
+}
 export interface IMediaProductTempUrl extends IMediaProductTempBase {
     url: string;
 }

@@ -227,7 +227,7 @@ export default function TableProductAttribute({
                                                                     "price"
                                                                 )}
                                                             />
-                                                            <div className="flex border box-border px-2 text-muted-foreground text-sm items-center gap-1 hover:bg-muted text-center">
+                                                            <div className="flex border box-border px-2 text-muted-foreground text-sm items-center gap-1 hover:bg-muted text-center rounded">
                                                                 <p>vnđ</p>
                                                             </div>
                                                         </div>
@@ -344,7 +344,7 @@ export default function TableProductAttribute({
                                                     "price"
                                                 )}
                                             />
-                                            <div className="flex border box-border px-2 text-muted-foreground text-sm items-center gap-1 hover:bg-muted text-center">
+                                            <div className="flex border box-border px-2 text-muted-foreground text-sm items-center gap-1 hover:bg-muted text-center rounded">
                                                 <p>vnđ</p>
                                             </div>
                                         </div>

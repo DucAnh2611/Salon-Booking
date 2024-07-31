@@ -61,11 +61,6 @@ export class CartServiceItemService {
                         media: true,
                     },
                     category: true,
-                    children: {
-                        media: {
-                            media: true,
-                        },
-                    },
                 },
             },
         });

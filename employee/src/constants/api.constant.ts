@@ -236,4 +236,36 @@ export const API_URLS = {
             withCredentials: true,
         }),
     },
+    SERVICE: {
+        LIST: (page = 1, limit = 10, key = "", orderBy = "") => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `service?limit=${limit}&page=${page}&key=${key}&orderBy=${orderBy}`,
+            withCredentials: true,
+        }),
+        DETAIL: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `service/${id}`,
+            withCredentials: true,
+        }),
+        CREATE: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `service`,
+            withCredentials: true,
+        }),
+        UPDATE: () => ({
+            method: "PUT",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `service`,
+            withCredentials: true,
+        }),
+        DELETE: () => ({
+            method: "DELETE",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `service`,
+            withCredentials: true,
+        }),
+    },
 };

@@ -24,7 +24,7 @@ export class ServiceAdminController {
     @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.SERVICE, action: [PermissionActionEnum.READ] }])
     find(@Query() query: FindServiceAdminDto) {
-        return this.serviceService.find(query);
+        return this.serviceService.findAdmin(query);
     }
 
     @Get(SERVICE_ROUTE.DETAIL)
@@ -63,7 +63,7 @@ export class ServiceAdminController {
         return this.serviceService.delete([id]);
     }
 
-    @Put(SERVICE_ROUTE.DELETE_MANY)
+    @Delete(SERVICE_ROUTE.DELETE_MANY)
     @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.SERVICE, action: [PermissionActionEnum.DELETE] }])
     DeleteMany(@Req() req: AppRequest, @Body() body: DeleteServiceDto) {

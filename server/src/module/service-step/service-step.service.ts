@@ -48,7 +48,7 @@ export class ServiceStepService {
         let currIndex = 1;
         const sortedList = list.sort((a, b) => a.step - b.step);
 
-        if (sortedList.pop().step === list.length) {
+        if (sortedList.at(sortedList.length - 1).step === list.length) {
             return sortedList;
         }
 
@@ -110,7 +110,7 @@ export class ServiceStepService {
 
         let thumbnail: MediaEntity | null = null;
         if (thumbnailId || thumbnailUrl) {
-            thumbnail = await this.prepareThumbnail(userId, thumbnailId, thumbnailUrl);
+            thumbnail = await this.prepareThumbnail(userId, serviceId, thumbnailId, thumbnailUrl);
         }
 
         const instances = this.serviceStepRepository.create({
@@ -162,16 +162,6 @@ export class ServiceStepService {
                 throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_SERVICE_STEP });
             }
 
-            let isSame = true;
-
-            Object.entries(props).forEach(([field, value]) => {
-                if (isExist[field] !== props[field]) {
-                    isSame = false;
-                }
-            });
-
-            if (isSame) return isExist;
-
             const newInstance = this.serviceStepRepository.create({
                 ...isExist,
                 ...props,
@@ -179,13 +169,17 @@ export class ServiceStepService {
             });
 
             if (thumbnailId || thumbnailUrl) {
-                const thumbnail = await this.prepareThumbnail(userId, thumbnailId, thumbnailUrl);
+                const thumbnail = await this.prepareThumbnail(userId, serviceId, thumbnailId, thumbnailUrl);
                 newInstance.thumbnailId = thumbnail.id;
+            } else {
+                newInstance.thumbnailId = null;
             }
-            return this.serviceStepRepository.save(newInstance);
-        }
-        const newIns: CreateSeviceStepDto = { thumbnailId, thumbnailUrl, ...props };
 
-        return this.save(userId, employeeId, serviceId, newIns);
+            return await this.serviceStepRepository.save(newInstance);
+        } else {
+            const newIns: CreateSeviceStepDto = { thumbnailId, thumbnailUrl, ...props };
+
+            return await this.save(userId, employeeId, serviceId, newIns);
+        }
     }
 }

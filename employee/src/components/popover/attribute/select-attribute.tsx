@@ -89,7 +89,6 @@ export default function PopoverSelectAttributeProduct({
         if (scrollRef.current) {
             const { scrollTop, scrollHeight, clientHeight } = scrollRef.current;
             if (scrollTop + clientHeight >= scrollHeight && canScroll) {
-                console.log(123123);
                 SetPage(page + 1);
             }
         }

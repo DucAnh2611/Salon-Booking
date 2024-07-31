@@ -7,6 +7,7 @@ import { mediaReducer } from "./media.reducer";
 import { permissionReducer } from "./permission.reducer";
 import { productReducer } from "./product.reducer";
 import { roleReducer } from "./role.reducer";
+import { serviceReducer } from "./service.reducer";
 import { themeReducer } from "./theme.reducer";
 
 const rootReducer = combineReducers({
@@ -19,6 +20,7 @@ const rootReducer = combineReducers({
     employeeReducer,
     attributeReducer,
     productReducer,
+    serviceReducer,
 });
 
 export default rootReducer;

@@ -64,10 +64,10 @@ export default function UpdateHistory({
                                         {userCreate.eRole.title}
                                     </Badge>
                                 </p>
-                                {updatedAt && (
+                                {createdAt && (
                                     <p>
                                         <b>Thời gian:</b>{" "}
-                                        {new Date(updatedAt).toLocaleString()}
+                                        {new Date(createdAt).toLocaleString()}
                                     </p>
                                 )}
                             </div>

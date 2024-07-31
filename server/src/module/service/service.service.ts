@@ -31,7 +31,7 @@ export class ServiceService {
     }
 
     async findAdmin(query: FindServiceAdminDto) {
-        const listService = await this.serviceBaseService.findAdmin(query);
+        const { list: listService, count, page, limit } = await this.serviceBaseService.findAdmin(query);
         const listMapMedia = await Promise.all(
             listService.map(async service => {
                 const media = await this.serviceMediaService.getListByService(service.id);
@@ -42,11 +42,11 @@ export class ServiceService {
             }),
         );
 
-        return listMapMedia;
+        return { items: listMapMedia, count, page, limit };
     }
 
     async find(query: FindServiceAdminDto) {
-        const listService = await this.serviceBaseService.findAdmin(query);
+        const { list: listService, count, page, limit } = await this.serviceBaseService.findAdmin(query);
         const listMapMedia = await Promise.all(
             listService.map(async service => {
                 const media = await this.serviceMediaService.getListByService(service.id);
@@ -57,7 +57,7 @@ export class ServiceService {
             }),
         );
 
-        return listMapMedia;
+        return { items: listMapMedia, count, page, limit };
     }
 
     async create(userId: string, employeeId: string, body: CreateServiceDto) {

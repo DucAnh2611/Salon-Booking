@@ -15,6 +15,9 @@ import UpdateProductScreen from "@/screens/product/update";
 import RoleScreen from "@/screens/role";
 import CreateRoleScreen from "@/screens/role/create";
 import UpdateRoleScreen from "@/screens/role/update";
+import ServiceScreen from "@/screens/service";
+import CreateServiceScreen from "@/screens/service/create";
+import UpdateServiceScreen from "@/screens/service/update";
 import { createBrowserRouter } from "react-router-dom";
 
 export const router = createBrowserRouter([
@@ -76,12 +79,29 @@ export const router = createBrowserRouter([
                         element: <ProductScreen />,
                     },
                     {
+                        path: "add",
+                        element: <CreateProductScreen />,
+                    },
+                    {
                         path: ":id",
                         element: <UpdateProductScreen />,
                     },
+                ],
+            },
+            {
+                path: ROUTER_PATH.SERVICE,
+                children: [
+                    {
+                        path: "",
+                        element: <ServiceScreen />,
+                    },
                     {
                         path: "add",
-                        element: <CreateProductScreen />,
+                        element: <CreateServiceScreen />,
+                    },
+                    {
+                        path: ":id",
+                        element: <UpdateServiceScreen />,
                     },
                 ],
             },

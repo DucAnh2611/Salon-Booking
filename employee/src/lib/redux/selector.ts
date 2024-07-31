@@ -18,3 +18,5 @@ export const employeeSelector = (state: TRootState) => state.employeeReducer;
 export const attributeSelector = (state: TRootState) => state.attributeReducer;
 
 export const productSelector = (state: TRootState) => state.productReducer;
+
+export const serviceSelector = (state: TRootState) => state.serviceReducer;

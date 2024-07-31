@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
+import UpdateHistory from "@/components/update-history";
 import { EFileType } from "@/enum/media.enum";
 import { ICategory } from "@/interface/api/category.interface";
 import {
@@ -211,9 +212,10 @@ export default function UpdateProductBaseTab({
                                                     <Input
                                                         className="flex-1"
                                                         placeholder="Giá gốc"
+                                                        type="number"
                                                         {...field}
                                                     />
-                                                    <div className="flex border box-border px-2 text-muted-foreground text-sm items-center gap-1 hover:bg-muted text-center">
+                                                    <div className="flex border box-border px-2 text-muted-foreground text-sm items-center gap-1 hover:bg-muted text-center rounded">
                                                         <p>vnđ</p>
                                                     </div>
                                                 </div>
@@ -238,6 +240,7 @@ export default function UpdateProductBaseTab({
                                                 <Input
                                                     className="flex-1"
                                                     placeholder="Số lượng"
+                                                    type="number"
                                                     {...field}
                                                 />
                                             </FormControl>
@@ -493,6 +496,14 @@ export default function UpdateProductBaseTab({
                                 </div>
                             )}
                         </div>
+                    </div>
+                    <div className="mt-4">
+                        <UpdateHistory
+                            createdAt={base.createdAt}
+                            userCreate={base.userCreate}
+                            updatedAt={base.updatedAt}
+                            userUpdate={base.userUpdate}
+                        />
                     </div>
                 </div>
             </CardContent>

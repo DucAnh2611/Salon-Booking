@@ -6,4 +6,5 @@ export const ZOD_MESSAGE = {
     int: (type: string) => `${type} phải là số nguyên.`,
     positive: (type: string) => `${type} phải là số dương.`,
     number: (type: string) => `${type} phải là số.`,
+    invalidEnum: (type: string) => `${type} Không hợp lệ.`,
 };
