@@ -1,3 +1,4 @@
+import DeleteServiceDialog from "@/components/dialog/service/delete";
 import UpdateServiceDialog from "@/components/dialog/service/update";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -248,7 +249,7 @@ export const serviceColumnDef: ColumnDef<IService>[] = [
                             <UpdateServiceDialog service={service} />
                         </DropdownMenuItem>
                         <DropdownMenuItem className="p-0" asChild>
-                            {/* <DeleteCategoryDialog item={category} /> */}
+                            <DeleteServiceDialog service={service} />
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

@@ -44,3 +44,87 @@ export const mergeDateComponents = ({
 
     return new Date(year, month - 1, day);
 };
+
+export const getDayPercent = (date: Date) => {
+    const moment = new Date(date);
+
+    const secondsSinceMidnight =
+        moment.getHours() * 3600 +
+        moment.getMinutes() * 60 +
+        moment.getSeconds();
+
+    const totalSecondsInDay = 24 * 3600;
+
+    const dayPercentage = (secondsSinceMidnight / totalSecondsInDay) * 100;
+
+    return Math.ceil(dayPercentage);
+};
+
+export const formatTimeToHHMM = (date: Date) => {
+    const newDate = new Date(date);
+
+    let hours = newDate.getHours();
+    let minutes = newDate.getMinutes();
+
+    let parsedHours = hours < 10 ? "0" + hours : hours;
+    let parsedMinutes = minutes < 10 ? "0" + minutes : minutes;
+
+    return `${parsedHours}:${parsedMinutes}`;
+};
+
+export const parseHHMMToTime = (time: string) => {
+    const isValidFormat = /^(0?\d|1\d|2[0-3]):([0-5]\d|[0-5]?\d)$/.test(time);
+
+    if (!isValidFormat) {
+        return { hours: 0, minutes: 0 };
+    }
+
+    const [hours, minutes] = time.split(":").map(Number);
+
+    return { hours, minutes };
+};
+
+export const calculateTimeRangePercentage = (
+    parentStart: Date,
+    parentEnd: Date,
+    childStart: Date,
+    childEnd: Date
+) => {
+    const parentStartDate = new Date(parentStart);
+    const parentEndDate = new Date(parentEnd);
+    const childStartDate = new Date(childStart);
+    const childEndDate = new Date(childEnd);
+
+    const parentDuration = parentEndDate.getTime() - parentStartDate.getTime();
+    const childDuration = childEndDate.getTime() - childStartDate.getTime();
+
+    const percentage = (childDuration / parentDuration) * 100;
+
+    return Math.ceil(percentage);
+};
+
+export const formatTimeDifference = (startDate: Date, endDate: Date) => {
+    const diffMs = Math.abs(endDate.getTime() - startDate.getTime());
+
+    const seconds = Math.floor((diffMs / 1000) % 60);
+    const minutes = Math.floor((diffMs / (1000 * 60)) % 60);
+    const hours = Math.floor((diffMs / (1000 * 60 * 60)) % 24);
+    const days = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+
+    let result = "";
+
+    if (days > 0) {
+        result += `${days} ngày `;
+    }
+    if (hours > 0) {
+        result += `${hours} giờ `;
+    }
+    if (minutes > 0 || (days === 0 && hours === 0)) {
+        result += `${minutes} phút `;
+    }
+    if (seconds > 0 || (days === 0 && hours === 0 && minutes === 0)) {
+        result += `${seconds} giây`;
+    }
+
+    return result.trim();
+};

@@ -1,6 +1,6 @@
 import { EServiceEmployeeExperience } from "@/enum/service.enum";
 import { ICategory } from "./category.interface";
-import { IEmployee, IEmployeeModify } from "./employee.interface";
+import { IEmployee, IUserEmployee } from "./employee.interface";
 import { IMedia } from "./media.interface";
 
 export interface IService {
@@ -83,8 +83,8 @@ export interface IServiceBaseDetail {
     createdAt: Date;
     categoryId: string;
     category: ICategory;
-    updateUser: IEmployeeModify;
-    createUser: IEmployeeModify;
+    userUpdate: IUserEmployee;
+    userCreate: IUserEmployee;
     media: IServiceMedia[];
 }
 

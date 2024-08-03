@@ -18,6 +18,9 @@ import UpdateRoleScreen from "@/screens/role/update";
 import ServiceScreen from "@/screens/service";
 import CreateServiceScreen from "@/screens/service/create";
 import UpdateServiceScreen from "@/screens/service/update";
+import CalendarWorkinghourScreen from "@/screens/working-hour";
+import DetailWorkingHourScreen from "@/screens/working-hour/detail";
+import UpdateWorkingHourScreen from "@/screens/working-hour/update";
 import { createBrowserRouter } from "react-router-dom";
 
 export const router = createBrowserRouter([
@@ -102,6 +105,23 @@ export const router = createBrowserRouter([
                     {
                         path: ":id",
                         element: <UpdateServiceScreen />,
+                    },
+                ],
+            },
+            {
+                path: ROUTER_PATH.WORKING,
+                children: [
+                    {
+                        path: "",
+                        element: <CalendarWorkinghourScreen />,
+                    },
+                    {
+                        path: ":id",
+                        element: <DetailWorkingHourScreen />,
+                    },
+                    {
+                        path: "u/:id",
+                        element: <UpdateWorkingHourScreen />,
                     },
                 ],
             },

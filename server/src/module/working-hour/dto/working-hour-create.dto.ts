@@ -24,3 +24,10 @@ export class CreateWorkingHourDto {
     @IsBoolean()
     isOff: boolean = false;
 }
+
+export class OffWorkingDto {
+    @IsNotEmpty()
+    @IsDate()
+    @Transform(({ value }) => new Date(value))
+    date: Date;
+}

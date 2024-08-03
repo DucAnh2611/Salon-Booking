@@ -124,4 +124,5 @@ export enum DataErrorCodeEnum {
     DELETE_ADMIN = 'DE095',
     CAN_NOT_CHANGE_ADMIN_ROLE = 'DE096',
     EXISTED_PRODUCT_BY_SKU = 'DE097',
+    WORKING_HOUR_START = 'DE098',
 }

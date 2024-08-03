@@ -77,17 +77,8 @@ export const listNavigate: IItemNavigate[] = [
     },
     {
         Icon: CalendarClockIcon,
-        title: "Thời gian làm việc",
-        children: [
-            {
-                title: "Ngày làm việc",
-                path: `${ROUTER_PATH.WORKING}`,
-            },
-            {
-                title: "Ca làm việc",
-                path: `${ROUTER_PATH.SHIFT}`,
-            },
-        ],
+        title: "Ngày làm việc",
+        path: `${ROUTER_PATH.WORKING}`,
     },
     {
         Icon: ReceiptIcon,

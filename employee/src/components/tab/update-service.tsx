@@ -21,6 +21,7 @@ import UpdateServiceStepSection from "../section/service/update/step";
 import { Button } from "../ui/button";
 import { Form } from "../ui/form";
 import { toast } from "../ui/use-toast";
+import UpdateHistory from "../update-history";
 
 interface IUpdateServiceTabProps extends IServiceUpdateSectionProps {
     detail: IServiceDetail;
@@ -134,6 +135,13 @@ export default function UpdateServiceTab({
                             stepDetail={detail.steps}
                             form={form}
                             sessionId={sessionId}
+                        />
+
+                        <UpdateHistory
+                            createdAt={detail.base.createdAt}
+                            updatedAt={detail.base.updatedAt}
+                            userCreate={detail.base.userCreate}
+                            userUpdate={detail.base.userUpdate}
                         />
 
                         <div className="sticky bottom-0 left-full w-fit flex gap-2">

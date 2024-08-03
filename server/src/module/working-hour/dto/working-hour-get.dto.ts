@@ -18,3 +18,10 @@ export class GetWorkingHourRangeDto {
     @IsDate()
     endDate: Date = new Date();
 }
+
+export class OffWorkingQueryDto {
+    @IsNotEmpty()
+    @Transform(({ value }) => new Date(value))
+    @IsDate()
+    date: Date = new Date();
+}

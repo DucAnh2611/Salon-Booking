@@ -1,4 +1,5 @@
 import { EGender } from "@/enum/gender.enum";
+import { EShiftEmployeeStatus } from "@/enum/shift.enum";
 import { IRole } from "./role.interface";
 
 export interface IEmployee {
@@ -71,4 +72,11 @@ export interface IEmployeeDetail {
     userBase: IUser;
     userCreate: IUserEmployee;
     userUpdate: IUserEmployee;
+}
+
+export interface IEmployeeShift {
+    shiftId: string;
+    employeeId: string;
+    employee: IEmployee;
+    status: EShiftEmployeeStatus;
 }

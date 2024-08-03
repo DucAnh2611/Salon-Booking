@@ -10,7 +10,7 @@ import { PermissionGuard } from '../../../shared/guard/permission.guard';
 import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
 import { CreateWorkingHourDto } from '../dto/working-hour-create.dto';
 import { DeleteWorkingHourDto } from '../dto/working-hour-delete.dto';
-import { GetWorkingHourParamDto, GetWorkingHourRangeDto } from '../dto/working-hour-get.dto';
+import { GetWorkingHourParamDto, GetWorkingHourRangeDto, OffWorkingQueryDto } from '../dto/working-hour-get.dto';
 import { UpdateWorkingHourDto } from '../dto/working-hour-update.dto';
 import { WorkingHourService } from '../working-hour.service';
 
@@ -68,12 +68,11 @@ export class WorkingHourAdminController {
             action: [PermissionActionEnum.UPDATE],
         },
     ])
-    toggleOff(@Req() req: AppRequest, @Param() param: GetWorkingHourParamDto) {
+    toggleOff(@Req() req: AppRequest, @Query() query: OffWorkingQueryDto) {
         const { accessPayload } = req;
         const { employeeId } = accessPayload;
-        const { id } = param;
 
-        return this.workingHourService.toggleOffDay(employeeId, id);
+        return this.workingHourService.toggleOffDay(employeeId, query);
     }
 
     @Put(WORKING_HOUR_ROUTE.UPDATE)

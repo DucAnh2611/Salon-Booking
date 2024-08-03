@@ -175,12 +175,12 @@ export const SERVICE_ROUTE = {
 
 export const WORKING_HOUR_ROUTE = {
     FIND: '',
-    DETAIL: ':id',
+    DETAIL: 'info/:id',
     CREATE: '',
     UPDATE: '',
     DELETE_ONE: ':id',
     DELETE_MANY: '',
-    TOGGLE_OFF: 'toggle-off/:id',
+    TOGGLE_OFF: 'toggle-off',
 };
 
 export const SHIFT_ROUTE = {
