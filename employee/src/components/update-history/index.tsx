@@ -1,5 +1,7 @@
 import { IUserEmployee } from "@/interface/api/employee.interface";
 import { api_media_url } from "@/utils/apiCall";
+import { formatTimeToHHMM } from "@/utils/date.utils";
+import { format } from "date-fns";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 import { Badge } from "../ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
@@ -43,7 +45,7 @@ export default function UpdateHistory({
                                         src={`${api_media_url}${userCreate?.userAvatar?.path}`}
                                         alt="@shadcn"
                                     />
-                                    <AvatarFallback className="bg-primary">
+                                    <AvatarFallback className="bg-primary text-black">
                                         {userCreate?.userBase.lastname
                                             .charAt(0)
                                             .toUpperCase()}
@@ -64,10 +66,15 @@ export default function UpdateHistory({
                                         {userCreate.eRole.title}
                                     </Badge>
                                 </p>
-                                {updatedAt && (
+                                {createdAt && (
                                     <p>
                                         <b>Thời gian:</b>{" "}
-                                        {new Date(updatedAt).toLocaleString()}
+                                        {format(createdAt, "dd/MM/yyyy")} lúc{" "}
+                                        {formatTimeToHHMM(createdAt).replace(
+                                            ":",
+                                            " giờ "
+                                        )}{" "}
+                                        phút
                                     </p>
                                 )}
                             </div>
@@ -84,7 +91,7 @@ export default function UpdateHistory({
                                         src={`${api_media_url}${userUpdate?.userAvatar?.path}`}
                                         alt="@shadcn"
                                     />
-                                    <AvatarFallback className="bg-primary">
+                                    <AvatarFallback className="bg-primary text-black">
                                         {userUpdate?.userBase.lastname
                                             .charAt(0)
                                             .toUpperCase()}
@@ -108,7 +115,12 @@ export default function UpdateHistory({
                                 {updatedAt && (
                                     <p>
                                         <b>Thời gian:</b>{" "}
-                                        {new Date(updatedAt).toLocaleString()}
+                                        {format(updatedAt, "dd/MM/yyyy")} lúc{" "}
+                                        {formatTimeToHHMM(updatedAt).replace(
+                                            ":",
+                                            " giờ "
+                                        )}{" "}
+                                        phút
                                     </p>
                                 )}
                             </div>

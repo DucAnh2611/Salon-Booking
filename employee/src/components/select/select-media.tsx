@@ -1,9 +1,10 @@
 import { API_URLS } from "@/constants/api.constant";
 import { IMediaTempUpload } from "@/interface/api/media.interface";
 import { apiCall } from "@/utils/apiCall";
+import { generateUUID } from "@/utils/uuid.utils";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
 import { FolderUpIcon } from "lucide-react";
-import { ChangeEvent } from "react";
+import { ChangeEvent, useState } from "react";
 import { Button } from "../ui/button";
 import {
     DropdownMenu,
@@ -18,13 +19,17 @@ interface ISelectMediaProps {
     onSelect: (urls: IMediaTempUpload[]) => void;
     sessionId: string;
     disabled?: boolean;
+    mutiple?: boolean;
 }
 
 export default function SelectMedia({
     onSelect,
     sessionId,
     disabled = false,
+    mutiple = true,
 }: ISelectMediaProps) {
+    const [uuid] = useState<string>(generateUUID());
+
     const tempUpload = async (file: File) => {
         const formData = new FormData();
 
@@ -98,7 +103,7 @@ export default function SelectMedia({
                     <DropdownMenuItem>
                         <Label
                             className="items-center w-full justify-start gap-2 flex px-4 py-3 hover:bg-muted rounded cursor-pointer"
-                            htmlFor="product-temp-medias"
+                            htmlFor={uuid}
                         >
                             <div className="w-[20px]">
                                 <FolderUpIcon size={15} />
@@ -112,8 +117,8 @@ export default function SelectMedia({
                 type="file"
                 accept="image/*, video/*"
                 className="hidden"
-                id="product-temp-medias"
-                multiple
+                id={uuid}
+                multiple={mutiple}
                 onChange={handleSelectMedia}
             />
         </div>

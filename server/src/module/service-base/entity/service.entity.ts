@@ -22,14 +22,8 @@ export class ServiceEntity extends ModifyEntity {
     @Column('integer')
     price: number;
 
-    @Column('uuid', { nullable: true })
-    parentId: string;
-
     @Column('uuid')
     categoryId: string;
-
-    @OneToMany(() => ServiceEntity, (serviceEntity: ServiceEntity) => serviceEntity.parent)
-    children: ServiceEntity[];
 
     @OneToMany(() => ServiceMediaEntity, (serviceMediaEntity: ServiceMediaEntity) => serviceMediaEntity.service)
     media: ServiceMediaEntity[];
@@ -51,10 +45,6 @@ export class ServiceEntity extends ModifyEntity {
         (orderServiceItemEntity: OrderServiceItemEntity) => orderServiceItemEntity.service,
     )
     orderServiceItems: OrderServiceItemEntity[];
-
-    @ManyToOne(() => ServiceEntity, (serviceEntity: ServiceEntity) => serviceEntity.children)
-    @JoinColumn({ name: 'parentId' })
-    parent: ServiceEntity;
 
     @ManyToOne(() => CategoryEntity, (categoryEntity: CategoryEntity) => categoryEntity.serviceCategory)
     @JoinColumn({ name: 'categoryId' })

@@ -154,9 +154,10 @@ export default function CreateProductBaseSection({
                                                     <Input
                                                         className="flex-1"
                                                         placeholder="Giá gốc"
+                                                        type="number"
                                                         {...field}
                                                     />
-                                                    <div className="flex border box-border px-2 text-muted-foreground text-sm items-center gap-1 hover:bg-muted text-center">
+                                                    <div className="flex border box-border px-2 text-muted-foreground text-sm items-center gap-1 hover:bg-muted text-center rounded">
                                                         <p>vnđ</p>
                                                     </div>
                                                 </div>
@@ -181,6 +182,7 @@ export default function CreateProductBaseSection({
                                                 <Input
                                                     className="flex-1"
                                                     placeholder="Số lượng"
+                                                    type="number"
                                                     {...field}
                                                 />
                                             </FormControl>

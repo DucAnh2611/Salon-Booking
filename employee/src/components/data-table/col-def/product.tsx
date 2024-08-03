@@ -1,3 +1,4 @@
+import DeleteProductDialog from "@/components/dialog/product/delete";
 import UpdateProductDialog from "@/components/dialog/product/update";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -275,7 +276,7 @@ export const productColumnDef: ColumnDef<IProduct>[] = [
                             <UpdateProductDialog product={product} />
                         </DropdownMenuItem>
                         <DropdownMenuItem className="p-0" asChild>
-                            {/* <DeleteCategoryDialog item={category} /> */}
+                            <DeleteProductDialog product={product} />
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

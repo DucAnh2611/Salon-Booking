@@ -76,6 +76,11 @@ export class ShiftEmployeeService {
     async save(createId: string, shiftId: string, assignment: ShiftEmployeeDto) {
         const { employeeId, status } = assignment;
 
+        const isStart = await this.shiftService.isShiftStart(shiftId);
+        if (isStart) {
+            throw new BadRequest({ message: DataErrorCodeEnum.SHIFT_STARTED });
+        }
+
         const isExist = await this.isExist(shiftId, employeeId);
         if (isExist) {
             return this.shiftEmployeeRepository.save({

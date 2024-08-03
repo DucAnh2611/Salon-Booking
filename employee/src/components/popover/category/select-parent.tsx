@@ -2,7 +2,6 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Popover, PopoverContent } from "@/components/ui/popover";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { API_URLS } from "@/constants/api.constant";
 import useDebounce from "@/hooks/useDebounce";
 import { ICategory, IFindCategory } from "@/interface/api/category.interface";
@@ -36,19 +35,20 @@ export default function PopoverSelectParent({
         const { response } = await apiCall<IFindCategory>({ ...api });
 
         if (response) {
-            if (response.result.items.length + items.length <= page * limit) {
-                SetItems(
-                    isNewList
-                        ? response.result.items
-                        : [...items, ...response.result.items]
-                );
-                SetCount(response.result.count);
+            if (
+                response.result.items.length + items.length <= page * limit &&
+                !isNewList
+            ) {
+                SetItems([...items, ...response.result.items]);
+            } else {
+                SetItems(response.result.items);
             }
+            SetCount(response.result.count);
 
             const maxPage = Math.ceil(response.result.count / limit);
             if (page >= maxPage) {
                 SetCanScroll(false);
-            } else if (!canScroll) {
+            } else {
                 SetCanScroll(true);
             }
             SetIsNewList(false);
@@ -122,13 +122,13 @@ export default function PopoverSelectParent({
                         </Button>
                     )}
                 </div>
-                <ScrollArea
-                    ref={scrollRef}
-                    onScroll={handleScroll}
-                    type="always"
-                    className="h-fit w-full"
-                >
-                    <div className="w-full flex flex-col gap-1 max-h-[200px]">
+
+                <div>
+                    <div
+                        ref={scrollRef}
+                        onScroll={handleScroll}
+                        className="w-full flex flex-col gap-1 max-h-[200px] overflow-y-auto"
+                    >
                         {items.length ? (
                             items.map((item) => (
                                 <Button
@@ -170,7 +170,7 @@ export default function PopoverSelectParent({
                             </div>
                         )}
                     </div>
-                </ScrollArea>
+                </div>
             </PopoverContent>
         </Popover>
     );

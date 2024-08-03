@@ -128,7 +128,7 @@ export default function DisplayPermission({
                                             <Button
                                                 variant="ghost"
                                                 type="button"
-                                                className={`w-full h-auto p-5 py-3 box-border rounded-none hover:bg-transparent ${
+                                                className={`w-full h-full p-5 py-3 box-border rounded-none hover:bg-transparent ${
                                                     canToggle
                                                         ? "cursor-pointer"
                                                         : "cursor-default"
@@ -155,7 +155,7 @@ export default function DisplayPermission({
                                             <Button
                                                 variant="ghost"
                                                 type="button"
-                                                className={`w-full h-autop-5 py-3 box-border rounded-none hover:bg-transparent ${
+                                                className={`w-full h-full p-5 py-3 box-border rounded-none hover:bg-transparent ${
                                                     canToggle
                                                         ? "cursor-pointer"
                                                         : "cursor-default"

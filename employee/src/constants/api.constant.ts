@@ -236,4 +236,114 @@ export const API_URLS = {
             withCredentials: true,
         }),
     },
+    SERVICE: {
+        LIST: (page = 1, limit = 10, key = "", orderBy = "") => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `service?limit=${limit}&page=${page}&key=${key}&orderBy=${orderBy}`,
+            withCredentials: true,
+        }),
+        DETAIL: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `service/${id}`,
+            withCredentials: true,
+        }),
+        CREATE: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `service`,
+            withCredentials: true,
+        }),
+        UPDATE: () => ({
+            method: "PUT",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `service`,
+            withCredentials: true,
+        }),
+        DELETE: () => ({
+            method: "DELETE",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `service`,
+            withCredentials: true,
+        }),
+    },
+    WORKING_HOUR: {
+        RANGE: (from: string, end: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `working-hour?fromDate=${from}&endDate=${end}`,
+            withCredentials: true,
+        }),
+        DETAIL: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `working-hour/info/${id}`,
+            withCredentials: true,
+        }),
+        CREATE: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `working-hour`,
+            withCredentials: true,
+        }),
+        TOGGLE_OFF: (date: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `working-hour/toggle-off?date=${date}`,
+            withCredentials: true,
+        }),
+        UPDATE: () => ({
+            method: "PUT",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `working-hour`,
+            withCredentials: true,
+        }),
+        DELETE: () => ({
+            method: "DELETE",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `working-hour`,
+            withCredentials: true,
+        }),
+    },
+    SHIFT: {
+        DETAIL: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `shift/${id}`,
+            withCredentials: true,
+        }),
+        CREATE: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `shift`,
+            withCredentials: true,
+        }),
+        UPDATE: () => ({
+            method: "PUT",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `shift`,
+            withCredentials: true,
+        }),
+        DELETE: (id: string) => ({
+            method: "DELETE",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `shift/${id}`,
+            withCredentials: true,
+        }),
+    },
+    SHIFT_ASSIGNMENT: {
+        CREATE: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `shift-employee`,
+            withCredentials: true,
+        }),
+        DELETE: () => ({
+            method: "DELETE",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `shift-employee/many`,
+            withCredentials: true,
+        }),
+    },
 };

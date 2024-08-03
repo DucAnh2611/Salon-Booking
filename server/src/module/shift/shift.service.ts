@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { LessThanOrEqual, MoreThanOrEqual, Repository } from 'typeorm';
+import { LessThanOrEqual, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
@@ -25,18 +25,35 @@ export class ShiftService {
         return this.shiftRepository.findOne({ where: { id: shiftId }, loadEagerRelations: false });
     }
 
-    isOverlapping(workingHourId: string, start: Date, end: Date, notShiftId?: string) {
-        const querybuilder = this.shiftRepository.createQueryBuilder('shift');
-        const query = querybuilder
-            .where('shift.workingHourId = :id', { id: workingHourId })
-            .andWhere('shift.start <= :start', { start })
-            .andWhere('shift.end >= :end', { end });
+    isTimeOverlap(start1: Date, end1: Date, start2: Date, end2: Date): boolean {
+        const startMillis1 = start1.getTime();
+        const endMillis1 = end1.getTime();
+        const startMillis2 = start2.getTime();
+        const endMillis2 = end2.getTime();
 
-        if (notShiftId) {
-            query.andWhere('shift.id != :id', { id: notShiftId });
-        }
+        return startMillis1 < endMillis2 && startMillis2 < endMillis1;
+    }
 
-        return query.getMany();
+    async isOverlapping(workingHourId: string, start: Date, end: Date, notShiftId?: string) {
+        const list = await this.shiftRepository.find({
+            where: {
+                workingHourId,
+                ...(notShiftId ? { id: Not(notShiftId) } : {}),
+            },
+            loadEagerRelations: false,
+        });
+        const [tarStart, tarEnd] = [new Date(start), new Date(end)];
+
+        const ovelapped = list.reduce((acc: ShiftEntity[], curr) => {
+            const [currStart, currEnd] = [new Date(curr.start), new Date(curr.end)];
+
+            if (this.isTimeOverlap(tarStart, tarEnd, currStart, currEnd)) {
+                acc.push(curr);
+            }
+            return acc;
+        }, []);
+
+        return ovelapped;
     }
 
     getShiftOverlappingBookingDate(bookingDate: Date) {
@@ -111,6 +128,7 @@ export class ShiftService {
         if (overlappingShifts.length > 0) {
             throw new BadRequest({ message: DataErrorCodeEnum.OVERLAPPING_SHIFTS });
         }
+
         return {
             start: startTime,
             end: endTime,
@@ -128,6 +146,7 @@ export class ShiftService {
                     userBase: {
                         userAvatar: true,
                     },
+                    eRole: true,
                 },
             },
         });
@@ -141,10 +160,16 @@ export class ShiftService {
             loadEagerRelations: false,
             relations: {
                 userCreate: {
-                    userBase: true,
+                    userBase: {
+                        userAvatar: true,
+                    },
+                    eRole: true,
                 },
                 userUpdate: {
-                    userBase: true,
+                    userBase: {
+                        userAvatar: true,
+                    },
+                    eRole: true,
                 },
             },
         });
@@ -185,6 +210,7 @@ export class ShiftService {
 
     async save(employeeId: string, body: CreateShiftDto) {
         const { workingHourId } = body;
+
         const { start, bookingStart, bookingEnd, end } = await this.timeCheck(
             workingHourId,
             body.bookingStart,
@@ -192,6 +218,10 @@ export class ShiftService {
             body.start,
             body.end,
         );
+
+        if (start.getTime() < Date.now()) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NEGATIVE_DATE });
+        }
 
         const instance = this.shiftRepository.create({
             workingHourId,

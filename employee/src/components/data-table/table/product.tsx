@@ -9,7 +9,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { IProduct } from "@/interface/api/product.interface";
-import { setListDeleteEmployeeApi } from "@/lib/redux/actions/employee.action";
+import { setListDeleteProductApi } from "@/lib/redux/actions/product.action";
 import { employeeSelector } from "@/lib/redux/selector";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
 import {
@@ -74,7 +74,7 @@ export default function ProductDataTable({
 
     useEffect(() => {
         dispatch(
-            setListDeleteEmployeeApi(
+            setListDeleteProductApi(
                 Object.keys(rowSelection).map((id: string) => {
                     return id;
                 })

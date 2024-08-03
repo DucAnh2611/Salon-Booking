@@ -60,7 +60,6 @@ export default function RoleDataTable({
     });
 
     useEffect(() => {
-        console.log(sorting);
         const sort = sorting[0];
         if (!sort) {
             return;

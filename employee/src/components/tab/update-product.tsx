@@ -102,10 +102,6 @@ export default function UpdateProductTab({
         SetSubmit(true);
     };
 
-    const testSubmit = () => {
-        console.log(form.getValues("types"));
-    };
-
     useMemo(() => {
         mapDataForForm(detail, form);
     }, [detail]);
@@ -145,7 +141,6 @@ export default function UpdateProductTab({
                                 type="submit"
                                 className="gap-1"
                                 disabled={submit}
-                                onClick={testSubmit}
                             >
                                 {submit && (
                                     <LoaderCircleIcon

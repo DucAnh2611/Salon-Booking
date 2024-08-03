@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, In, Repository } from 'typeorm';
+import { Equal, In, MoreThan, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { combineDateAndTime, isTime1Greater } from '../../shared/utils/parse-time.utils';
 import { CreateWorkingHourDto } from './dto/working-hour-create.dto';
 import { DeleteWorkingHourDto } from './dto/working-hour-delete.dto';
-import { GetWorkingHourRangeDto } from './dto/working-hour-get.dto';
+import { GetWorkingHourRangeDto, OffWorkingQueryDto } from './dto/working-hour-get.dto';
 import { UpdateWorkingHourDto } from './dto/working-hour-update.dto';
 import { WorkingHourEntity } from './entity/working-hour.entity';
 
@@ -34,8 +34,7 @@ export class WorkingHourService {
             throw new BadRequest({ message: DataErrorCodeEnum.INVALID_TIME_RANGE });
         }
 
-        const currDate = new Date().getDate();
-        if (date.getUTCDate() - currDate < 0) {
+        if (combineDateAndTime(date, start).getTime() - Date.now() < 0) {
             throw new BadRequest({ message: DataErrorCodeEnum.NEGATIVE_DATE });
         }
 
@@ -76,10 +75,16 @@ export class WorkingHourService {
             loadEagerRelations: false,
             relations: {
                 userCreate: {
-                    userBase: true,
+                    userBase: {
+                        userAvatar: true,
+                    },
+                    eRole: true,
                 },
                 userUpdate: {
-                    userBase: true,
+                    userBase: {
+                        userAvatar: true,
+                    },
+                    eRole: true,
                 },
                 shifts: true,
             },
@@ -110,6 +115,7 @@ export class WorkingHourService {
                         userUpdate: {
                             userBase: true,
                         },
+                        shifts: true,
                     },
                 }),
             ),
@@ -150,6 +156,10 @@ export class WorkingHourService {
         return this.workingHourRepository.save(listInstance);
     }
 
+    isStart(date: Date) {
+        return date.getTime() <= Date.now();
+    }
+
     async update(employeeId: string, body: UpdateWorkingHourDto) {
         const { id, start, end } = body;
 
@@ -164,6 +174,12 @@ export class WorkingHourService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_WORKING_HOUR });
         }
 
+        const isStart = this.isStart(new Date(exist.start));
+
+        if (isStart) {
+            throw new BadRequest({ message: DataErrorCodeEnum.WORKING_HOUR_START });
+        }
+
         const instance = this.workingHourRepository.create({
             ...exist,
             start: startCombine,
@@ -174,13 +190,33 @@ export class WorkingHourService {
         return this.workingHourRepository.save(instance);
     }
 
-    async toggleOffDay(employeeId: string, workingHourId: string) {
-        const exist = await this.isExist(workingHourId);
-        if (!exist) {
-            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_WORKING_HOUR });
+    async toggleOffDay(employeeId: string, query: OffWorkingQueryDto) {
+        const { date } = query;
+        const exist = await this.workingHourRepository.findOne({
+            where: {
+                date: Equal(date),
+            },
+            loadEagerRelations: false,
+        });
+
+        const isStart = this.isStart(new Date(exist.start));
+
+        if (isStart) {
+            throw new BadRequest({ message: DataErrorCodeEnum.WORKING_HOUR_START });
         }
 
-        return this.workingHourRepository.save({ id: workingHourId, isOff: !exist.isOff, updatedBy: employeeId });
+        if (!exist) {
+            await this.workingHourRepository.save({
+                date: date,
+                isOff: true,
+                createdBy: employeeId,
+                updatedBy: employeeId,
+            });
+            return DataSuccessCodeEnum.OK;
+        }
+
+        await this.workingHourRepository.update(exist.id, { isOff: !exist.isOff, updatedBy: employeeId });
+        return DataSuccessCodeEnum.OK;
     }
 
     async deleteOne(workingHourId: string) {
@@ -189,13 +225,21 @@ export class WorkingHourService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_WORKING_HOUR });
         }
 
+        const isStart = this.isStart(new Date(exist.start));
+        if (isStart) {
+            throw new BadRequest({ message: DataErrorCodeEnum.WORKING_HOUR_START });
+        }
+
         return this.workingHourRepository.delete({ id: workingHourId });
     }
 
     async deleteMany(employeeId: string, body: DeleteWorkingHourDto) {
         const { workingHourIds } = body;
 
-        const deletedWorkingHour = await this.workingHourRepository.softDelete({ id: In(workingHourIds) });
+        const deletedWorkingHour = await this.workingHourRepository.softDelete({
+            id: In(workingHourIds),
+            start: MoreThan(new Date()),
+        });
 
         return DataSuccessCodeEnum.OK;
     }

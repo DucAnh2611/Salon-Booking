@@ -21,11 +21,11 @@ export class UpdateSeviceStepDto {
     description?: string;
 
     @IsOptional()
-    @IsUUID('all')
+    @IsString()
     thumbnailId?: string;
 
     @IsOptional()
-    @IsUUID('all')
+    @IsString()
     thumbnailUrl?: string;
 }
 

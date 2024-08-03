@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { EmployeeService } from '../employee/employee.service';
@@ -89,11 +89,7 @@ export class ServiceEmployeeService {
 
         const deletedList = await this.serviceEmployeeRepository.delete({
             serviceId,
-            employeeId: In(
-                listByServiceId
-                    .filter(item => !employees.find(e => e.employeeId === item.employeeId))
-                    .map(i => i.employeeId),
-            ),
+            employeeId: Not(In(employees.filter(i => !!i.employeeId).map(i => i.employeeId))),
         });
 
         const updated = await Promise.all(employees.map(employee => this.update(employeeId, serviceId, employee)));
@@ -107,13 +103,16 @@ export class ServiceEmployeeService {
         let instance = null;
 
         if (isExist) {
-            instance = this.serviceEmployeeRepository.create({
-                ...isExist,
-                experience,
-                updatedBy: employeeId,
-            });
+            instance = this.serviceEmployeeRepository.update(
+                { serviceId, employeeId: sEmployeeId },
+                {
+                    ...isExist,
+                    experience,
+                    updatedBy: employeeId,
+                },
+            );
         } else {
-            instance = this.serviceEmployeeRepository.create({
+            instance = await this.serviceEmployeeRepository.save({
                 serviceId,
                 employeeId: sEmployeeId,
                 experience,
@@ -122,6 +121,6 @@ export class ServiceEmployeeService {
             });
         }
 
-        return this.serviceEmployeeRepository.save(instance);
+        return instance;
     }
 }

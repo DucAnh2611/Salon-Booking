@@ -35,11 +35,17 @@ export class ServiceBaseService {
             loadEagerRelations: false,
             relations: {
                 userUpdate: {
-                    userBase: true,
+                    userBase: {
+                        userAvatar: true,
+                    },
+                    eRole: true,
                 },
                 category: true,
                 userCreate: {
-                    userBase: true,
+                    userBase: {
+                        userAvatar: true,
+                    },
+                    eRole: true,
                 },
             },
         });
@@ -60,7 +66,7 @@ export class ServiceBaseService {
         const { key, limit, orderBy, page } = query;
 
         const order = orderBy ? ParseOrderString(orderBy) : { createdAt: SortByEnum.ASC };
-        const list = await this.seriviceBaseRepository.find({
+        const [list, count] = await this.seriviceBaseRepository.findAndCount({
             where: {
                 name: Like(`%${key}%`),
             },
@@ -83,7 +89,7 @@ export class ServiceBaseService {
             take: limit,
         });
 
-        return list;
+        return { list, count, page, limit };
     }
 
     async find(query: FindServiceAdminDto) {
