@@ -50,7 +50,10 @@ export default function CreateProductScreen() {
                 thumbnailUrls: [],
             },
             details: [],
-            types: [],
+            types: {
+                selectAttribute: {},
+                types: [],
+            },
         },
         resolver: zodResolver(createProductSchema),
     });

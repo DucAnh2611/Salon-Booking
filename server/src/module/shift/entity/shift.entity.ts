@@ -1,6 +1,7 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
+import { OrderServiceItemEntity } from '../../order-service-item/entity/order-service-item.entity';
 import { ShiftEmployeeEntity } from '../../shift-employee/entity/shift-employee.entity';
 import { WorkingHourEntity } from '../../working-hour/entity/working-hour.entity';
 
@@ -24,6 +25,12 @@ export class ShiftEntity extends ModifyEntity {
 
     @OneToMany(() => ShiftEmployeeEntity, (shiftEmployeeEntity: ShiftEmployeeEntity) => shiftEmployeeEntity.shift)
     shiftEmployee: ShiftEmployeeEntity[];
+
+    @OneToMany(
+        () => OrderServiceItemEntity,
+        (orderServiceItemEntity: OrderServiceItemEntity) => orderServiceItemEntity.shift,
+    )
+    orderServiceItem: OrderServiceItemEntity[];
 
     @ManyToOne(() => WorkingHourEntity, (workingHourEntity: WorkingHourEntity) => workingHourEntity.shifts)
     @JoinColumn({ name: 'workingHourId' })

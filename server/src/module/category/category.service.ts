@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Like, Repository } from 'typeorm';
+import { IsNull, Like, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
@@ -9,7 +9,7 @@ import { ParseOrderString } from '../../shared/utils/parse-dynamic-queyry.utils'
 import { MediaEntity } from '../media/entity/media.entity';
 import { MediaTypesEnum } from '../media/enum/media-types.enum';
 import { CreateCategoryDto } from './dto/category-create.dto';
-import { FindCategoryAdminDto, FindCategoryDto } from './dto/category-get.dto';
+import { FindCategoryAdminDto } from './dto/category-get.dto';
 import { UpdateCategoryDto } from './dto/category-update.dto';
 import { CategoryEntity } from './entity/category.entity';
 
@@ -19,6 +19,35 @@ export class CategoryService {
         @InjectRepository(CategoryEntity) private readonly categoryRepository: Repository<CategoryEntity>,
         @InjectRepository(MediaEntity) private readonly mediaRepository: Repository<MediaEntity>,
     ) {}
+
+    async buildCategoryTree(parents: CategoryEntity[]) {
+        if (!parents.length) {
+            return [];
+        }
+
+        const list = await Promise.all(
+            parents.map(async parent => {
+                const childList = await this.categoryRepository.find({
+                    where: {
+                        parentId: parent.id,
+                    },
+                    loadEagerRelations: false,
+                    relations: {
+                        image: true,
+                    },
+                });
+
+                const childTree = await this.buildCategoryTree(childList);
+
+                return {
+                    ...parent,
+                    childrens: childTree,
+                };
+            }),
+        );
+
+        return list;
+    }
 
     async isNested(id: string, parentId: string) {
         const isNested = await this.categoryRepository.findOne({
@@ -101,20 +130,21 @@ export class CategoryService {
         return { limit, page, items: findCategory, count };
     }
 
-    async find(query: FindCategoryDto) {
-        const { key } = query;
-
+    async tree() {
         const findCategory = await this.categoryRepository.find({
             where: {
-                title: Like(`%${key || ''}%`),
+                parentId: IsNull(),
             },
             loadEagerRelations: false,
             order: {
                 createdAt: SortByEnum.DESC,
             },
+            relations: {
+                image: true,
+            },
         });
 
-        return findCategory;
+        return this.buildCategoryTree(findCategory);
     }
 
     async create(employeeId: string, body: CreateCategoryDto) {

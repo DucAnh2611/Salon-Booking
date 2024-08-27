@@ -29,7 +29,7 @@ export class OrderServiceItemService {
     }
 
     async checkService(item: CreateOrderServiceItemDto) {
-        const { date, employeeId, serviceId } = item;
+        const { shiftId, employeeId, serviceId } = item;
 
         const isValidServiceEmployee = await this.serviceEmployeeService.isExist(serviceId, employeeId);
         if (!isValidServiceEmployee) {
@@ -46,12 +46,12 @@ export class OrderServiceItemService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_EMPLOYEE });
         }
 
-        const shift = await this.shiftService.getShiftOverlappingBookingDate(date);
+        const shift = await this.shiftService.isExist(shiftId);
         if (!shift) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_SHIFT });
         }
-        const serviceDuration = new Date(date);
-        serviceDuration.setMinutes(date.getMinutes() + service.duration);
+        const serviceDuration = new Date(shift.bookingStart);
+        serviceDuration.setMinutes(shift.bookingStart.getMinutes() + service.duration);
 
         const isServiceWithinShift = shift.bookingEnd.getTime() <= serviceDuration.getTime();
         if (!isServiceWithinShift) {
@@ -101,14 +101,15 @@ export class OrderServiceItemService {
 
         const savedOrderService = await this.orderServiceItemRepository.save(
             body.map(item => {
-                const { date, employeeId, serviceId } = item;
+                const { shiftId, employeeId, serviceId, bookingTime } = item;
                 const [serviceSnapshot, employeeSnapShot] = snapshotList.find(
                     ([service, employee]) => service.id === serviceId && employee.id === employeeId,
                 );
 
                 return this.orderServiceItemRepository.create({
                     orderId,
-                    bookingDate: date,
+                    shiftId,
+                    bookingTime,
                     serviceSnapshot,
                     employeeSnapShot,
                     employeeId,

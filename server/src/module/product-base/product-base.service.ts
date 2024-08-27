@@ -82,6 +82,8 @@ export class ProductBaseService {
                 types: true,
             },
             order: { ...order },
+            skip: (page - 1) * limit,
+            take: limit,
         });
 
         const mapMedia = await Promise.all(
@@ -99,6 +101,32 @@ export class ProductBaseService {
             limit,
             page,
         };
+    }
+
+    featured() {
+        return this.productBaseRepository.find({
+            where: {},
+            loadEagerRelations: false,
+            take: 10,
+            skip: 0,
+            order: { createdAt: SortByEnum.DESC },
+            relations: {
+                types: true,
+                productMedia: {
+                    media: true,
+                },
+            },
+        });
+    }
+
+    async inStock(id: string) {
+        const product = await this.isValid(id);
+
+        if (!product) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PRODUCT });
+        }
+
+        return product.quantity;
     }
 
     async find(query: FindProductBaseDto) {
@@ -251,6 +279,13 @@ export class ProductBaseService {
             throw new BadRequest({ message: DataErrorCodeEnum.MISSING_THUMBNAIL });
         }
 
+        if (props.sku) {
+            const [base, type] = await this.findBySku(props.sku);
+            if (base || type) {
+                throw new BadRequest({ message: DataErrorCodeEnum.SAME_SKU });
+            }
+        }
+
         const productInstance = this.productBaseRepository.create({
             ...props,
             createdBy: employeeId,
@@ -279,6 +314,7 @@ export class ProductBaseService {
             price: productBase.price || isExist.price,
             quantity: productBase.quantity || isExist.quantity,
             updatedBy: employeeId,
+            updatedAt: new Date(),
         });
 
         if (categoryId) {

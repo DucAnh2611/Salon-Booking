@@ -21,10 +21,22 @@ export class OrderTransactionEntity extends BaseEntity {
     paidAmount: number;
 
     @Column('varchar')
+    accountBankBin: string;
+
+    @Column('varchar')
     accountNumber: string;
 
     @Column('varchar')
     accountName: string;
+
+    @Column('varchar', { nullable: true })
+    buyerAccountBankBin: string;
+
+    @Column('varchar', { nullable: true })
+    buyerAccountNumber: string;
+
+    @Column('varchar', { nullable: true })
+    buyerAccountName: string;
 
     @Column('text')
     description: string;

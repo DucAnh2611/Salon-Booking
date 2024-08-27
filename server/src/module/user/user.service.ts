@@ -10,6 +10,30 @@ import { UserEntity } from './entity/user.entity';
 export class UserService {
     constructor(@InjectRepository(UserEntity) private readonly userRepository: Repository<UserEntity>) {}
 
+    getClient(userId: string) {
+        return this.userRepository.findOne({
+            where: { id: userId },
+            loadEagerRelations: false,
+            relations: {
+                client: true,
+                userAvatar: true,
+            },
+        });
+    }
+
+    getStaff(userId: string) {
+        return this.userRepository.findOne({
+            where: { id: userId },
+            loadEagerRelations: false,
+            relations: {
+                employee: {
+                    eRole: true,
+                },
+                userAvatar: true,
+            },
+        });
+    }
+
     async create(user: CreateUserDto) {
         const newUser = this.userRepository.create(user);
         const createdUser = await this.userRepository.save(newUser);

@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
+import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
+import { BadRequest } from '../../shared/exception/error.exception';
 import { FindProductBaseAdminDto, FindProductBaseDto } from '../product-base/dto/product-base-get.dto';
 import { ProductBaseService } from '../product-base/product-base.service';
 import { ProductDetailService } from '../product-detail/product-detail.service';
 import { ProductTypesService } from '../product-types/product-types.service';
 import { CreateProductDto } from './dto/product-create.dto';
+import { GetProductInStockQueryDto } from './dto/product-get.dto';
 import { UpdateProductDto } from './dto/product-update.dto';
 
 @Injectable()
@@ -13,7 +16,6 @@ export class ProductService {
         private readonly productDetailService: ProductDetailService,
         private readonly productTypesService: ProductTypesService,
     ) {}
-
     async detail(id: string) {
         const productBaseDetail = await this.productBaseService.detail(id);
 
@@ -34,6 +36,20 @@ export class ProductService {
         return productList;
     }
 
+    featured() {
+        return this.productBaseService.featured();
+    }
+
+    inStock(query: GetProductInStockQueryDto) {
+        const { productId, typeId } = query;
+
+        if (typeId) {
+            return this.productTypesService.inStock(typeId);
+        }
+
+        return this.productBaseService.inStock(productId);
+    }
+
     async find(query: FindProductBaseDto) {
         const productList = await this.productBaseService.find(query);
 
@@ -42,10 +58,28 @@ export class ProductService {
 
     async create(userId: string, employeeId: string, body: CreateProductDto) {
         const { base, details, types } = body;
+
+        let sameSku = false;
+        types.types.reduce(
+            (acc: Record<string, number>, curr) => {
+                if (curr.sku) {
+                    if (acc[curr.sku]) {
+                        acc[curr.sku] = acc[curr.sku] + 1;
+                        sameSku = true;
+                    } else acc[curr.sku] = 1;
+                }
+                return acc;
+            },
+            base.sku ? { [base.sku]: 1 } : {},
+        );
+        if (sameSku) {
+            throw new BadRequest({ message: DataErrorCodeEnum.SAME_SKU });
+        }
+
         const savedProduct = await this.productBaseService.save(userId, employeeId, base);
 
         const [savedTypes, savedDetails] = await Promise.all([
-            this.productTypesService.saveList(userId, employeeId, { productId: savedProduct.id, productTypes: types }),
+            this.productTypesService.saveList(userId, employeeId, { productId: savedProduct.id, ...types }),
             this.productDetailService.saveMany({ details, productId: savedProduct.id }),
         ]);
 
@@ -59,10 +93,27 @@ export class ProductService {
     async update(userId: string, employeeId: string, body: UpdateProductDto) {
         const { base, details, types, productId } = body;
 
+        let sameSku = false;
+        types.types.reduce(
+            (acc: Record<string, number>, curr) => {
+                if (curr.sku) {
+                    if (acc[curr.sku]) {
+                        acc[curr.sku] = acc[curr.sku] + 1;
+                        sameSku = true;
+                    } else acc[curr.sku] = 1;
+                }
+                return acc;
+            },
+            base.sku ? { [base.sku]: 1 } : {},
+        );
+        if (sameSku) {
+            throw new BadRequest({ message: DataErrorCodeEnum.SAME_SKU });
+        }
+
         const savedProduct = await this.productBaseService.update(userId, employeeId, productId, base);
 
         const [savedTypes, savedDetails] = await Promise.all([
-            this.productTypesService.updateList(userId, employeeId, { productId, productTypes: types }),
+            this.productTypesService.updateList(userId, employeeId, { productId, ...types }),
             this.productDetailService.updateList({ details, productId }),
         ]);
 

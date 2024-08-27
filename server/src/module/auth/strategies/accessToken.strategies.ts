@@ -11,11 +11,11 @@ import { Forbidden } from '../../../shared/exception/error.exception';
 import { ExtractStrategy } from '../../../shared/utils/extract-strategy.utils';
 
 @Injectable()
-export class AccessTokenStrategy extends PassportStrategy(Strategy, JWT_CONSTANT.access.strategyName) {
+export class AccessTokenStrategy extends PassportStrategy(Strategy, JWT_CONSTANT.access.strategyNameManager) {
     constructor() {
         super({
             jwtFromRequest: ExtractJwt.fromExtractors([
-                ExtractStrategy.extractFromCookies(cookieConfig.accesstoken.name),
+                ExtractStrategy.extractFromCookies(cookieConfig.accesstoken.manager),
                 ExtractJwt.fromAuthHeaderAsBearerToken(),
             ]),
             secretOrKey: jwtConfig.access.secret,
@@ -24,7 +24,30 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, JWT_CONSTANT
     }
 
     validate(req: AppRequest, payload: AccessTokenPayload) {
-        const accessToken: string = ExtractStrategy.extractFromCookies(cookieConfig.accesstoken.name)(req);
+        const accessToken: string = ExtractStrategy.extractFromCookies(cookieConfig.accesstoken.manager)(req);
+
+        req.accessPayload = { ...payload };
+
+        if (!accessToken) throw new Forbidden({ requestCode: RequestErrorCodeEnum.FORBIDDEN });
+        return { ...payload, accessToken };
+    }
+}
+
+@Injectable()
+export class AccessTokenClientStrategy extends PassportStrategy(Strategy, JWT_CONSTANT.access.strategyNameClient) {
+    constructor() {
+        super({
+            jwtFromRequest: ExtractJwt.fromExtractors([
+                ExtractStrategy.extractFromCookies(cookieConfig.accesstoken.client),
+                ExtractJwt.fromAuthHeaderAsBearerToken(),
+            ]),
+            secretOrKey: jwtConfig.access.secret,
+            passReqToCallback: true,
+        });
+    }
+
+    validate(req: AppRequest, payload: AccessTokenPayload) {
+        const accessToken: string = ExtractStrategy.extractFromCookies(cookieConfig.accesstoken.client)(req);
 
         req.accessPayload = { ...payload };
 

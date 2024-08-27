@@ -1,8 +1,8 @@
+import { IAttribute } from "@/interface/api/attribute.interface";
 import {
-    IAttribute,
-    IAttributeProduct,
-    IAttributeProductValue,
-} from "@/interface/api/attribute.interface";
+    IAttributeValue,
+    IAttributeValueUpdate,
+} from "@/interface/api/product.interface";
 import { generateUUID } from "@/utils/uuid.utils";
 import { Label } from "@radix-ui/react-dropdown-menu";
 import { ChangeEvent, useState } from "react";
@@ -12,8 +12,8 @@ import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 
 interface ISelectAttributeProduct {
-    onSelect: (attrId: IAttributeProduct) => void;
-    selected: IAttributeProduct;
+    onSelect: (attrId: IAttributeValue) => void;
+    selected: IAttributeValue;
 }
 
 export default function SelectAttributeProduct({
@@ -22,54 +22,91 @@ export default function SelectAttributeProduct({
 }: ISelectAttributeProduct) {
     const [error, SetError] = useState<string>();
     const [newAttrValue, SetNewAttrValue] = useState<{
-        type: keyof IAttributeProduct;
-        value: IAttributeProductValue;
+        type: keyof IAttributeValue;
+        value: IAttributeValueUpdate;
     } | null>();
 
     const resetAttributeProduct = () => {
-        onSelect({
-            first: {
-                attribute: null,
-                values: [],
-            },
-            second: {
-                attribute: null,
-                values: [],
-            },
-        });
+        onSelect({});
         SetNewAttrValue(null);
         SetError("");
     };
 
     const clearAttrSecond = () => {
-        if (selected.second.attribute) {
-            onSelect({
-                ...selected,
-                second: {
-                    attribute: null,
-                    values: [],
-                },
-            });
+        if (selected.sec && selected.sec.attribute) {
+            if (selected.first && selected.first.attribute) {
+                onSelect({
+                    first: selected.first,
+                });
+            } else {
+                onSelect({});
+            }
         }
     };
 
     const onSelectAttribute =
-        (type: keyof IAttributeProduct) => (attribute: IAttribute | null) => {
-            onSelect({
+        (type: keyof IAttributeValue) => (attribute: IAttribute | null) => {
+            let newSelect = {
                 ...selected,
                 [type]: {
-                    attribute,
-                    values: [],
+                    attribute: attribute,
+                    value: [],
                 },
-            });
+            };
+            if (type === "sec" && !newSelect.first) {
+                SetError("Phải nhập phân loại 1");
+                onSelect(selected);
+                return;
+            }
+
+            if (!attribute) {
+                if (type === "first") {
+                    newSelect = {};
+                } else {
+                    newSelect = {
+                        first: newSelect.first,
+                    };
+                }
+                onSelect(newSelect);
+                return;
+            }
+
+            if (
+                type === "sec" &&
+                newSelect.first &&
+                newSelect.first.attribute &&
+                attribute &&
+                attribute.id === newSelect.first.attribute.id
+            ) {
+                newSelect = { ...selected };
+                SetError("Phải nhập khác phân loại 1");
+                onSelect(newSelect);
+                return;
+            }
+
+            if (
+                type === "first" &&
+                newSelect.sec &&
+                newSelect.sec.attribute &&
+                attribute &&
+                attribute.id === newSelect.sec.attribute.id
+            ) {
+                newSelect = { ...selected };
+                SetError("Phải nhập khác phân loại 2");
+                onSelect(newSelect);
+                return;
+            }
+
+            onSelect(newSelect);
             SetError("");
+            return;
         };
 
-    const clickAddValue = (type: keyof IAttributeProduct) => () => {
+    const clickAddValue = (type: keyof IAttributeValue) => () => {
         SetNewAttrValue({
             type,
             value: {
-                id: generateUUID(),
+                tempId: generateUUID(),
                 value: "",
             },
         });
@@ -95,46 +132,51 @@ export default function SelectAttributeProduct({
         if (
             newAttrValue &&
             newAttrValue.value.value &&
-            !selected[newAttrValue.type].values.some(
-                (v) => v.value === newAttrValue.value.value
-            )
+            selected[newAttrValue.type]
         ) {
             const newSelectedAttr = {
                 ...selected,
                 [newAttrValue.type]: {
                     ...selected[newAttrValue.type],
-                    values: [
-                        ...selected[newAttrValue.type].values,
+                    value: [
+                        ...(selected[newAttrValue.type]?.value || []),
                         newAttrValue.value,
                     ],
                 },
             };
             if (
+                newSelectedAttr.first &&
+                newSelectedAttr.sec &&
                 newSelectedAttr.first.attribute &&
-                newSelectedAttr.second.attribute &&
+                newSelectedAttr.sec.attribute &&
                 newSelectedAttr.first.attribute.id ===
-                    newSelectedAttr.second.attribute.id
+                    newSelectedAttr.sec.attribute.id
             ) {
                 SetError("Các kiểu phải khác nhau");
+                onSelect(selected);
             } else {
                 onSelect(newSelectedAttr);
                 SetError("");
+                SetNewAttrValue(null);
             }
-            SetNewAttrValue(null);
         }
     };
 
     const deleteValue =
-        (type: keyof IAttributeProduct) => (value: IAttributeProductValue) => {
-            onSelect({
-                ...selected,
-                [type]: {
-                    ...selected[type],
-                    values: selected[type].values.filter(
-                        (item) => item.id !== value.id
-                    ),
-                },
-            });
+        (type: keyof IAttributeValue) => (value: IAttributeValueUpdate) => {
+            if (selected[type]) {
+                onSelect({
+                    ...selected,
+                    [type]: {
+                        ...selected[type],
+                        value: selected[type]?.value.filter((item) =>
+                            item.id
+                                ? item.id !== value.id
+                                : item.tempId !== value.tempId
+                        ),
+                    },
+                });
+            }
         };
 
     return (
@@ -148,9 +190,9 @@ export default function SelectAttributeProduct({
                             </Label>
                             <PopoverSelectAttributeProduct
                                 onSelect={onSelectAttribute("first")}
-                                selected={selected.first.attribute}
+                                selected={selected.first?.attribute || null}
                             />
-                            {selected.first.attribute && (
+                            {selected.first?.attribute && (
                                 <Button
                                     type="button"
                                     variant="outline"
@@ -161,13 +203,21 @@ export default function SelectAttributeProduct({
                                 </Button>
                             )}
                         </div>
-                        {selected.first.attribute && (
+                        {selected.first?.attribute && (
                             <div className="grid grid-cols-2 gap-3 mt-2">
-                                {selected.first.values.map((value) => (
-                                    <InputProductAttributeValue
-                                        value={value}
-                                        onDelete={deleteValue("first")}
-                                    />
+                                {selected.first.value.map((value) => (
+                                    <div
+                                        key={
+                                            value.tempId
+                                                ? value.tempId
+                                                : value.id
+                                        }
+                                    >
+                                        <InputProductAttributeValue
+                                            value={value}
+                                            onDelete={deleteValue("first")}
+                                        />
+                                    </div>
                                 ))}
                                 {newAttrValue ? (
                                     newAttrValue?.type === "first" && (
@@ -213,10 +263,10 @@ export default function SelectAttributeProduct({
                                 Phân loại 2
                             </Label>
                             <PopoverSelectAttributeProduct
-                                onSelect={onSelectAttribute("second")}
-                                selected={selected.second.attribute}
+                                onSelect={onSelectAttribute("sec")}
+                                selected={selected.sec?.attribute || null}
                             />
-                            {selected.second.attribute && (
+                            {selected.sec?.attribute && (
                                 <Button
                                     type="button"
                                     variant="outline"
@@ -228,16 +278,24 @@ export default function SelectAttributeProduct({
                             )}
                         </div>
 
-                        {selected.second.attribute && (
+                        {selected.sec?.attribute && (
                             <div className="grid grid-cols-2 gap-3 mt-2">
-                                {selected.second.values.map((value) => (
-                                    <InputProductAttributeValue
-                                        value={value}
-                                        onDelete={deleteValue("second")}
-                                    />
+                                {selected.sec.value.map((value) => (
+                                    <div
+                                        key={
+                                            value.tempId
+                                                ? value.tempId
+                                                : value.id
+                                        }
+                                    >
+                                        <InputProductAttributeValue
+                                            value={value}
+                                            onDelete={deleteValue("sec")}
+                                        />
+                                    </div>
                                 ))}
                                 {newAttrValue ? (
-                                    newAttrValue?.type === "second" && (
+                                    newAttrValue?.type === "sec" && (
                                         <div className="flex gap-1">
                                             <Input
                                                 placeholder="Mẫu mã"
@@ -265,7 +323,7 @@ export default function SelectAttributeProduct({
                                         <Button
                                             type="button"
                                             variant="outline"
-                                            onClick={clickAddValue("second")}
+                                            onClick={clickAddValue("sec")}
                                         >
                                             Thêm mẫu mã
                                         </Button>

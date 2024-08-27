@@ -11,11 +11,11 @@ import { Forbidden } from '../../../shared/exception/error.exception';
 import { ExtractStrategy } from '../../../shared/utils/extract-strategy.utils';
 
 @Injectable()
-export class RefreshTokenStrategy extends PassportStrategy(Strategy, JWT_CONSTANT.refresh.strategyName) {
+export class RefreshTokenStrategy extends PassportStrategy(Strategy, JWT_CONSTANT.refresh.strategyNameManager) {
     constructor() {
         super({
             jwtFromRequest: ExtractJwt.fromExtractors([
-                ExtractStrategy.extractFromCookies(cookieConfig.refreshtoken.name),
+                ExtractStrategy.extractFromCookies(cookieConfig.refreshtoken.manager),
             ]),
             secretOrKey: jwtConfig.refresh.secret,
             passReqToCallback: true,
@@ -23,7 +23,29 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, JWT_CONSTAN
     }
 
     validate(req: AppRequest, payload: RefreshTokenPayload) {
-        const refreshToken: string = ExtractStrategy.extractFromCookies(cookieConfig.refreshtoken.name)(req);
+        const refreshToken: string = ExtractStrategy.extractFromCookies(cookieConfig.refreshtoken.manager)(req);
+
+        req.refreshPayload = { ...payload };
+
+        if (!refreshToken) throw new Forbidden({ requestCode: RequestErrorCodeEnum.FORBIDDEN });
+        return { ...payload, refreshToken };
+    }
+}
+
+@Injectable()
+export class RefreshTokenClientStrategy extends PassportStrategy(Strategy, JWT_CONSTANT.refresh.strategyNameClient) {
+    constructor() {
+        super({
+            jwtFromRequest: ExtractJwt.fromExtractors([
+                ExtractStrategy.extractFromCookies(cookieConfig.refreshtoken.client),
+            ]),
+            secretOrKey: jwtConfig.refresh.secret,
+            passReqToCallback: true,
+        });
+    }
+
+    validate(req: AppRequest, payload: RefreshTokenPayload) {
+        const refreshToken: string = ExtractStrategy.extractFromCookies(cookieConfig.refreshtoken.client)(req);
 
         req.refreshPayload = { ...payload };
 

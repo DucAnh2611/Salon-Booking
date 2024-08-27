@@ -11,7 +11,11 @@ export class CreateOrderServiceItemDto {
     serviceId: string;
 
     @IsNotEmpty()
+    @IsUUID('all')
+    shiftId: string;
+
+    @IsNotEmpty()
     @Transform(({ value }) => new Date(value))
     @IsDate()
-    date: Date;
+    bookingTime: Date;
 }

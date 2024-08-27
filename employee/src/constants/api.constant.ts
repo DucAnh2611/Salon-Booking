@@ -41,7 +41,7 @@ export const API_URLS = {
         LOGOUT: () => ({
             method: "GET",
             headers: HEADERS.DEFAULT_HEADER,
-            endPoint: "auth/logout",
+            endPoint: "auth/logout-emp",
             withCredentials: true,
         }),
     },

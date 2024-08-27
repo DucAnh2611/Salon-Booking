@@ -1,14 +1,15 @@
 import { Type } from 'class-transformer';
 import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID, ValidateNested } from 'class-validator';
+import { CreateProductTypeBodyDto } from '../../product/dto/product-create.dto';
 
-export class CreateTypesDto {
-    @IsNotEmpty()
+class CreateTypesAttributeValueDto {
+    @IsOptional()
     @IsUUID('all')
-    attrId: string;
+    attrValueTempId?: string;
 
-    @IsNotEmpty()
-    @IsString()
-    value: string;
+    @IsOptional()
+    @IsUUID('all')
+    attrValueId?: string;
 
     @IsNotEmpty()
     @Type(() => Number)
@@ -16,6 +17,13 @@ export class CreateTypesDto {
     @IsPositive()
     @IsInt()
     level: number;
+}
+
+export class CreateTypesDto {
+    @IsNotEmpty()
+    @ValidateNested()
+    @Type(() => CreateTypesAttributeValueDto)
+    value: CreateTypesAttributeValueDto;
 
     @IsOptional()
     @IsUUID('all')
@@ -25,8 +33,7 @@ export class CreateTypesDto {
     @IsString()
     thumbnailUrl?: string;
 }
-
-export class ProductTypesDto {
+export class CreateProductTypesDto {
     @IsNotEmpty()
     @Type(() => Number)
     @IsNumber()
@@ -51,13 +58,8 @@ export class ProductTypesDto {
     types: CreateTypesDto[];
 }
 
-export class CreateProductTypesDto {
+export class CreateProductTypesBodyDto extends CreateProductTypeBodyDto {
     @IsNotEmpty()
     @IsString()
     productId: string;
-
-    @IsNotEmpty()
-    @ValidateNested({ each: true })
-    @Type(() => ProductTypesDto)
-    productTypes: ProductTypesDto[];
 }

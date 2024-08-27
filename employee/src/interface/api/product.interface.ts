@@ -18,7 +18,6 @@ export interface IProduct {
     userUpdate: IEmployeeModify;
     productMedia: IProductMedia[];
 }
-
 export interface IProductInfo {
     base: IProductBaseInfo;
     details: IProductDetailUpdate[];
@@ -53,15 +52,12 @@ export interface IProductTypeUpdate {
     productTypesId?: string;
     price: number;
     quantity: number;
-    sku: string;
+    sku?: string;
     types: IProductTypeAttributeUpdate[];
 }
 
 export interface IProductTypeAttributeUpdate {
-    attrId: string;
-    value: string;
-    attrName: string;
-    level: number;
+    value: IProductTypeAttributeValueUpdate;
 }
 
 export interface IProductBaseUpdate {
@@ -76,11 +72,16 @@ export interface IProductBaseUpdate {
     thumbnailUrls?: IMediaProductTempUrlCreate[];
 }
 
+export interface IProductTypesUpdate {
+    selectAttribute: IAttributeValue;
+    types: IProductTypeUpdate[];
+}
+
 export interface IProductUpdate {
     productId: string;
     base: IProductBaseUpdate;
     details: IProductDetailUpdateForm[];
-    types: IProductTypeUpdate[];
+    types: IProductTypesUpdate;
 }
 
 export interface IProductTypeInfo {
@@ -91,12 +92,18 @@ export interface IProductTypeInfo {
     productTypesAttribute: IProductTypeAttributeInfo[];
 }
 
+export interface IProductAttributeValueInfo {
+    id: string;
+    value: string;
+    attribute: IAttribute;
+    attributeId: string;
+}
+
 export interface IProductTypeAttributeInfo {
     productTypesId: string;
-    attributeId: string;
-    value: string;
+    value: IProductAttributeValueInfo;
+    attributeValueId: string;
     level: number;
-    attribute: IAttribute;
 }
 
 export interface IProductBaseCreate {
@@ -110,9 +117,46 @@ export interface IProductBaseCreate {
     categoryId: string;
 }
 
+export interface IProductTypeAttributeValueCreate {
+    attrValueTempId: string;
+    level: number;
+}
+
+export interface IAttributeValueUpdate {
+    id?: string;
+    value: string;
+    tempId?: string;
+}
+
+export interface ILevelSelectAttributeValueCreate {
+    attribute: IAttribute | null;
+    value: IAttributeValueUpdate[];
+}
+
+export interface IAttributeValue {
+    first?: ILevelSelectAttributeValueCreate;
+    sec?: ILevelSelectAttributeValueCreate;
+}
+
+export interface IProductTypeAttributeCreate {
+    value: IProductTypeAttributeValueCreate;
+}
+
+export interface IProductTypeCreate {
+    quantity: number;
+    price: number;
+    sku?: string;
+    types: IProductTypeAttributeCreate[];
+}
+
+export interface IProductTypesCreate {
+    selectAttribute: IAttributeValue;
+    types: IProductTypeCreate[];
+}
+
 export interface IProductCreate {
     base: IProductBaseCreate;
-    types: IProductType[];
+    types: IProductTypesCreate;
     details: IProductDetailCreate[];
 }
 
@@ -134,6 +178,13 @@ export interface IProductDetailUpdate {
     value: string;
     id: string;
 }
+
+export interface IProductTypeAttributeValueUpdate {
+    attrValueTempId?: string;
+    attrValueId?: string;
+    level: number;
+}
+
 export interface IProductDetailUpdateForm {
     key: string;
     value: string;
@@ -153,8 +204,5 @@ export interface IProductType {
 }
 
 export interface IProductTypeAttribute {
-    attrId: string;
-    attrName: string;
-    value: string;
-    level: number;
+    value: IProductTypeAttributeValueUpdate;
 }

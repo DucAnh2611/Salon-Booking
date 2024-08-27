@@ -13,7 +13,7 @@ import {
 } from "@/interface/api/attribute.interface";
 import { apiCall } from "@/utils/apiCall";
 import { CheckIcon } from "lucide-react";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useMemo, useRef, useState } from "react";
 
 interface IPopoverSelectAttributeProduct {
     onSelect: (attrId: IAttribute | null) => void;
@@ -78,7 +78,6 @@ export default function PopoverSelectAttributeProduct({
 
     const handleSelect = (item: IAttribute | null) => () => {
         onSelect(item);
-        SetSelect(item);
     };
 
     const handleChangeNew = (e: ChangeEvent<HTMLInputElement>) => {
@@ -108,7 +107,6 @@ export default function PopoverSelectAttributeProduct({
         if (response) {
             reset();
 
-            SetItems([]);
             SetNewAttribute("");
             SetOpenCreate(!openCreate);
         }
@@ -118,7 +116,7 @@ export default function PopoverSelectAttributeProduct({
         fetchList();
     }, [key, page, limit]);
 
-    useEffect(() => {
+    useMemo(() => {
         SetSelect(selected);
     }, [selected]);
 
@@ -170,6 +168,7 @@ export default function PopoverSelectAttributeProduct({
                             <Input
                                 placeholder="Nhập tên kiểu"
                                 onChange={handleChangeKey}
+                                defaultValue={""}
                             />
                             {select && (
                                 <Button

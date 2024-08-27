@@ -17,6 +17,7 @@ export const ROUTER = {
 
     SERVICE: 'service',
     PRODUCT: 'product',
+    PRODUCT_CLIENT: 'product/client',
 
     VOUCHER: 'voucher',
 
@@ -35,9 +36,7 @@ export const ROUTER = {
     CART_SERVICE: 'cart-service',
 
     ORDER: 'order',
-    ORDER_PRODUCT: 'order-product',
-    ORDER_SERVICE: 'order-service',
-    ORDER_TRANSACTION: 'order-transaction',
+    ORDER_STAFF: 'order/staff',
 };
 
 export const AUTH_ROUTE = {
@@ -46,8 +45,11 @@ export const AUTH_ROUTE = {
     CLIENT_LOGIN: 'client-login',
     CLIENT_REGISTER: 'client-register',
 
-    REFRESH_TOKEN: 'refresh-token',
-    LOG_OUT: 'logout',
+    EMP_REFRESH_TOKEN: 'emp-refresh-token',
+    CLIENT_REFRESH_TOKEN: 'client-refresh-token',
+
+    CLIENT_LOG_OUT: 'logout-client',
+    EMP_LOG_OUT: 'logout-emp',
 };
 
 export const ROLE_ROUTE = {
@@ -119,6 +121,9 @@ export const ATTRIBUTE_VALUE_ROUTE = {
     DELETE_ONE: ':id',
     DELETE_MANY: '',
 };
+export const CLIENT_CATEGORY_ROUTE = {
+    TREE: '/client/tree',
+};
 
 export const CATEGORY_ROUTE = {
     FIND: 'find',
@@ -134,6 +139,12 @@ export const VOUCHER_ROUTE = {
     UPDATE: ':id',
     DELETE_ONE: ':id',
     DELETE_MANY: '',
+};
+
+export const CLIENT_PRODUCT_ROUTE = {
+    FIND: '',
+    FEATURED: 'feature',
+    IN_STOCK: 'in-stock',
 };
 
 export const PRODUCT_ROUTE = {
@@ -219,8 +230,36 @@ export const CART_SERVICE_ROUTE = {
     DELETE: ':id',
 };
 
-export const ORDER_ROUTE = {
+export const CLIENT_ORDER_ROUTE = {
     TRACKING: 'tracking/:id',
-    PRODUCT: 'order-product',
-    SERVICE: 'order-service',
+    SEARCH: 'search',
+
+    PLACE_PRODUCT: 'place/product',
+    PLACE_SERVICE: 'place/service',
+
+    CANCEL: 'cancel',
+
+    FAIL_TRANSACTION: ':id/transaction/fail',
+    SUCCESS_TRANSACTION: ':id/transaction/success',
+
+    GET_PAYMENT_LINK_PRODUCT: ':id/product/payment',
+    GET_PAYMENT_LINK_SERVICE: ':id/service/payment',
+
+    UPDATE_STATE: ':id/state',
+
+    CREATE_REQUEST_REFUND: 'refund/',
+    RECEIVE_REFUND: 'refund/:id/received',
+};
+
+export const ORDER_ROUTE = {
+    LIST: 'list',
+    DETAIL: ':id',
+
+    CANCEL: 'cancel',
+
+    UPDATE_STATE: ':id/state',
+
+    CREATE_REQUEST_REFUND: 'refund/',
+    DECLINE_REFUND: 'refund/decline',
+    APROVED_REFUND: 'refund/approved',
 };

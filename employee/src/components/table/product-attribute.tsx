@@ -1,15 +1,15 @@
 import {
-    IAttribute,
-    IAttributeProduct,
-} from "@/interface/api/attribute.interface";
-import { IProductType } from "@/interface/api/product.interface";
+    IAttributeValue,
+    IAttributeValueUpdate,
+    IProductType,
+} from "@/interface/api/product.interface";
 import { ChangeEvent, useEffect, useState } from "react";
 import RequireField from "../require-field";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 
 interface ITableProductAttribute {
-    attributeProduct: IAttributeProduct;
+    attributeProduct: IAttributeValue;
     productTypes: IProductType[];
     onChange: (type: IProductType[]) => void;
 }
@@ -19,110 +19,52 @@ export default function TableProductAttribute({
     productTypes,
     onChange,
 }: ITableProductAttribute) {
-    const [types, SetTypes] = useState<IProductType[]>(productTypes);
+    const [types, SetTypes] = useState<IProductType[]>([]);
 
     const handleOnChange =
         (
             attrIds: Array<{
-                attr: IAttribute | null;
-                value: string;
+                value: IAttributeValueUpdate;
                 level: number;
             }>,
             key: keyof Omit<IProductType, "types">
         ) =>
         (e: ChangeEvent<HTMLInputElement>) => {
             const index = types.findIndex((t) => {
-                if (attrIds.length === 1) {
-                    if (
-                        t.types[0].level === attrIds[0].level &&
-                        attrIds[0].attr &&
-                        t.types[0].attrId === attrIds[0].attr.id &&
-                        t.types[0].value === attrIds[0].value &&
-                        t.types.length === 1
-                    ) {
-                        return true;
-                    }
-                } else if (attrIds.length === 2) {
-                    if (
-                        t.types[0].level === attrIds[0].level &&
-                        attrIds[0].attr &&
-                        t.types[0].attrId === attrIds[0].attr.id &&
-                        t.types[0].value === attrIds[0].value &&
-                        t.types[1].level === attrIds[1].level &&
-                        attrIds[1].attr &&
-                        t.types[1].attrId === attrIds[1].attr.id &&
-                        t.types[1].value === attrIds[1].value &&
-                        t.types.length === 2
-                    ) {
-                        return true;
-                    }
-                }
+                const map = new Map();
+                attrIds.forEach((attrId) => {
+                    map.set(
+                        attrId.value.tempId,
+                        (map.has(attrId.value.tempId)
+                            ? map.get(attrId.value.tempId)
+                            : 0) + 1
+                    );
+                });
 
-                return false;
+                t.types.forEach((t) => {
+                    map.set(
+                        t.value.attrValueTempId,
+                        (map.has(t.value.attrValueTempId)
+                            ? map.get(t.value.attrValueTempId)
+                            : 0) + 1
+                    );
+                });
+                return Array.from(map).length === attrIds.length;
             });
-
             if (index !== -1) {
                 const listType = types;
                 const typeOfValue = typeof listType[index][key];
                 let value: any = e.target.value;
-
                 if (typeOfValue === "number") {
                     value = parseInt(value) || 0;
-                    if (key === "price") {
-                        value = value * 1000;
-                    }
                 }
                 listType[index] = {
                     ...types[index],
                     [key]: value,
                 };
-
                 onChange(listType);
             }
         };
-
-    const getValue = (
-        attrIds: Array<{
-            attr: IAttribute | null;
-            value: string;
-            level: number;
-        }>,
-        key: keyof Omit<IProductType, "types">
-    ) => {
-        const index = types.findIndex((t) => {
-            if (attrIds.length === 1) {
-                if (
-                    t.types[0].level === attrIds[0].level &&
-                    attrIds[0].attr &&
-                    t.types[0].attrId === attrIds[0].attr.id &&
-                    t.types[0].value === attrIds[0].value &&
-                    t.types.length === 1
-                ) {
-                    return true;
-                }
-            } else if (attrIds.length === 2) {
-                if (
-                    t.types[0].level === attrIds[0].level &&
-                    attrIds[0].attr &&
-                    t.types[0].attrId === attrIds[0].attr.id &&
-                    t.types[0].value === attrIds[0].value &&
-                    t.types[1].level === attrIds[1].level &&
-                    attrIds[1].attr &&
-                    t.types[1].attrId === attrIds[1].attr.id &&
-                    t.types[1].value === attrIds[1].value &&
-                    t.types.length === 2
-                ) {
-                    return true;
-                }
-            }
-
-            return false;
-        });
-        if (index !== -1) {
-            return productTypes[index][key];
-        }
-        return "";
-    };
 
     useEffect(() => {
         SetTypes(productTypes);
@@ -130,7 +72,7 @@ export default function TableProductAttribute({
 
     return (
         <div className="w-full mt-5">
-            {attributeProduct.first.attribute && (
+            {attributeProduct.first && attributeProduct.first.attribute && (
                 <div>
                     <div className="flex">
                         <div className="border w-[150px] p-2 flex items-center justify-center">
@@ -138,10 +80,10 @@ export default function TableProductAttribute({
                                 {attributeProduct.first.attribute.name}
                             </Label>
                         </div>
-                        {attributeProduct.second.attribute && (
+                        {attributeProduct.sec?.attribute && (
                             <div className="border w-[150px] p-2 flex items-center justify-center">
                                 <Label className="text-center w-full">
-                                    {attributeProduct.second.attribute.name}
+                                    {attributeProduct.sec?.attribute.name}
                                 </Label>
                             </div>
                         )}
@@ -162,15 +104,16 @@ export default function TableProductAttribute({
                         </div>
                     </div>
                     <div>
-                        {attributeProduct.first.values.map((fValue) => (
+                        {attributeProduct.first.value.map((fValue) => (
                             <div className="flex w-full">
                                 <div className="border flex items-center justify-center w-[150px] box-border px-3">
                                     <p className="text-sm">{fValue.value}</p>
                                 </div>
 
-                                {attributeProduct.second.attribute ? (
+                                {attributeProduct.sec &&
+                                attributeProduct.sec.attribute ? (
                                     <div className="flex-1">
-                                        {attributeProduct.second.values.map(
+                                        {attributeProduct.sec.value.map(
                                             (sValue) => (
                                                 <div className="flex">
                                                     <div className="border flex items-center justify-center w-[150px] box-border px-3">
@@ -185,42 +128,14 @@ export default function TableProductAttribute({
                                                                 className="rounded-none w-full"
                                                                 placeholder="Giá"
                                                                 type="number"
-                                                                defaultValue={parseInt(
-                                                                    getValue(
-                                                                        [
-                                                                            {
-                                                                                attr: attributeProduct
-                                                                                    .first
-                                                                                    .attribute,
-                                                                                value: fValue.value,
-                                                                                level: 1,
-                                                                            },
-                                                                            {
-                                                                                attr: attributeProduct
-                                                                                    .second
-                                                                                    .attribute,
-                                                                                value: sValue.value,
-                                                                                level: 2,
-                                                                            },
-                                                                        ],
-                                                                        "price"
-                                                                    )?.toString() ||
-                                                                        ""
-                                                                )}
                                                                 onChange={handleOnChange(
                                                                     [
                                                                         {
-                                                                            attr: attributeProduct
-                                                                                .first
-                                                                                .attribute,
-                                                                            value: fValue.value,
+                                                                            value: fValue,
                                                                             level: 1,
                                                                         },
                                                                         {
-                                                                            attr: attributeProduct
-                                                                                .second
-                                                                                .attribute,
-                                                                            value: sValue.value,
+                                                                            value: sValue,
                                                                             level: 2,
                                                                         },
                                                                     ],
@@ -235,42 +150,14 @@ export default function TableProductAttribute({
                                                             className="rounded-none"
                                                             placeholder="Số lượng"
                                                             type="number"
-                                                            defaultValue={parseInt(
-                                                                getValue(
-                                                                    [
-                                                                        {
-                                                                            attr: attributeProduct
-                                                                                .first
-                                                                                .attribute,
-                                                                            value: fValue.value,
-                                                                            level: 1,
-                                                                        },
-                                                                        {
-                                                                            attr: attributeProduct
-                                                                                .second
-                                                                                .attribute,
-                                                                            value: sValue.value,
-                                                                            level: 2,
-                                                                        },
-                                                                    ],
-                                                                    "quantity"
-                                                                )?.toString() ||
-                                                                    ""
-                                                            )}
                                                             onChange={handleOnChange(
                                                                 [
                                                                     {
-                                                                        attr: attributeProduct
-                                                                            .first
-                                                                            .attribute,
-                                                                        value: fValue.value,
+                                                                        value: fValue,
                                                                         level: 1,
                                                                     },
                                                                     {
-                                                                        attr: attributeProduct
-                                                                            .second
-                                                                            .attribute,
-                                                                        value: sValue.value,
+                                                                        value: sValue,
                                                                         level: 2,
                                                                     },
                                                                 ],
@@ -280,39 +167,14 @@ export default function TableProductAttribute({
                                                         <Input
                                                             className="rounded-none"
                                                             placeholder="SKU"
-                                                            defaultValue={getValue(
-                                                                [
-                                                                    {
-                                                                        attr: attributeProduct
-                                                                            .first
-                                                                            .attribute,
-                                                                        value: fValue.value,
-                                                                        level: 1,
-                                                                    },
-                                                                    {
-                                                                        attr: attributeProduct
-                                                                            .second
-                                                                            .attribute,
-                                                                        value: sValue.value,
-                                                                        level: 2,
-                                                                    },
-                                                                ],
-                                                                "sku"
-                                                            )}
                                                             onChange={handleOnChange(
                                                                 [
                                                                     {
-                                                                        attr: attributeProduct
-                                                                            .first
-                                                                            .attribute,
-                                                                        value: fValue.value,
+                                                                        value: fValue,
                                                                         level: 1,
                                                                     },
                                                                     {
-                                                                        attr: attributeProduct
-                                                                            .second
-                                                                            .attribute,
-                                                                        value: sValue.value,
+                                                                        value: sValue,
                                                                         level: 2,
                                                                     },
                                                                 ],
@@ -334,10 +196,7 @@ export default function TableProductAttribute({
                                                 onChange={handleOnChange(
                                                     [
                                                         {
-                                                            attr: attributeProduct
-                                                                .first
-                                                                .attribute,
-                                                            value: fValue.value,
+                                                            value: fValue,
                                                             level: 1,
                                                         },
                                                     ],
@@ -355,9 +214,7 @@ export default function TableProductAttribute({
                                             onChange={handleOnChange(
                                                 [
                                                     {
-                                                        attr: attributeProduct
-                                                            .first.attribute,
-                                                        value: fValue.value,
+                                                        value: fValue,
                                                         level: 1,
                                                     },
                                                 ],
@@ -370,9 +227,7 @@ export default function TableProductAttribute({
                                             onChange={handleOnChange(
                                                 [
                                                     {
-                                                        attr: attributeProduct
-                                                            .first.attribute,
-                                                        value: fValue.value,
+                                                        value: fValue,
                                                         level: 1,
                                                     },
                                                 ],

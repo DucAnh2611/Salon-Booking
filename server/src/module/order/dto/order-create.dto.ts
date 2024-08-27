@@ -1,5 +1,15 @@
 import { Type } from 'class-transformer';
-import { IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
+import {
+    IsEnum,
+    IsInt,
+    IsNotEmpty,
+    IsNumber,
+    IsOptional,
+    IsPositive,
+    IsString,
+    IsUUID,
+    ValidateNested,
+} from 'class-validator';
 import { OrderPaymentTypeEnum } from '../../../common/enum/order.enum';
 import { CreateOrderProductItemDto } from '../../order-product-item/dto/order-product-item-create.module';
 import { CreateOrderServiceItemDto } from '../../order-service-item/dto/order-service-item-create.dto';
@@ -52,4 +62,32 @@ export class CreateOrderServiceDto {
     @ValidateNested({ each: true })
     @Type(() => CreateOrderServiceItemDto)
     services: CreateOrderServiceItemDto[];
+}
+
+export class CreateOrderRefundRequestAdminDto {
+    @IsNotEmpty()
+    @IsUUID('all')
+    orderId: string;
+
+    @IsNotEmpty()
+    @IsNumber()
+    @IsPositive()
+    @IsInt()
+    amount: number;
+
+    @IsNotEmpty()
+    @IsString()
+    accountName: string;
+
+    @IsNotEmpty()
+    @IsString()
+    accountNumber: string;
+
+    @IsNotEmpty()
+    @IsString()
+    accountBankBin: string;
+
+    @IsOptional()
+    @IsString()
+    note?: string;
 }

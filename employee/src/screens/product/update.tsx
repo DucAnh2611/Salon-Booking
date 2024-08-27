@@ -32,7 +32,10 @@ export default function UpdateProductScreen() {
                 thumbnailUrls: [],
             },
             details: [],
-            types: [],
+            types: {
+                selectAttribute: {},
+                types: [],
+            },
         },
         resolver: zodResolver(updateProductSchema),
     });

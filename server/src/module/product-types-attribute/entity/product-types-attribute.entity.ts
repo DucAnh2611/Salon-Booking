@@ -1,26 +1,23 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, Entity, Index, JoinColumn, ManyToOne } from 'typeorm';
 import { BaseEntity } from '../../../common/enitty/base.entity';
-import { AttributeEntity } from '../../attribute/entity/attribute.entity';
+import { AttributeValueEntity } from '../../attribute-value/entity/attribute-value.entity';
 import { MediaEntity } from '../../media/entity/media.entity';
 import { ProductTypesEntity } from '../../product-types/entity/product-types.entity';
 
-@Index(['productTypesId', 'attributeId'])
+@Index(['productTypesId', 'attributeValueId'])
 @Entity('product_types_attribute')
 export class ProductTypesAttributeEntity extends BaseEntity {
-    @PrimaryColumn('uuid')
+    @Column('uuid')
     productTypesId: string;
-
-    @PrimaryColumn('uuid')
-    attributeId: string;
-
-    @Column('varchar', { length: 20 })
-    value: string;
 
     @Column('integer', { default: 1 })
     level: number;
 
     @Column('uuid', { nullable: true })
     thumbnailId: string;
+
+    @Column('uuid')
+    attributeValueId: string;
 
     @ManyToOne(() => MediaEntity, (mediaEntity: MediaEntity) => mediaEntity.productTypesAttributeThumbnail, {
         eager: true,
@@ -35,7 +32,10 @@ export class ProductTypesAttributeEntity extends BaseEntity {
     @JoinColumn({ name: 'productTypesId' })
     productTypes: ProductTypesEntity;
 
-    @ManyToOne(() => AttributeEntity, (attributeEntity: AttributeEntity) => attributeEntity.productTypesAttribute)
-    @JoinColumn({ name: 'attributeId' })
-    attribute: AttributeEntity;
+    @ManyToOne(
+        () => AttributeValueEntity,
+        (attributeValueEntity: AttributeValueEntity) => attributeValueEntity.productTypeAttribute,
+    )
+    @JoinColumn({ name: 'attributeValueId' })
+    value: AttributeValueEntity;
 }

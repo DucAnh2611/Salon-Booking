@@ -3,13 +3,12 @@ const nextConfig = {
     images: {
         remotePatterns: [
             {
-                protocol: "http",
-                hostname: "localhost",
-                port: "*",
+                protocol: "https",
+                hostname: "t4.ftcdn.net",
+                port: "",
                 pathname: "/**",
             },
         ],
     },
 };
-
 export default nextConfig;

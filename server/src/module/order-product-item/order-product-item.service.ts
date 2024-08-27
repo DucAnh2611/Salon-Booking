@@ -87,7 +87,7 @@ export class OrderProductItemService {
                 loadEagerRelations: false,
                 relations: {
                     productTypesAttribute: {
-                        attribute: true,
+                        value: true,
                     },
                 },
             }),

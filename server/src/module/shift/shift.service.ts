@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { combineDateAndTime, isTime1Greater } from '../../shared/utils/parse-time.utils';
 import { ShiftEmployeeEntity } from '../shift-employee/entity/shift-employee.entity';
@@ -170,6 +171,25 @@ export class ShiftService {
                         userAvatar: true,
                     },
                     eRole: true,
+                },
+                orderServiceItem: {
+                    employee: {
+                        userBase: {
+                            userAvatar: true,
+                        },
+                    },
+                    service: {
+                        category: true,
+                        media: {
+                            media: true,
+                        },
+                    },
+                    order: true,
+                },
+            },
+            order: {
+                orderServiceItem: {
+                    bookingTime: SortByEnum.ASC,
                 },
             },
         });
