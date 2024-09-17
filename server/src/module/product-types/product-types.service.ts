@@ -7,7 +7,7 @@ import { BadRequest } from '../../shared/exception/error.exception';
 import { AttributeValueService } from '../attribute-value/attribute-value.service';
 import { CreateAttributeValueDto } from '../attribute-value/dto/attribute-value-create.dto';
 import { SavedAttributeValueWithTemp } from '../attribute-value/interface/attribute-value-create.interface';
-import { ProductBaseService } from '../product-base/product-base.service';
+import { ProductBaseService } from '../product-base/service/product-base.service';
 import { CreateProductTypesAttributeDto } from '../product-types-attribute/dto/product-types-attribute-create.dto';
 import { UpdateProductTypesAttributeDto } from '../product-types-attribute/dto/product-types-attribute-update.dto';
 import { ProductTypesAttributeService } from '../product-types-attribute/product-types-attribute.service';
@@ -60,7 +60,7 @@ export class ProductTypesService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PRODUCT_TYPE });
         }
 
-        return type.quantity;
+        return { quantity: type.quantity };
     }
 
     listByProductId(id: string) {

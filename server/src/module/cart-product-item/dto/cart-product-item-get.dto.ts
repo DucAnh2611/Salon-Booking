@@ -5,3 +5,12 @@ export class GetCartProductParamDto {
     @IsUUID('all')
     id: string;
 }
+export class GetCartProductAmountDto {
+    @IsNotEmpty()
+    @IsUUID('all', { each: true })
+    itemIds: string[];
+
+    @IsNotEmpty()
+    @IsUUID('all')
+    cartProductId: string;
+}

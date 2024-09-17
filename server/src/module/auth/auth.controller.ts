@@ -132,20 +132,14 @@ export class AuthController {
     }
 
     @Get(AUTH_ROUTE.CLIENT_LOG_OUT)
-    @UseGuards(RefreshTokenClientGuard)
     async clientLogout(@Req() req: AppRequest, @Res({ passthrough: true }) res: Response) {
-        const { accessPayload } = req;
-
         res.clearCookie(cookieConfig.refreshtoken.client);
         res.clearCookie(cookieConfig.accesstoken.client);
         return DataSuccessCodeEnum.OK;
     }
 
     @Get(AUTH_ROUTE.EMP_LOG_OUT)
-    @UseGuards(RefreshTokenGuard)
     async managerLogout(@Req() req: AppRequest, @Res({ passthrough: true }) res: Response) {
-        const { accessPayload } = req;
-
         res.clearCookie(cookieConfig.refreshtoken.manager);
         res.clearCookie(cookieConfig.accesstoken.manager);
         return DataSuccessCodeEnum.OK;

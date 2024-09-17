@@ -8,11 +8,13 @@ import { LOGGER_CONSTANT_NAME } from '../../common/constant/logger.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { OrderPaymentStatusEnum } from '../../common/enum/order.enum';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { appConfig } from '../../config/app.config';
 import { payosConfig } from '../../config/payos.config';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { addMinutesToCurrentTime, dateToUnixTimestamp } from '../../shared/utils/date.utils';
 import { AppLoggerService } from '../logger/logger.service';
+import { OrderRefundRequestService } from '../oder-refund-request/order-refund-request.service';
 import { OrderBaseService } from '../order-base/order-base.service';
 import { OrderProductItemService } from '../order-product-item/order-product-item.service';
 import { OrderServiceItemService } from '../order-service-item/order-service-item.service';
@@ -31,14 +33,20 @@ export class OrderTransactionService {
         private readonly orderProductItemService: OrderProductItemService,
         private readonly orderServiceItemService: OrderServiceItemService,
         private readonly orderBaseService: OrderBaseService,
+        private readonly orderRefundRequestService: OrderRefundRequestService,
     ) {
         this.payos = new PayOS(payosConfig.CLIENT_ID, payosConfig.API_KEY, payosConfig.CHECKSUM_KEY);
     }
 
-    isTransactionPending(orderId: string, orderCode: string) {
+    async countTransactionByOrder(orderId: string) {
+        return this.orderTransactionRepository.count({ where: { orderId } });
+    }
+
+    async isTransactionPending(orderId: string) {
+        const order = await this.orderBaseService.get(orderId);
         return this.orderTransactionRepository.findOne({
             where: {
-                orderCode: orderCode,
+                orderCode: order.code,
                 orderId: orderId,
                 status: OrderPaymentStatusEnum.PENDING,
                 expireAt: MoreThan(new Date()),
@@ -48,7 +56,7 @@ export class OrderTransactionService {
     }
 
     async createTransactionOrderProduct(orderId: string, orderCode: number, amount: number) {
-        const isExistPending = await this.isTransactionPending(orderId, orderCode.toString());
+        const isExistPending = await this.isTransactionPending(orderId);
         if (isExistPending) {
             return isExistPending;
         }
@@ -59,12 +67,16 @@ export class OrderTransactionService {
 
         const expireAt = addMinutesToCurrentTime(TRACSACTION_EXPIRE_MINUTES);
 
+        const transCount = await this.countTransactionByOrder(orderId);
+
+        const orderCodePayment = parseInt(`${orderCode}${transCount}`);
+
         const payment = await this.payos.createPaymentLink({
-            orderCode,
+            orderCode: orderCodePayment,
             amount,
             description: `TT DON HANG ${orderCode}`,
-            cancelUrl: `${appConfig.clientUrl}/orders/transactions/${orderId}/ok`,
-            returnUrl: `${appConfig.clientUrl}/orders/transactions/${orderId}/cancel`,
+            cancelUrl: `${appConfig.clientUrl}/transaction/${orderId}/cancel`,
+            returnUrl: `${appConfig.clientUrl}/transaction/${orderId}/ok`,
             items: items.map(item => {
                 let price = item.productSnapshot.price;
                 let name = item.productSnapshot.name;
@@ -73,7 +85,7 @@ export class OrderTransactionService {
                     price = item.productTypeSnapshot.price;
                     const addedName = `${name} - [${item.productTypeSnapshot.productTypesAttribute
                         .map(curr => curr.value.value)
-                        .join('|')}]`;
+                        .join(' | ')}]`;
                     name = addedName;
                 }
                 return {
@@ -108,7 +120,7 @@ export class OrderTransactionService {
     }
 
     async createTransactionOrderService(orderId: string, orderCode: number, amount: number) {
-        const isExistPending = await this.isTransactionPending(orderId, orderCode.toString());
+        const isExistPending = await this.isTransactionPending(orderId);
         if (isExistPending) {
             return isExistPending;
         }
@@ -123,8 +135,8 @@ export class OrderTransactionService {
             orderCode,
             amount,
             description: `TT DON HANG ${orderCode}`,
-            cancelUrl: `${appConfig.clientUrl}/orders/transactions/${orderId}/ok`,
-            returnUrl: `${appConfig.clientUrl}/orders/transactions/${orderId}/cancel`,
+            cancelUrl: `${appConfig.url}/${appConfig.prefix}/order/transaction/${orderId}/ok`,
+            returnUrl: `${appConfig.url}/${appConfig.prefix}/order/transaction/${orderId}/cancel`,
             items: items.map(item => {
                 const name = item.serviceSnapshot.name;
                 const price = item.serviceSnapshot.price;
@@ -160,13 +172,20 @@ export class OrderTransactionService {
         return saved;
     }
 
-    async cancelTransaction(id: string) {
-        const isExist = await this.orderTransactionRepository.findOne({ where: { id }, loadEagerRelations: false });
+    async cancelTransaction(id: string, paidAmount: number) {
+        const isExist = await this.orderTransactionRepository.findOne({
+            where: { id, status: OrderPaymentStatusEnum.PENDING },
+            loadEagerRelations: false,
+        });
         if (!isExist) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER_TRANSACTION });
         }
+
         const [updateTransaction, cancelPaymentLink] = await Promise.all([
-            this.orderTransactionRepository.update({ id: id }, { status: OrderPaymentStatusEnum.CANCELLED }),
+            this.orderTransactionRepository.update(
+                { id: id, paidAmount },
+                { status: OrderPaymentStatusEnum.CANCELLED },
+            ),
             this.payos.cancelPaymentLink(isExist.paymentId),
         ]);
 
@@ -179,19 +198,34 @@ export class OrderTransactionService {
     }
 
     getTransactionByOrderAdmin(orderId: string) {
-        return this.orderTransactionRepository.find({ where: { orderId }, loadEagerRelations: false });
+        return this.orderTransactionRepository.find({
+            where: { orderId },
+            order: { createdAt: SortByEnum.DESC },
+            loadEagerRelations: false,
+        });
     }
 
     async getTransactionByOrder(clientId: string, orderId: string) {
         const orderTransaction = await this.orderTransactionRepository.find({
             where: { orderId, order: { clientId } },
+            order: { createdAt: SortByEnum.DESC },
             loadEagerRelations: false,
-            relations: {
-                order: true,
-            },
         });
 
-        return orderTransaction;
+        const mapCanCreateRefund = await Promise.all(
+            orderTransaction.map(async tran => {
+                const canCreateRefund = await this.orderRefundRequestService.canCreateRefund(tran.orderId, tran.id);
+
+                const canCreateRefundFinal = tran.paidAmount > tran.orderAmount ? canCreateRefund : false;
+
+                return {
+                    ...tran,
+                    createRefund: !!canCreateRefundFinal,
+                };
+            }),
+        );
+
+        return mapCanCreateRefund;
     }
 
     getTransactionState(paymentId: string) {
@@ -203,6 +237,7 @@ export class OrderTransactionService {
         const findExpireTransaction = await this.orderTransactionRepository.find({
             where: {
                 expireAt: LessThanOrEqual(new Date()),
+                status: OrderPaymentStatusEnum.PENDING,
             },
             loadEagerRelations: false,
         });

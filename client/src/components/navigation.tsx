@@ -8,11 +8,11 @@ import UserAuth from "./userAuth";
 
 export default function Navigation() {
     return (
-        <header className="w-full h-fit box-border border-b">
+        <nav className="w-full h-fit box-border border-b z-10 bg-background">
             <div className="container px-4 py-3 flex items-center justify-between ">
                 <div className="flex gap-10 items-center">
                     <Link
-                        href="#"
+                        href="/"
                         className="flex items-center justify-center gap-2"
                         prefetch={false}
                     >
@@ -63,6 +63,6 @@ export default function Navigation() {
                     <ModeToggle />
                 </div>
             </div>
-        </header>
+        </nav>
     );
 }

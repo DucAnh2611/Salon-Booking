@@ -11,7 +11,7 @@ import {
     ValidateNested,
 } from 'class-validator';
 import { OrderPaymentTypeEnum } from '../../../common/enum/order.enum';
-import { CreateOrderProductItemDto } from '../../order-product-item/dto/order-product-item-create.module';
+import { CreateOrderProductItemDto } from '../../order-product-item/dto/order-product-item-create.dto';
 import { CreateOrderServiceItemDto } from '../../order-service-item/dto/order-service-item-create.dto';
 
 export class OrderContactDto {
@@ -68,6 +68,10 @@ export class CreateOrderRefundRequestAdminDto {
     @IsNotEmpty()
     @IsUUID('all')
     orderId: string;
+
+    @IsNotEmpty()
+    @IsUUID('all')
+    transactionId: string;
 
     @IsNotEmpty()
     @IsNumber()

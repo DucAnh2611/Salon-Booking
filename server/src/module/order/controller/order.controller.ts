@@ -3,28 +3,73 @@ import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { CLIENT_ORDER_ROUTE, ROUTER } from '../../../common/constant/router.constant';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
-import { AccessTokenGuard } from '../../../shared/guard/accessToken.guard';
+import { AccessTokenClientGuard } from '../../../shared/guard/accessToken.guard';
 import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
 import { CreateOrderRefundRequestDto } from '../../oder-refund-request/dto/order-refund-request-create.dto';
 import { FindOrderClientDto } from '../../order-base/dto/order-base-get.dto';
 import { ReturnUrlTransactionPayOsDto } from '../../order-transaction/dto/order-transaction.get.dto';
 import { CreateOrderProductDto, CreateOrderServiceDto } from '../dto/order-create.dto';
-import { GetOrderParamDto } from '../dto/order-get.dto';
+import { GetOrderParamDto, GetOrderTrackingParamDto } from '../dto/order-get.dto';
 import { ClientCancelOrderStateDto, UpdateOrderStateDto } from '../dto/order-update.dto';
 import { OrderService } from '../order.service';
 
-@UseGuards(AccessTokenGuard, UserTypeGuard)
+@UseGuards(AccessTokenClientGuard, UserTypeGuard)
 @Controller(ROUTER.ORDER)
 export class OrderController {
     constructor(private readonly orderService: OrderService) {}
 
     @Get(CLIENT_ORDER_ROUTE.TRACKING)
     @UserType(ROLE_TITLE.client)
-    tracking(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
+    tracking(@Req() req: AppRequest, @Param() param: GetOrderTrackingParamDto) {
+        const { clientId } = req.accessPayload;
+        const { code } = param;
+
+        return this.orderService.tracking(code, clientId);
+    }
+
+    @Get(CLIENT_ORDER_ROUTE.TRACKING_STATE)
+    @UserType(ROLE_TITLE.client)
+    trackingState(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { clientId } = req.accessPayload;
         const { id: orderId } = param;
 
-        return this.orderService.tracking(orderId, clientId);
+        return this.orderService.trackingDetail(clientId, { type: 'state', orderId });
+    }
+
+    @Get(CLIENT_ORDER_ROUTE.TRACKING_PRODUCT)
+    @UserType(ROLE_TITLE.client)
+    trackingProducts(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
+        const { clientId } = req.accessPayload;
+        const { id: orderId } = param;
+
+        return this.orderService.trackingDetail(clientId, { type: 'product', orderId });
+    }
+
+    @Get(CLIENT_ORDER_ROUTE.TRACKING_SERVICE)
+    @UserType(ROLE_TITLE.client)
+    trackingServices(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
+        const { clientId } = req.accessPayload;
+        const { id: orderId } = param;
+
+        return this.orderService.trackingDetail(clientId, { type: 'service', orderId });
+    }
+
+    @Get(CLIENT_ORDER_ROUTE.TRACKING_REFUND)
+    @UserType(ROLE_TITLE.client)
+    trackingRefunds(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
+        const { clientId } = req.accessPayload;
+        const { id: orderId } = param;
+
+        return this.orderService.trackingDetail(clientId, { type: 'refund', orderId });
+    }
+
+    @Get(CLIENT_ORDER_ROUTE.TRACKING_TRANSACTION)
+    @UserType(ROLE_TITLE.client)
+    trackingTransaction(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
+        const { clientId } = req.accessPayload;
+        const { id: orderId } = param;
+
+        return this.orderService.trackingDetail(clientId, { type: 'transaction', orderId });
     }
 
     @Post(CLIENT_ORDER_ROUTE.SEARCH)
@@ -37,7 +82,7 @@ export class OrderController {
 
     @Post(CLIENT_ORDER_ROUTE.PLACE_PRODUCT)
     @UserType(ROLE_TITLE.client)
-    placeOrderProduct(@Req() req: AppRequest, @Body() body: CreateOrderProductDto) {
+    placeOrderProductSchema(@Req() req: AppRequest, @Body() body: CreateOrderProductDto) {
         const { clientId, userId } = req.accessPayload;
         return this.orderService.createOrderProduct(userId, clientId, body);
     }
@@ -80,7 +125,7 @@ export class OrderController {
         const { clientId, userId } = req.accessPayload;
         const { id: orderId } = param;
 
-        return this.orderService.transactionCancel(userId, clientId, orderId, query);
+        return this.orderService.transactionSuccessfull(userId, clientId, orderId, query);
     }
 
     @Get(CLIENT_ORDER_ROUTE.GET_PAYMENT_LINK_PRODUCT)

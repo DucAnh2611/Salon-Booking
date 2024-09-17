@@ -1,5 +1,6 @@
 "use client";
 
+import { IFailRequest } from "@/interface/response.interface";
 import { ILocalStorage } from "@/interface/str.interface";
 import { loginApi } from "@/lib/actions/auth.action";
 import { localStorageSet } from "@/lib/localStr";
@@ -29,9 +30,10 @@ import {
 
 interface ILoginFormProps {
     onSuccess: () => void;
+    onFail: (error: IFailRequest) => void;
 }
 
-export default function LoginForm({ onSuccess }: ILoginFormProps) {
+export default function LoginForm({ onSuccess, onFail }: ILoginFormProps) {
     const [show, SetShow] = useState<boolean>(false);
 
     const toggleShowPassword = () => {
@@ -39,13 +41,15 @@ export default function LoginForm({ onSuccess }: ILoginFormProps) {
     };
 
     const handleSubmit = async () => {
-        const { response } = await loginApi(form.getValues());
-
+        const { response, error } = await loginApi(form.getValues());
         if (response) {
             localStorageSet<ILocalStorage>({
                 accessToken: response.result.accessToken,
             });
             onSuccess();
+        }
+        if (error) {
+            onFail(error);
         }
     };
 

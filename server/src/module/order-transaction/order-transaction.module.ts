@@ -1,5 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { OrderRefundRequestModule } from '../oder-refund-request/order-refund-request.module';
 import { OrderBaseModule } from '../order-base/order-base.module';
 import { OrderProductItemModule } from '../order-product-item/order-product-item.module';
 import { OrderServiceItemModule } from '../order-service-item/order-service-item.module';
@@ -12,6 +13,7 @@ import { OrderTransactionService } from './order-transaction.service';
         OrderBaseModule,
         OrderProductItemModule,
         OrderServiceItemModule,
+        OrderRefundRequestModule,
     ],
     providers: [OrderTransactionService],
     exports: [OrderTransactionService],

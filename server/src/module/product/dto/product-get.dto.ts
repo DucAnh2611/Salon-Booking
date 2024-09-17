@@ -6,6 +6,6 @@ export class GetProductInStockQueryDto {
     productId: string;
 
     @IsOptional()
-    @IsUUID('all', { each: true })
+    @IsUUID('all')
     typeId?: string;
 }

@@ -28,6 +28,8 @@ export interface IAPIUserClientMe {
     phoneVerified: boolean;
     userId: string;
     userBase: IUserBase;
+    cartProduct: any[];
+    cartService: any[];
 }
 
 export interface IApiLogin {

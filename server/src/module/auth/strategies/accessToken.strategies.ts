@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JWT_CONSTANT } from '../../../common/constant/jwt.constant';
+import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
 import { RequestErrorCodeEnum } from '../../../common/enum/request-error-code.enum';
 import { AccessTokenPayload } from '../../../common/interface/auth.interface';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
@@ -28,7 +29,11 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, JWT_CONSTANT
 
         req.accessPayload = { ...payload };
 
-        if (!accessToken) throw new Forbidden({ requestCode: RequestErrorCodeEnum.FORBIDDEN });
+        if (!accessToken)
+            throw new Forbidden({
+                requestCode: RequestErrorCodeEnum.FORBIDDEN,
+                message: DataErrorCodeEnum.INVALID_ACCESS_TOKEN,
+            });
         return { ...payload, accessToken };
     }
 }
@@ -51,7 +56,11 @@ export class AccessTokenClientStrategy extends PassportStrategy(Strategy, JWT_CO
 
         req.accessPayload = { ...payload };
 
-        if (!accessToken) throw new Forbidden({ requestCode: RequestErrorCodeEnum.FORBIDDEN });
+        if (!accessToken)
+            throw new Forbidden({
+                requestCode: RequestErrorCodeEnum.FORBIDDEN,
+                message: DataErrorCodeEnum.INVALID_ACCESS_TOKEN,
+            });
         return { ...payload, accessToken };
     }
 }

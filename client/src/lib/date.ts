@@ -20,3 +20,14 @@ export const getNumberOfMonthsInYear = (year: number) => {
         return 12;
     }
 };
+export const getTimeDifference = (
+    date1: Date,
+    date2: Date
+): { minutes: number; seconds: number } => {
+    const diffInMs = Math.abs(date2.getTime() - date1.getTime());
+    const totalSeconds = Math.floor(diffInMs / 1000);
+    const minutes = Math.floor(totalSeconds / 60);
+    const seconds = totalSeconds % 60;
+
+    return { minutes, seconds };
+};

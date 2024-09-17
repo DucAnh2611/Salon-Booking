@@ -47,7 +47,6 @@ export const apiCall = async <T>({
     headers,
     params,
     withCredentials = false,
-    log = true,
 }: ApiCallProps) => {
     try {
         const result = await axios.request({
@@ -68,10 +67,20 @@ export const apiCall = async <T>({
     } catch (e) {
         const err = e as AxiosError;
 
-        const error: IFailRequest = (err.response?.data as IFailRequest) || {
+        let error: IFailRequest = (err.response?.data as IFailRequest) || {
             status: 400,
-            code: ERequestErrorCode.RE002,
-            message: EDataErrorCode.DE001,
+            code: "RE002",
+            message: "DE001",
+        };
+
+        error = {
+            ...error,
+            code:
+                getEnumValue(ERequestErrorCode, error.code) ||
+                ERequestErrorCode.RE002,
+            message:
+                getEnumValue(EDataErrorCode, error.message) ||
+                EDataErrorCode.DE001,
         };
 
         return {

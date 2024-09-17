@@ -37,6 +37,9 @@ export const ROUTER = {
 
     ORDER: 'order',
     ORDER_STAFF: 'order/staff',
+
+    PROVINCE: 'province',
+    BANK: 'bank',
 };
 
 export const AUTH_ROUTE = {
@@ -143,8 +146,9 @@ export const VOUCHER_ROUTE = {
 
 export const CLIENT_PRODUCT_ROUTE = {
     FIND: '',
+    DETAIL: 'i/:id',
     FEATURED: 'feature',
-    IN_STOCK: 'in-stock',
+    ON_STOCK: 'on-stock',
 };
 
 export const PRODUCT_ROUTE = {
@@ -219,6 +223,7 @@ export const CART_ROUTE = {
 
 export const CART_PRODUCT_ROUTE = {
     GET: 'me',
+    CART_AMOUNT: 'amount',
     ADD: '',
     UPDATE: '',
     DELETE: ':id',
@@ -231,7 +236,14 @@ export const CART_SERVICE_ROUTE = {
 };
 
 export const CLIENT_ORDER_ROUTE = {
-    TRACKING: 'tracking/:id',
+    TRACKING: 'tracking/:code',
+
+    TRACKING_REFUND: 'tracking/:id/refunds',
+    TRACKING_TRANSACTION: 'tracking/:id/transactions',
+    TRACKING_STATE: 'tracking/:id/states',
+    TRACKING_PRODUCT: 'tracking/:id/products',
+    TRACKING_SERVICE: 'tracking/:id/services',
+
     SEARCH: 'search',
 
     PLACE_PRODUCT: 'place/product',
@@ -262,4 +274,23 @@ export const ORDER_ROUTE = {
     CREATE_REQUEST_REFUND: 'refund/',
     DECLINE_REFUND: 'refund/decline',
     APROVED_REFUND: 'refund/approved',
+};
+
+export const PROVINCE_ROUTE = {
+    LIST_PROVINCE: 'list-province',
+    SEARCH_PROVINCE: 'search-province',
+    GET_PROVINCE: 'get-province/:code',
+
+    LIST_DISTRICT: 'list-district',
+    SEARCH_DISTRICT: 'search-district',
+    GET_DISTRICT: 'get-district/:code',
+
+    LIST_WARD: 'list-ward',
+    SEARCH_WARD: 'search-ward',
+    GET_WARD: 'get-ward/:code',
+};
+
+export const VIETQR_ROUTE = {
+    BANK_LIST: 'banks',
+    QUICK_QR: 'quick-qr',
 };

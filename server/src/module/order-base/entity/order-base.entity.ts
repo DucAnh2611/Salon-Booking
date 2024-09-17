@@ -9,7 +9,7 @@ import {
     UpdateDateColumn,
 } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
-import { OrderPaymentTypeEnum, OrderStatusEnum } from '../../../common/enum/order.enum';
+import { OrderPaymentTypeEnum, OrderStatusEnum, OrderType } from '../../../common/enum/order.enum';
 import { ClientEntity } from '../../client/entity/client.entity';
 import { OrderRefundRequestEntity } from '../../oder-refund-request/entity/order-refund-request.entity';
 import { OrderProductItemEntity } from '../../order-product-item/entity/order-product-item.entity';
@@ -25,7 +25,7 @@ function generateOrderCode() {
 
     const randomPart = Math.floor(10000 + Math.random() * 90000);
 
-    const orderCode = `${timestampPart}${randomPart}`;
+    const orderCode = `${randomPart}${timestampPart}`;
 
     return orderCode;
 }
@@ -53,6 +53,9 @@ export class OrderEntity extends ModifyEntity {
     @Column('integer')
     total: number;
 
+    @Column('integer', { default: 0 })
+    totalPaid: number;
+
     @Column('integer')
     taxRate: number;
 
@@ -65,19 +68,22 @@ export class OrderEntity extends ModifyEntity {
     @Column('boolean', { default: false })
     refund: boolean;
 
-    @Column('integer')
+    @Column('timestamp with time zone')
     orderDate: Date;
 
     @Column('enum', { enum: OrderStatusEnum })
     status: OrderStatusEnum;
 
+    @Column('enum', { enum: OrderType, default: OrderType.PRODUCT })
+    type: OrderType;
+
     @Column('enum', { enum: OrderPaymentTypeEnum })
     paymentType: OrderPaymentTypeEnum;
 
-    @CreateDateColumn({ type: 'time with time zone' })
+    @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: Date;
 
-    @UpdateDateColumn({ type: 'time with time zone' })
+    @UpdateDateColumn({ type: 'timestamp with time zone' })
     updatedAt: Date;
 
     @OneToMany(

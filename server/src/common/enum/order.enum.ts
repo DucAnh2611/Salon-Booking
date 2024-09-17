@@ -5,6 +5,7 @@ export enum OrderPaymentTypeEnum {
 
 export enum OrderStatusEnum {
     CONFIRMED,
+    CALL_CONFIRM,
 
     // Product
     PROCESSING,
@@ -13,7 +14,6 @@ export enum OrderStatusEnum {
     RECEIVED,
 
     // Service
-    CALL_CONFIRM,
     ARRIVED,
     ON_SERVICE,
     PAYING,

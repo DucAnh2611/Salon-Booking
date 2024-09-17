@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { JWT_CONSTANT } from '../../../common/constant/jwt.constant';
+import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
 import { RequestErrorCodeEnum } from '../../../common/enum/request-error-code.enum';
 import { RefreshTokenPayload } from '../../../common/interface/auth.interface';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
@@ -27,7 +28,11 @@ export class RefreshTokenStrategy extends PassportStrategy(Strategy, JWT_CONSTAN
 
         req.refreshPayload = { ...payload };
 
-        if (!refreshToken) throw new Forbidden({ requestCode: RequestErrorCodeEnum.FORBIDDEN });
+        if (!refreshToken)
+            throw new Forbidden({
+                requestCode: RequestErrorCodeEnum.FORBIDDEN,
+                message: DataErrorCodeEnum.INVALID_REFRESH_TOKEN,
+            });
         return { ...payload, refreshToken };
     }
 }
@@ -49,7 +54,11 @@ export class RefreshTokenClientStrategy extends PassportStrategy(Strategy, JWT_C
 
         req.refreshPayload = { ...payload };
 
-        if (!refreshToken) throw new Forbidden({ requestCode: RequestErrorCodeEnum.FORBIDDEN });
+        if (!refreshToken)
+            throw new Forbidden({
+                requestCode: RequestErrorCodeEnum.FORBIDDEN,
+                message: DataErrorCodeEnum.INVALID_REFRESH_TOKEN,
+            });
         return { ...payload, refreshToken };
     }
 }

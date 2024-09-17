@@ -1,4 +1,10 @@
 import { toast } from "@/components/ui/use-toast";
+import { API_URLS } from "@/constants/api.constant";
+import {
+    DATA_ERROR_CODE,
+    REQUEST_ERROR_CODE,
+} from "@/constants/error.constant";
+import { TOKEN } from "@/constants/token.constant";
 import { EDataErrorCode } from "@/enum/data-code-error.enum";
 import { ERequestErrorCode } from "@/enum/request-code-error.enum";
 import {
@@ -24,6 +30,7 @@ type ApiCallProps = {
     headers: Record<string, string>;
     params?: Record<string, unknown>;
     withCredentials?: boolean;
+    tryRefresh?: boolean;
 };
 
 const parseParams = (params: Record<string, unknown>) => {
@@ -72,21 +79,49 @@ export const apiCall = async <T>({
     } catch (e) {
         const err = e as AxiosError;
 
-        const error: IFailRequest = (err.response?.data as IFailRequest) || {
+        const errorApi = (err.response?.data as IFailRequest) || null;
+
+        const error: IFailRequest = errorApi || {
             status: 400,
-            code: ERequestErrorCode.RE002,
-            message: EDataErrorCode.DE001,
+            code: ERequestErrorCode.SERVER_INTERNAL,
+            message: EDataErrorCode.INTERNAL,
         };
 
-        toast({
-            variant: "destructive",
-            title:
-                getEnumValue(ERequestErrorCode, error.code) ||
-                ERequestErrorCode.RE002,
-            description:
-                getEnumValue(EDataErrorCode, error.message) ||
-                EDataErrorCode.DE999,
-        });
+        if (errorApi.code === ERequestErrorCode.FORBIDDEN) {
+            if (errorApi.message === EDataErrorCode.INVALID_ACCESS_TOKEN) {
+                const { response: rfRes } = await refreshToken();
+                if (rfRes) {
+                    const recall: IApiResponse<T> = await apiCall<T>({
+                        endPoint,
+                        method,
+                        payload,
+                        headers,
+                        params,
+                        withCredentials,
+                    });
+                    return recall;
+                }
+            }
+            if (errorApi.message === EDataErrorCode.INVALID_REFRESH_TOKEN) {
+                localStorage.removeItem(TOKEN.LCS);
+
+                toast({
+                    variant: "destructive",
+                    title: "Lỗi xác thực",
+                    description:
+                        "Thông tin xác thực không hợp lệ vui lòng đặng nhập lại.",
+                    duration: 1000,
+                });
+            }
+        } else {
+            toast({
+                variant: "destructive",
+                title: REQUEST_ERROR_CODE[error.code],
+                description:
+                    DATA_ERROR_CODE[error.message] || DATA_ERROR_CODE.DE999,
+                duration: 1000,
+            });
+        }
 
         return {
             response: null,
@@ -94,6 +129,8 @@ export const apiCall = async <T>({
         } as IApiResponse<T>;
     }
 };
-function getEnumValue(enumObject: any, fieldName: string): string | undefined {
-    return enumObject[fieldName];
+
+async function refreshToken() {
+    const api = API_URLS.AUTH.REFRESH_TOKEN();
+    return apiCall({ ...api });
 }

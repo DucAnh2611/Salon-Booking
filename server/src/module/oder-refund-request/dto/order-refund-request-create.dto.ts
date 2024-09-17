@@ -5,6 +5,10 @@ export class CreateOrderRefundRequestDto {
     @IsUUID('all')
     orderId: string;
 
+    @IsOptional()
+    @IsUUID('all')
+    transactionId?: string;
+
     @IsNotEmpty()
     @IsNumber()
     @IsPositive()

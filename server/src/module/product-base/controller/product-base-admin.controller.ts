@@ -11,7 +11,7 @@ import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
 import { CreateProductBaseDto } from '../dto/product-base-create.dto';
 import { GetProductBaseParamDto } from '../dto/product-base-get.dto';
 import { UpdateProductBaseDto } from '../dto/product-base-update.dto';
-import { ProductBaseService } from '../product-base.service';
+import { ProductBaseService } from '../service/product-base.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
 @Controller(ROUTER.PRODUCT_BASE)

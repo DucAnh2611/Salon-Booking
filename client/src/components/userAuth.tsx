@@ -10,7 +10,6 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
-import { HoverCard, HoverCardContent, HoverCardTrigger } from "./ui/hover-card";
 import UserAvatar from "./user-avatar";
 
 export default function UserAuth() {
@@ -49,10 +48,22 @@ export default function UserAuth() {
                 </div>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end">
-                <DropdownMenuItem>Tra cứu đơn hàng</DropdownMenuItem>
-                <HoverCard openDelay={0}>
-                    <HoverCardTrigger className="w-full">
-                        <DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Button
+                        asChild
+                        className="w-full py-1.5 h-fit justify-start font-normal"
+                        variant="ghost"
+                    >
+                        <Link href="/order">Đơn hàng</Link>
+                    </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Button
+                        asChild
+                        className="w-full py-1.5 h-fit justify-start font-normal"
+                        variant="ghost"
+                    >
+                        <Link href="/cart">
                             Giỏ hàng
                             {me.cartProduct.length + me.cartService.length !==
                                 0 && (
@@ -64,33 +75,9 @@ export default function UserAuth() {
                                         me.cartService.length}
                                 </Badge>
                             )}
-                        </DropdownMenuItem>
-                    </HoverCardTrigger>
-                    <HoverCardContent
-                        side="right"
-                        align="center"
-                        className="w-auto p-2"
-                    >
-                        <div className="w-[120px] rounded-sm hover:bg-secondary px-2 py-2 flex justify-start cursor-default relative">
-                            <p className="text-left w-full text-sm">Sản phẩm</p>
-                            <Badge
-                                variant="destructive"
-                                className="absolute top-1/2 right-2 -translate-y-1/2 aspect-square p-0 size-4 flex items-center justify-center text-[10px]"
-                            >
-                                {me.cartProduct.length}
-                            </Badge>
-                        </div>
-                        <div className="w-[120px] rounded-sm hover:bg-secondary px-2 py-2 flex justify-start cursor-default relative">
-                            <p className="text-left w-full text-sm">Dịch vụ</p>
-                            <Badge
-                                variant="destructive"
-                                className="absolute top-1/2 right-2 -translate-y-1/2 aspect-square p-0 size-4 flex items-center justify-center text-[10px]"
-                            >
-                                {me.cartService.length}
-                            </Badge>
-                        </div>
-                    </HoverCardContent>
-                </HoverCard>
+                        </Link>
+                    </Button>
+                </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem asChild>
                     <Button

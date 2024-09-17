@@ -57,11 +57,11 @@ export class CartServiceService {
 
         await this.isOwnCart(clientId, cart.id);
 
-        const total = await this.cartServiceItemService.getTotalAmount(cart.id);
+        const cartAmount = await this.cartServiceItemService.getTotalAmount(cart.id);
         const tax = TAX_RATE;
-        const taxAmount = Math.round(total * (1 + tax));
+        const taxAmount = Math.round(cartAmount * tax);
 
-        return { ...cart, services: cartDetail, tax, taxAmount, total };
+        return { ...cart, services: cartDetail, tax, taxAmount, cartAmount, total: cartAmount + taxAmount };
     }
 
     async add(clientId: string, body: CreateCartServiceItemDto) {

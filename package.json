@@ -1,0 +1,17 @@
+{
+    "name": "salon_booking_project",
+    "version": "0.0.1",
+    "description": "",
+    "author": "",
+    "private": true,
+    "license": "UNLICENSED",
+    "scripts": {
+        "client:run-dev": "cd ./client && npm run dev",
+        "server:run-dev": "cd ./server && npm run start:dev",
+        "employee:run": "cd ./employee && npm start"
+    },
+    "dependencies": {
+        "@nestjs/axios": "^3.0.3",
+        "axios": "^1.7.7"
+    }
+}

@@ -4,7 +4,7 @@ import { In, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
-import { ProductBaseService } from '../product-base/product-base.service';
+import { ProductBaseService } from '../product-base/service/product-base.service';
 import { CreateProductDetailDto, ProductDetailDto } from './dto/product-detail-create.dto';
 import { ProductDetailExistDto, UpdateProductDetailDto } from './dto/product-detail-update.dto';
 import { ProductDetailEntity } from './entity/product-detail.entity';

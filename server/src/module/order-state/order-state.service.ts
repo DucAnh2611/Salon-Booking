@@ -19,6 +19,7 @@ export class OrderStateService {
             where: { orderId },
             loadEagerRelations: false,
             relations: { userCreate: { userAvatar: true } },
+            order: { createdAt: SortByEnum.DESC },
         });
     }
 
@@ -61,7 +62,7 @@ export class OrderStateService {
             },
         });
 
-        if (!states) {
+        if (states) {
             throw new BadRequest({ message: DataErrorCodeEnum.ORDER_STATE_EXIST });
         }
 
@@ -70,6 +71,7 @@ export class OrderStateService {
             description,
             userId,
             state,
+            createdBy: userId,
         });
     }
 }

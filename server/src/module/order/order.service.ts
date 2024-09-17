@@ -25,6 +25,7 @@ import { ReturnUrlTransactionPayOsDto } from '../order-transaction/dto/order-tra
 import { OrderTransactionService } from '../order-transaction/order-transaction.service';
 import { UserService } from '../user/user.service';
 import { CreateOrderProductDto, CreateOrderRefundRequestAdminDto, CreateOrderServiceDto } from './dto/order-create.dto';
+import { TrackingDetailOrderDto } from './dto/order-get.dto';
 import {
     ApprovedRefundRequestDto,
     ClientCancelOrderStateDto,
@@ -49,7 +50,22 @@ export class OrderService {
     ) {}
 
     /** @Order */
-    async tracking(orderId: string, clientId: string) {
+    async tracking(code: string, clientId: string) {
+        const order = await this.orderBaseService.getCode(code, clientId);
+        if (!order) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
+        }
+
+        const isOwn = await this.orderBaseService.isOwn(order.id, clientId);
+        if (!isOwn) {
+            throw new BadRequest({ message: DataErrorCodeEnum.ORDER_FORBIDDEN });
+        }
+
+        return order;
+    }
+
+    async trackingDetail(clientId: string, detailType: TrackingDetailOrderDto) {
+        const { orderId, type } = detailType;
         const order = await this.orderBaseService.get(orderId);
         if (!order) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
@@ -60,25 +76,29 @@ export class OrderService {
             throw new BadRequest({ message: DataErrorCodeEnum.ORDER_FORBIDDEN });
         }
 
-        const returnOrder = {
-            ...order,
-        };
+        let detail = null;
 
-        const [state, refunds, products, services, transactions] = await Promise.all([
-            this.orderStateService.getByOrder(orderId),
-            this.orderRefundRequestService.getByOrder(orderId),
-            this.orderProductItemService.getProductByOrder(orderId),
-            this.orderServiceItemService.getServiceOrder(orderId),
-            this.orderTransactionService.getTransactionByOrder(clientId, orderId),
-        ]);
+        switch (type) {
+            case 'state':
+                detail = await this.orderStateService.getByOrder(orderId);
+                break;
+            case 'refund':
+                detail = await this.orderRefundRequestService.getByOrder(orderId);
+                break;
+            case 'transaction':
+                detail = await this.orderTransactionService.getTransactionByOrder(clientId, orderId);
+                break;
+            case 'product':
+                detail = await this.orderProductItemService.getProductByOrder(orderId);
+                break;
+            case 'service':
+                detail = await this.orderServiceItemService.getServiceOrder(orderId);
+                break;
+            default:
+                return null;
+        }
 
-        returnOrder.orderState = state;
-        returnOrder.refundRequests = refunds;
-        returnOrder.services = services;
-        returnOrder.products = products;
-        returnOrder.transactions = transactions;
-
-        return returnOrder;
+        return detail;
     }
 
     async clientList(clientId: string, body: FindOrderClientDto) {
@@ -103,6 +123,7 @@ export class OrderService {
             ...contact,
             paymentType,
             total: totalAmount,
+            type: OrderType.PRODUCT,
         });
 
         const [_aProduct, _aState, _rmCart] = await Promise.all([
@@ -112,7 +133,10 @@ export class OrderService {
                 orderId: newOrder.id,
                 state: OrderStatusEnum.CONFIRMED,
             }),
-            this.cartProductService.removeCart(clientId),
+            this.cartProductService.removeCartItems(
+                clientId,
+                products.map(productItem => productItem.itemId),
+            ),
         ]);
 
         return newOrder;
@@ -130,6 +154,7 @@ export class OrderService {
             ...contact,
             paymentType,
             total: totalAmount,
+            type: OrderType.SERVICE,
         });
 
         const [_aServices, _aState, _rmCart] = await Promise.all([
@@ -174,6 +199,7 @@ export class OrderService {
                 if (bankBin && accountName && accountNumber) {
                     await this.orderRefundRequestService.initRefundRequest(userId, {
                         orderId,
+                        transactionId: paidOrder.id,
                         amount: paidOrder.paidAmount,
                         accountBankBin: bankBin,
                         accountName: accountName,
@@ -195,9 +221,16 @@ export class OrderService {
                     throw new BadRequest({ message: DataErrorCodeEnum.MISSING_ORDER_REFUND_BANK_INFO });
                 }
             } else {
-                const pendingTransaction = await this.orderTransactionService.isTransactionPending(orderId, order.code);
+                const pendingTransaction = await this.orderTransactionService.isTransactionPending(orderId);
+
+                //logic: get pedning transaction  -> get paid amount (not finish) -> create caneltransaction
+                // if paid amount is not 0 so create refund request to user
                 if (pendingTransaction) {
-                    await this.orderTransactionService.cancelTransaction(pendingTransaction.id);
+                    //TODO - update logic for case: paid x% of bill then cancel
+                    await this.orderTransactionService.cancelTransaction(
+                        pendingTransaction.id,
+                        pendingTransaction.paidAmount,
+                    );
                 }
             }
         }
@@ -240,9 +273,12 @@ export class OrderService {
                     accountNumber: paidOrder.buyerAccountNumber,
                 });
             } else {
-                const pendingTransaction = await this.orderTransactionService.isTransactionPending(orderId, order.code);
+                //logic: get pedning transaction  -> get paid amount (not finish) -> create caneltransaction
+                // if paid amount is not 0 so create refund request to user
+                const pendingTransaction = await this.orderTransactionService.isTransactionPending(orderId);
+                //TODO - update logic for case: paid x% of bill then cancel
                 if (pendingTransaction) {
-                    await this.orderTransactionService.cancelTransaction(pendingTransaction.id);
+                    await this.orderTransactionService.cancelTransaction(pendingTransaction.id, order.totalPaid);
                 }
             }
         }
@@ -264,6 +300,7 @@ export class OrderService {
         if (!order) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
         }
+
         const isOwn = await this.orderBaseService.isOwn(orderId, clientId);
         if (!isOwn) {
             throw new BadRequest({ message: DataErrorCodeEnum.ORDER_FORBIDDEN });
@@ -273,23 +310,23 @@ export class OrderService {
             throw new BadRequest({ message: DataErrorCodeEnum.ORDER_PAYMENT_TYPE_IS_NOT_BANK });
         }
 
-        const orderTransaction = await this.orderTransactionService.getTransactionByOrderAdmin(orderId);
-        const paidOrder = orderTransaction.find(transaction => transaction.status === OrderPaymentStatusEnum.PAID);
-        if (paidOrder) {
+        const pendingTransaction = await this.orderTransactionService.isTransactionPending(orderId);
+        if (pendingTransaction) return pendingTransaction;
+
+        const remainAmount = order.total - order.totalPaid;
+
+        if (!remainAmount) {
             throw new BadRequest({ message: DataErrorCodeEnum.ORDER_PAID });
         }
-
-        const pendingTransaction = await this.orderTransactionService.isTransactionPending(orderId, order.code);
-        if (pendingTransaction) return pendingTransaction;
 
         if (type === 'P') {
             return this.orderTransactionService.createTransactionOrderProduct(
                 order.id,
                 parseInt(order.code),
-                order.total,
+                remainAmount,
             );
         }
-        return this.orderTransactionService.createTransactionOrderService(order.id, parseInt(order.code), order.total);
+        return this.orderTransactionService.createTransactionOrderService(order.id, parseInt(order.code), remainAmount);
     }
 
     async transactionSuccessfull(
@@ -298,6 +335,11 @@ export class OrderService {
         orderId: string,
         returnBody: ReturnUrlTransactionPayOsDto,
     ) {
+        const order = await this.orderBaseService.get(orderId);
+        if (!order) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
+        }
+
         const isOwn = await this.orderBaseService.isOwn(orderId, clientId);
         if (!isOwn) {
             throw new BadRequest({ message: DataErrorCodeEnum.ORDER_FORBIDDEN });
@@ -308,20 +350,25 @@ export class OrderService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PAYMENT_TRANSACTION });
         }
 
-        const pendingTransaction = await this.orderTransactionService.isTransactionPending(
-            orderId,
-            returnBody.orderCode.toString(),
-        );
+        const pendingTransaction = await this.orderTransactionService.isTransactionPending(orderId);
         if (!pendingTransaction) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER_TRANSACTION });
         }
 
-        await this.orderBaseService.paidSuccessfull(userId, orderId);
+        if (paymentInfo.amountPaid >= order.total - order.totalPaid) {
+            await this.orderBaseService.paidSuccessfull(userId, orderId);
+        }
 
-        return this.orderTransactionService.updateTransaction(pendingTransaction.id, {
-            paidAmount: paymentInfo.amountPaid,
-            status: OrderPaymentStatusEnum.PAID,
-        });
+        const [_udpateRemain, updateTransaction] = await Promise.all([
+            this.orderBaseService.updateTotalPaid(order.id, order.totalPaid + paymentInfo.amountPaid, userId),
+            this.orderTransactionService.updateTransaction(pendingTransaction.id, {
+                paidAmount: paymentInfo.amountPaid,
+                status: OrderPaymentStatusEnum.PAID,
+                paymentTransactions: paymentInfo.transactions,
+            }),
+        ]);
+
+        return updateTransaction;
     }
 
     async transactionCancel(
@@ -330,6 +377,11 @@ export class OrderService {
         orderId: string,
         returnBody: ReturnUrlTransactionPayOsDto,
     ) {
+        const order = await this.orderBaseService.get(orderId);
+        if (!order) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
+        }
+
         const isOwn = await this.orderBaseService.isOwn(orderId, clientId);
         if (!isOwn) {
             throw new BadRequest({ message: DataErrorCodeEnum.ORDER_FORBIDDEN });
@@ -340,17 +392,20 @@ export class OrderService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PAYMENT_TRANSACTION });
         }
 
-        const pendingTransaction = await this.orderTransactionService.isTransactionPending(
-            orderId,
-            returnBody.orderCode.toString(),
-        );
+        const pendingTransaction = await this.orderTransactionService.isTransactionPending(orderId);
         if (!pendingTransaction) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER_TRANSACTION });
         }
 
-        await this.orderBaseService.paidFailed(userId, orderId);
+        const [_udpateRemain, cancelTransaction] = await Promise.all([
+            this.orderBaseService.updateTotalPaid(order.id, order.totalPaid + paymentInfo.amountPaid, userId),
+            this.orderTransactionService.updateTransaction(pendingTransaction.id, {
+                paidAmount: paymentInfo.amountPaid,
+                paymentTransactions: paymentInfo.transactions,
+            }),
+        ]);
 
-        return this.orderTransactionService.cancelTransaction(pendingTransaction.id);
+        return cancelTransaction;
     }
 
     /** @Order_State */
@@ -407,7 +462,7 @@ export class OrderService {
 
     /** @Order_Refund_Request */
     async createRefundRequest(userId: string, clientId: string, body: CreateOrderRefundRequestDto) {
-        const { orderId } = body;
+        const { orderId, amount } = body;
 
         const order = await this.orderBaseService.get(orderId);
         if (!order) {
@@ -419,12 +474,18 @@ export class OrderService {
             throw new BadRequest({ message: DataErrorCodeEnum.ORDER_FORBIDDEN });
         }
 
+        if (order.totalPaid <= order.total) {
+            throw new BadRequest({ message: DataErrorCodeEnum.FULFULLIED_PAID_AMOUNT });
+        }
+
         const refundRequest = await this.orderRefundRequestService.initRefundRequest(userId, {
             orderId,
+            transactionId: body.transactionId,
             accountBankBin: body.accountBankBin,
             accountName: body.accountName,
             accountNumber: body.accountNumber,
-            amount: order.total,
+            note: body.note,
+            amount: amount,
         });
 
         await this.orderRefundStateService.addState({
@@ -432,6 +493,8 @@ export class OrderService {
             state: OrderRefundStatusEnum.PENDING,
             userId,
         });
+
+        return refundRequest;
     }
 
     async createRefundRequestAdmin(userId: string, body: CreateOrderRefundRequestAdminDto) {

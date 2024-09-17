@@ -35,7 +35,7 @@ export const API_URLS = {
         REFRESH_TOKEN: () => ({
             method: "GET",
             headers: HEADERS.DEFAULT_HEADER,
-            endPoint: "auth/refresh-token",
+            endPoint: "auth/emp-refresh-token",
             withCredentials: true,
         }),
         LOGOUT: () => ({

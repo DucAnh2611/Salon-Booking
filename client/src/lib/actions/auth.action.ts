@@ -11,7 +11,7 @@ import { apiCall } from "../apiCall";
 export const meApi = async () => {
     const api = API_URLS.AUTH.ME();
 
-    const apiRes = await apiCall<IAPIUserClientMe>({ ...api, log: false });
+    const apiRes = await apiCall<IAPIUserClientMe>({ ...api });
 
     return apiRes;
 };

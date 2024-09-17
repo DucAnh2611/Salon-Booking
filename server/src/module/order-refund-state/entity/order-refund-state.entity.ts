@@ -25,7 +25,7 @@ export class OrderRefundStateEntity extends BaseEntity {
     @Column('text', { nullable: true })
     note: string;
 
-    @CreateDateColumn({ type: 'time with time zone' })
+    @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: Date;
 
     @ManyToOne(() => MediaEntity, (mediaEntity: MediaEntity) => mediaEntity.orderRefundState, { nullable: true })

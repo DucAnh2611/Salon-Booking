@@ -22,7 +22,7 @@ export default function UserClientProvider({ children }: PropsWithChildren) {
         const isAuth = await isAuthenticated();
         if (isAuth && !me) {
             const { response } = await meApi();
-            if (response) {
+            if (response && response.result) {
                 SetMe(response.result);
             } else {
                 SetMe(null);

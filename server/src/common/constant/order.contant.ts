@@ -4,6 +4,7 @@ export const ORDER_STATE_PRODUCT: Record<'normal' | 'cancel', Record<'staff' | '
     normal: {
         staff: [
             OrderStatusEnum.CONFIRMED,
+            OrderStatusEnum.CALL_CONFIRM,
             OrderStatusEnum.PROCESSING,
             OrderStatusEnum.SHIPPING,
             OrderStatusEnum.SHIPPED,

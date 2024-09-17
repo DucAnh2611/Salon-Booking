@@ -6,6 +6,7 @@ import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { Forbidden } from '../../shared/exception/error.exception';
 import { CartProductItemService } from '../cart-product-item/cart-product-item.service';
 import { CreateCartProductItemDto } from '../cart-product-item/dto/cart-product-item-create.dto';
+import { GetCartProductAmountDto } from '../cart-product-item/dto/cart-product-item-get.dto';
 import { UpdateCartProductItemDto } from '../cart-product-item/dto/cart-product-item-update.dto';
 import { TAX_RATE } from '../order-base/order-base.service';
 import { CartProductEntity } from './entity/cart-product.entity';
@@ -17,10 +18,10 @@ export class CartProductService {
         private readonly cartProductItemService: CartProductItemService,
     ) {}
 
-    async removeCart(clientId: string) {
+    async removeCartItems(clientId: string, itemIds: string[]) {
         const cart = await this.cartProductRepository.findOne({ where: { clientId }, loadEagerRelations: false });
 
-        const deletedCart = await this.cartProductItemService.removeAll(cart.id);
+        const deletedCart = await this.cartProductItemService.removeList(cart.id, itemIds);
 
         return DataSuccessCodeEnum.OK;
     }
@@ -53,17 +54,31 @@ export class CartProductService {
         return cartProduct;
     }
 
+    async calculateAmount(clientId: string, body: GetCartProductAmountDto) {
+        const { cartProductId } = body;
+        await this.isOwnCart(clientId, cartProductId);
+
+        const cartAmount = await this.cartProductItemService.getTotalAmount(body);
+
+        const tax = TAX_RATE;
+        const taxAmount = Math.floor(tax * cartAmount);
+
+        return {
+            tax,
+            taxAmount,
+            cartAmount,
+            total: taxAmount + cartAmount,
+        };
+    }
+
     async get(clientId: string) {
         const cartProduct = await this.getClientCart(clientId);
         const cartProductDetail = await this.cartProductItemService.get(cartProduct.id);
 
-        await this.isOwnCart(clientId, cartProduct.id);
-
-        const total = await this.cartProductItemService.getTotalAmount(cartProduct.id);
-        const tax = TAX_RATE;
-        const taxAmount = Math.round(total * (1 + tax));
-
-        return { ...cartProduct, products: cartProductDetail, tax, taxAmount, total };
+        return {
+            ...cartProduct,
+            products: cartProductDetail,
+        };
     }
 
     async add(clientId: string, body: CreateCartProductItemDto) {

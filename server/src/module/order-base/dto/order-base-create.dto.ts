@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString } from 'class-validator';
-import { OrderPaymentTypeEnum } from '../../../common/enum/order.enum';
+import { OrderPaymentTypeEnum, OrderType } from '../../../common/enum/order.enum';
 
 export class CreateOrderBaseDto {
     @IsNotEmpty()
@@ -26,4 +26,8 @@ export class CreateOrderBaseDto {
     @IsNotEmpty()
     @IsEnum(OrderPaymentTypeEnum)
     paymentType: OrderPaymentTypeEnum;
+
+    @IsNotEmpty()
+    @IsEnum(OrderType)
+    type: OrderType;
 }

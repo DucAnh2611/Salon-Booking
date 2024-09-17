@@ -3,13 +3,13 @@ import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { CART_SERVICE_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { AppRequest } from '../../common/interface/custom-request.interface';
 import { UserType } from '../../shared/decorator/user-types.decorator';
-import { AccessTokenGuard } from '../../shared/guard/accessToken.guard';
+import { AccessTokenClientGuard } from '../../shared/guard/accessToken.guard';
 import { UserTypeGuard } from '../../shared/guard/user-type.guard';
 import { CreateCartServiceItemDto } from '../cart-service-item/dto/cart-service-item-create.dto';
 import { GetCartServiceItemParamDto } from '../cart-service-item/dto/cart-service-item-get.dto';
 import { CartServiceService } from './cart-service.service';
 
-@UseGuards(AccessTokenGuard, UserTypeGuard)
+@UseGuards(AccessTokenClientGuard, UserTypeGuard)
 @Controller(ROUTER.CART_SERVICE)
 export class CartServiceController {
     constructor(private readonly cartServiceService: CartServiceService) {}

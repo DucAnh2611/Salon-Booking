@@ -16,20 +16,18 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
     children,
-    modal,
 }: Readonly<{
     children: ReactNode;
-    modal: ReactNode;
 }>) {
     return (
-        <UserClientProvider>
-            <html lang="en">
-                <body
-                    className={cn(
-                        "min-h-[100dvh] w-full overflow-x-hidden bg-background font-sans antialiased",
-                        inter.variable
-                    )}
-                >
+        <html lang="en">
+            <body
+                className={cn(
+                    "min-h-[100dvh] w-full overflow-hidden bg-background font-sans antialiased relative",
+                    inter.variable
+                )}
+            >
+                <UserClientProvider>
                     <ThemeProvider
                         attribute="class"
                         defaultTheme="system"
@@ -37,11 +35,10 @@ export default function RootLayout({
                         disableTransitionOnChange
                     >
                         {children}
-                        {modal}
                         <Toaster />
                     </ThemeProvider>
-                </body>
-            </html>
-        </UserClientProvider>
+                </UserClientProvider>
+            </body>
+        </html>
     );
 }

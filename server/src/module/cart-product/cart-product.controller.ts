@@ -3,14 +3,14 @@ import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { CART_PRODUCT_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { AppRequest } from '../../common/interface/custom-request.interface';
 import { UserType } from '../../shared/decorator/user-types.decorator';
-import { AccessTokenGuard } from '../../shared/guard/accessToken.guard';
+import { AccessTokenClientGuard } from '../../shared/guard/accessToken.guard';
 import { UserTypeGuard } from '../../shared/guard/user-type.guard';
 import { CreateCartProductItemDto } from '../cart-product-item/dto/cart-product-item-create.dto';
-import { GetCartProductParamDto } from '../cart-product-item/dto/cart-product-item-get.dto';
+import { GetCartProductAmountDto, GetCartProductParamDto } from '../cart-product-item/dto/cart-product-item-get.dto';
 import { UpdateCartProductItemDto } from '../cart-product-item/dto/cart-product-item-update.dto';
 import { CartProductService } from './cart-product.service';
 
-@UseGuards(AccessTokenGuard, UserTypeGuard)
+@UseGuards(AccessTokenClientGuard, UserTypeGuard)
 @Controller(ROUTER.CART_PRODUCT)
 export class CartProductController {
     constructor(private readonly cartProductService: CartProductService) {}
@@ -21,6 +21,14 @@ export class CartProductController {
         const { clientId } = req.accessPayload;
 
         return this.cartProductService.get(clientId);
+    }
+
+    @Post(CART_PRODUCT_ROUTE.CART_AMOUNT)
+    @UserType(ROLE_TITLE.client)
+    cartAmount(@Req() req: AppRequest, @Body() body: GetCartProductAmountDto) {
+        const { clientId } = req.accessPayload;
+
+        return this.cartProductService.calculateAmount(clientId, body);
     }
 
     @Post(CART_PRODUCT_ROUTE.ADD)

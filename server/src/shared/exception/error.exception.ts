@@ -24,7 +24,7 @@ export class NotFound extends AppExceptionBase {
     constructor() {
         super({
             status: HttpStatus.NOT_FOUND,
-            requestCode: RequestErrorCodeEnum.FORBIDDEN,
+            requestCode: RequestErrorCodeEnum.NOT_FOUND,
             message: DataErrorCodeEnum.NOT_EXIST,
         });
     }

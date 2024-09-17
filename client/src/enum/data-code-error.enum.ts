@@ -109,8 +109,8 @@ export enum EDataErrorCode {
 
     // Order
     DE082 = "Đơn hàng bị cấm",
-    DE084 = "Sản phẩm hết hàng",
-    DE085 = "Các loại sản phẩm hết hàng",
+    DE084 = "Sản phẩm đã hết hàng hoặc vượt quá số lượng",
+    DE085 = "Loại sản phẩm đã hết hàng hoặc vượt quá số lượng",
     DE086 = "Không thể gắn danh mục cha là chính mình",
     DE087 = "Danh mục sản phẩm được chọn có danh mục cha là danh mục hiện tại.",
     DE088 = "Không tồn tại vai trò cha",
