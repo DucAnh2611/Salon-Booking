@@ -44,6 +44,7 @@ interface IDialogCreateRefundProps {
     order: IOrderDetail;
     transaction: ITransactionOrder;
     amount: number;
+    onSuccess: () => void;
 }
 
 export default function DialogCreateRefund({
@@ -51,6 +52,7 @@ export default function DialogCreateRefund({
     order,
     amount,
     transaction,
+    onSuccess,
 }: IDialogCreateRefundProps) {
     const { reload } = useOrderTracking();
     const [open, SetOpen] = useState<boolean>(false);
@@ -99,6 +101,7 @@ export default function DialogCreateRefund({
 
         if (response) {
             reload("refund");
+            onSuccess();
             handleOpen(false);
         } else {
             toast({
@@ -116,6 +119,7 @@ export default function DialogCreateRefund({
         } else {
             form.setValue("desc", `HOAN TIEN DON HANG ${order.code}`);
             form.setValue("amount", amount);
+            SetConfirm(false);
         }
         SetOpen(open);
     };
@@ -225,6 +229,7 @@ export default function DialogCreateRefund({
                                     <div className="w-full flex gap-3">
                                         <Checkbox
                                             id="confirm"
+                                            checked={confirm}
                                             onCheckedChange={handleConfirm}
                                         />
                                         <Label htmlFor="confirm">

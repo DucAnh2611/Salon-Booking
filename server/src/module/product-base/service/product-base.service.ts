@@ -222,10 +222,12 @@ export class ProductBaseService {
     ) {
         let mutipleMedia: CreateProductMediaDto[] = [];
         if (thumbnailIds && thumbnailIds.length) {
-            mutipleMedia = await this.insertMediaWithIds(thumbnailIds, productId);
+            const insertMediaId = await this.insertMediaWithIds(thumbnailIds, productId);
+            mutipleMedia = [...mutipleMedia, ...insertMediaId];
         }
         if (thumbnailUrls && thumbnailUrls.length) {
-            mutipleMedia = await this.insertMediaWithUrls(thumbnailUrls, productId, userId);
+            const insertMediaUrl = await this.insertMediaWithUrls(thumbnailUrls, productId, userId);
+            mutipleMedia = [...mutipleMedia, ...insertMediaUrl];
         }
 
         const saveMediaProduct = await this.productMediaService.saveMany(mutipleMedia);
@@ -299,9 +301,12 @@ export class ProductBaseService {
             productInstance.categoryId = categoryId;
         }
 
+        console.warn(thumbnailIds, thumbnailUrls);
+
         if (thumbnailIds || thumbnailUrls) {
             const productMedias = await this.productMediaService.getListByProductId(productBaseId);
             let listDeleteMedias = productMedias.map(media => media.mediaId);
+
             if (thumbnailIds) {
                 listDeleteMedias = thumbnailIds.reduce((acc, curr) => {
                     if (!productMedias.find(media => media.mediaId === curr.id)) {
@@ -311,7 +316,7 @@ export class ProductBaseService {
                 }, []);
             }
 
-            const [deleteBeforeInsert, saveMediaProduct] = await Promise.all([
+            const [_deleteBeforeInsert, _saveMediaProduct] = await Promise.all([
                 this.productMediaService.deleteMany(productBaseId, listDeleteMedias),
                 this.attachMedia(productBaseId, userId, thumbnailIds, thumbnailUrls),
             ]);

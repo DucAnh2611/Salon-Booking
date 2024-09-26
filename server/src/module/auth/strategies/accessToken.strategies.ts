@@ -34,6 +34,7 @@ export class AccessTokenStrategy extends PassportStrategy(Strategy, JWT_CONSTANT
                 requestCode: RequestErrorCodeEnum.FORBIDDEN,
                 message: DataErrorCodeEnum.INVALID_ACCESS_TOKEN,
             });
+
         return { ...payload, accessToken };
     }
 }
@@ -61,6 +62,7 @@ export class AccessTokenClientStrategy extends PassportStrategy(Strategy, JWT_CO
                 requestCode: RequestErrorCodeEnum.FORBIDDEN,
                 message: DataErrorCodeEnum.INVALID_ACCESS_TOKEN,
             });
+
         return { ...payload, accessToken };
     }
 }

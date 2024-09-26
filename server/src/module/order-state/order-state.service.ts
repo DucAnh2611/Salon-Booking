@@ -1,10 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
-import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
+import { Repository } from 'typeorm';
 import { OrderStatusEnum } from '../../common/enum/order.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
-import { BadRequest } from '../../shared/exception/error.exception';
 import { CreateOrderStateDto } from './dto/order-state-create.entity';
 import { OrderStateEntity } from './entity/order-state.entity';
 
@@ -22,56 +20,21 @@ export class OrderStateService {
             order: { createdAt: SortByEnum.DESC },
         });
     }
-
-    async canCancel(orderId: string) {
-        const canNotCancel = [
-            OrderStatusEnum.PROCESSING,
-            OrderStatusEnum.SHIPPING,
-            OrderStatusEnum.SHIPPED,
-            OrderStatusEnum.RECEIVED,
-            OrderStatusEnum.CALL_CONFIRM,
-            OrderStatusEnum.ARRIVED,
-            OrderStatusEnum.ON_SERVICE,
-            OrderStatusEnum.PAYING,
-            OrderStatusEnum.FINISH,
-
-            OrderStatusEnum.CANCELLED,
-            OrderStatusEnum.REFUNDED,
-            OrderStatusEnum.RETURNED,
-        ];
-
-        const orderStates = await this.orderStateRepository.find({
-            where: {
-                state: In(canNotCancel),
-                orderId,
-            },
-            loadEagerRelations: false,
-        });
-
-        return !orderStates.length;
-    }
-
     async addState(body: CreateOrderStateDto) {
         const { userId, description, orderId, state } = body;
-        const states = await this.orderStateRepository.findOne({
-            where: { orderId: orderId, state },
-            loadEagerRelations: false,
-            relations: { order: true },
-            order: {
-                createdAt: SortByEnum.DESC,
-            },
-        });
-
-        if (states) {
-            throw new BadRequest({ message: DataErrorCodeEnum.ORDER_STATE_EXIST });
-        }
 
         return this.orderStateRepository.save({
             orderId,
             description,
-            userId,
             state,
             createdBy: userId,
+        });
+    }
+    async addCancelExpired(orderId: string) {
+        return this.orderStateRepository.save({
+            orderId,
+            description: 'Tự động hủy đơn hết hạn',
+            state: OrderStatusEnum.CANCELLED,
         });
     }
 }

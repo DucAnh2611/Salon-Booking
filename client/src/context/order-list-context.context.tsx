@@ -41,16 +41,15 @@ export default function OrderListProviver({ children }: ILayoutProps) {
     const [order, SetOrder] = useState<IListOrderOrder>({});
     const [page, SetPage] = useState<number>(1);
     const [count, SetCount] = useState<number>(0);
-    const [limit, SetLimit] = useState<number>(20);
+    const [limit, SetLimit] = useState<number>(10);
     const [isLoading, SetIsLoading] = useState<boolean>(false);
     const [isError, SetIsError] = useState<boolean>(false);
 
     const setSearchBody = async (body: IApiListOrder) => {
         if (
-            isSameObject(body.order, order) &&
-            isSameObject(body.filter, filter) &&
-            body.page !== page &&
-            body.limit !== limit
+            (isSameObject(body.order, order) &&
+                isSameObject(body.filter, filter)) ||
+            body.page !== page
         ) {
             SetPage(body.page);
         } else {

@@ -1,16 +1,15 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, LessThanOrEqual, Like, MoreThanOrEqual, Repository } from 'typeorm';
+import { Between, In, LessThanOrEqual, Like, MoreThanOrEqual, Repository } from 'typeorm';
+import { TAX_RATE } from '../../common/constant/order.contant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
-import { OrderStatusEnum } from '../../common/enum/order.enum';
+import { OrderStatusEnum, OrderType } from '../../common/enum/order.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { CreateOrderBaseDto } from './dto/order-base-create.dto';
-import { FindOrderClientDto } from './dto/order-base-get.dto';
+import { FindOrderAdminDto, FindOrderClientDto } from './dto/order-base-get.dto';
 import { OrderEntity } from './entity/order-base.entity';
-
-export const TAX_RATE = 0.08;
 
 @Injectable()
 export class OrderBaseService {
@@ -77,12 +76,69 @@ export class OrderBaseService {
             },
         });
     }
+
+    async getOrderAdmin(body: FindOrderAdminDto) {
+        const { limit, page, order, filter } = body;
+
+        const { from, to, code, ...filterProps } = filter;
+
+        return this.orderBaseRepository.findAndCount({
+            where: {
+                ...filterProps,
+                code: Like(`%${code || ''}%`),
+                ...(from
+                    ? to
+                        ? { createdAt: Between(from, new Date(to.getTime() + 24 * 60 * 60 * 1000)) }
+                        : { createdAt: MoreThanOrEqual(from) }
+                    : to
+                      ? { createdAt: LessThanOrEqual(new Date(to.getTime() + 24 * 60 * 60 * 1000)) }
+                      : {}),
+            },
+            loadEagerRelations: false,
+            take: limit,
+            skip: (page - 1) * limit,
+            order: {
+                ...(Object.entries(order).length ? order : { createdAt: SortByEnum.ASC }),
+            },
+        });
+    }
+
+    getExpiredOrderService() {
+        return this.orderBaseRepository.find({
+            where: {
+                type: OrderType.SERVICE,
+                confirmExpired: LessThanOrEqual(new Date()),
+                status: In([OrderStatusEnum.PAID_PAYMENT, OrderStatusEnum.PENDING_PAYMENT, OrderStatusEnum.PENDING]),
+            },
+            loadEagerRelations: false,
+            relations: {
+                services: true,
+            },
+        });
+    }
+
+    cancelExpiredOrder(id: string) {
+        return this.orderBaseRepository.update({ id: id }, { status: OrderStatusEnum.CANCELLED });
+    }
+
     getCode(code: string, clientId: string) {
         return this.orderBaseRepository.findOne({ where: { code: code, clientId }, loadEagerRelations: false });
     }
 
     get(orderId: string) {
         return this.orderBaseRepository.findOne({ where: { id: orderId }, loadEagerRelations: false });
+    }
+
+    getAdmin(orderId: string) {
+        return this.orderBaseRepository.findOne({
+            where: { id: orderId },
+            loadEagerRelations: false,
+            relations: {
+                userCreate: {
+                    client: true,
+                },
+            },
+        });
     }
 
     create(userId: string, clientId: string, body: CreateOrderBaseDto) {
@@ -99,8 +155,7 @@ export class OrderBaseService {
             address,
             tax: taxAmount,
             paid: false,
-            refund: false,
-            status: OrderStatusEnum.CONFIRMED,
+            status: OrderStatusEnum.PENDING,
             taxRate: TAX_RATE * 100,
             total: total + taxAmount,
             totalPaid: 0,
@@ -113,24 +168,30 @@ export class OrderBaseService {
         return this.orderBaseRepository.save(instance);
     }
 
-    async paidSuccessfull(userId: string, orderId: string) {
+    async paidSuccessfull(userId: string, orderId: string, paidAmount: number) {
         const order = await this.get(orderId);
         if (!order) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
         }
 
-        await this.orderBaseRepository.update({ id: orderId }, { paid: true, updatedBy: userId });
+        await this.orderBaseRepository.update(
+            { id: orderId },
+            { paid: true, status: OrderStatusEnum.PAID_PAYMENT, totalPaid: paidAmount, updatedBy: userId },
+        );
 
         return DataSuccessCodeEnum.OK;
     }
 
-    async paidFailed(userId: string, orderId: string) {
+    async paidFailed(userId: string, orderId: string, paidAmount: number) {
         const order = await this.get(orderId);
         if (!order) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
         }
 
-        await this.orderBaseRepository.update({ id: orderId }, { paid: false, updatedBy: userId });
+        await this.orderBaseRepository.update(
+            { id: orderId },
+            { paid: false, status: OrderStatusEnum.PENDING_PAYMENT, totalPaid: paidAmount, updatedBy: userId },
+        );
 
         return DataSuccessCodeEnum.OK;
     }

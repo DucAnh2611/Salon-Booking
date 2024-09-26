@@ -164,7 +164,7 @@ export interface IProductMedia {
     productId: string;
     mediaId: string;
     isThumbnail: boolean;
-    media: IMedia;
+    media: IMedia | null;
 }
 
 export interface IProductDetail {

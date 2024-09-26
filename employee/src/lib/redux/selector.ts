@@ -25,3 +25,14 @@ export const workingHourSelector = (state: TRootState) =>
     state.workingHourReducer;
 
 export const shiftSelector = (state: TRootState) => state.shiftReducer;
+
+export const orderSelector = (state: TRootState) => state.orderReducer;
+
+export const orderDetailSelector = (state: TRootState) =>
+    state.orderDetailReducer;
+
+export const orderStateSelector = (state: TRootState) =>
+    state.orderStateReducer;
+
+export const orderRefundSelector = (state: TRootState) =>
+    state.orderRefundReducer;

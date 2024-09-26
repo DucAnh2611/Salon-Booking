@@ -6,7 +6,7 @@ import { UserEntity } from '../../user/entity/user.entity';
 
 @Entity('order_state')
 export class OrderStateEntity extends BaseEntity {
-    @Column('enum', { enum: OrderStatusEnum })
+    @Column('enum', { enum: OrderStatusEnum, default: OrderStatusEnum[OrderStatusEnum.PENDING] })
     state: OrderStatusEnum;
 
     @Column('uuid')
@@ -15,7 +15,7 @@ export class OrderStateEntity extends BaseEntity {
     @Column('text', { nullable: true })
     description: string;
 
-    @Column('uuid')
+    @Column('uuid', { nullable: true })
     createdBy: string;
 
     @CreateDateColumn({ type: 'timestamp with time zone' })

@@ -3,11 +3,11 @@
 import { toast } from "@/components/ui/use-toast";
 import { EOrderTransactionReturnPayos } from "@/enum/order.enum";
 import {
-    IApiCancelTransaction,
+    IApiFailTransaction,
     IApiSuccessTransaction,
 } from "@/interface/transaction.interface";
 import {
-    cancelTransaction,
+    failTransaction,
     successTransaction,
 } from "@/lib/actions/transaction.action";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -25,21 +25,25 @@ export default function CancelTransaction({
 
     const [mount, SetMount] = useState<boolean>(false);
 
-    const cancelTran = async (query: IApiCancelTransaction) => {
-        const { response } = await cancelTransaction(orderId, query);
+    const cancelTran = async (query: IApiFailTransaction) => {
+        const { response } = await failTransaction(orderId, query);
 
         if (response) {
             toast({
                 title: "Hủy thanh toán",
                 description: "Đã hủy giao dịch thanh toán.",
+            });
+        } else {
+            toast({
+                title: "Thất bại",
+                description: "Hủy giao dịch thất bại.",
                 variant: "destructive",
             });
-
-            // Format of orderCode for paymentlink: <ORDER_CODE[10]><TRANSACTION_ORDER_COUNT>
-            router.push(
-                `/tracking?code=${query.orderCode.toString().slice(0, 10)}`
-            );
         }
+
+        router.push(
+            `/tracking?code=${query.orderCode.toString().slice(0, 10)}`
+        );
     };
 
     const successTran = async (query: IApiSuccessTransaction) => {
@@ -50,12 +54,16 @@ export default function CancelTransaction({
                 title: "Đã thanh toán",
                 description: "Đã hoàn thành giao dịch.",
             });
-
-            // Format of orderCode for paymentlink: <ORDER_CODE[10]><TRANSACTION_ORDER_COUNT>
-            router.push(
-                `/tracking?code=${query.orderCode.toString().slice(0, 10)}`
-            );
+        } else {
+            toast({
+                title: "Thất bại",
+                description: "Giao dịch thất bại.",
+                variant: "destructive",
+            });
         }
+        router.push(
+            `/tracking?code=${query.orderCode.toString().slice(0, 10)}`
+        );
     };
 
     useEffect(() => {

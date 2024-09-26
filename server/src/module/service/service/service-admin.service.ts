@@ -1,14 +1,14 @@
 import { Injectable } from '@nestjs/common';
-import { ServiceBaseService } from '../service-base/service-base.service';
-import { ServiceEmployeeService } from '../service-employee/service-employee.service';
-import { ServiceMediaService } from '../service-media/service-media.service';
-import { ServiceStepService } from '../service-step/service-step.service';
-import { CreateServiceDto } from './dto/service-create.dto';
-import { FindServiceAdminDto } from './dto/service-get.dto';
-import { UpdateServiceDto } from './dto/service-update.dto';
+import { ServiceBaseService } from '../../service-base/service-base.service';
+import { ServiceEmployeeService } from '../../service-employee/service-employee.service';
+import { ServiceMediaService } from '../../service-media/service-media.service';
+import { ServiceStepService } from '../../service-step/service-step.service';
+import { CreateServiceDto } from '../dto/service-create.dto';
+import { FindServiceAdminDto } from '../dto/service-get.dto';
+import { UpdateServiceDto } from '../dto/service-update.dto';
 
 @Injectable()
-export class ServiceService {
+export class ServiceAdminService {
     constructor(
         private readonly serviceBaseService: ServiceBaseService,
         private readonly serviceEmployeeService: ServiceEmployeeService,

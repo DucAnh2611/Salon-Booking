@@ -11,3 +11,15 @@ export const dateToUnixTimestamp = (date: Date) => {
 
     return int32Timestamp;
 };
+
+export const isToday = (time: Date) => {
+    const now = new Date();
+    const nowDay = [now.getFullYear(), now.getMonth(), now.getDate()];
+    const timeDay = [time.getFullYear(), time.getMonth(), time.getDate()];
+
+    for (const i in nowDay) {
+        if (nowDay[i] !== timeDay[i]) return false;
+    }
+
+    return true;
+};

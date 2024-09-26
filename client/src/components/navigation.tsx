@@ -22,7 +22,7 @@ export default function Navigation() {
                     <nav className="ml-auto flex gap-0 items-center flex-1">
                         <Button variant="ghost" asChild>
                             <Link
-                                href="#"
+                                href="/product"
                                 className="text-sm font-medium underline-offset-4"
                                 prefetch={false}
                             >
@@ -31,7 +31,7 @@ export default function Navigation() {
                         </Button>
                         <Button variant="ghost" asChild>
                             <Link
-                                href="#"
+                                href="/service"
                                 className="text-sm font-medium underline-offset-4"
                                 prefetch={false}
                             >

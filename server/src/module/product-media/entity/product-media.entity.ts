@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
 import { MediaEntity } from '../../media/entity/media.entity';
 import { ProductBaseEntity } from '../../product-base/entity/product-base.entity';
 
@@ -20,4 +20,7 @@ export class ProductMediaEntity {
     @ManyToOne(() => ProductBaseEntity, (productBaseEntity: ProductBaseEntity) => productBaseEntity.productMedia)
     @JoinColumn({ name: 'productId' })
     product: ProductBaseEntity;
+
+    @CreateDateColumn({ type: 'timestamp with time zone', default: new Date() })
+    createdAt: Date;
 }

@@ -47,7 +47,7 @@ export class BankService {
 
         list = res.data;
 
-        await this.redisService.set(this.keyRedis, res.data, 1000 * 60 * 15);
+        this.redisService.set(this.keyRedis, res.data, 1000 * 60 * 60);
 
         return list;
     }
@@ -76,15 +76,22 @@ export class BankService {
                     addInfo: desc,
                     amount: amount,
                     format: 'text',
-                    template: 'print',
+                    template: 'compact',
                 },
             },
         );
 
         const res = await firstValueFrom(request);
-        this.redisService.set(`${bankBin}_${bankAccount}_${bankName}_${amount}`, res, 24 * 60 * 60 * 1000);
+        this.redisService.set(`${bankBin}_${bankAccount}_${bankName}_${amount}`, res, 60 * 60 * 1000);
 
         return res.data;
+    }
+
+    async removeQr(name: string) {
+        const redisCheck = (await this.redisService.get(name)) as BankQuickQrApi | null;
+        if (!redisCheck) return;
+
+        await this.redisService.del(name);
     }
 
     async getBankFromBin(bin: number) {

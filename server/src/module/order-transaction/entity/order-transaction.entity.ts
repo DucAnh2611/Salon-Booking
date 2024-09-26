@@ -48,7 +48,7 @@ export class OrderTransactionEntity extends BaseEntity {
     @Column('jsonb', { default: [] })
     paymentTransactions: object[];
 
-    @Column('timestamp with time zone')
+    @Column('timestamp with time zone', { nullable: true })
     expireAt: Date;
 
     @CreateDateColumn({ type: 'timestamp with time zone' })

@@ -27,7 +27,7 @@ export default function OrderDataTable({}: IOrderDataTableProps) {
                             {orders.map((order) => (
                                 <Card
                                     key={order.id}
-                                    className="group overflow-hidden"
+                                    className="group overflow-hidden h-full flex flex-col"
                                 >
                                     <CardHeader className="p-2 w-full bg-muted">
                                         <div className="flex justify-between items-center text-xs w-full">
@@ -55,66 +55,74 @@ export default function OrderDataTable({}: IOrderDataTableProps) {
                                         </div>
                                     </CardHeader>
                                     <Separator orientation="horizontal" />
-                                    <CardContent className="p-2">
-                                        <div className="flex justify-between items-center text-xs w-full">
-                                            <p className="text-sm">
-                                                {ORDER_TYPE[order.type]}
-                                            </p>
-                                            <p className="font-medium text-primary">
-                                                {ORDER_STATUS[order.status]}
-                                            </p>
-                                        </div>
-                                        <Separator
-                                            orientation="horizontal"
-                                            className="my-2"
-                                        />
-                                        <div className="flex flex-col gap-0.5 w-full">
-                                            <p className="text-sm">
-                                                <b className="mr-1">
-                                                    Người nhận:
-                                                </b>
-                                                {order.name}
-                                            </p>
-                                            <p className="text-sm">
-                                                <b className="mr-1">SĐT:</b>
-                                                {order.phone}
-                                            </p>
-                                            <p className="text-sm">
-                                                <b className="mr-1">Địa chỉ:</b>
-                                                {order.address}
-                                            </p>
-                                        </div>
-                                        <Separator
-                                            orientation="horizontal"
-                                            className="my-2"
-                                        />
-                                        <div className="flex justify-between items-center text-xs w-full">
-                                            <p className="text-sm w-fit">
-                                                <b className="mr-1">
-                                                    Ngày tạo:
-                                                </b>
-                                                {dayjs(order.createdAt).format(
-                                                    "DD/MM/YYYY"
+                                    <CardContent className="p-2 flex-1 flex justify-between flex-col">
+                                        <div className="flex-1">
+                                            <div className="flex justify-between items-center text-xs w-full">
+                                                <p className="text-sm">
+                                                    {ORDER_TYPE[order.type]}
+                                                </p>
+                                                <p className="font-medium text-primary">
+                                                    {ORDER_STATUS[order.status]}
+                                                </p>
+                                            </div>
+                                            <Separator
+                                                orientation="horizontal"
+                                                className="my-2"
+                                            />
+                                            <div className="flex flex-col gap-0.5 w-full">
+                                                <p className="text-sm">
+                                                    <b className="mr-1">
+                                                        Người nhận:
+                                                    </b>
+                                                    {order.name}
+                                                </p>
+                                                <p className="text-sm">
+                                                    <b className="mr-1">SĐT:</b>
+                                                    {order.phone}
+                                                </p>
+                                                {order.address && (
+                                                    <p className="text-sm">
+                                                        <b className="mr-1">
+                                                            Địa chỉ:
+                                                        </b>
+                                                        {order.address}
+                                                    </p>
                                                 )}
-                                            </p>
-                                            <p className="text-sm w-fit">
-                                                <b className="mr-1">Tổng:</b>
-                                                {order.total.toLocaleString(
-                                                    "vi-VN",
-                                                    {
-                                                        style: "currency",
-                                                        currency: "VND",
-                                                    }
-                                                )}
-                                            </p>
+                                            </div>
                                         </div>
-                                        <Separator
-                                            orientation="horizontal"
-                                            className="my-2"
-                                        />
-                                        <div className="flex gap-2 w-full">
+                                        <div className=" w-full">
+                                            <Separator
+                                                orientation="horizontal"
+                                                className="my-2"
+                                            />
+                                            <div className="flex justify-between items-center text-xs w-full">
+                                                <p className="text-sm w-fit">
+                                                    <b className="mr-1">
+                                                        Ngày tạo:
+                                                    </b>
+                                                    {dayjs(
+                                                        order.createdAt
+                                                    ).format("DD/MM/YYYY")}
+                                                </p>
+                                                <p className="text-sm w-fit">
+                                                    <b className="mr-1">
+                                                        Tổng:
+                                                    </b>
+                                                    {order.total.toLocaleString(
+                                                        "vi-VN",
+                                                        {
+                                                            style: "currency",
+                                                            currency: "VND",
+                                                        }
+                                                    )}
+                                                </p>
+                                            </div>
+                                            <Separator
+                                                orientation="horizontal"
+                                                className="my-2"
+                                            />
                                             <Button
-                                                className="flex-1"
+                                                className="w-full"
                                                 size="sm"
                                                 asChild
                                             >

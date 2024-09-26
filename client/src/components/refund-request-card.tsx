@@ -8,6 +8,8 @@ import { format } from "date-fns";
 import { ChevronsDown, ChevronsUp } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import DialogCancelRefund from "./dialog-cancel-refund";
+import DialogReceiveRefund from "./dialog-receive-refund";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader } from "./ui/card";
 import { Separator } from "./ui/separator";
@@ -16,8 +18,9 @@ const colorSchema: Record<EOrderRefundRequestStatus, string> = {
     [EOrderRefundRequestStatus.PENDING]: "hsl(var(--primary))",
     [EOrderRefundRequestStatus.APPROVED]: "#3b82f6",
     [EOrderRefundRequestStatus.DECLINE]: "hsl(var(--destructive))",
-    [EOrderRefundRequestStatus.EXPIRED]: "hsl(var(--muted))",
+    [EOrderRefundRequestStatus.EXPIRED]: "#a855f7",
     [EOrderRefundRequestStatus.RECEIVED]: "#4ade80",
+    [EOrderRefundRequestStatus.CANCELLED]: "hsl(var(--destructive))",
 };
 
 interface IRefundRequestCardProps {
@@ -27,11 +30,24 @@ interface IRefundRequestCardProps {
 export default function RefundRequestCard({ refund }: IRefundRequestCardProps) {
     const {
         order: { order },
+        reload,
     } = useOrderTracking();
     const [open, SetOpen] = useState<boolean>(false);
 
     const toggleDetail = () => {
         SetOpen((o) => !o);
+    };
+
+    const onSuccessCancel = () => {
+        reload("refund");
+        reload("transaction");
+        reload("order");
+    };
+
+    const onSuccessReceive = () => {
+        reload("refund");
+        reload("transaction");
+        reload("order");
     };
 
     return (
@@ -116,17 +132,17 @@ export default function RefundRequestCard({ refund }: IRefundRequestCardProps) {
                             {refund.description || "Không"}
                         </span>
                     </div>
-
-                    <div className="flex gap-2 text-sm  w-full">
-                        <span className="font-medium">Hết hạn:</span>
-
-                        <span className="">
-                            {format(refund.expiredAt, "yyyy/MM/dd HH:mm a")}
-                        </span>
-                    </div>
                 </div>
                 <Separator orientation="horizontal" className="my-1" />
                 <div className="flex justify-end w-full my-2">
+                    <div className="flex gap-2 text-sm  w-full">
+                        <span className="font-medium">Hết hạn:</span>
+
+                        <span className="text-muted-foreground italic">
+                            {format(refund.expiredAt, "yyyy/MM/dd HH:mm:ss")}
+                        </span>
+                    </div>
+
                     <div className="flex w-fit gap-2 text-sm">
                         <span className="font-medium">Tổng:</span>
                         <span className="font-medium">
@@ -134,6 +150,44 @@ export default function RefundRequestCard({ refund }: IRefundRequestCardProps) {
                         </span>
                     </div>
                 </div>
+
+                {refund.status === EOrderRefundRequestStatus.APPROVED &&
+                    order && (
+                        <div className="w-full">
+                            <DialogReceiveRefund
+                                trigger={
+                                    <Button
+                                        className="w-full bg-blue-500 text-blue-500 border-blue-500 bg-opacity-15 hover:text-blue-500 hover:bg-blue-500 hover:bg-opacity-25"
+                                        variant="ghost"
+                                    >
+                                        Đã nhận
+                                    </Button>
+                                }
+                                orderId={order.id}
+                                onSuccess={onSuccessReceive}
+                                requestId={refund.id}
+                            />
+                        </div>
+                    )}
+
+                {refund.status === EOrderRefundRequestStatus.PENDING &&
+                    order && (
+                        <div className="w-full">
+                            <DialogCancelRefund
+                                trigger={
+                                    <Button
+                                        className="w-full bg-red-500 text-red-500 border-red-500 bg-opacity-15 hover:text-red-500 hover:bg-red-500 hover:bg-opacity-25"
+                                        variant="ghost"
+                                    >
+                                        Hủy yêu cầu
+                                    </Button>
+                                }
+                                orderId={order.id}
+                                onSuccess={onSuccessCancel}
+                                requestId={refund.id}
+                            />
+                        </div>
+                    )}
 
                 <Separator orientation="horizontal" className="my-1" />
                 <div>

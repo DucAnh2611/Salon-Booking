@@ -147,6 +147,20 @@ export class CategoryService {
         return this.buildCategoryTree(findCategory);
     }
 
+    async list() {
+        const findCategory = await this.categoryRepository.find({
+            where: {},
+            loadEagerRelations: false,
+            order: {
+                createdAt: SortByEnum.DESC,
+            },
+            relations: {
+                image: true,
+            },
+        });
+        return findCategory;
+    }
+
     async create(employeeId: string, body: CreateCategoryDto) {
         const { title, imageId, parentId } = body;
 

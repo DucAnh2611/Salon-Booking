@@ -220,6 +220,8 @@ export class WorkingHourService {
             throw new BadRequest({ message: DataErrorCodeEnum.WORKING_HOUR_START });
         }
 
+        //check if is worrking hour is overlap with some shift? if overlap decline, then ok
+
         const instance = this.workingHourRepository.create({
             ...exist,
             start: startCombine,

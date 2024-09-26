@@ -14,9 +14,13 @@ export const ORDER_PAYMENT_TYPE: Record<EOrderPaymentType, string> = {
 };
 
 export const ORDER_STATUS: Record<EOrderStatus, string> = {
-    [EOrderStatus.CONFIRMED]: "Đã đặt đơn",
+    [EOrderStatus.PENDING]: "Tạo dơn hàng",
+    [EOrderStatus.PENDING_PAYMENT]: "Đợi thanh toán",
+    [EOrderStatus.PAID_PAYMENT]: "Thanh toán thành công",
 
+    [EOrderStatus.CONFIRMED]: "Đã xác nhận đơn hàng",
     [EOrderStatus.CALL_CONFIRM]: "Đã gọi điện xác nhận",
+
     [EOrderStatus.PROCESSING]: "Đang xử lý",
     [EOrderStatus.SHIPPING]: "Đang giao hàng",
     [EOrderStatus.SHIPPED]: "Đã giao hàng",
@@ -53,15 +57,17 @@ export const ORDER_REFUND_REQUEST_STATUS: Record<
     string
 > = {
     [EOrderPaymentStatus.PENDING]: "Chờ duyệt",
-    [EOrderRefundRequestStatus.DECLINE]: "Từ chối hoàn tiền",
+    [EOrderRefundRequestStatus.DECLINE]: "Từ chối yêu cầU",
     [EOrderRefundRequestStatus.APPROVED]: "Đã duyệt",
     [EOrderRefundRequestStatus.EXPIRED]: "Hết hạn",
     [EOrderRefundRequestStatus.RECEIVED]: "Đã nhận",
+    [EOrderRefundRequestStatus.CANCELLED]: "Đã hủy",
 };
 
 export const ORDER_REFUND_STATUS: Record<EOrderRefundStatus, string> = {
     [EOrderRefundStatus.PENDING]: "Chờ duyệt",
-    [EOrderRefundStatus.DECLINE]: "Từ chối hoàn tiền",
+    [EOrderRefundStatus.DECLINE]: "Từ chối yêu cầu",
     [EOrderRefundStatus.APPROVED]: "Đã duyệt",
     [EOrderRefundStatus.RECEIVED]: "Đã nhận",
+    [EOrderRefundStatus.CANCELLED]: "Đã hủy",
 };

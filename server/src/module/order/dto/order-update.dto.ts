@@ -9,10 +9,19 @@ export class ClientUpdateOrderStateDto {
     @IsNotEmpty()
     @IsEnum(OrderStatusEnum)
     state: OrderStatusEnum;
+}
+export class StaffUpdateOrderStateDto {
+    @IsNotEmpty()
+    @IsUUID('all')
+    orderId: string;
 
     @IsNotEmpty()
-    @IsEnum(OrderType)
-    type: OrderType;
+    @IsEnum(OrderStatusEnum)
+    state: OrderStatusEnum;
+
+    @IsOptional()
+    @IsString()
+    description?: string;
 }
 
 export class StaffCancelOrderStateDto {
@@ -33,18 +42,6 @@ export class ClientCancelOrderStateDto {
     @IsNotEmpty()
     @IsString()
     reason: string;
-
-    @IsNotEmpty()
-    @IsString()
-    bankBin?: string;
-
-    @IsNotEmpty()
-    @IsString()
-    accountName?: string;
-
-    @IsNotEmpty()
-    @IsString()
-    accountNumber?: string;
 }
 
 export class DeclineRefundRequestDto {

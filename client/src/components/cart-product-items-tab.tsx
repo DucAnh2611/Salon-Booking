@@ -33,7 +33,17 @@ export default function CartProductItemTab({}: ICartProductItemTabProps) {
 
     const selectAll = (check: CheckedState) => {
         if (!cart.products.length) return;
-        setSelectItems(check ? cart.products : []);
+        setSelectItems(
+            check
+                ? cart.products.filter(
+                      (p) =>
+                          !p.product.deletedAt ||
+                          (p.productType &&
+                              !p.product.deletedAt &&
+                              !p.productType.deletedAt)
+                  )
+                : []
+        );
     };
 
     const isItemSelect = (i: IProductItemCart) => {
@@ -119,6 +129,11 @@ export default function CartProductItemTab({}: ICartProductItemTabProps) {
                         <div className="flex justify-between w-full border-b p-3 box-border py-4">
                             <div className="flex gap-2 items-center">
                                 <Checkbox
+                                    disabled={
+                                        !!productItem.product.deletedAt ||
+                                        (productItem.productType &&
+                                            !!productItem.productType.deletedAt)
+                                    }
                                     id={productItem.id}
                                     checked={isItemSelect(productItem)}
                                     onCheckedChange={handleSelectItems(
@@ -151,12 +166,25 @@ export default function CartProductItemTab({}: ICartProductItemTabProps) {
                                     {productItem.productType.id}
                                 </div>
                             )}
-                            <div className="flex justify-end">
-                                <QuantityButton
-                                    value={productItem.quantity}
-                                    onChange={handleChangeQuantity(productItem)}
-                                />
-                            </div>
+                            {!!productItem.product.deletedAt ||
+                            (productItem.productType &&
+                                !!productItem.productType.deletedAt) ? (
+                                <div className="flex justify-end">
+                                    <p className="text-sm text-destructive">
+                                        Sản phẩm đã hoặc kiểu loại sản phẩm đã
+                                        bị xóa
+                                    </p>
+                                </div>
+                            ) : (
+                                <div className="flex justify-end">
+                                    <QuantityButton
+                                        value={productItem.quantity}
+                                        onChange={handleChangeQuantity(
+                                            productItem
+                                        )}
+                                    />
+                                </div>
+                            )}
                         </div>
                     </div>
                 ))}

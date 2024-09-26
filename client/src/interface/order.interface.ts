@@ -14,7 +14,6 @@ export interface IOrder {
     note: string;
     phone: string;
 
-    refund: boolean;
     paid: boolean;
 
     tax: number;
@@ -25,13 +24,20 @@ export interface IOrder {
     status: EOrderStatus;
     paymentType: EOrderPaymentType;
     type: EOrderType;
+    confirmExpired: Date | null;
 
     orderDate: Date;
     createdAt: Date;
     updatedAt: Date;
 }
 
-export interface IOrderDetail extends IOrderSearch {}
+export interface IOrderDetail extends IOrderSearch {
+    cancelable: boolean;
+    returnable: boolean;
+    receivable: boolean;
+    createPayment: boolean;
+    confirmable: boolean;
+}
 
 export interface IOrderSearch extends IOrder {}
 
@@ -53,7 +59,6 @@ export interface IPlaceOrderResponse {
     paid: boolean;
     paymentType: EOrderPaymentType;
     phone: string;
-    refund: boolean;
     status: EOrderStatus;
     tax: number;
     taxRate: number;
@@ -104,7 +109,6 @@ export interface IListOrderOrder {
     code?: ESortBy;
     status?: ESortBy;
     paid?: ESortBy;
-    refund?: ESortBy;
     createdAt?: ESortBy;
     updatedAt?: ESortBy;
     total?: ESortBy;
@@ -114,4 +118,35 @@ export interface IOrderTracking {
     order: IOrderDetail | null;
     isLoading: boolean;
     isError: boolean;
+}
+
+export interface IApiCancelOrder {
+    orderId: string;
+    reason: string;
+}
+
+export interface IApiCancelRefund {
+    orderId: string;
+    requestId: string;
+    note: string;
+}
+
+export interface IPlaceOrderServiceContact {
+    name: string;
+    phone: string;
+    note?: string;
+}
+
+export interface IPlaceOrderServiceServices {
+    itemId: string;
+    employeeId: string | null;
+    serviceId: string;
+    shiftId: string | null;
+    bookingTime: Date | null;
+}
+
+export interface IPlaceOrderService {
+    contact: IPlaceOrderServiceContact;
+    paymentType: TPlaceOrderProductPaymentType;
+    services: IPlaceOrderServiceServices[];
 }

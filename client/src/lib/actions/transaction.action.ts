@@ -1,6 +1,7 @@
 import { API_URLS } from "@/constant/api.constant";
 import {
     IApiCancelTransaction,
+    IApiFailTransaction,
     IApiSuccessTransaction,
     ITransactionOrder,
 } from "@/interface/transaction.interface";
@@ -17,12 +18,12 @@ export const getPaymentLinkProduct = async (id: string) => {
     return resApi;
 };
 
-/** @CANCEL_TRANSACTION */
-export const cancelTransaction = async (
+/** @FAIL_TRANSACTION */
+export const failTransaction = async (
     orderId: string,
-    query: IApiCancelTransaction
+    query: IApiFailTransaction
 ) => {
-    const api = API_URLS.TRANSACTION.CANCEL(orderId, query);
+    const api = API_URLS.TRANSACTION.FAIL(orderId, query);
 
     const resApi = await apiCall({
         ...api,
@@ -40,6 +41,21 @@ export const successTransaction = async (
 
     const resApi = await apiCall({
         ...api,
+    });
+
+    return resApi;
+};
+
+/** @CANCEL_TRANSACTION */
+export const cancelTransaction = async (
+    orderId: string,
+    body: IApiCancelTransaction
+) => {
+    const api = API_URLS.TRANSACTION.CANCEL(orderId);
+
+    const resApi = await apiCall({
+        ...api,
+        payload: body,
     });
 
     return resApi;

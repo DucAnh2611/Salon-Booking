@@ -326,7 +326,9 @@ export default function UpdateProductBaseTab({
                                     {productMediaId.map((media) => (
                                         <div
                                             className="w-full aspect-square rounded-md overflow-hidden relative group/preview"
-                                            key={media.media.path}
+                                            key={
+                                                media.media?.path || Date.now()
+                                            }
                                         >
                                             <div
                                                 className={cn(
@@ -381,28 +383,32 @@ export default function UpdateProductBaseTab({
                                                 </div>
                                             </div>
 
-                                            {media.media.type ===
-                                            EFileType.IMAGE ? (
-                                                <>
-                                                    <img
+                                            {media.media &&
+                                                media.media.type ===
+                                                    EFileType.IMAGE && (
+                                                    <>
+                                                        <img
+                                                            src={
+                                                                api_media_url +
+                                                                media.media.path
+                                                            }
+                                                            alt="product-temp"
+                                                            className="w-full h-full object-cover"
+                                                        />
+                                                    </>
+                                                )}
+                                            {media.media &&
+                                                media.media.type ===
+                                                    EFileType.VIDEO && (
+                                                    <video
                                                         src={
                                                             api_media_url +
                                                             media.media.path
                                                         }
-                                                        alt="product-temp"
+                                                        controls
                                                         className="w-full h-full object-cover"
                                                     />
-                                                </>
-                                            ) : (
-                                                <video
-                                                    src={
-                                                        api_media_url +
-                                                        media.media.path
-                                                    }
-                                                    controls
-                                                    className="w-full h-full object-cover"
-                                                />
-                                            )}
+                                                )}
                                         </div>
                                     ))}
                                     {productMediaUrl.map((media) => (

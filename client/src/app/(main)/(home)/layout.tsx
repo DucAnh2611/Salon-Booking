@@ -8,14 +8,17 @@ export const metadata: Metadata = {
 export default function HomeLayout({
     hero,
     product,
+    service,
 }: Readonly<{
     hero: React.ReactNode;
     product: React.ReactNode;
+    service: React.ReactNode;
 }>) {
     return (
         <>
             {hero}
             {product}
+            {service}
         </>
     );
 }

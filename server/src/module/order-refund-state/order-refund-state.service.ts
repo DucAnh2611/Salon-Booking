@@ -1,9 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
-import { OrderRefundRequestStatusEnum, OrderRefundStatusEnum } from '../../common/enum/order.enum';
+import { OrderRefundStatusEnum } from '../../common/enum/order.enum';
 import { multerConfig } from '../../config/multer.configs';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { MediaService } from '../media/service/media.service';
@@ -27,6 +26,16 @@ export class OrderRefundStateService {
         });
     }
 
+    getApprovedState(requestId: string) {
+        return this.orderRefundStateRepository.findOne({
+            where: {
+                refundRequestId: requestId,
+                status: OrderRefundStatusEnum.APPROVED,
+            },
+            loadEagerRelations: false,
+        });
+    }
+
     async addAutoDecline(requestId: string) {
         const getByRequest = await this.orderRefundStateRepository.findOne({
             where: { refundRequestId: requestId, status: OrderRefundStatusEnum.DECLINE },
@@ -37,6 +46,7 @@ export class OrderRefundStateService {
         const newRequestStatus = await this.orderRefundStateRepository.save({
             refundRequestId: requestId,
             note: 'Yêu cầu hoàn tiền hết hạn!',
+            status: OrderRefundStatusEnum.DECLINE,
         });
         return newRequestStatus;
     }
@@ -73,40 +83,5 @@ export class OrderRefundStateService {
 
         const newRequestStatus = await this.orderRefundStateRepository.save(instance);
         return newRequestStatus;
-    }
-
-    @Cron(CronExpression.EVERY_MINUTE)
-    async autoReveived() {
-        const listApproved = await this.orderRefundStateRepository.find({
-            where: {
-                status: OrderRefundStatusEnum.APPROVED,
-                refundRequest: {
-                    status: OrderRefundRequestStatusEnum.APPROVED,
-                },
-            },
-            loadEagerRelations: false,
-            relations: {
-                refundRequest: true,
-            },
-        });
-
-        const expireApprovedIds = listApproved.reduce((acc, approved) => {
-            const updatedDate = new Date(approved.createdAt.getTime() + AUTO_RECEIVE_HOUR * 60 * 60 * 1000);
-
-            if (updatedDate > new Date() && !acc.includes(approved.refundRequestId)) {
-                acc.push(approved.refundRequestId);
-            }
-            return acc;
-        }, []);
-
-        await this.orderRefundStateRepository.save(
-            expireApprovedIds.map(
-                approved =>
-                    ({
-                        refundRequestId: approved,
-                        status: OrderRefundStatusEnum.RECEIVED,
-                    }) as OrderRefundStateEntity,
-            ),
-        );
     }
 }

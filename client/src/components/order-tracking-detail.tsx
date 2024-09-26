@@ -1,17 +1,25 @@
+"use client";
+
 import {
     ORDER_PAYMENT_TYPE,
     ORDER_STATUS,
     ORDER_TYPE,
 } from "@/constant/order.constant";
-import { EOrderPaymentType, EOrderType } from "@/enum/order.enum";
+import { EOrderPaymentType, EOrderStatus, EOrderType } from "@/enum/order.enum";
 import useOrderTracking from "@/hook/useOrderTracking.hook";
 import { IOrderDetail } from "@/interface/order.interface";
 import { getPaymentLinkProduct } from "@/lib/actions/transaction.action";
+import { getTimeDifference } from "@/lib/date";
 import { formatMoney } from "@/lib/money";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
+import DialogCancelOrder from "./dialog-cancel-order";
+import DialogConfirmOrder from "./dialog-confirm-order";
+import DialogReceiveOrder from "./dialog-receive-order";
+import DialogReturnOrder from "./dialog-return-order";
 import OrderTrackingProduct from "./order-tracking-product";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
@@ -31,7 +39,10 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
     const router = useRouter();
     const {
         order: { order: order },
+        reload,
     } = useOrderTracking();
+    const [timeLeft, SetTimeLeft] = useState<string>("00:00");
+    const [isExpired, SetIsExpired] = useState<boolean>(false);
 
     const handleCopyCode = (orderCp: IOrderDetail) => () => {
         window.navigator.clipboard.writeText(orderCp.code);
@@ -52,15 +63,97 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
                 title: "Thất bại",
                 description:
                     "Lấy link thanh toán thất bại. Vui lòng thử lại sau",
+                variant: "destructive",
             });
         }
     };
+
+    const onSuccessCancel = () => {
+        reload("order");
+        reload("state");
+    };
+
+    const onSuccessReceive = () => {
+        reload("order");
+        reload("state");
+    };
+
+    const onSuccessReturn = () => {
+        reload("order");
+        reload("state");
+    };
+
+    const onSuccessConfirm = () => {
+        reload("order");
+        reload("state");
+    };
+
+    useEffect(() => {
+        if (order) {
+            if (
+                order.confirmExpired &&
+                new Date(order.confirmExpired) >= new Date()
+            ) {
+                const timeCountInterval = setInterval(() => {
+                    const { minutes, seconds } = getTimeDifference(
+                        new Date(),
+                        order.confirmExpired
+                            ? new Date(order.confirmExpired)
+                            : new Date()
+                    );
+
+                    SetTimeLeft(
+                        `${minutes > 9 ? minutes : `0${minutes}`}:${
+                            seconds > 9 ? seconds : `0${seconds}`
+                        }`
+                    );
+                    if (minutes <= 0 && seconds <= 0) {
+                        SetIsExpired(true);
+                    }
+                }, 1000);
+
+                return () => {
+                    clearInterval(timeCountInterval);
+                };
+            } else {
+                SetIsExpired(true);
+            }
+        }
+    }, [order]);
 
     if (!order) return <></>;
 
     return (
         <div className="w-full">
-            {order.paymentType === EOrderPaymentType.BANK && !order.paid && (
+            {order.confirmExpired && !isExpired && order.confirmable && (
+                <div className="box-border flex items-center gap-5 px-3 py-2 rounded-md border mb-1">
+                    <p className="flex-1 break-words whitespace-normal text-sm font-medium">
+                        Vui lòng xác nhận đơn hàng trước
+                        <span className="text-primary">
+                            {format(
+                                order.confirmExpired,
+                                "yyyy/MM/dd HH:mm:ss"
+                            )}
+                        </span>
+                    </p>
+                    <p className="w-fit h-fit py-2 px-3 text-sm border rounded text-primary font-bold">
+                        {timeLeft}
+                    </p>
+                </div>
+            )}
+            {order.confirmExpired &&
+                isExpired &&
+                order.status === EOrderStatus.CANCELLED && (
+                    <div className="box-border flex bg-destructive items-center gap-5 px-3 py-2 rounded-md border mb-1">
+                        <p className="flex-1 break-words whitespace-normal text-sm font-medium">
+                            {`Đơn hàng đã hết hạn lúc ${format(
+                                order.confirmExpired,
+                                "yyyy/MM/dd HH:mm:ss"
+                            )}, đơn đã tự động bị hủy. Các yêu cầu giao dịch cũng bị hủy, nếu bạn đã chuyển 1 phần tiền, hãy gửi yêu cầu hoàn tiền.`}
+                        </p>
+                    </div>
+                )}
+            {order.createPayment && !isExpired && (
                 <div className="bg-primary box-border flex items-center gap-5 px-3 py-2 rounded-t-md">
                     <p className="flex-1 break-words whitespace-normal text-background text-sm font-medium text-black">
                         Đơn hàng này hiện chưa được thanh toán, vui lòng thanh
@@ -123,19 +216,23 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
                                             title: "Ghi chú",
                                             value: order.note || "Không",
                                         },
-                                    ].map((item) => (
-                                        <div
-                                            className="grid grid-cols-7 w-full text-sm gap-3 items-start"
-                                            key={item.title}
-                                        >
-                                            <span className="font-medium whitespace-normal col-span-2 place-items-start">
-                                                {item.title}
-                                            </span>
-                                            <span className="whitespace-normal break-words col-span-5 text-muted-foreground">
-                                                {item.value}
-                                            </span>
-                                        </div>
-                                    ))}
+                                    ].map((item) =>
+                                        !!item.value ? (
+                                            <div
+                                                className="grid grid-cols-7 w-full text-sm gap-3 items-start"
+                                                key={item.title}
+                                            >
+                                                <span className="font-medium whitespace-normal col-span-2 place-items-start">
+                                                    {item.title}
+                                                </span>
+                                                <span className="whitespace-normal break-words col-span-5 text-muted-foreground">
+                                                    {item.value}
+                                                </span>
+                                            </div>
+                                        ) : (
+                                            <></>
+                                        )
+                                    )}
                                 </div>
                             </div>
                             <Separator
@@ -208,7 +305,7 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
                                                     ? "Đã thanh toán"
                                                     : order.paymentType ===
                                                       EOrderPaymentType.CASH
-                                                    ? "Thanh toán khi nhận hàng"
+                                                    ? "Thanh toán khi hoàn thành"
                                                     : "Chưa thanh toán"}
                                             </Badge>
                                         </span>
@@ -302,6 +399,61 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
                     </div>
                 </CardContent>
             </Card>
+            <div className="w-full py-3">
+                <div className="w-full grid grid-cols-2 gap-2">
+                    {order.cancelable && (
+                        <DialogCancelOrder
+                            onSuccess={onSuccessCancel}
+                            trigger={
+                                <Button className="w-full" variant="outline">
+                                    Hủy đơn
+                                </Button>
+                            }
+                            orderId={order.id}
+                        />
+                    )}
+                    {order.returnable && (
+                        <DialogReturnOrder
+                            onSuccess={onSuccessReturn}
+                            orderId={order.id}
+                            trigger={
+                                <Button className="w-full" variant="outline">
+                                    Hoàn đơn
+                                </Button>
+                            }
+                        />
+                    )}
+                    {order.confirmable && (
+                        <DialogConfirmOrder
+                            onSuccess={onSuccessConfirm}
+                            orderId={order.id}
+                            trigger={
+                                <Button
+                                    className="w-full"
+                                    variant="default"
+                                    disabled={!order.confirmable}
+                                >
+                                    Xác nhận đơn hàng
+                                </Button>
+                            }
+                        />
+                    )}
+                    {order.receivable && (
+                        <DialogReceiveOrder
+                            onSuccess={onSuccessReceive}
+                            orderId={order.id}
+                            trigger={
+                                <Button
+                                    className="w-full col-span-2"
+                                    variant="default"
+                                >
+                                    Đã nhận được hàng
+                                </Button>
+                            }
+                        />
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

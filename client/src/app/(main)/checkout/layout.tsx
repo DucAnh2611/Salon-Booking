@@ -1,6 +1,7 @@
 "use client";
 
-import CartProductContacttProvider from "@/context/cart-product-contact.context";
+import CartProductContactProvider from "@/context/cart-product-contact.context";
+import CartServiceContactProvider from "@/context/cart-service-contact.context";
 import ProvinceProvider from "@/context/province.context";
 import withAuth from "@/hoc/withAuth";
 import { ILayoutProps } from "@/interface/layout.interface";
@@ -23,14 +24,16 @@ function CheckoutLayout({ product, service }: ICartLayoutProps) {
 
     return (
         <div className="w-full h-fit py-10 box-border">
-            <CartProductContacttProvider>
-                <ProvinceProvider>
-                    <div className="container px-4 gap-5 flex w-full box-border h-fit">
-                        {type === "service" && service}
-                        {type === "product" && product}
-                    </div>
-                </ProvinceProvider>
-            </CartProductContacttProvider>
+            <CartProductContactProvider>
+                <CartServiceContactProvider>
+                    <ProvinceProvider>
+                        <div className="container px-4 gap-5 flex w-full box-border h-fit">
+                            {type === "service" && service}
+                            {type === "product" && product}
+                        </div>
+                    </ProvinceProvider>
+                </CartServiceContactProvider>
+            </CartProductContactProvider>
         </div>
     );
 }

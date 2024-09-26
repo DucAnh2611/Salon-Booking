@@ -47,12 +47,25 @@ export class CreateOrderProductDto {
     @Type(() => CreateOrderProductItemDto)
     products: CreateOrderProductItemDto[];
 }
+export class OrderServiceContactDto {
+    @IsNotEmpty()
+    @IsString()
+    name: string;
+
+    @IsNotEmpty()
+    @IsString()
+    phone: string;
+
+    @IsOptional()
+    @IsString()
+    note?: string;
+}
 
 export class CreateOrderServiceDto {
     @IsNotEmpty()
     @ValidateNested()
-    @Type(() => OrderContactDto)
-    contact: OrderContactDto;
+    @Type(() => OrderServiceContactDto)
+    contact: OrderServiceContactDto;
 
     @IsNotEmpty()
     @IsEnum(OrderPaymentTypeEnum)

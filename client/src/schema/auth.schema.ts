@@ -68,7 +68,6 @@ export const signupSchema = z
         }),
     })
     .superRefine(({ password, confirmPassword }, context) => {
-        console.log(password, confirmPassword);
         if (password !== confirmPassword) {
             context.addIssue({
                 code: "custom",

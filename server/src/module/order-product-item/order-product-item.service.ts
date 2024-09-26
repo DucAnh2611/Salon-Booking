@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
+import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { CartProductItemEntity } from '../cart-product-item/entity/cart-product-item.entity';
 import { ProductBaseEntity } from '../product-base/entity/product-base.entity';
@@ -21,6 +22,10 @@ export class OrderProductItemService {
         @InjectRepository(CartProductItemEntity)
         private readonly cartProductItemRepository: Repository<CartProductItemEntity>,
     ) {}
+
+    countItemsOrder(orderId: string) {
+        return this.orderProductItemRepository.count({ where: { orderId }, loadEagerRelations: false });
+    }
 
     async isItemInCart(itemId: string) {
         const isItemInCart = await this.cartProductItemRepository.findOne({
@@ -160,22 +165,35 @@ export class OrderProductItemService {
         return list;
     }
 
-    async updateProductQuantity(item: CreateOrderProductItemDto) {
-        const { productId, quantity, productTypeId } = item;
-        if (productTypeId) {
-            const productType = await this.productTypesRepository.findOne({
-                where: { id: productTypeId },
-                loadEagerRelations: false,
-            });
-
-            return this.productTypesRepository.save({ ...productType, quantity: productType.quantity - quantity });
-        }
-        const product = await this.productBaseRepository.findOne({
-            where: { id: productId },
+    async updateProductQuantity(orderId: string) {
+        const orderProductItems = await this.orderProductItemRepository.find({
+            where: { orderId },
             loadEagerRelations: false,
         });
+        await Promise.all(
+            orderProductItems.map(async item => {
+                const { productId, quantity, productTypeId } = item;
+                if (productTypeId) {
+                    const productType = await this.productTypesRepository.findOne({
+                        where: { id: productTypeId },
+                        loadEagerRelations: false,
+                    });
 
-        return this.productBaseRepository.save({ ...product, quantity: product.quantity - quantity });
+                    return this.productTypesRepository.save({
+                        ...productType,
+                        quantity: productType.quantity - quantity,
+                    });
+                }
+                const product = await this.productBaseRepository.findOne({
+                    where: { id: productId },
+                    loadEagerRelations: false,
+                });
+
+                return this.productBaseRepository.save({ ...product, quantity: product.quantity - quantity });
+            }),
+        );
+
+        return DataSuccessCodeEnum.OK;
     }
 
     async create(orderId: string, list: CreateOrderProductItemDto[]) {
@@ -207,9 +225,26 @@ export class OrderProductItemService {
                 });
             }),
         );
-
-        const updateQuantity = await Promise.all(list.map(item => this.updateProductQuantity(item)));
-
         return savedList;
+    }
+
+    async restock(orderId: string) {
+        const items = await this.orderProductItemRepository.find({ where: { orderId }, loadEagerRelations: false });
+
+        const request: Promise<UpdateResult>[] = [];
+
+        for (const item of items) {
+            const itemId = item.productTypeId ? item.productId : item.productId;
+            request.push(
+                this[item.productTypeId ? 'productBaseRepository' : 'productTypesRepository'].increment(
+                    { id: itemId },
+                    'quantity',
+                    item.quantity,
+                ),
+            );
+        }
+        await Promise.all(request);
+
+        return DataSuccessCodeEnum.OK;
     }
 }

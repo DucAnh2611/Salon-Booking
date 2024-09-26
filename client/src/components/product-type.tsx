@@ -9,7 +9,7 @@ import {
 } from "@/interface/product.interface";
 import { addProductCart } from "@/lib/actions/cart.action";
 import { productOnStock } from "@/lib/actions/product.action";
-import { addToCartSchema } from "@/schema/cart.schema";
+import { addProductToCartSchema } from "@/schema/cart.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -43,8 +43,8 @@ export default function ProductTypeSelect({
     const [attributeValues, SetAttributeValues] =
         useState<TProductTypeAttribute>([]);
 
-    const form = useForm<z.infer<typeof addToCartSchema>>({
-        resolver: zodResolver(addToCartSchema),
+    const form = useForm<z.infer<typeof addProductToCartSchema>>({
+        resolver: zodResolver(addProductToCartSchema),
         defaultValues: {
             productId: product.base.id,
             productTypeId: undefined,

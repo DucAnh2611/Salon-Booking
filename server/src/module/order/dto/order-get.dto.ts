@@ -1,10 +1,18 @@
-import { IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { OrderType } from '../../../common/enum/order.enum';
 
 export class GetOrderParamDto {
     @IsNotEmpty()
     @IsUUID()
     id: string;
 }
+
+export class GetRequestRefundParamDto {
+    @IsNotEmpty()
+    @IsUUID()
+    id: string;
+}
+
 export class GetOrderTrackingParamDto {
     @IsNotEmpty()
     @IsString()
@@ -22,4 +30,10 @@ type TrackingDetailType = 'state' | 'refund' | 'transaction' | 'product' | 'serv
 export class TrackingDetailOrderDto {
     type: TrackingDetailType;
     orderId: string;
+}
+
+export class GetOrderStateListQueryDto {
+    @IsNotEmpty()
+    @IsEnum(OrderType)
+    type: OrderType;
 }

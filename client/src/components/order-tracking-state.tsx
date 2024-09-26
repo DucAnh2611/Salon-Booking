@@ -95,14 +95,14 @@ export default function OrderTrackingState({}: IOrderTrackingStateProps) {
                                             <p className="w-full whitespace-normal break-words text-xs italic">
                                                 {format(
                                                     state.createdAt,
-                                                    "yyyy/MM/dd hh:mm aaa"
+                                                    "yyyy/MM/dd HH:mm:ss"
                                                 )}
                                             </p>
-                                            <p className="w-full whitespace-normal break-words text-sm mt-1">
+                                            <p className="w-full whitespace-normal break-words text-sm mt-2">
                                                 {ORDER_STATUS[state.state]}
                                             </p>
                                             {state.description && (
-                                                <p className="w-full whitespace-normal break-words text-sm text-muted-foreground italic">
+                                                <p className="w-full whitespace-normal font-normal break-words text-sm text-muted-foreground italic">
                                                     {state.description}
                                                 </p>
                                             )}

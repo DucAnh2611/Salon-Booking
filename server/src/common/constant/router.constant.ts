@@ -17,7 +17,8 @@ export const ROUTER = {
 
     SERVICE: 'service',
     PRODUCT: 'product',
-    PRODUCT_CLIENT: 'product/client',
+    PRODUCT_CLIENT: 'product-client',
+    SERVICE_CLIENT: 'service-client',
 
     VOUCHER: 'voucher',
 
@@ -28,8 +29,10 @@ export const ROUTER = {
     PRODUCT_TYPES: 'product-types',
 
     WORKING_HOUR: 'working-hour',
+    WORKING_HOUR_CLIENT: 'working-hour/client',
     SHIFT: 'shift',
     SHIFT_EMPLOYEE: 'shift-employee',
+    SHIFT_EMPLOYEE_CLIENT: 'shift-employee/client',
 
     CART: 'cart',
     CART_PRODUCT: 'cart-product',
@@ -126,6 +129,7 @@ export const ATTRIBUTE_VALUE_ROUTE = {
 };
 export const CLIENT_CATEGORY_ROUTE = {
     TREE: '/client/tree',
+    LIST: '/client/list',
 };
 
 export const CATEGORY_ROUTE = {
@@ -142,6 +146,12 @@ export const VOUCHER_ROUTE = {
     UPDATE: ':id',
     DELETE_ONE: ':id',
     DELETE_MANY: '',
+};
+
+export const CLIENT_SERVICE_ROUTE = {
+    FIND: '',
+    DETAIL: 'i/:id',
+    FEATURED: 'feature',
 };
 
 export const CLIENT_PRODUCT_ROUTE = {
@@ -198,6 +208,10 @@ export const WORKING_HOUR_ROUTE = {
     TOGGLE_OFF: 'toggle-off',
 };
 
+export const WORKING_HOUR_CLIENT_ROUTE = {
+    SEARCH: '',
+};
+
 export const SHIFT_ROUTE = {
     FIND: '',
     DETAIL: ':id',
@@ -205,6 +219,7 @@ export const SHIFT_ROUTE = {
     UPDATE: '',
     DELETE_ONE: ':id',
     DELETE_MANY: '',
+    BOOKING: 'booking',
 };
 
 export const SHIFT_EMPLOYEE_ROUTE = {
@@ -212,6 +227,11 @@ export const SHIFT_EMPLOYEE_ROUTE = {
     UPDATE_STATUS: '',
     DELETE_ONE: '',
     DELETE_MANY: 'many',
+};
+
+export const SHIFT_EMPLOYEE_CLIENT_ROUTE = {
+    SERVICE_EMPLOYEE: 'service-employee',
+    CHECK_OVERLAP_SERVICE: 'overlap',
 };
 
 export const CART_ROUTE = {
@@ -231,6 +251,7 @@ export const CART_PRODUCT_ROUTE = {
 
 export const CART_SERVICE_ROUTE = {
     GET: 'me',
+    CART_AMOUNT: 'amount',
     ADD: '',
     DELETE: ':id',
 };
@@ -248,19 +269,40 @@ export const CLIENT_ORDER_ROUTE = {
 
     PLACE_PRODUCT: 'place/product',
     PLACE_SERVICE: 'place/service',
-
-    CANCEL: 'cancel',
+    CONFIRM_ORDER_SERVICE: 'order-service/:id/confirm',
 
     FAIL_TRANSACTION: ':id/transaction/fail',
     SUCCESS_TRANSACTION: ':id/transaction/success',
+    CANCEL_TRANSACTION: ':id/transaction/cancel',
 
     GET_PAYMENT_LINK_PRODUCT: ':id/product/payment',
     GET_PAYMENT_LINK_SERVICE: ':id/service/payment',
 
-    UPDATE_STATE: ':id/state',
+    RECEIVE_ORDER: ':id/receive',
+    RETURN_ORDER: ':id/return',
+    CANCEL_ORDER: 'cancel',
 
     CREATE_REQUEST_REFUND: 'refund/',
+    CANCEL_REQUEST_REFUND: 'refund/cancel',
     RECEIVE_REFUND: 'refund/:id/received',
+};
+
+export const ADMIN_ORDER_ROUTE = {
+    LIST: '',
+    DETAIL: 'd/:id',
+
+    REFUND: 'd/:id/refunds',
+    TRANSACTION: 'd/:id/transactions',
+    STATE: 'd/:id/states',
+    PRODUCT: 'd/:id/products',
+    SERVICE: 'd/:id/services',
+
+    ORDER_STATE_LIST: 'order-state/list',
+    UPDATE_ORDER_STATE: 'order-state/',
+
+    APPROVE_ORDER_REFUND: 'order-refund/approve',
+    DECLINE_ORDER_REFUND: 'order-refund/decline',
+    CREATE_OR_PAYMENT: 'order-refund/create-qr/:id',
 };
 
 export const ORDER_ROUTE = {

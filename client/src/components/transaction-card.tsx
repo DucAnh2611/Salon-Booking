@@ -1,5 +1,5 @@
 import { ORDER_PAYMENT_STATUS } from "@/constant/order.constant";
-import { EOrderPaymentStatus } from "@/enum/order.enum";
+import { EOrderPaymentStatus, EOrderPaymentType } from "@/enum/order.enum";
 import useOrderTracking from "@/hook/useOrderTracking.hook";
 import { ITransactionOrder } from "@/interface/transaction.interface";
 import { getTimeDifference } from "@/lib/date";
@@ -7,7 +7,10 @@ import { formatMoney } from "@/lib/money";
 import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ChevronsDown, ChevronsUp } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
+import DialogCancelTransaction from "./dialog-cancel-transaction";
 import DialogCreateRefund from "./dialog-create-refund";
 import { Button } from "./ui/button";
 import { Card, CardContent, CardHeader } from "./ui/card";
@@ -28,7 +31,10 @@ export default function TransactionCard({
 }: ITransactionCartProps) {
     const {
         order: { order },
+        reload,
     } = useOrderTracking();
+    const router = useRouter();
+
     const [open, SetOpen] = useState<boolean>(false);
     const [timeRemain, SetTimeRemain] = useState<{
         minutes: number;
@@ -37,6 +43,15 @@ export default function TransactionCard({
 
     const toggleDetail = () => {
         SetOpen((o) => !o);
+    };
+
+    const onSuccessCancel = () => {
+        reload("order");
+        reload("transaction");
+    };
+
+    const onSuccessCreatRefundRequet = () => {
+        reload("transaction");
     };
 
     useEffect(() => {
@@ -79,7 +94,10 @@ export default function TransactionCard({
                         </span>
                     ) : (
                         <span className="font-medium">
-                            {format(transaction.createdAt, "yyyy/MM/dd HH:mm")}
+                            {format(
+                                transaction.createdAt,
+                                "yyyy/MM/dd HH:mm:ss"
+                            )}
                         </span>
                     )}
                     <span
@@ -128,7 +146,7 @@ export default function TransactionCard({
                     </div>
                 </div>
 
-                {transaction.paidAmount - transaction.orderAmount > 0 && (
+                {transaction.paidAmount > 0 && (
                     <div>
                         <Separator orientation="horizontal" className="my-1" />
                         <div className="w-full text-sm flex flex-row gap-1">
@@ -137,38 +155,83 @@ export default function TransactionCard({
                             </span>
                             <span className="font-medium ">
                                 {formatMoney(
-                                    transaction.paidAmount -
-                                        transaction.orderAmount
+                                    transaction.status ===
+                                        EOrderPaymentStatus.PAID
+                                        ? transaction.paidAmount -
+                                              transaction.orderAmount
+                                        : transaction.paidAmount
                                 )}
                             </span>
                         </div>
-                        {open && transaction.createRefund ? (
-                            <DialogCreateRefund
-                                trigger={
-                                    <Button
-                                        variant="default"
-                                        className="w-full mt-2"
-                                        size="sm"
-                                    >
-                                        Yêu cầu hoàn tiền
-                                    </Button>
-                                }
-                                order={order}
-                                amount={
-                                    transaction.paidAmount -
-                                    transaction.orderAmount
-                                }
-                                transaction={transaction}
-                            />
+                        {open ? (
+                            transaction.createRefund ? (
+                                <DialogCreateRefund
+                                    trigger={
+                                        <Button
+                                            variant="default"
+                                            className="w-full mt-2"
+                                            size="sm"
+                                        >
+                                            Yêu cầu hoàn tiền
+                                        </Button>
+                                    }
+                                    order={order}
+                                    amount={
+                                        transaction.status ===
+                                        EOrderPaymentStatus.PAID
+                                            ? transaction.paidAmount -
+                                              transaction.orderAmount
+                                            : transaction.paidAmount
+                                    }
+                                    transaction={transaction}
+                                    onSuccess={onSuccessCreatRefundRequet}
+                                />
+                            ) : (
+                                <div className="w-full text-sm flex flex-row gap-1">
+                                    <span className="font-medium italic text-xs text-muted-foreground">
+                                        Yêu cầu hoàn tiền đã được ghi nhận
+                                    </span>
+                                </div>
+                            )
                         ) : (
-                            <div className="w-full text-sm flex flex-row gap-1">
-                                <span className="font-medium italic text-xs text-muted-foreground">
-                                    Yêu cầu hoàn tiền đã được ghi nhận
-                                </span>
-                            </div>
+                            <></>
                         )}
                     </div>
                 )}
+
+                {transaction.status == EOrderPaymentStatus.PENDING &&
+                    order &&
+                    order.paymentType === EOrderPaymentType.BANK && (
+                        <div className="flex gap-2 w-full">
+                            <DialogCancelTransaction
+                                orderId={order.id}
+                                transactionId={transaction.id}
+                                onSuccess={onSuccessCancel}
+                                trigger={
+                                    <Button
+                                        variant="default"
+                                        className="w-full mt-2 bg-red-500 text-red-500 bg-opacity-15 hover:bg-red-500 hover:bg-opacity-20"
+                                        size="sm"
+                                    >
+                                        Hủy giao dịch
+                                    </Button>
+                                }
+                            />
+                            <Button
+                                variant="default"
+                                className="w-full mt-2 bg-yellow-500 text-yellow-500 bg-opacity-15 hover:bg-yellow-500 hover:bg-opacity-20"
+                                size="sm"
+                                asChild
+                            >
+                                <Link
+                                    href={transaction.paymentUrl}
+                                    target="_blank"
+                                >
+                                    Tiếp tục thanh toán
+                                </Link>
+                            </Button>
+                        </div>
+                    )}
 
                 <div>
                     <Button

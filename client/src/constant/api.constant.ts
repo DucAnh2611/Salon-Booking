@@ -6,7 +6,7 @@ import {
     IWardSearchQuery,
 } from "@/interface/province.interface";
 import {
-    IApiCancelTransaction,
+    IApiFailTransaction,
     IApiSuccessTransaction,
 } from "@/interface/transaction.interface";
 import { joinString } from "@/lib/string";
@@ -67,11 +67,31 @@ export const API_URLS = {
             withCredentials: true,
         }),
     },
+    CATEGORY: {
+        TREE: () => ({
+            method: "GET",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["category", "client", "tree"],
+            }),
+            withCredentials: true,
+        }),
+        LIST: () => ({
+            method: "GET",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["category", "client", "list"],
+            }),
+            withCredentials: true,
+        }),
+    },
     PRODUCT: {
         FEATURED: () => ({
             method: "GET",
             headers: HEADERS.header(),
-            endPoint: "product/client/feature",
+            endPoint: "product-client/feature",
             withCredentials: true,
         }),
         DETAIL: (id: string) => ({
@@ -79,7 +99,7 @@ export const API_URLS = {
             headers: HEADERS.header(),
             endPoint: joinString({
                 joinString: "/",
-                strings: ["product", "client", "i", id],
+                strings: ["product-client", "i", id],
             }),
             withCredentials: true,
         }),
@@ -88,7 +108,27 @@ export const API_URLS = {
             headers: HEADERS.header(),
             endPoint: joinString({
                 joinString: "/",
-                strings: ["product", "client", "on-stock"],
+                strings: ["product-client", "on-stock"],
+            }),
+            withCredentials: true,
+        }),
+    },
+    SERVICE: {
+        FEATURED: () => ({
+            method: "GET",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["service-client", "feature"],
+            }),
+            withCredentials: true,
+        }),
+        DETAIL: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["service-client", "i", id],
             }),
             withCredentials: true,
         }),
@@ -136,6 +176,43 @@ export const API_URLS = {
             endPoint: joinString({
                 joinString: "/",
                 strings: ["cart-product", id],
+            }),
+            withCredentials: true,
+        }),
+
+        GET_SERVICE: () => ({
+            method: "GET",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["cart-service", "me"],
+            }),
+            withCredentials: true,
+        }),
+        ADD_SERVICE: () => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["cart-service"],
+            }),
+            withCredentials: true,
+        }),
+        GET_SERVICE_AMOUNT: () => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["cart-service", "amount"],
+            }),
+            withCredentials: true,
+        }),
+        DELETE_SERVICE: (id: string) => ({
+            method: "DELETE",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["cart-service", id],
             }),
             withCredentials: true,
         }),
@@ -210,6 +287,51 @@ export const API_URLS = {
             endPoint: joinString({
                 joinString: "/",
                 strings: ["order", "place", "product"],
+            }),
+            withCredentials: true,
+        }),
+        CANCEL: () => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "cancel"],
+            }),
+            withCredentials: true,
+        }),
+        RECEIVE: (id: string) => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", id, "receive"],
+            }),
+            withCredentials: true,
+        }),
+        RETURN: (id: string) => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", id, "return"],
+            }),
+            withCredentials: true,
+        }),
+        CONFIRM: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "order-service", id, "confirm"],
+            }),
+            withCredentials: true,
+        }),
+        PLACE_SERVICE: () => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "place", "service"],
             }),
             withCredentials: true,
         }),
@@ -317,9 +439,9 @@ export const API_URLS = {
             }),
             withCredentials: true,
         }),
-        CANCEL: (
+        FAIL: (
             orderId: string,
-            { code, id, orderCode, status }: IApiCancelTransaction
+            { code, id, orderCode, status }: IApiFailTransaction
         ) => ({
             method: "GET",
             headers: HEADERS.header(),
@@ -332,6 +454,15 @@ export const API_URLS = {
                     "fail" +
                         `?code=${code}&cancel=true&id=${id}&orderCode=${orderCode}&status=${status}`,
                 ],
+            }),
+            withCredentials: true,
+        }),
+        CANCEL: (orderId: string) => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", orderId, "transaction", "cancel"],
             }),
             withCredentials: true,
         }),
@@ -390,6 +521,53 @@ export const API_URLS = {
             endPoint: joinString({
                 joinString: "/",
                 strings: ["order", "refund", requestId, "received"],
+            }),
+            withCredentials: true,
+        }),
+        CANCEL: () => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "refund", "cancel"],
+            }),
+            withCredentials: true,
+        }),
+        RECEIVE: (id: string) => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "refund", id, "received"],
+            }),
+            withCredentials: true,
+        }),
+    },
+    SHIFT: {
+        GET_BOOKING_TIME: () => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["shift", "booking"],
+            }),
+            withCredentials: true,
+        }),
+        GET_EMPLOYEE_BOOKING: () => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["shift-employee", "client", "service-employee"],
+            }),
+            withCredentials: true,
+        }),
+        CHECK_OVERLAP_SERVICE_EMPLOYEE: () => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["shift-employee", "client", "overlap"],
             }),
             withCredentials: true,
         }),

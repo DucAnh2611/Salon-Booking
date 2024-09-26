@@ -1,11 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { ServiceEntity } from '../service-base/entity/service.entity';
 import { CreateCartServiceItemDto } from './dto/cart-service-item-create.dto';
+import { GetCartServiceAmountDto } from './dto/cart-service-item-get.dto';
 import { CartServiceItemEntity } from './entity/cart-service-item.entity';
 
 @Injectable()
@@ -20,9 +21,10 @@ export class CartServiceItemService {
         return this.cartServiceItemRepository.findOne({ where: { id }, loadEagerRelations: false });
     }
 
-    async getTotalAmount(cartServiceId: string) {
+    async getTotalAmount(body: GetCartServiceAmountDto) {
+        const { cartServiceId, itemIds } = body;
         const items = await this.cartServiceItemRepository.find({
-            where: { cartServiceId },
+            where: { cartServiceId, id: In(itemIds) },
             loadEagerRelations: false,
             relations: { service: true },
         });
@@ -63,6 +65,7 @@ export class CartServiceItemService {
                     category: true,
                 },
             },
+            withDeleted: true,
         });
     }
 
@@ -97,6 +100,12 @@ export class CartServiceItemService {
         }
 
         const remove = await this.cartServiceItemRepository.delete({ id: cartServiceItemId });
+
+        return DataSuccessCodeEnum.OK;
+    }
+
+    async removeList(cartId: string, itemIds: string[]) {
+        await this.cartServiceItemRepository.delete({ cartServiceId: cartId, id: In(itemIds) });
 
         return DataSuccessCodeEnum.OK;
     }

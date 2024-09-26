@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
+import { TAX_RATE } from '../../common/constant/order.contant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { Forbidden } from '../../shared/exception/error.exception';
@@ -8,7 +9,6 @@ import { CartProductItemService } from '../cart-product-item/cart-product-item.s
 import { CreateCartProductItemDto } from '../cart-product-item/dto/cart-product-item-create.dto';
 import { GetCartProductAmountDto } from '../cart-product-item/dto/cart-product-item-get.dto';
 import { UpdateCartProductItemDto } from '../cart-product-item/dto/cart-product-item-update.dto';
-import { TAX_RATE } from '../order-base/order-base.service';
 import { CartProductEntity } from './entity/cart-product.entity';
 
 @Injectable()
@@ -21,7 +21,7 @@ export class CartProductService {
     async removeCartItems(clientId: string, itemIds: string[]) {
         const cart = await this.cartProductRepository.findOne({ where: { clientId }, loadEagerRelations: false });
 
-        const deletedCart = await this.cartProductItemService.removeList(cart.id, itemIds);
+        await this.cartProductItemService.removeList(cart.id, itemIds);
 
         return DataSuccessCodeEnum.OK;
     }

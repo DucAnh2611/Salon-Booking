@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest, InternalServer } from '../../shared/exception/error.exception';
 import { MediaService } from '../media/service/media.service';
 import { CreateProductMediaDto } from './dto/product-media-create.dto';
@@ -25,6 +26,9 @@ export class ProductMediaService {
             loadEagerRelations: false,
             relations: {
                 media: true,
+            },
+            order: {
+                createdAt: SortByEnum.DESC,
             },
         });
     }

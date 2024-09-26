@@ -6,7 +6,10 @@ import { UserType } from '../../shared/decorator/user-types.decorator';
 import { AccessTokenClientGuard } from '../../shared/guard/accessToken.guard';
 import { UserTypeGuard } from '../../shared/guard/user-type.guard';
 import { CreateCartServiceItemDto } from '../cart-service-item/dto/cart-service-item-create.dto';
-import { GetCartServiceItemParamDto } from '../cart-service-item/dto/cart-service-item-get.dto';
+import {
+    GetCartServiceAmountDto,
+    GetCartServiceItemParamDto,
+} from '../cart-service-item/dto/cart-service-item-get.dto';
 import { CartServiceService } from './cart-service.service';
 
 @UseGuards(AccessTokenClientGuard, UserTypeGuard)
@@ -20,6 +23,14 @@ export class CartServiceController {
         const { clientId } = req.accessPayload;
 
         return this.cartServiceService.get(clientId);
+    }
+
+    @Post(CART_SERVICE_ROUTE.CART_AMOUNT)
+    @UserType(ROLE_TITLE.client)
+    getCartAmount(@Req() req: AppRequest, @Body() body: GetCartServiceAmountDto) {
+        const { clientId } = req.accessPayload;
+
+        return this.cartServiceService.calculateAmount(clientId, body);
     }
 
     @Post(CART_SERVICE_ROUTE.ADD)

@@ -1,17 +1,22 @@
-import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { CLIENT_ORDER_ROUTE, ROUTER } from '../../../common/constant/router.constant';
+import { OrderStatusEnum } from '../../../common/enum/order.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
 import { AccessTokenClientGuard } from '../../../shared/guard/accessToken.guard';
 import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
-import { CreateOrderRefundRequestDto } from '../../oder-refund-request/dto/order-refund-request-create.dto';
+import {
+    CancelOrderRefundRequestDto,
+    CancelTransactionDto,
+    CreateOrderRefundRequestDto,
+} from '../../oder-refund-request/dto/order-refund-request-create.dto';
 import { FindOrderClientDto } from '../../order-base/dto/order-base-get.dto';
 import { ReturnUrlTransactionPayOsDto } from '../../order-transaction/dto/order-transaction.get.dto';
 import { CreateOrderProductDto, CreateOrderServiceDto } from '../dto/order-create.dto';
 import { GetOrderParamDto, GetOrderTrackingParamDto } from '../dto/order-get.dto';
-import { ClientCancelOrderStateDto, UpdateOrderStateDto } from '../dto/order-update.dto';
-import { OrderService } from '../order.service';
+import { ClientCancelOrderStateDto } from '../dto/order-update.dto';
+import { OrderService } from '../service/order.service';
 
 @UseGuards(AccessTokenClientGuard, UserTypeGuard)
 @Controller(ROUTER.ORDER)
@@ -94,17 +99,18 @@ export class OrderController {
         return this.orderService.createOrderService(userId, clientId, body);
     }
 
-    @Post(CLIENT_ORDER_ROUTE.CANCEL)
+    @Get(CLIENT_ORDER_ROUTE.CONFIRM_ORDER_SERVICE)
     @UserType(ROLE_TITLE.client)
-    cancelOrder(@Req() req: AppRequest, @Body() body: ClientCancelOrderStateDto) {
+    confirmOrderService(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { clientId, userId } = req.accessPayload;
+        const { id: orderId } = param;
 
-        return this.orderService.clientCancelOrder(userId, clientId, body);
+        return this.orderService.clientConfirmOrder(userId, clientId, orderId);
     }
 
     @Get(CLIENT_ORDER_ROUTE.FAIL_TRANSACTION)
     @UserType(ROLE_TITLE.client)
-    cancelTransaction(
+    failTransaction(
         @Req() req: AppRequest,
         @Param() param: GetOrderParamDto,
         @Query() query: ReturnUrlTransactionPayOsDto,
@@ -112,7 +118,7 @@ export class OrderController {
         const { clientId, userId } = req.accessPayload;
         const { id: orderId } = param;
 
-        return this.orderService.transactionCancel(userId, clientId, orderId, query);
+        return this.orderService.transactionFail(userId, clientId, orderId, query);
     }
 
     @Get(CLIENT_ORDER_ROUTE.SUCCESS_TRANSACTION)
@@ -128,35 +134,62 @@ export class OrderController {
         return this.orderService.transactionSuccessfull(userId, clientId, orderId, query);
     }
 
+    @Post(CLIENT_ORDER_ROUTE.CANCEL_TRANSACTION)
+    @UserType(ROLE_TITLE.client)
+    cancelTransaction(@Req() req: AppRequest, @Param() param: GetOrderParamDto, @Body() body: CancelTransactionDto) {
+        const { clientId, userId } = req.accessPayload;
+        const { id: orderId } = param;
+
+        return this.orderService.cancelTranscation(userId, clientId, orderId, body);
+    }
+
     @Get(CLIENT_ORDER_ROUTE.GET_PAYMENT_LINK_PRODUCT)
     @UserType(ROLE_TITLE.client)
     getPaymentLinkProduct(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
-        const { clientId } = req.accessPayload;
+        const { clientId, userId } = req.accessPayload;
         const { id: orderId } = param;
 
-        return this.orderService.getPaymentLink(orderId, clientId, 'P');
+        return this.orderService.getPaymentLink(orderId, userId, clientId, 'P');
     }
 
     @Get(CLIENT_ORDER_ROUTE.GET_PAYMENT_LINK_SERVICE)
     @UserType(ROLE_TITLE.client)
     getPaymentLinkService(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
-        const { clientId } = req.accessPayload;
-        const { id: orderId } = param;
-
-        return this.orderService.getPaymentLink(orderId, clientId, 'S');
-    }
-
-    @Put(CLIENT_ORDER_ROUTE.UPDATE_STATE)
-    @UserType(ROLE_TITLE.client)
-    receiveProduct(@Req() req: AppRequest, @Param() param: GetOrderParamDto, @Body() body: UpdateOrderStateDto) {
         const { clientId, userId } = req.accessPayload;
         const { id: orderId } = param;
-        const { type, state } = body;
+
+        return this.orderService.getPaymentLink(orderId, userId, clientId, 'S');
+    }
+
+    @Post(CLIENT_ORDER_ROUTE.CANCEL_ORDER)
+    @UserType(ROLE_TITLE.client)
+    cancelOrder(@Req() req: AppRequest, @Body() body: ClientCancelOrderStateDto) {
+        const { clientId, userId } = req.accessPayload;
+
+        return this.orderService.clientCancelOrder(userId, clientId, body);
+    }
+
+    @Post(CLIENT_ORDER_ROUTE.RECEIVE_ORDER)
+    @UserType(ROLE_TITLE.client)
+    receiveOrder(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
+        const { clientId, userId } = req.accessPayload;
+        const { id: orderId } = param;
 
         return this.orderService.clientUpdateState(userId, clientId, {
             orderId,
-            state,
-            type,
+            state: OrderStatusEnum.RECEIVED,
+        });
+    }
+
+    @Post(CLIENT_ORDER_ROUTE.RETURN_ORDER)
+    @UserType(ROLE_TITLE.client)
+    returnOrder(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
+        const { clientId, userId } = req.accessPayload;
+        const { id: orderId } = param;
+
+        return this.orderService.clientUpdateState(userId, clientId, {
+            orderId,
+            state: OrderStatusEnum.RETURNED,
         });
     }
 
@@ -168,7 +201,15 @@ export class OrderController {
         return this.orderService.createRefundRequest(userId, clientId, body);
     }
 
-    @Put(CLIENT_ORDER_ROUTE.RECEIVE_REFUND)
+    @Post(CLIENT_ORDER_ROUTE.CANCEL_REQUEST_REFUND)
+    @UserType(ROLE_TITLE.client)
+    cancelRequestRefund(@Req() req: AppRequest, @Body() body: CancelOrderRefundRequestDto) {
+        const { clientId, userId } = req.accessPayload;
+
+        return this.orderService.cancelRefundRequest(userId, clientId, body);
+    }
+
+    @Post(CLIENT_ORDER_ROUTE.RECEIVE_REFUND)
     @UserType(ROLE_TITLE.client)
     receivedRefund(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { userId } = req.accessPayload;

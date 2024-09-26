@@ -1,9 +1,9 @@
+import { InjectQueue } from '@nestjs/bull';
 import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import PayOS from '@payos/node';
-import { In, LessThanOrEqual, MoreThan, Repository } from 'typeorm';
-import { CRON_EXPRESSION } from '../../common/constant/cron.constant';
+import { Queue } from 'bull';
+import { Repository } from 'typeorm';
 import { LOGGER_CONSTANT_NAME } from '../../common/constant/logger.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
@@ -12,7 +12,6 @@ import { SortByEnum } from '../../common/enum/query.enum';
 import { appConfig } from '../../config/app.config';
 import { payosConfig } from '../../config/payos.config';
 import { BadRequest } from '../../shared/exception/error.exception';
-import { addMinutesToCurrentTime, dateToUnixTimestamp } from '../../shared/utils/date.utils';
 import { AppLoggerService } from '../logger/logger.service';
 import { OrderRefundRequestService } from '../oder-refund-request/order-refund-request.service';
 import { OrderBaseService } from '../order-base/order-base.service';
@@ -34,22 +33,23 @@ export class OrderTransactionService {
         private readonly orderServiceItemService: OrderServiceItemService,
         private readonly orderBaseService: OrderBaseService,
         private readonly orderRefundRequestService: OrderRefundRequestService,
+        @InjectQueue('payment_cancel') private readonly paymentCancelQueue: Queue,
     ) {
         this.payos = new PayOS(payosConfig.CLIENT_ID, payosConfig.API_KEY, payosConfig.CHECKSUM_KEY);
     }
 
-    async countTransactionByOrder(orderId: string) {
+    async countTransactionOrder(orderId: string) {
         return this.orderTransactionRepository.count({ where: { orderId } });
     }
 
     async isTransactionPending(orderId: string) {
         const order = await this.orderBaseService.get(orderId);
+
         return this.orderTransactionRepository.findOne({
             where: {
                 orderCode: order.code,
                 orderId: orderId,
                 status: OrderPaymentStatusEnum.PENDING,
-                expireAt: MoreThan(new Date()),
             },
             loadEagerRelations: false,
         });
@@ -65,9 +65,7 @@ export class OrderTransactionService {
 
         const contact = await this.orderBaseService.get(orderId);
 
-        const expireAt = addMinutesToCurrentTime(TRACSACTION_EXPIRE_MINUTES);
-
-        const transCount = await this.countTransactionByOrder(orderId);
+        const transCount = await this.countTransactionOrder(orderId);
 
         const orderCodePayment = parseInt(`${orderCode}${transCount}`);
 
@@ -97,7 +95,6 @@ export class OrderTransactionService {
             buyerAddress: contact.address,
             buyerName: contact.name,
             buyerPhone: contact.phone,
-            expiredAt: dateToUnixTimestamp(expireAt),
         });
 
         const instance = this.orderTransactionRepository.create({
@@ -111,7 +108,7 @@ export class OrderTransactionService {
             paymentUrl: payment.checkoutUrl,
             paymentId: payment.paymentLinkId,
             status: OrderPaymentStatusEnum.PENDING,
-            expireAt,
+            expireAt: null,
         });
 
         const saved = await this.orderTransactionRepository.save(instance);
@@ -128,8 +125,6 @@ export class OrderTransactionService {
         const items = await this.orderServiceItemService.getServiceOrder(orderId);
 
         const contact = await this.orderBaseService.get(orderId);
-
-        const expireAt = addMinutesToCurrentTime(TRACSACTION_EXPIRE_MINUTES);
 
         const payment = await this.payos.createPaymentLink({
             orderCode,
@@ -150,7 +145,6 @@ export class OrderTransactionService {
             buyerAddress: contact.address,
             buyerName: contact.name,
             buyerPhone: contact.phone,
-            expiredAt: dateToUnixTimestamp(expireAt),
         });
 
         const instance = this.orderTransactionRepository.create({
@@ -164,7 +158,7 @@ export class OrderTransactionService {
             paymentUrl: payment.checkoutUrl,
             paymentId: payment.paymentLinkId,
             status: OrderPaymentStatusEnum.PENDING,
-            expireAt,
+            expireAt: null,
         });
 
         const saved = await this.orderTransactionRepository.save(instance);
@@ -172,7 +166,7 @@ export class OrderTransactionService {
         return saved;
     }
 
-    async cancelTransaction(id: string, paidAmount: number) {
+    async cancelTransaction(id: string, paidAmount: number, transactionList: object[]) {
         const isExist = await this.orderTransactionRepository.findOne({
             where: { id, status: OrderPaymentStatusEnum.PENDING },
             loadEagerRelations: false,
@@ -181,10 +175,10 @@ export class OrderTransactionService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER_TRANSACTION });
         }
 
-        const [updateTransaction, cancelPaymentLink] = await Promise.all([
+        const [_updateTransaction, _cancelPaymentLink] = await Promise.all([
             this.orderTransactionRepository.update(
-                { id: id, paidAmount },
-                { status: OrderPaymentStatusEnum.CANCELLED },
+                { id: id },
+                { status: OrderPaymentStatusEnum.CANCELLED, paymentTransactions: transactionList, paidAmount },
             ),
             this.payos.cancelPaymentLink(isExist.paymentId),
         ]);
@@ -205,6 +199,20 @@ export class OrderTransactionService {
         });
     }
 
+    getPaidTransaction(orderId: string) {
+        return this.orderTransactionRepository.findOne({
+            where: { orderId, status: OrderPaymentStatusEnum.PAID },
+            loadEagerRelations: false,
+        });
+    }
+
+    getPendingTransaction(orderId: string) {
+        return this.orderTransactionRepository.find({
+            where: { orderId, status: OrderPaymentStatusEnum.PENDING },
+            loadEagerRelations: false,
+        });
+    }
+
     async getTransactionByOrder(clientId: string, orderId: string) {
         const orderTransaction = await this.orderTransactionRepository.find({
             where: { orderId, order: { clientId } },
@@ -214,13 +222,22 @@ export class OrderTransactionService {
 
         const mapCanCreateRefund = await Promise.all(
             orderTransaction.map(async tran => {
-                const canCreateRefund = await this.orderRefundRequestService.canCreateRefund(tran.orderId, tran.id);
+                if (tran.status === OrderPaymentStatusEnum.PENDING) {
+                    return {
+                        ...tran,
+                        createRefund: false,
+                    };
+                }
 
-                const canCreateRefundFinal = tran.paidAmount > tran.orderAmount ? canCreateRefund : false;
+                let canCreateRefundFinal = false;
+
+                if (tran.paidAmount !== tran.orderAmount && tran.paidAmount > 0) {
+                    canCreateRefundFinal = await this.orderRefundRequestService.canCreateRefund(tran.orderId, tran.id);
+                }
 
                 return {
                     ...tran,
-                    createRefund: !!canCreateRefundFinal,
+                    createRefund: canCreateRefundFinal,
                 };
             }),
         );
@@ -232,24 +249,12 @@ export class OrderTransactionService {
         return this.payos.getPaymentLinkInformation(paymentId);
     }
 
-    @Cron(CRON_EXPRESSION.EVERY_1_MINUTES)
-    async expireTransaction() {
-        const findExpireTransaction = await this.orderTransactionRepository.find({
-            where: {
-                expireAt: LessThanOrEqual(new Date()),
-                status: OrderPaymentStatusEnum.PENDING,
-            },
+    async cancelTransactionOrderQueue(orderId: string) {
+        const items = await this.orderTransactionRepository.find({
+            where: { orderId, status: OrderPaymentStatusEnum.PENDING },
             loadEagerRelations: false,
         });
 
-        if (findExpireTransaction.length) {
-            await this.orderTransactionRepository.update(
-                { id: In(findExpireTransaction.map(tst => tst.id)) },
-                { status: OrderPaymentStatusEnum.CANCELLED },
-            );
-            this.logger.info(
-                `Auto cancel ${findExpireTransaction.length} transaction at: ${new Date().toLocaleString()}`,
-            );
-        }
+        Promise.all(items.map(item => this.paymentCancelQueue.add('cancelPayment', item)));
     }
 }

@@ -26,10 +26,6 @@ export class FindOrderClientFilterDto {
     paid?: boolean;
 
     @IsOptional()
-    @IsBoolean()
-    refund?: boolean;
-
-    @IsOptional()
     @Transform(({ value }) => new Date(value))
     @IsDate()
     from?: Date;
@@ -80,4 +76,74 @@ export class FindOrderClientDto extends PaginationQuery {
     @ValidateNested()
     @Type(() => FindOrderClientOrderDto)
     order: FindOrderClientOrderDto;
+}
+
+export class FindOrderAdminFilterDto {
+    @IsOptional()
+    @IsString()
+    code?: string;
+
+    @IsOptional()
+    @IsEnum(OrderStatusEnum)
+    status?: OrderStatusEnum;
+
+    @IsOptional()
+    @IsEnum(OrderType)
+    type?: OrderType;
+
+    @IsOptional()
+    @IsEnum(OrderPaymentTypeEnum)
+    paymentType?: OrderPaymentTypeEnum;
+
+    @IsOptional()
+    @IsBoolean()
+    paid?: boolean;
+
+    @IsOptional()
+    @Transform(({ value }) => new Date(value))
+    @IsDate()
+    from?: Date;
+
+    @IsOptional()
+    @Transform(({ value }) => new Date(value))
+    @IsDate()
+    to?: Date;
+}
+
+export class FindOrderAdminOrderDto {
+    @IsOptional()
+    @IsEnum(SortByEnum)
+    code?: SortByEnum;
+
+    @IsOptional()
+    @IsEnum(SortByEnum)
+    status?: SortByEnum;
+
+    @IsOptional()
+    @IsEnum(SortByEnum)
+    paid?: SortByEnum;
+
+    @IsOptional()
+    @IsEnum(SortByEnum)
+    createdAt?: SortByEnum;
+
+    @IsOptional()
+    @IsEnum(SortByEnum)
+    updatedAt?: SortByEnum;
+
+    @IsOptional()
+    @IsEnum(SortByEnum)
+    total?: SortByEnum;
+}
+
+export class FindOrderAdminDto extends PaginationQuery {
+    @IsNotEmpty()
+    @ValidateNested()
+    @Type(() => FindOrderAdminFilterDto)
+    filter: FindOrderAdminFilterDto;
+
+    @IsNotEmpty()
+    @ValidateNested()
+    @Type(() => FindOrderAdminOrderDto)
+    order: FindOrderAdminOrderDto;
 }

@@ -1,3 +1,4 @@
+import { BullModule } from '@nestjs/bull';
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { OrderRefundRequestModule } from '../oder-refund-request/order-refund-request.module';
@@ -9,6 +10,13 @@ import { OrderTransactionService } from './order-transaction.service';
 
 @Module({
     imports: [
+        BullModule.registerQueue({
+            name: 'payment_cancel',
+            limiter: {
+                max: 2,
+                duration: 1000,
+            },
+        }),
         TypeOrmModule.forFeature([OrderTransactionEntity]),
         OrderBaseModule,
         OrderProductItemModule,

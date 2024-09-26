@@ -206,9 +206,20 @@ export class ShiftService {
     async getShiftFromBookingDate(body: GetShiftFromBookingTimeDto) {
         const { bookingDate } = body;
 
+        const currentDate = new Date();
+
+        currentDate.setHours(0);
+        currentDate.setMinutes(0);
+        currentDate.setSeconds(0);
+        currentDate.setMilliseconds(0);
+
+        if (currentDate.getTime() > bookingDate.getTime()) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NEGATIVE_DATE });
+        }
+
         const workingHour = await this.workingHourService.getWorkingHourAtDate(bookingDate);
         if (!workingHour) {
-            return [];
+            return { available: false };
         }
 
         const shifts = await this.shiftRepository.find({
@@ -216,14 +227,21 @@ export class ShiftService {
                 workingHourId: workingHour.id,
             },
             loadEagerRelations: false,
+            order: {
+                start: SortByEnum.ASC,
+            },
         });
 
-        return shifts;
+        return { shifts: shifts, ...workingHour, available: true };
     }
 
-    getShiftFromBookingTime(bookingTime: Date) {
+    getShiftFromBookingTime(bookingTime: Date, workingHourId: string) {
         return this.shiftRepository.findOne({
-            where: { bookingStart: LessThanOrEqual(bookingTime), bookingEnd: MoreThanOrEqual(bookingTime) },
+            where: {
+                bookingStart: LessThanOrEqual(bookingTime),
+                bookingEnd: MoreThanOrEqual(bookingTime),
+                workingHourId: workingHourId,
+            },
             loadEagerRelations: false,
         });
     }

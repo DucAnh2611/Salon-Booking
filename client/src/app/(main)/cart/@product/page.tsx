@@ -35,21 +35,6 @@ export default function CartProductPage() {
         fetchData();
     }, []);
 
-    if (loading) {
-        return <p>Loading...</p>;
-    }
-
-    if (error || !cart) {
-        return <p>Failed to load cart data</p>;
-    }
-
-    if (!cart.products.length) {
-        return (
-            <div className="w-full h-full">
-                <p>Giở hàng không có sản phẩm nào</p>
-            </div>
-        );
-    }
     return (
         <div className="w-full flex gap-5">
             <Card className="h-fit flex-1 p-4 box-border">
@@ -58,7 +43,14 @@ export default function CartProductPage() {
                 </CardHeader>
                 <Separator className="" orientation="horizontal" />
                 <CardContent className="p-4 pt-0">
-                    <CartProductItemTab />
+                    {loading && <p>Loading...</p>}
+                    {error || (!cart && <p>error</p>)}
+                    {cart && !cart.products.length && (
+                        <div className="w-full h-full">
+                            <p>Giở hàng không có sản phẩm nào</p>
+                        </div>
+                    )}
+                    {cart && !!cart.products.length && <CartProductItemTab />}
                 </CardContent>
             </Card>
 

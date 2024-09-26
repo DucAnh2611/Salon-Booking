@@ -8,6 +8,7 @@ export interface IProduct {
     name: number;
     description: number;
     productMedia: IProductMedia[];
+    deletedAt: Date;
 }
 
 export interface IProductInfo {
@@ -51,6 +52,7 @@ export interface IProductTypes {
     productTypesAttribute: IProductTypeAttribute[];
     sku: string | null;
     price: number;
+    deletedAt: Date;
 }
 
 export interface IProductTypeAttribute {
@@ -112,4 +114,18 @@ export interface IProductItemOrder {
 
 export interface IProductOrderTracking {
     products: IProductItemOrder[];
+}
+
+export interface IApiSearchProductPriceRange {
+    from: number;
+    to?: number;
+}
+
+export interface IApiSearchProduct {
+    key: string;
+    price: IApiSearchProductPriceRange;
+    categoryIds?: string[];
+    orderBy?: string;
+    page: number;
+    limit: number;
 }

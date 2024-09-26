@@ -73,7 +73,7 @@ export default function SheetOrderOrder({}: ISheetOrderOrderProps) {
                     <SlidersHorizontal size={15} /> Sắp xếp
                 </Button>
             </SheetTrigger>
-            <SheetContent className="flex flex-col items-start justify-start gap-0">
+            <SheetContent className="flex flex-col items-start justify-start gap-0 !max-w-none w-[500px]">
                 <SheetHeader>
                     <SheetTitle>Sắp xếp dữ liệu</SheetTitle>
                     <SheetDescription>
@@ -134,17 +134,6 @@ export default function SheetOrderOrder({}: ISheetOrderOrderProps) {
                                     <SelectSort
                                         value={order.status}
                                         onSelect={handleSelectSort("status")}
-                                    />
-                                </div>
-                            </div>
-                            <div className="flex gap-2 items-center justify-between">
-                                <p className="flex-1 text-sm">
-                                    Tình trạng hoàn đơn
-                                </p>
-                                <div className="w-[150px]">
-                                    <SelectSort
-                                        value={order.refund}
-                                        onSelect={handleSelectSort("refund")}
                                     />
                                 </div>
                             </div>

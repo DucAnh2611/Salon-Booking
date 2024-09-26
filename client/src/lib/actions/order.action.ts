@@ -1,11 +1,14 @@
 import { API_URLS } from "@/constant/api.constant";
 import { IOrderState } from "@/interface/order-state.interface";
 import {
+    IApiCancelOrder,
+    IApiCancelRefund,
     IApiListOrder,
     IOrderDetail,
     IOrderSearchResponse,
     IPlaceOrderProduct,
     IPlaceOrderResponse,
+    IPlaceOrderService,
 } from "@/interface/order.interface";
 import { IProductItemOrder } from "@/interface/product.interface";
 import { IRefundOrder } from "@/interface/refund.interface";
@@ -93,6 +96,86 @@ export const trackingOrderService = async (id: string) => {
 /** @PLACE_ORDER_PRODUCT  */
 export const placeOrderProduct = async (body: IPlaceOrderProduct) => {
     const api = API_URLS.ORDER.PLACE_PRODUCT();
+
+    const resApi = await apiCall<IPlaceOrderResponse>({
+        ...api,
+        payload: body,
+    });
+
+    return resApi;
+};
+
+/** @CANCEL_ORDER */
+export const cancelOrder = async (body: IApiCancelOrder) => {
+    const api = API_URLS.ORDER.CANCEL();
+
+    const resApi = await apiCall({
+        ...api,
+        payload: body,
+    });
+
+    return resApi;
+};
+
+/** @RECEIVE_ORDER */
+export const receiveOrder = async (id: string) => {
+    const api = API_URLS.ORDER.RECEIVE(id);
+
+    const resApi = await apiCall({
+        ...api,
+    });
+
+    return resApi;
+};
+
+/** @RETURN_ORDER */
+export const returnOrder = async (id: string) => {
+    const api = API_URLS.ORDER.RETURN(id);
+
+    const resApi = await apiCall({
+        ...api,
+    });
+
+    return resApi;
+};
+
+/** @cONFIRM_ORDER */
+export const confirmOrder = async (id: string) => {
+    const api = API_URLS.ORDER.CONFIRM(id);
+
+    const resApi = await apiCall({
+        ...api,
+    });
+
+    return resApi;
+};
+
+/** @CANCEL_REFUND */
+export const cancelRefund = async (body: IApiCancelRefund) => {
+    const api = API_URLS.REFUND.CANCEL();
+
+    const resApi = await apiCall({
+        ...api,
+        payload: body,
+    });
+
+    return resApi;
+};
+
+/** @RECEIVE_REFUND */
+export const receiveRefund = async (id: string) => {
+    const api = API_URLS.REFUND.RECEIVE(id);
+
+    const resApi = await apiCall({
+        ...api,
+    });
+
+    return resApi;
+};
+
+/** @PLACE_ORDER_SERVICE  */
+export const placeOrderService = async (body: IPlaceOrderService) => {
+    const api = API_URLS.ORDER.PLACE_SERVICE();
 
     const resApi = await apiCall<IPlaceOrderResponse>({
         ...api,

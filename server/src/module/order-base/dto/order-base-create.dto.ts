@@ -8,7 +8,7 @@ export class CreateOrderBaseDto {
 
     @IsNotEmpty()
     @IsString()
-    address: string;
+    address?: string;
 
     @IsNotEmpty()
     @IsString()

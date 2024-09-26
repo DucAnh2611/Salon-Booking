@@ -22,9 +22,7 @@ export const CartProductContactContext = createContext<ICartContactContext>({
     setContact: (ct: IContactCart) => {},
 });
 
-export default function CartProductContacttProvider({
-    children,
-}: ILayoutProps) {
+export default function CartProductContactProvider({ children }: ILayoutProps) {
     const [contact, SetContact] = useState<IContactCart>({
         address: {
             district: null,

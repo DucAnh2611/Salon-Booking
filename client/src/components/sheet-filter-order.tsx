@@ -123,7 +123,7 @@ export default function SheetFilterOrder({}: ISheetFilterOrderProps) {
                     <Filter size={15} /> Bộ lọc
                 </Button>
             </SheetTrigger>
-            <SheetContent className="flex flex-col items-start justify-start gap-0">
+            <SheetContent className="flex flex-col items-start justify-start gap-0 !max-w-none w-[500px]">
                 <SheetHeader>
                     <SheetTitle>Bộ lọc đơn hàng</SheetTitle>
                     <SheetDescription>
@@ -148,12 +148,8 @@ export default function SheetFilterOrder({}: ISheetFilterOrderProps) {
                             >
                                 Không
                             </Button>
-                            {Object.entries(EOrderStatus)
-                                .filter(
-                                    ([_, value]) =>
-                                        parseInt(value as string) >= 0
-                                )
-                                .map(([key, value]) => (
+                            {Object.entries(EOrderStatus).map(
+                                ([key, value]) => (
                                     <Button
                                         key={key}
                                         variant={
@@ -169,7 +165,8 @@ export default function SheetFilterOrder({}: ISheetFilterOrderProps) {
                                     >
                                         {ORDER_STATUS[value as EOrderStatus]}
                                     </Button>
-                                ))}
+                                )
+                            )}
                         </div>
                     </div>
                     <div className="mb-5 ">

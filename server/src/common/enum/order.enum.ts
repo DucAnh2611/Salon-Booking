@@ -4,24 +4,26 @@ export enum OrderPaymentTypeEnum {
 }
 
 export enum OrderStatusEnum {
-    CONFIRMED,
-    CALL_CONFIRM,
+    PENDING = 'PENDING',
+    PENDING_PAYMENT = 'PENDING_PAYMENT',
+    PAID_PAYMENT = 'PAID_PAYMENT',
+
+    CONFIRMED = 'CONFIRMED',
+    CALL_CONFIRM = 'CALL_CONFIRM',
 
     // Product
-    PROCESSING,
-    SHIPPING,
-    SHIPPED,
-    RECEIVED,
+    PROCESSING = 'PROCESSING',
+    SHIPPING = 'SHIPPING',
+    SHIPPED = 'SHIPPED',
+    RECEIVED = 'RECEIVED',
 
     // Service
-    ARRIVED,
-    ON_SERVICE,
-    PAYING,
-    FINISH,
+    ON_SERVICE = 'ON_SERVICE',
+    FINISH = 'FINISH',
 
-    CANCELLED,
-    RETURNED,
-    REFUNDED,
+    CANCELLED = 'CANCELLED',
+    RETURNED = 'RETURNED',
+    REFUNDED = 'REFUNDED',
 }
 
 export enum OrderPaymentStatusEnum {
@@ -41,6 +43,7 @@ export enum OrderRefundRequestStatusEnum {
     APPROVED = 'APPROVED',
     EXPIRED = 'EXPIRED',
     RECEIVED = 'RECEIVED',
+    CANCELLED = 'CANCELLED',
 }
 
 export enum OrderRefundStatusEnum {
@@ -48,6 +51,7 @@ export enum OrderRefundStatusEnum {
     DECLINE = 'DECLINE',
     APPROVED = 'APPROVED',
     RECEIVED = 'RECEIVED',
+    CANCELLED = 'CANCELLED',
 }
 
 export enum OrderTransactionReturnPayos {

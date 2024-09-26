@@ -25,5 +25,5 @@ export interface QuickQr {
     acpId?: number;
     accountName?: string;
     qrCode: string;
-    qrDataUrl: string;
+    qrDataURL: string;
 }

@@ -6,7 +6,9 @@ import { ServiceEmployeeModule } from '../service-employee/service-employee.modu
 import { ServiceMediaModule } from '../service-media/service-media.module';
 import { ServiceStepModule } from '../service-step/service-step.module';
 import { ServiceAdminController } from './controller/service-admin.controller';
-import { ServiceService } from './service.service';
+import { ServiceController } from './controller/service.controller';
+import { ServiceAdminService } from './service/service-admin.service';
+import { ServiceService } from './service/service.service';
 
 @Module({
     imports: [
@@ -17,8 +19,8 @@ import { ServiceService } from './service.service';
         RoleModule,
         RolePermissionModule,
     ],
-    controllers: [ServiceAdminController],
-    providers: [ServiceService],
-    exports: [ServiceService],
+    controllers: [ServiceAdminController, ServiceController],
+    providers: [ServiceAdminService, ServiceService],
+    exports: [ServiceAdminService, ServiceService],
 })
 export class ServiceModule {}

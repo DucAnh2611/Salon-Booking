@@ -38,7 +38,7 @@ export interface ITransactionTracking {
     transactions: ITransactionOrder[];
 }
 
-export interface IApiCancelTransaction {
+export interface IApiFailTransaction {
     code: string;
     id: string;
     cancel: boolean;
@@ -52,6 +52,11 @@ export interface IApiSuccessTransaction {
     cancel: boolean;
     status: EOrderTransactionReturnPayos;
     orderCode: number;
+}
+
+export interface IApiCancelTransaction {
+    note: string;
+    transactionId: string;
 }
 
 export interface IPaymentTransactions {

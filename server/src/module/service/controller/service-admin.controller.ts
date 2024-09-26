@@ -13,12 +13,12 @@ import { CreateServiceDto } from '../dto/service-create.dto';
 import { DeleteServiceDto } from '../dto/service-delete.dto';
 import { FindServiceAdminDto, GetServiceParamDto } from '../dto/service-get.dto';
 import { UpdateServiceDto } from '../dto/service-update.dto';
-import { ServiceService } from '../service.service';
+import { ServiceAdminService } from '../service/service-admin.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
 @Controller(ROUTER.SERVICE)
 export class ServiceAdminController {
-    constructor(private readonly serviceService: ServiceService) {}
+    constructor(private readonly serviceService: ServiceAdminService) {}
 
     @Get(SERVICE_ROUTE.GET)
     @UserType(ROLE_TITLE.staff)

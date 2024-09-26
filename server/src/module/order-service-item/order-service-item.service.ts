@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { ShiftEmployeeStatusEnum } from '../../common/enum/shift.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { EmployeeService } from '../employee/employee.service';
 import { ServiceBaseService } from '../service-base/service-base.service';
@@ -24,17 +25,25 @@ export class OrderServiceItemService {
         private readonly shiftService: ShiftService,
     ) {}
 
+    async setAvailableEmployeeOrder(orderId: string) {
+        const items = await this.orderServiceItemRepository.find({ where: { orderId }, loadEagerRelations: false });
+
+        await Promise.all(
+            items.map(item =>
+                this.shiftEmployeeService.updateStatus(item.employeeId, {
+                    shiftId: item.shiftId,
+                    status: ShiftEmployeeStatusEnum.AVAILABLE,
+                }),
+            ),
+        );
+    }
+
     getServiceOrder(orderId: string) {
         return this.orderServiceItemRepository.find({ where: { orderId }, loadEagerRelations: false });
     }
 
     async checkService(item: CreateOrderServiceItemDto) {
-        const { shiftId, employeeId, serviceId } = item;
-
-        const isValidServiceEmployee = await this.serviceEmployeeService.isExist(serviceId, employeeId);
-        if (!isValidServiceEmployee) {
-            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_SERVICE_EMPLOYEE });
-        }
+        const { shiftId, employeeId, serviceId, bookingTime, itemId } = item;
 
         const service = await this.serviceBaseService.isValid(serviceId);
         if (!service) {
@@ -46,21 +55,34 @@ export class OrderServiceItemService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_EMPLOYEE });
         }
 
+        const serviceEmployee = await this.serviceEmployeeService.isExist(serviceId, employeeId);
+        if (!serviceEmployee) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_SERVICE_EMPLOYEE });
+        }
+
         const shift = await this.shiftService.isExist(shiftId);
         if (!shift) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_SHIFT });
-        }
-        const serviceDuration = new Date(shift.bookingStart);
-        serviceDuration.setMinutes(shift.bookingStart.getMinutes() + service.duration);
-
-        const isServiceWithinShift = shift.bookingEnd.getTime() <= serviceDuration.getTime();
-        if (!isServiceWithinShift) {
-            throw new BadRequest({ message: DataErrorCodeEnum.BOOKING_TIME_OUTSIDE_SHIFT });
         }
 
         const isEmployeeInShift = await this.shiftEmployeeService.isEmployeeInShift(employeeId, shift.id);
         if (!isEmployeeInShift) {
             throw new BadRequest({ message: DataErrorCodeEnum.EMPLOYEE_NOT_IN_SHIFT });
+        }
+
+        const isAvailable = isEmployeeInShift.status === ShiftEmployeeStatusEnum.AVAILABLE;
+        if (!isAvailable) {
+            throw new BadRequest({ message: DataErrorCodeEnum.EMPLOYEE_IS_NOT_AVAILABLE });
+        }
+
+        const serviceDuration = new Date(bookingTime);
+        serviceDuration.setMinutes(serviceDuration.getMinutes() + service.duration);
+
+        const isServiceWithinShift =
+            shift.bookingEnd.getTime() >= serviceDuration.getTime() &&
+            shift.bookingStart.getTime() <= serviceDuration.getTime();
+        if (!isServiceWithinShift) {
+            throw new BadRequest({ message: DataErrorCodeEnum.BOOKING_TIME_OUTSIDE_SHIFT });
         }
 
         return true;
@@ -70,8 +92,10 @@ export class OrderServiceItemService {
         if (!list.length) {
             throw new BadRequest({ message: DataErrorCodeEnum.NO_ORDER_ITEM });
         }
-        const checkList = await Promise.all(list.map(item => this.checkService(item)));
-        return checkList.filter(item => item).length === list.length;
+
+        await Promise.all(list.map(item => this.checkService(item)));
+
+        return true;
     }
 
     async getTotalAmount(list: CreateOrderServiceItemDto[]) {

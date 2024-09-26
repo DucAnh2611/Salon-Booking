@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { OrderPaymentTypeEnum, OrderStatusEnum, OrderType } from '../../../common/enum/order.enum';
+import { addMinutesToCurrentTime } from '../../../shared/utils/date.utils';
 import { ClientEntity } from '../../client/entity/client.entity';
 import { OrderRefundRequestEntity } from '../../oder-refund-request/entity/order-refund-request.entity';
 import { OrderProductItemEntity } from '../../order-product-item/entity/order-product-item.entity';
@@ -30,6 +31,8 @@ function generateOrderCode() {
     return orderCode;
 }
 
+const EXPIRE_CONFIRM_SERVICE_ORDER = 15;
+
 @Entity('order')
 export class OrderEntity extends ModifyEntity {
     @Column('varchar')
@@ -41,7 +44,7 @@ export class OrderEntity extends ModifyEntity {
     @Column('text')
     name: string;
 
-    @Column('text')
+    @Column('text', { nullable: true })
     address: string;
 
     @Column('varchar')
@@ -65,20 +68,20 @@ export class OrderEntity extends ModifyEntity {
     @Column('boolean', { default: false })
     paid: boolean;
 
-    @Column('boolean', { default: false })
-    refund: boolean;
-
     @Column('timestamp with time zone')
     orderDate: Date;
 
     @Column('enum', { enum: OrderStatusEnum })
     status: OrderStatusEnum;
 
-    @Column('enum', { enum: OrderType, default: OrderType.PRODUCT })
+    @Column('enum', { enum: OrderType })
     type: OrderType;
 
     @Column('enum', { enum: OrderPaymentTypeEnum })
     paymentType: OrderPaymentTypeEnum;
+
+    @Column('timestamp with time zone', { nullable: true })
+    confirmExpired: Date;
 
     @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: Date;
@@ -126,7 +129,10 @@ export class OrderEntity extends ModifyEntity {
     client: ClientEntity;
 
     @BeforeInsert()
-    createCode() {
+    initDefault() {
         this.code = generateOrderCode();
+        if (this.type === OrderType.SERVICE) {
+            this.confirmExpired = addMinutesToCurrentTime(EXPIRE_CONFIRM_SERVICE_ORDER);
+        }
     }
 }

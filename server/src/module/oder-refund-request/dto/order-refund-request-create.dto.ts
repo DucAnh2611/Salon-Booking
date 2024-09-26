@@ -31,3 +31,27 @@ export class CreateOrderRefundRequestDto {
     @IsString()
     note?: string;
 }
+
+export class CancelOrderRefundRequestDto {
+    @IsNotEmpty()
+    @IsUUID('all')
+    orderId: string;
+
+    @IsOptional()
+    @IsUUID('all')
+    requestId: string;
+
+    @IsNotEmpty()
+    @IsString()
+    note: string;
+}
+
+export class CancelTransactionDto {
+    @IsOptional()
+    @IsUUID('all')
+    transactionId: string;
+
+    @IsNotEmpty()
+    @IsString()
+    note: string;
+}

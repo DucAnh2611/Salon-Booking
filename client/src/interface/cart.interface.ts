@@ -1,10 +1,15 @@
-import { IProduct, IProductItemCart } from "./product.interface";
+import { IProductItemCart } from "./product.interface";
 import { IDistrict, IProvince, IWard } from "./province.interface";
+import { IServiceItemCartBooking } from "./service.interface";
 
 export interface IApiAddProductCart {
     productId: string;
     productTypeId?: string;
     quantity: number;
+}
+
+export interface IApiAddServiceCart {
+    serviceId: string;
 }
 
 export interface IApiUpdateProductCart {
@@ -14,12 +19,18 @@ export interface IApiUpdateProductCart {
 
 export interface IContactCart {
     name: string;
-    address: IContactCartAdress;
+    address: IContactCartAddress;
     phone: string;
     note?: string;
 }
 
-export interface IContactCartAdress {
+export interface IContactCartService {
+    name: string;
+    phone: string;
+    note?: string;
+}
+
+export interface IContactCartAddress {
     province: IProvince | null;
     district: IDistrict | null;
     ward: IWard | null;
@@ -31,7 +42,19 @@ export interface IApiCartProductAmount {
     cartProductId: string;
 }
 
+export interface IApiCartServiceAmount {
+    itemIds: string[];
+    cartServiceId: string;
+}
+
 export interface ICartProductAmount {
+    cartAmount: number;
+    taxAmount: number;
+    tax: number;
+    total: number;
+}
+
+export interface ICartServiceAmount {
     cartAmount: number;
     taxAmount: number;
     tax: number;
@@ -44,5 +67,6 @@ export interface ICartProduct {
 }
 
 export interface ICartService {
-    services: IProduct[];
+    id: string;
+    services: IServiceItemCartBooking[];
 }

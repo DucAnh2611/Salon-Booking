@@ -74,8 +74,14 @@ export default function UpdateProductTab({
         const selectedAttr: IAttributeValue = {};
 
         detail.types.forEach((type) => {
-            const { id, quantity, price, productTypesAttribute, ...typeInf } =
-                type;
+            const {
+                id,
+                quantity,
+                price,
+                productTypesAttribute,
+                sku,
+                ...typeInf
+            } = type;
 
             const mapLevel: Array<keyof IAttributeValue> = [
                 "first",
@@ -87,6 +93,7 @@ export default function UpdateProductTab({
                 productTypeId: id,
                 quantity: quantity,
                 price: price,
+                sku: sku || "",
                 ...typeInf,
                 types: productTypesAttribute.map((ta) => {
                     const addTypeAttribue: z.infer<
@@ -116,6 +123,7 @@ export default function UpdateProductTab({
 
             types.push(addTypes);
         });
+
         form.setValue("types.types", types);
         form.setValue("types.selectAttribute", selectedAttr);
     };
