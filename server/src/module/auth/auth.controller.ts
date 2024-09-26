@@ -6,7 +6,7 @@ import { AppRequest } from '../../common/interface/custom-request.interface';
 import { cookieConfig } from '../../config/cookie.config';
 import { jwtConfig } from '../../config/jwt.config';
 import { CookieService } from '../../shared/global/cookie/cookie.service';
-import { RefreshTokenGuard } from '../../shared/guard/refreshToken.guard';
+import { RefreshTokenClientGuard, RefreshTokenGuard } from '../../shared/guard/refreshToken.guard';
 import { TimeUtil } from '../../shared/utils/parse-time.util';
 import { RegisterClientDto } from '../client/dto/client-create.dto';
 import { AuthService } from './auth.service';
@@ -25,7 +25,7 @@ export class AuthController {
 
         this.cookieService.setCookie(
             res,
-            cookieConfig.accesstoken.name,
+            cookieConfig.accesstoken.manager,
             accessToken,
             cookieConfig.options({
                 maxAge: TimeUtil.toMilisecond({ time: jwtConfig.access.expire }),
@@ -34,7 +34,7 @@ export class AuthController {
 
         this.cookieService.setCookie(
             res,
-            cookieConfig.refreshtoken.name,
+            cookieConfig.refreshtoken.manager,
             refreshToken,
             cookieConfig.options({
                 maxAge: TimeUtil.toMilisecond({ time: jwtConfig.refresh.expire }),
@@ -57,7 +57,7 @@ export class AuthController {
 
         this.cookieService.setCookie(
             res,
-            cookieConfig.accesstoken.name,
+            cookieConfig.accesstoken.client,
             accessToken,
             cookieConfig.options({
                 maxAge: TimeUtil.toMilisecond({ time: jwtConfig.access.expire }),
@@ -66,25 +66,26 @@ export class AuthController {
 
         this.cookieService.setCookie(
             res,
-            cookieConfig.refreshtoken.name,
+            cookieConfig.refreshtoken.client,
             refreshToken,
             cookieConfig.options({
                 maxAge: TimeUtil.toMilisecond({ time: jwtConfig.refresh.expire }),
             }),
         );
-
-        return DataSuccessCodeEnum.OK;
+        return {
+            accessToken,
+        };
     }
 
-    @Get(AUTH_ROUTE.REFRESH_TOKEN)
+    @Get(AUTH_ROUTE.EMP_REFRESH_TOKEN)
     @UseGuards(RefreshTokenGuard)
-    async refreshToken(@Req() req: AppRequest, @Res({ passthrough: true }) res: Response) {
+    async refreshTokenManager(@Req() req: AppRequest, @Res({ passthrough: true }) res: Response) {
         const { refreshPayload } = req;
         const { accessToken, refreshToken } = await this.authService.refreshTokens(refreshPayload);
 
         this.cookieService.setCookie(
             res,
-            cookieConfig.accesstoken.name,
+            cookieConfig.accesstoken.manager,
             accessToken,
             cookieConfig.options({
                 maxAge: TimeUtil.toMilisecond({ time: jwtConfig.access.expire }),
@@ -93,7 +94,7 @@ export class AuthController {
 
         this.cookieService.setCookie(
             res,
-            cookieConfig.refreshtoken.name,
+            cookieConfig.refreshtoken.manager,
             refreshToken,
             cookieConfig.options({
                 maxAge: TimeUtil.toMilisecond({ time: jwtConfig.refresh.expire }),
@@ -103,11 +104,44 @@ export class AuthController {
         return DataSuccessCodeEnum.OK;
     }
 
-    @Get(AUTH_ROUTE.LOG_OUT)
-    @UseGuards(RefreshTokenGuard)
-    async logout(@Req() req: AppRequest, @Res({ passthrough: true }) res: Response) {
-        res.clearCookie(cookieConfig.refreshtoken.name);
-        res.clearCookie(cookieConfig.accesstoken.name);
+    @Get(AUTH_ROUTE.CLIENT_REFRESH_TOKEN)
+    @UseGuards(RefreshTokenClientGuard)
+    async refreshTokenClient(@Req() req: AppRequest, @Res({ passthrough: true }) res: Response) {
+        const { refreshPayload } = req;
+        const { accessToken, refreshToken } = await this.authService.refreshTokens(refreshPayload);
+
+        this.cookieService.setCookie(
+            res,
+            cookieConfig.accesstoken.client,
+            accessToken,
+            cookieConfig.options({
+                maxAge: TimeUtil.toMilisecond({ time: jwtConfig.access.expire }),
+            }),
+        );
+
+        this.cookieService.setCookie(
+            res,
+            cookieConfig.refreshtoken.client,
+            refreshToken,
+            cookieConfig.options({
+                maxAge: TimeUtil.toMilisecond({ time: jwtConfig.refresh.expire }),
+            }),
+        );
+
+        return DataSuccessCodeEnum.OK;
+    }
+
+    @Get(AUTH_ROUTE.CLIENT_LOG_OUT)
+    async clientLogout(@Req() req: AppRequest, @Res({ passthrough: true }) res: Response) {
+        res.clearCookie(cookieConfig.refreshtoken.client);
+        res.clearCookie(cookieConfig.accesstoken.client);
+        return DataSuccessCodeEnum.OK;
+    }
+
+    @Get(AUTH_ROUTE.EMP_LOG_OUT)
+    async managerLogout(@Req() req: AppRequest, @Res({ passthrough: true }) res: Response) {
+        res.clearCookie(cookieConfig.refreshtoken.manager);
+        res.clearCookie(cookieConfig.accesstoken.manager);
         return DataSuccessCodeEnum.OK;
     }
 }

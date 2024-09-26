@@ -1,4 +1,4 @@
-import { Controller, Get, UseGuards } from '@nestjs/common';
+import { Controller, Get, Req, UseGuards } from '@nestjs/common';
 import { OAUTH_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { AppRequestOAuth } from '../../common/interface/custom-request.interface';
 import { FacebookOAuthGuard } from '../../shared/guard/facebook-oauth.guard';

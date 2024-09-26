@@ -171,11 +171,6 @@ export default function DialogCreateWorkingDay() {
                 const { hours: hourTo, minutes: minuteTo } = parseHHMMToTime(
                     selectTime.to
                 );
-                console.log(
-                    hourTo * 60 + minuteTo,
-                    hourFrom * 60 + minuteFrom,
-                    formatDate
-                );
                 if (hourTo * 60 + minuteTo < hourFrom * 60 + minuteFrom) {
                     newSelectTime.to = formatDate;
                 }

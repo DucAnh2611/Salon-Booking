@@ -1,10 +1,10 @@
-import { IAttributeProductValue } from "@/interface/api/attribute.interface";
+import { IAttributeValueUpdate } from "@/interface/api/product.interface";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 
 interface IInputProductAttributeValueProps {
-    onDelete: (value: IAttributeProductValue) => void;
-    value: IAttributeProductValue;
+    onDelete: (value: IAttributeValueUpdate) => void;
+    value: IAttributeValueUpdate;
 }
 
 export default function InputProductAttributeValue({

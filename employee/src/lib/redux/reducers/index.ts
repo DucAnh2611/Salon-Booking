@@ -4,6 +4,10 @@ import authReducer from "./auth.reducer";
 import { categoryReducer } from "./category.reducer";
 import { employeeReducer } from "./employee.reducer";
 import { mediaReducer } from "./media.reducer";
+import { orderDetailReducer } from "./order-detail.reducer";
+import { orderRefundReducer } from "./order-refund.reducer";
+import { orderStateReducer } from "./order-state.reducer";
+import { orderReducer } from "./order.reducer";
 import { permissionReducer } from "./permission.reducer";
 import { productReducer } from "./product.reducer";
 import { roleReducer } from "./role.reducer";
@@ -25,6 +29,10 @@ const rootReducer = combineReducers({
     serviceReducer,
     workingHourReducer,
     shiftReducer,
+    orderReducer,
+    orderDetailReducer,
+    orderStateReducer,
+    orderRefundReducer,
 });
 
 export default rootReducer;

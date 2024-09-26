@@ -14,6 +14,10 @@ const classStatus: Record<
         border: "border-green-400",
         inside: "bg-green-400",
     },
+    [EShiftEmployeeStatus.BOOKED]: {
+        border: "border-blue-400",
+        inside: "bg-blue-400",
+    },
     [EShiftEmployeeStatus.ON_JOB]: {
         border: "border-primary",
         inside: "bg-primary",

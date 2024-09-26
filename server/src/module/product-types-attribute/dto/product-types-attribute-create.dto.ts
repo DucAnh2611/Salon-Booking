@@ -8,11 +8,7 @@ export class CreateProductTypesAttributeDto {
 
     @IsNotEmpty()
     @IsUUID('all')
-    attrId: string;
-
-    @IsNotEmpty()
-    @IsString()
-    value: string;
+    valueId: string;
 
     @IsNotEmpty()
     @Type(() => Number)

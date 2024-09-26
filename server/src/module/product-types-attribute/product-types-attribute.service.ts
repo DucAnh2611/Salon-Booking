@@ -27,7 +27,9 @@ export class ProductTypesAttributeService {
             loadEagerRelations: false,
             relations: {
                 thumbnail: true,
-                attribute: true,
+                value: {
+                    attribute: true,
+                },
             },
             order: {
                 level: SortByEnum.ASC,
@@ -35,14 +37,7 @@ export class ProductTypesAttributeService {
         });
     }
 
-    async getThumbnailId(
-        userId: string,
-        productId: string,
-        typeId: string,
-        attrId: string,
-        mediaId?: string,
-        mediaUrl?: string,
-    ) {
+    async getThumbnailId(userId: string, productId: string, typeId: string, mediaId?: string, mediaUrl?: string) {
         if (mediaId) {
             const validMedia = await this.mediaService.isValid(mediaId);
             if (!validMedia) {
@@ -65,23 +60,19 @@ export class ProductTypesAttributeService {
         return null;
     }
 
-    async isValid(productTypesId: string, attrId: string) {
-        const [validAttr, productTypeAttr] = await Promise.all([
-            this.attributeService.isValid(attrId),
+    async isValid(productTypesId: string) {
+        const [productTypeAttr] = await Promise.all([
             this.productTypesAttributeRepository.findOne({
-                where: { productTypesId, attributeId: attrId },
+                where: { productTypesId },
                 loadEagerRelations: false,
             }),
         ]);
-        if (!validAttr) {
-            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ATTRIBUTE });
-        }
-        return { validAttr, productTypeAttr };
+        return productTypeAttr;
     }
 
-    async isExist(productTypesId: string, attrId: string) {
+    async isExist(productTypesId: string) {
         const exist = await this.productTypesAttributeRepository.findOne({
-            where: { productTypesId, attributeId: attrId },
+            where: { productTypesId },
             loadEagerRelations: false,
         });
         if (!exist) {
@@ -90,59 +81,71 @@ export class ProductTypesAttributeService {
         return exist;
     }
 
+    async isExistTypeAttribute(productTypesId: string, valueId: string, level: number) {
+        const exist = await this.productTypesAttributeRepository.findOne({
+            where: { productTypesId, attributeValueId: valueId, level },
+            loadEagerRelations: false,
+        });
+        return exist;
+    }
+
     async saveMany(userId: string, productId: string, attribute: CreateProductTypesAttributeDto[]) {
         return Promise.all(attribute.map(attr => this.save(userId, productId, attr)));
     }
 
     async save(userId: string, productId: string, attribute: CreateProductTypesAttributeDto) {
-        const { attrId, productTypesId, mediaId, mediaUrl, value, level } = attribute;
+        const { productTypesId, mediaId, mediaUrl, valueId, level } = attribute;
+        await this.isValid(productTypesId);
 
-        await this.isValid(productTypesId, attrId);
-
-        const thumbnailId = await this.getThumbnailId(userId, productId, productTypesId, attrId, mediaId, mediaUrl);
-
+        const thumbnailId = await this.getThumbnailId(userId, productId, productTypesId, mediaId, mediaUrl);
         const instance = this.productTypesAttributeRepository.create({
-            attributeId: attrId,
+            attributeValueId: valueId,
             productTypesId: productTypesId,
             thumbnailId: thumbnailId,
-            value,
             level,
         });
-
         const saved = await this.productTypesAttributeRepository.save(instance);
-
         return saved;
     }
 
     async updateMany(userId: string, productId: string, attribute: UpdateProductTypesAttributeDto[]) {
-        return Promise.all(attribute.map(attr => this.update(userId, productId, attr)));
+        if (!attribute.length) return [];
+
+        await this.deleteBeforeInsert(attribute.at(0).productTypesId);
+        const updated = await Promise.all(attribute.map(attr => this.update(userId, productId, attr)));
+        return updated;
     }
 
     async update(userId: string, productId: string, updateAttr: UpdateProductTypesAttributeDto) {
-        const { attrId, mediaId, mediaUrl, productTypesId, value } = updateAttr;
+        const { mediaId, mediaUrl, productTypesId, valueId, level } = updateAttr;
 
-        await this.isValid(productTypesId, attrId);
+        await this.isValid(productTypesId);
 
-        const thumbnailId = await this.getThumbnailId(userId, productId, productTypesId, attrId, mediaId, mediaUrl);
+        const thumbnailId = await this.getThumbnailId(userId, productId, productTypesId, mediaId, mediaUrl);
 
-        const exist = await this.isExist(productTypesId, attrId);
+        const exist = await this.isExistTypeAttribute(productTypesId, valueId, level);
+        if (!exist) {
+            return this.save(userId, productId, { level, productTypesId, valueId, mediaId, mediaUrl });
+        }
 
-        const newProductTypesAttr: ProductTypesAttributeEntity = {
-            ...exist,
-            thumbnailId: thumbnailId || exist.thumbnailId,
-            value: value || exist.value,
-        };
-
-        return this.productTypesAttributeRepository.update(
-            { productTypesId, attributeId: attrId },
-            newProductTypesAttr,
+        await this.productTypesAttributeRepository.update(
+            { productTypesId },
+            { attributeValueId: valueId, level: level, thumbnailId: thumbnailId || exist.thumbnailId },
         );
+
+        return DataSuccessCodeEnum.OK;
     }
 
-    async deleteOne(productTypesId: string, attributeId: string) {
-        const exist = await this.isExist(productTypesId, attributeId);
+    async deleteBeforeInsert(productTypesId: string) {
+        await this.productTypesAttributeRepository.delete({
+            productTypesId,
+        });
+    }
 
-        await this.productTypesAttributeRepository.delete({ productTypesId, attributeId });
+    async deleteOne(productTypesId: string) {
+        const exist = await this.isExist(productTypesId);
+
+        await this.productTypesAttributeRepository.delete({ productTypesId });
 
         return DataSuccessCodeEnum.OK;
     }

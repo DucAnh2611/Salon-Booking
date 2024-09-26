@@ -52,7 +52,7 @@ export class EmployeeController {
     @Get(EMPLOYEE_ROUTE.FIND)
     @UserType(ROLE_TITLE.staff)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.READ] }])
-    find(@Query() query: FindEmployeeQueryDto) {
+    find(@Req() req: AppRequest, @Query() query: FindEmployeeQueryDto) {
         return this.employeeService.findEmployee(query);
     }
 

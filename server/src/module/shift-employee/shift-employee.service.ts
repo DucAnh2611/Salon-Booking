@@ -3,9 +3,12 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { ShiftEmployeeStatusEnum } from '../../common/enum/shift.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
+import { ServiceEntity } from '../service-base/entity/service.entity';
 import { ServiceEmployeeService } from '../service-employee/service-employee.service';
 import { ShiftService } from '../shift/shift.service';
+import { OrderServiceCheckOverlapDto } from './dto/order-service-item-get.dto';
 import { BodyCreateShiftEmployeeDto, ShiftEmployeeDto } from './dto/shift-employee-create.dto';
 import { DeleteShiftEmployeeDto } from './dto/shift-employee-delete.dto';
 import { GetServiceShiftEmployeeDto } from './dto/shift-employee-get.dto';
@@ -19,6 +22,8 @@ export class ShiftEmployeeService {
         private readonly shiftEmployeeRepository: Repository<ShiftEmployeeEntity>,
         private readonly shiftService: ShiftService,
         private readonly serviceEmployeeService: ServiceEmployeeService,
+        @InjectRepository(ServiceEntity)
+        private readonly serviceRepository: Repository<ServiceEntity>,
     ) {}
 
     isExist(shiftId: string, employeeId: string) {
@@ -33,9 +38,35 @@ export class ShiftEmployeeService {
         return this.shiftEmployeeRepository.findOne({ where: { employeeId, shiftId }, loadEagerRelations: false });
     }
 
+    async checkOverlapServiceEmployee(body: OrderServiceCheckOverlapDto) {
+        const { services } = body;
+        const sortServiceBookingtime = services.sort((a, b) => a.bookingTime.getTime() - b.bookingTime.getTime());
+
+        await Promise.all(
+            sortServiceBookingtime.map(async (service, i) => {
+                if (i < sortServiceBookingtime.length - 1) {
+                    const nextService = sortServiceBookingtime[i + 1];
+
+                    const currentServiceEndTime = await this.calculateServiceEndTime(
+                        service.bookingTime,
+                        service.serviceId,
+                    );
+
+                    if (nextService && currentServiceEndTime > nextService.bookingTime) {
+                        throw new BadRequest({ message: DataErrorCodeEnum.OVERLAP_SERVICE_EMPLOYEE });
+                    }
+                }
+
+                return true;
+            }),
+        );
+
+        return true;
+    }
+
     async getServiceEmployeeBookingTime(body: GetServiceShiftEmployeeDto) {
-        const { bookingTime, serviceId } = body;
-        const shift = await this.shiftService.getShiftFromBookingTime(bookingTime);
+        const { bookingTime, serviceId, workingHourId } = body;
+        const shift = await this.shiftService.getShiftFromBookingTime(bookingTime, workingHourId);
         if (!shift) {
             return [];
         }
@@ -43,7 +74,11 @@ export class ShiftEmployeeService {
         const serviceEmployees = await this.serviceEmployeeService.listByServiceId(serviceId);
 
         const shiftEmployess = await this.shiftEmployeeRepository.find({
-            where: { shiftId: shift.id, employee: In(serviceEmployees.map(e => e.employeeId)) },
+            where: {
+                shiftId: shift.id,
+                employee: In(serviceEmployees.map(e => e.employeeId)),
+                status: ShiftEmployeeStatusEnum.AVAILABLE,
+            },
             loadEagerRelations: false,
             relations: {
                 employee: {
@@ -140,5 +175,19 @@ export class ShiftEmployeeService {
         const deleted = await this.shiftEmployeeRepository.delete({ shiftId, employeeId: In(employeeIds) });
 
         return DataSuccessCodeEnum.OK;
+    }
+
+    async calculateServiceEndTime(bookingTime: Date, serviceId: string) {
+        const service = await this.serviceRepository.findOne({ where: { id: serviceId }, loadEagerRelations: false });
+
+        if (!service) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_SERVICE });
+        }
+
+        const estimatedDuration = service.duration;
+        const endTime = new Date(bookingTime);
+        endTime.setMinutes(endTime.getMinutes() + estimatedDuration);
+
+        return endTime;
     }
 }

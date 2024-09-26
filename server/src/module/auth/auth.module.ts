@@ -10,8 +10,8 @@ import { RoleModule } from '../role/role.module';
 import { UserModule } from '../user/user.module';
 import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
-import { AccessTokenStrategy } from './strategies/accessToken.strategies';
-import { RefreshTokenStrategy } from './strategies/refreshToken.strategies';
+import { AccessTokenClientStrategy, AccessTokenStrategy } from './strategies/accessToken.strategies';
+import { RefreshTokenClientStrategy, RefreshTokenStrategy } from './strategies/refreshToken.strategies';
 
 @Module({
     imports: [
@@ -24,6 +24,14 @@ import { RefreshTokenStrategy } from './strategies/refreshToken.strategies';
         RoleModule,
     ],
     controllers: [AuthController],
-    providers: [AuthService, JwtTokenUtil, JwtService, AccessTokenStrategy, RefreshTokenStrategy],
+    providers: [
+        AuthService,
+        JwtTokenUtil,
+        JwtService,
+        AccessTokenStrategy,
+        RefreshTokenStrategy,
+        AccessTokenClientStrategy,
+        RefreshTokenClientStrategy,
+    ],
 })
 export class AuthModule {}

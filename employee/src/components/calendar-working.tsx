@@ -82,7 +82,7 @@ export default function CalendarWorking({
     }, [reload]);
 
     return (
-        <div className="flex flex-col">
+        <div className="flex flex-col relative">
             {isCalling && !isFailure && (
                 <div className="w-full h-full absolute top-0 left-0 flex items-center justify-center z-[1]  backdrop-blur-sm">
                     <div className="w-full h-full absolute top-0 left-0 bg-foreground opacity-20" />

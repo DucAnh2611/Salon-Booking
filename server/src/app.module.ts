@@ -19,10 +19,12 @@ import { MediaModule } from './module/media/media.module';
 import { OrderModule } from './module/order/order.module';
 import { PermissionModule } from './module/permission/permission.module';
 import { ProductModule } from './module/product/product.module';
+import { RedisModule } from './module/redis/redis.module';
 import { RolePermissionModule } from './module/role-permission/role-permission.module';
 import { RoleModule } from './module/role/role.module';
 import { ScheduleModule } from './module/schedule/schedule.module';
 import { ServiceModule } from './module/service/service.module';
+import { ThirdPartyModule } from './module/thirdparty/thirdparty.module';
 import { AppResponseInterceptor } from './shared/interceptor';
 
 @Module({
@@ -53,6 +55,10 @@ import { AppResponseInterceptor } from './shared/interceptor';
 
         CartModule,
         OrderModule,
+        RedisModule,
+
+        //Third party module
+        ThirdPartyModule,
     ],
     providers: [
         AppLoggerService,

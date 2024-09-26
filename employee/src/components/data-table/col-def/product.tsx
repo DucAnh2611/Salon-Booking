@@ -51,17 +51,30 @@ export const productColumnDef: ColumnDef<IProduct>[] = [
         cell: ({ cell }) => {
             const medias = cell.getValue() as IProductMedia[];
 
+            if (
+                !medias ||
+                (medias && medias.find((m) => m.isThumbnail && !m.media))
+            )
+                return (
+                    <div className="w-full flex items-center justify-center">
+                        <div className="h-[70px] aspect-square bg-muted flex items-center justify-center text-muted-foreground">
+                            <ImageOffIcon size={15} />
+                        </div>
+                    </div>
+                );
+            const thumbnailList = medias.filter(
+                (m) => m.isThumbnail && m.media
+            );
+
             return (
                 <div className="w-full flex items-center justify-center">
-                    {medias.length ? (
-                        getMediaType(
-                            medias.filter((m) => m.isThumbnail)[0].media.path
-                        ) === "image" ? (
+                    {thumbnailList.length > 0 &&
+                        thumbnailList[0].media &&
+                        (getMediaType(thumbnailList[0].media.path) ===
+                        "image" ? (
                             <img
                                 src={
-                                    api_media_url +
-                                    medias.filter((m) => m.isThumbnail)[0].media
-                                        .path
+                                    api_media_url + thumbnailList[0].media.path
                                 }
                                 alt="product"
                                 className="h-[70px] aspect-square object-cover rounded-md overflow-hidden"
@@ -69,14 +82,12 @@ export const productColumnDef: ColumnDef<IProduct>[] = [
                         ) : (
                             <video
                                 src={
-                                    api_media_url +
-                                    medias.filter((m) => m.isThumbnail)[0].media
-                                        .path
+                                    api_media_url + thumbnailList[0].media.path
                                 }
                                 className="h-[70px] aspect-square object-cover rounded-md overflow-hidden"
                             />
-                        )
-                    ) : (
+                        ))}
+                    {thumbnailList.length <= 0 && (
                         <div className="h-[70px] aspect-square bg-muted flex items-center justify-center text-muted-foreground">
                             <ImageOffIcon size={15} />
                         </div>

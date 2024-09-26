@@ -86,10 +86,6 @@ export default function UpdateServiceTab({
     const handleSubmit =
         (test = false) =>
         () => {
-            if (test) {
-                console.log(form.getValues());
-                return;
-            }
             const payload = form.getValues();
 
             payload.base.duration = parseInt(payload.base.duration.toString());

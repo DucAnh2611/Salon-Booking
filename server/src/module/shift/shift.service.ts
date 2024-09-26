@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { LessThanOrEqual, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { combineDateAndTime, isTime1Greater } from '../../shared/utils/parse-time.utils';
 import { ShiftEmployeeEntity } from '../shift-employee/entity/shift-employee.entity';
@@ -171,6 +172,25 @@ export class ShiftService {
                     },
                     eRole: true,
                 },
+                orderServiceItem: {
+                    employee: {
+                        userBase: {
+                            userAvatar: true,
+                        },
+                    },
+                    service: {
+                        category: true,
+                        media: {
+                            media: true,
+                        },
+                    },
+                    order: true,
+                },
+            },
+            order: {
+                orderServiceItem: {
+                    bookingTime: SortByEnum.ASC,
+                },
             },
         });
 
@@ -186,9 +206,20 @@ export class ShiftService {
     async getShiftFromBookingDate(body: GetShiftFromBookingTimeDto) {
         const { bookingDate } = body;
 
+        const currentDate = new Date();
+
+        currentDate.setHours(0);
+        currentDate.setMinutes(0);
+        currentDate.setSeconds(0);
+        currentDate.setMilliseconds(0);
+
+        if (currentDate.getTime() > bookingDate.getTime()) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NEGATIVE_DATE });
+        }
+
         const workingHour = await this.workingHourService.getWorkingHourAtDate(bookingDate);
         if (!workingHour) {
-            return [];
+            return { available: false };
         }
 
         const shifts = await this.shiftRepository.find({
@@ -196,14 +227,21 @@ export class ShiftService {
                 workingHourId: workingHour.id,
             },
             loadEagerRelations: false,
+            order: {
+                start: SortByEnum.ASC,
+            },
         });
 
-        return shifts;
+        return { shifts: shifts, ...workingHour, available: true };
     }
 
-    getShiftFromBookingTime(bookingTime: Date) {
+    getShiftFromBookingTime(bookingTime: Date, workingHourId: string) {
         return this.shiftRepository.findOne({
-            where: { bookingStart: LessThanOrEqual(bookingTime), bookingEnd: MoreThanOrEqual(bookingTime) },
+            where: {
+                bookingStart: LessThanOrEqual(bookingTime),
+                bookingEnd: MoreThanOrEqual(bookingTime),
+                workingHourId: workingHourId,
+            },
             loadEagerRelations: false,
         });
     }

@@ -8,8 +8,8 @@ import { UserType } from '../../../shared/decorator/user-types.decorator';
 import { AccessTokenGuard } from '../../../shared/guard/accessToken.guard';
 import { PermissionGuard } from '../../../shared/guard/permission.guard';
 import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
-import { CreateProductTypesDto } from '../dto/product-types-create.dto';
-import { UpdateProductTypesDto } from '../dto/product-types-update.dto';
+import { CreateProductTypesBodyDto } from '../dto/product-types-create.dto';
+import { UpdateProductTypesBodyDto } from '../dto/product-types-update.dto';
 import { ProductTypesService } from '../product-types.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
@@ -29,7 +29,7 @@ export class ProductTypesAdminController {
             action: [PermissionActionEnum.CREATE],
         },
     ])
-    create(@Req() req: AppRequest, @Body() body: CreateProductTypesDto) {
+    create(@Req() req: AppRequest, @Body() body: CreateProductTypesBodyDto) {
         const { accessPayload } = req;
         const { employeeId, userId } = accessPayload;
 
@@ -48,7 +48,7 @@ export class ProductTypesAdminController {
             action: [PermissionActionEnum.UPDATE],
         },
     ])
-    update(@Req() req: AppRequest, @Body() body: UpdateProductTypesDto) {
+    update(@Req() req: AppRequest, @Body() body: UpdateProductTypesBodyDto) {
         const { accessPayload } = req;
         const { employeeId, userId } = accessPayload;
 

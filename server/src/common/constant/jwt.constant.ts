@@ -1,8 +1,10 @@
 export const JWT_CONSTANT = {
     access: {
-        strategyName: 'jwt-access',
+        strategyNameClient: 'jwt-access-client',
+        strategyNameManager: 'jwt-access-manager',
     },
     refresh: {
-        strategyName: 'jwt-refresh',
+        strategyNameClient: 'jwt-refresh-client',
+        strategyNameManager: 'jwt-refresh-manager',
     },
 };

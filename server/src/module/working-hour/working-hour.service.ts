@@ -3,8 +3,10 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, In, MoreThan, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { combineDateAndTime, isTime1Greater } from '../../shared/utils/parse-time.utils';
+import { OrderServiceItemEntity } from '../order-service-item/entity/order-service-item.entity';
 import { CreateWorkingHourDto } from './dto/working-hour-create.dto';
 import { DeleteWorkingHourDto } from './dto/working-hour-delete.dto';
 import { GetWorkingHourRangeDto, OffWorkingQueryDto } from './dto/working-hour-get.dto';
@@ -15,7 +17,34 @@ import { WorkingHourEntity } from './entity/working-hour.entity';
 export class WorkingHourService {
     constructor(
         @InjectRepository(WorkingHourEntity) private readonly workingHourRepository: Repository<WorkingHourEntity>,
+        @InjectRepository(OrderServiceItemEntity)
+        private readonly orderServiceItemRepository: Repository<OrderServiceItemEntity>,
     ) {}
+
+    async getOrderShift(shiftId: string) {
+        return this.orderServiceItemRepository.find({
+            where: { shiftId },
+            loadEagerRelations: false,
+            relations: {
+                employee: {
+                    userBase: {
+                        userAvatar: true,
+                    },
+                },
+                service: {
+                    category: true,
+                    media: {
+                        media: true,
+                    },
+                },
+                shift: true,
+                order: true,
+            },
+            order: {
+                bookingTime: SortByEnum.ASC,
+            },
+        });
+    }
 
     isExistByDate(date: Date) {
         return this.workingHourRepository.findOne({
@@ -69,8 +98,8 @@ export class WorkingHourService {
         });
     }
 
-    detail(id: string) {
-        const workingHour = this.workingHourRepository.findOne({
+    async detail(id: string) {
+        const workingHour = await this.workingHourRepository.findOne({
             where: { id },
             loadEagerRelations: false,
             relations: {
@@ -89,11 +118,22 @@ export class WorkingHourService {
                 shifts: true,
             },
         });
+
         if (!workingHour) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_WORKING_HOUR });
         }
 
-        return workingHour;
+        const mapOrderShift = await Promise.all(
+            workingHour.shifts.map(async shift => {
+                const bookedService = await this.getOrderShift(shift.id);
+                return {
+                    ...shift,
+                    orderServiceItem: bookedService,
+                };
+            }),
+        );
+
+        return { ...workingHour, shifts: mapOrderShift } as WorkingHourEntity;
     }
 
     async getRange(range: GetWorkingHourRangeDto) {
@@ -179,6 +219,8 @@ export class WorkingHourService {
         if (isStart) {
             throw new BadRequest({ message: DataErrorCodeEnum.WORKING_HOUR_START });
         }
+
+        //check if is worrking hour is overlap with some shift? if overlap decline, then ok
 
         const instance = this.workingHourRepository.create({
             ...exist,

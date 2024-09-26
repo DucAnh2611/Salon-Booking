@@ -1,3 +1,6 @@
+import { EDataErrorCode } from "@/enum/data-code-error.enum";
+import { ERequestErrorCode } from "@/enum/request-code-error.enum";
+
 export interface IApiResponse<T> {
     response: ISuccessRequest<T> | null;
     error: IFailRequest | null;
@@ -8,8 +11,8 @@ export interface IBaseRequest {
 }
 
 export interface IFailRequest extends IBaseRequest {
-    code: string;
-    message: string;
+    code: ERequestErrorCode;
+    message: EDataErrorCode;
 }
 
 export interface ISuccessRequest<T> extends IBaseRequest {

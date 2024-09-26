@@ -13,129 +13,92 @@ import {
     FormItem,
     FormLabel,
 } from "@/components/ui/form";
-import { IAttributeProduct } from "@/interface/api/attribute.interface";
-import { IProductType } from "@/interface/api/product.interface";
+import {
+    IAttributeValue,
+    IProductType,
+} from "@/interface/api/product.interface";
 import { IProductTabCreateProps } from "@/interface/product-tabs.interface";
-import { generateUUID } from "@/utils/uuid.utils";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 export default function CreateProductTypeSection({
     form,
     sessionId,
 }: IProductTabCreateProps) {
-    const [selectedAttr, SetSelectedAttr] = useState<IAttributeProduct>({
-        first: {
-            attribute: null,
-            values: [],
-        },
-        second: {
-            attribute: null,
-            values: [],
-        },
-    });
+    const [selectedAttr, SetSelectedAttr] = useState<IAttributeValue>({});
+    const [productTypes, SetProductTypes] = useState<IProductType[]>([]);
 
-    const [productTypes, SetProductTypes] = useState<IProductType[]>(
-        form.getValues("types") || []
-    );
-
-    const getSelectedAttrForm = (types: IProductType[]) => {
-        const selectAttr: IAttributeProduct = {
-            first: {
-                attribute: null,
-                values: [],
-            },
-            second: {
-                attribute: null,
-                values: [],
-            },
-        };
-
-        const typeIndex: Array<keyof IAttributeProduct> = ["first", "second"];
-
-        types.forEach((pType) => {
-            pType.types.forEach((attrType) => {
-                const level = typeIndex[attrType.level - 1];
-                if (!selectAttr[level].attribute) {
-                    selectAttr[level].attribute = {
-                        id: attrType.attrId,
-                        name: attrType.attrName,
-                    };
-                }
-                selectAttr[level].values.push({
-                    id: generateUUID(),
-                    value: attrType.value,
-                });
-            });
-        });
-
-        SetSelectedAttr(selectAttr);
-    };
-
-    const defaultList = (selectedAttr: IAttributeProduct) => {
+    const defaultList = (selectedAttr: IAttributeValue) => {
         const list: IProductType[] = [];
-        if (selectedAttr.first.attribute) {
-            const fAttr = selectedAttr.first.attribute;
-            if (selectedAttr.second.attribute) {
-                const sAttr = selectedAttr.second.attribute;
 
-                selectedAttr.first.values.forEach((fValue) => {
-                    selectedAttr.second.values.forEach((sValue) => {
+        if (selectedAttr.first && selectedAttr.first.attribute) {
+            if (selectedAttr.sec && selectedAttr.sec.attribute) {
+                selectedAttr.first?.value.forEach((fValue) => {
+                    selectedAttr.sec?.value.forEach((sValue) => {
                         list.push({
                             price: 0,
                             quantity: 0,
                             types: [
                                 {
-                                    attrId: fAttr.id,
-                                    attrName: fAttr.name,
-                                    level: 1,
-                                    value: fValue.value,
+                                    value: {
+                                        attrValueTempId: fValue.tempId || "",
+                                        level: 1,
+                                    },
                                 },
-
                                 {
-                                    attrId: sAttr.id,
-                                    attrName: fAttr.name,
-                                    level: 2,
-                                    value: sValue.value,
+                                    value: {
+                                        attrValueTempId: sValue.tempId || "",
+                                        level: 2,
+                                    },
                                 },
                             ],
                         });
                     });
                 });
             } else {
-                selectedAttr.first.values.forEach((fValue) => {
+                selectedAttr.first?.value.forEach((fValue) => {
                     list.push({
                         price: 0,
                         quantity: 0,
                         types: [
                             {
-                                attrId: fAttr.id,
-                                attrName: fAttr.name,
-                                level: 1,
-                                value: fValue.value,
+                                value: {
+                                    attrValueTempId: fValue.tempId || "",
+                                    level: 1,
+                                },
                             },
                         ],
                     });
                 });
             }
         }
+
         return list;
     };
 
-    const handleSelectAttr = (select: IAttributeProduct) => {
+    const handleSelectAttr = (select: IAttributeValue) => {
         SetSelectedAttr(select);
         SetProductTypes(defaultList(select));
 
         form.clearErrors("types");
+        form.setValue("types.selectAttribute", select);
     };
 
-    const handleChangeAttr = (attr: IProductType[]) => {
+    const handleChangeProductTypeAttr = (attr: IProductType[]) => {
         SetProductTypes(attr);
-        form.setValue("types", attr);
+        form.setValue(
+            "types.types",
+            attr.map((a) => ({
+                ...a,
+                types: a.types.map((at) => ({
+                    ...at,
+                    value: {
+                        ...at.value,
+                        attrValueTempId: at.value.attrValueTempId || "",
+                    },
+                })),
+            }))
+        );
     };
-
-    useEffect(() => {
-        getSelectedAttrForm(form.getValues("types"));
-    }, [form]);
 
     return (
         <Card>
@@ -162,8 +125,9 @@ export default function CreateProductTypeSection({
                                         onSelect={handleSelectAttr}
                                         selected={selectedAttr}
                                     />
+
                                     <TableProductAttribute
-                                        onChange={handleChangeAttr}
+                                        onChange={handleChangeProductTypeAttr}
                                         productTypes={productTypes}
                                         attributeProduct={selectedAttr}
                                     />

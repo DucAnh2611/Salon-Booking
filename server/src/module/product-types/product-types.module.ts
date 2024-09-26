@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AttributeModule } from '../attribute/attribute.module';
+import { AttributeValueModule } from '../attribute-value/attribute-value.module';
 import { ProductBaseModule } from '../product-base/product-base.module';
 import { ProductTypesAttributeModule } from '../product-types-attribute/product-types-attribute.module';
 import { RolePermissionModule } from '../role-permission/role-permission.module';
@@ -12,11 +12,11 @@ import { ProductTypesService } from './product-types.service';
 @Module({
     imports: [
         TypeOrmModule.forFeature([ProductTypesEntity]),
-        AttributeModule,
         ProductBaseModule,
         RoleModule,
         RolePermissionModule,
         ProductTypesAttributeModule,
+        AttributeValueModule,
     ],
     controllers: [ProductTypesAdminController],
     providers: [ProductTypesService],

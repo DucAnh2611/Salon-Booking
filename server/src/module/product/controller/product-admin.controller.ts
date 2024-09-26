@@ -12,7 +12,7 @@ import { DeleteProductBaseDto } from '../../product-base/dto/product-base-delete
 import { FindProductBaseAdminDto, GetProductBaseParamDto } from '../../product-base/dto/product-base-get.dto';
 import { CreateProductDto } from '../dto/product-create.dto';
 import { UpdateProductDto } from '../dto/product-update.dto';
-import { ProductService } from '../product.service';
+import { ProductService } from '../service/product.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
 @Controller(ROUTER.PRODUCT)

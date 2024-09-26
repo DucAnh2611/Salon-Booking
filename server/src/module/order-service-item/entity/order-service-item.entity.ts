@@ -3,6 +3,7 @@ import { BaseEntity } from '../../../common/enitty/base.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { OrderEntity } from '../../order-base/entity/order-base.entity';
 import { ServiceEntity } from '../../service-base/entity/service.entity';
+import { ShiftEntity } from '../../shift/entity/shift.entity';
 
 @Entity('order_service_item')
 export class OrderServiceItemEntity extends BaseEntity {
@@ -21,8 +22,11 @@ export class OrderServiceItemEntity extends BaseEntity {
     @Column('jsonb')
     employeeSnapShot: EmployeeEntity;
 
+    @Column('uuid')
+    shiftId: string;
+
     @Column('timestamp with time zone')
-    bookingDate: Date;
+    bookingTime: Date;
 
     @ManyToOne(() => OrderEntity, (orderEntity: OrderEntity) => orderEntity.services)
     @JoinColumn({ name: 'orderId' })
@@ -35,4 +39,7 @@ export class OrderServiceItemEntity extends BaseEntity {
     @ManyToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.orderServiceItems)
     @JoinColumn({ name: 'employeeId' })
     employee: EmployeeEntity;
+
+    @ManyToOne(() => ShiftEntity, (shiftEntity: ShiftEntity) => shiftEntity.orderServiceItem)
+    shift: ShiftEntity;
 }

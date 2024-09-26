@@ -9,6 +9,7 @@ export const RedisOptions: CacheModuleAsyncOptions = {
             socket: {
                 host: redisConfig.host,
                 port: parseInt(redisConfig.port),
+                timeout: 3000,
             },
             username: redisConfig.username,
             password: redisConfig.password,

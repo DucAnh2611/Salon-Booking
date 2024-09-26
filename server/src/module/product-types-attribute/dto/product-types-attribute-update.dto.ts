@@ -1,4 +1,5 @@
-import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { Type } from 'class-transformer';
+import { IsInt, IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID } from 'class-validator';
 
 export class UpdateProductTypesAttributeDto {
     @IsNotEmpty()
@@ -7,11 +8,14 @@ export class UpdateProductTypesAttributeDto {
 
     @IsNotEmpty()
     @IsUUID('all')
-    attrId: string;
+    valueId: string;
 
     @IsNotEmpty()
-    @IsString()
-    value: string;
+    @Type(() => Number)
+    @IsNumber()
+    @IsPositive()
+    @IsInt()
+    level: number;
 
     @IsOptional()
     @IsUUID('all')

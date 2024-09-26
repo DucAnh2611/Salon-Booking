@@ -38,6 +38,10 @@ export class UpdateProductBaseDto {
     brand?: string;
 
     @IsOptional()
+    @IsString()
+    sku?: string;
+
+    @IsOptional()
     @IsUUID('all')
     categoryId?: string;
 }

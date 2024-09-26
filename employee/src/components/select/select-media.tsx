@@ -20,6 +20,7 @@ interface ISelectMediaProps {
     sessionId: string;
     disabled?: boolean;
     mutiple?: boolean;
+    accept?: string;
 }
 
 export default function SelectMedia({
@@ -27,6 +28,7 @@ export default function SelectMedia({
     sessionId,
     disabled = false,
     mutiple = true,
+    accept = "image/*, video/*",
 }: ISelectMediaProps) {
     const [uuid] = useState<string>(generateUUID());
 
@@ -103,7 +105,7 @@ export default function SelectMedia({
                     <DropdownMenuItem>
                         <Label
                             className="items-center w-full justify-start gap-2 flex px-4 py-3 hover:bg-muted rounded cursor-pointer"
-                            htmlFor={uuid}
+                            htmlFor={"select-media" + uuid}
                         >
                             <div className="w-[20px]">
                                 <FolderUpIcon size={15} />
@@ -115,9 +117,9 @@ export default function SelectMedia({
             </DropdownMenu>
             <Input
                 type="file"
-                accept="image/*, video/*"
+                accept={accept}
                 className="hidden"
-                id={uuid}
+                id={"select-media" + uuid}
                 multiple={mutiple}
                 onChange={handleSelectMedia}
             />

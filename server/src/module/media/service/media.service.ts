@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { mkdir, readFile, stat, unlink, writeFile } from 'fs/promises';
 import * as mime from 'mime-types';
@@ -229,7 +228,6 @@ export class MediaService {
         }
     }
 
-    @Cron(CronExpression.EVERY_HOUR)
     async ensureDirectoryExists(filePath: string): Promise<boolean> {
         try {
             await mkdir(filePath, { recursive: true });

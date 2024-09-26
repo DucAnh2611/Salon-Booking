@@ -1,12 +1,15 @@
-import { IProductInfo } from "@/interface/api/product.interface";
+import {
+    IAttributeValue,
+    IProductInfo,
+} from "@/interface/api/product.interface";
 import { IProductTabUpdateProps } from "@/interface/product-tabs.interface";
 import { updateProductApi } from "@/lib/redux/actions/product.action";
 import { productSelector } from "@/lib/redux/selector";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
 import {
-    productTypeDetailSchema,
     updateProductDetailSchema,
     updateProductSchema,
+    updateProductTypeDetailSchema,
     updateProductTypeSchema,
 } from "@/schemas/product.schema";
 import { generateUUID } from "@/utils/uuid.utils";
@@ -68,28 +71,61 @@ export default function UpdateProductTab({
         form.setValue("details", details);
 
         const types: Array<z.infer<typeof updateProductTypeSchema>> = [];
+        const selectedAttr: IAttributeValue = {};
+
         detail.types.forEach((type) => {
+            const {
+                id,
+                quantity,
+                price,
+                productTypesAttribute,
+                sku,
+                ...typeInf
+            } = type;
+
+            const mapLevel: Array<keyof IAttributeValue> = [
+                "first",
+                "first",
+                "sec",
+            ];
+
             const addTypes: z.infer<typeof updateProductTypeSchema> = {
-                productTypeId: type.id,
-                quantity: type.quantity,
-                price: type.price,
-                sku: type.sku || "",
-                types: type.productTypesAttribute.map((ta) => {
+                productTypeId: id,
+                quantity: quantity,
+                price: price,
+                sku: sku || "",
+                ...typeInf,
+                types: productTypesAttribute.map((ta) => {
                     const addTypeAttribue: z.infer<
-                        typeof productTypeDetailSchema
+                        typeof updateProductTypeDetailSchema
                     > = {
-                        attrId: ta.attributeId,
-                        attrName: ta.attribute.name,
-                        value: ta.value,
-                        level: ta.level,
+                        value: {
+                            attrValueId: ta.value.id,
+                            level: ta.level,
+                        },
                     };
+
+                    const typeSelectAttr = mapLevel[ta.level] || mapLevel[1];
+
+                    selectedAttr[typeSelectAttr] = {
+                        attribute: ta.value.attribute,
+                        value: [
+                            ...(
+                                selectedAttr[typeSelectAttr]?.value || []
+                            ).filter((e) => e.id && e.id !== ta.value.id),
+                            { id: ta.value.id, value: ta.value.value },
+                        ],
+                    };
+
                     return addTypeAttribue;
                 }),
             };
 
             types.push(addTypes);
         });
-        form.setValue("types", types);
+
+        form.setValue("types.types", types);
+        form.setValue("types.selectAttribute", selectedAttr);
     };
 
     const handleSubmit = () => {
@@ -110,6 +146,9 @@ export default function UpdateProductTab({
         if (submit && !isUpdating && !isFailure) {
             SetSubmit(false);
             window.location.reload();
+        }
+        if (submit && !isUpdating && isFailure) {
+            SetSubmit(false);
         }
     }, [isUpdating, isFailure]);
 

@@ -1,4 +1,6 @@
 import { EFileType } from "@/enum/media.enum";
+import { EOrderType } from "@/enum/order.enum";
+import { joinString } from "@/utils/string";
 
 const HEADERS = {
     DEFAULT_HEADER: {
@@ -35,13 +37,13 @@ export const API_URLS = {
         REFRESH_TOKEN: () => ({
             method: "GET",
             headers: HEADERS.DEFAULT_HEADER,
-            endPoint: "auth/refresh-token",
+            endPoint: "auth/emp-refresh-token",
             withCredentials: true,
         }),
         LOGOUT: () => ({
             method: "GET",
             headers: HEADERS.DEFAULT_HEADER,
-            endPoint: "auth/logout",
+            endPoint: "auth/logout-emp",
             withCredentials: true,
         }),
     },
@@ -189,7 +191,6 @@ export const API_URLS = {
             withCredentials: true,
         }),
     },
-
     ATTRIBUTE: {
         LIST: (page = 1, limit = 10, key = "", orderBy = "") => ({
             method: "GET",
@@ -343,6 +344,122 @@ export const API_URLS = {
             method: "DELETE",
             headers: HEADERS.DEFAULT_HEADER,
             endPoint: `shift-employee/many`,
+            withCredentials: true,
+        }),
+    },
+    ORDER: {
+        LIST: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff"],
+            }),
+            withCredentials: true,
+        }),
+    },
+    ORDER_PRODUCT: {
+        DETAIL: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "d", id],
+            }),
+            withCredentials: true,
+        }),
+        STATE: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "d", id, "states"],
+            }),
+            withCredentials: true,
+        }),
+        REFUND: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "d", id, "refunds"],
+            }),
+            withCredentials: true,
+        }),
+        TRANSACTION: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "d", id, "transactions"],
+            }),
+            withCredentials: true,
+        }),
+        PRODUCT: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "d", id, "products"],
+            }),
+            withCredentials: true,
+        }),
+        SERVICE: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "d", id, "services"],
+            }),
+            withCredentials: true,
+        }),
+    },
+    ORDER_STATE: {
+        LIST: (type: EOrderType) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "order-state", `list?type=${type}`],
+            }),
+            withCredentials: true,
+        }),
+        UPDATE: () => ({
+            method: "PUT",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "order-state"],
+            }),
+            withCredentials: true,
+        }),
+    },
+    REFUND: {
+        APPROVE: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "order-refund", "approve"],
+            }),
+            withCredentials: true,
+        }),
+        DECLINE: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "order-refund", "decline"],
+            }),
+            withCredentials: true,
+        }),
+        GET_PAYMENT_QR: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "order-refund", "create-qr", id],
+            }),
             withCredentials: true,
         }),
     },

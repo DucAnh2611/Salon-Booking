@@ -13,18 +13,15 @@ import {
     FormField,
     FormItem,
     FormLabel,
+    FormMessage,
 } from "@/components/ui/form";
 import {
-    IAttributeProduct,
-    IAttributeProductValue,
-} from "@/interface/api/attribute.interface";
-import {
-    IProductTypeAttribute,
+    IAttributeValue,
+    IProductTypeAttributeUpdate,
     IProductTypeInfo,
     IProductTypeUpdate,
 } from "@/interface/api/product.interface";
 import { IProductTabUpdateProps } from "@/interface/product-tabs.interface";
-import { generateUUID } from "@/utils/uuid.utils";
 import { useMemo, useState } from "react";
 
 interface IUpdateProductTypeTabProps extends IProductTabUpdateProps {
@@ -36,73 +33,67 @@ export default function UpdateProductTypeTab({
     sessionId,
     types,
 }: IUpdateProductTypeTabProps) {
-    const [selectedAttr, SetSelectedAttr] = useState<IAttributeProduct>({
-        first: {
-            attribute: null,
-            values: [],
-        },
-        second: {
-            attribute: null,
-            values: [],
-        },
-    });
+    const [selectedAttr, SetSelectedAttr] = useState<IAttributeValue>({});
     const [productTypes, SetProductTypes] = useState<IProductTypeUpdate[]>([]);
     const [isChange, SetIsChange] = useState<boolean>(false);
 
-    const defaultList = (selectedAttr: IAttributeProduct) => {
+    const defaultList = (selectedAttr: IAttributeValue) => {
         let list: IProductTypeUpdate[] = [];
 
-        if (selectedAttr.first.attribute) {
-            const fAttr = selectedAttr.first.attribute;
-            if (selectedAttr.second.attribute) {
-                const sAttr = selectedAttr.second.attribute;
-
-                selectedAttr.first.values.forEach((fdValue) => {
-                    selectedAttr.second.values.forEach((sdValue) => {
-                        list = [
-                            ...list,
-                            {
-                                price: 0,
-                                quantity: 0,
-                                sku: "",
-                                types: [
-                                    {
-                                        attrId: fAttr.id,
-                                        attrName: fAttr.name,
+        if (selectedAttr.first && selectedAttr.first.attribute) {
+            if (selectedAttr.sec && selectedAttr.sec.attribute) {
+                selectedAttr.first?.value.forEach((fValue) => {
+                    selectedAttr.sec?.value.forEach((sValue) => {
+                        list.push({
+                            price: 0,
+                            quantity: 0,
+                            types: [
+                                {
+                                    value: {
+                                        ...(fValue.id
+                                            ? { attrValueId: fValue.id }
+                                            : {}),
+                                        ...(fValue.tempId
+                                            ? { attrValueTempId: fValue.tempId }
+                                            : {}),
                                         level: 1,
-                                        value: fdValue.value,
                                     },
-
-                                    {
-                                        attrId: sAttr.id,
-                                        attrName: fAttr.name,
+                                },
+                                {
+                                    value: {
+                                        ...(sValue.id
+                                            ? { attrValueId: sValue.id }
+                                            : {}),
+                                        ...(sValue.tempId
+                                            ? { attrValueTempId: sValue.tempId }
+                                            : {}),
                                         level: 2,
-                                        value: sdValue.value,
                                     },
-                                ],
-                            },
-                        ];
+                                },
+                            ],
+                        });
                     });
                 });
             } else {
-                for (const fdValue of selectedAttr.first.values) {
-                    list = [
-                        ...list,
-                        {
-                            price: 0,
-                            quantity: 0,
-                            sku: "",
-                            types: [
-                                {
-                                    attrId: fAttr.id,
-                                    attrName: fAttr.name,
+                selectedAttr.first?.value.forEach((fValue) => {
+                    list.push({
+                        price: 0,
+                        quantity: 0,
+                        types: [
+                            {
+                                value: {
+                                    ...(fValue.id
+                                        ? { attrValueId: fValue.id }
+                                        : {}),
+                                    ...(fValue.tempId
+                                        ? { attrValueTempId: fValue.tempId }
+                                        : {}),
                                     level: 1,
-                                    value: fdValue.value,
                                 },
-                            ],
-                        },
-                    ];
-                }
+                            },
+                        ],
+                    });
+                });
             }
         }
 
@@ -110,7 +101,7 @@ export default function UpdateProductTypeTab({
     };
 
     const defineNewList = (
-        selectedAttr: IAttributeProduct
+        selectedAttr: IAttributeValue
     ): IProductTypeUpdate[] => {
         const newDefaultList = defaultList(selectedAttr);
 
@@ -122,7 +113,8 @@ export default function UpdateProductTypeTab({
                 const map = new Map();
 
                 combineList.forEach((item) => {
-                    const key = item.attrId + item.value + item.level;
+                    const key =
+                        item.value.attrValueId || item.value.attrValueTempId;
                     if (map.has(key)) {
                         map.set(key, map.get(key) + 1);
                     } else {
@@ -144,7 +136,7 @@ export default function UpdateProductTypeTab({
         return list;
     };
 
-    const handleSelectAttr = (select: IAttributeProduct) => {
+    const handleSelectAttr = (select: IAttributeValue) => {
         const newList = defineNewList(select);
 
         SetProductTypes(newList);
@@ -152,6 +144,7 @@ export default function UpdateProductTypeTab({
         SetIsChange(true);
 
         form.clearErrors("types");
+        form.setValue("types.selectAttribute", select);
     };
 
     const handleChangeType = (types: IProductTypeUpdate[]) => {
@@ -162,86 +155,77 @@ export default function UpdateProductTypeTab({
     const convertToUpdate = (
         types: IProductTypeInfo[]
     ): IProductTypeUpdate[] => {
-        return types.map((type) => {
+        const productTypes = types.map((type) => {
             const { id, productTypesAttribute, ...update } = type;
             return {
-                productTypesId: type.id,
+                productTypesId: id,
                 ...update,
                 types: productTypesAttribute.map((typeAttr) => {
                     return {
-                        attrId: typeAttr.attributeId,
-                        attrName: typeAttr.attribute.name,
-                        value: typeAttr.value,
-                        level: typeAttr.level,
-                    } as IProductTypeAttribute;
+                        value: {
+                            level: typeAttr.level,
+                            attrValueId: typeAttr.attributeValueId,
+                        },
+                    } as IProductTypeAttributeUpdate;
                 }),
             };
         });
+
+        return productTypes;
     };
 
     const detectSelectAttr = (types: IProductTypeInfo[]) => {
-        const selectAttr: IAttributeProduct = {
-            first: {
-                attribute: null,
-                values: [],
-            },
-            second: {
-                attribute: null,
-                values: [],
-            },
-        };
+        let selectAttr: IAttributeValue = {};
 
         if (types.length) {
-            const firstValue: IAttributeProductValue[] = [];
-            const secValue: IAttributeProductValue[] = [];
-
             types.forEach((type) => {
-                type.productTypesAttribute.forEach((attr) => {
-                    selectAttr[
-                        attr.level === 1 ? "first" : "second"
-                    ].attribute = attr.attribute;
+                const mapLevel: Array<keyof IAttributeValue> = [
+                    "first",
+                    "first",
+                    "sec",
+                ];
+                type.productTypesAttribute.forEach((ta) => {
+                    const typeSelectAttr = mapLevel[ta.level] || mapLevel[1];
 
-                    if (
-                        attr.level === 1 &&
-                        !firstValue.some((v) => attr.value === v.value)
-                    ) {
-                        firstValue.push({
-                            id: generateUUID(),
-                            value: attr.value,
-                        });
-                    }
-                    if (
-                        attr.level === 2 &&
-                        !secValue.some((v) => attr.value === v.value)
-                    ) {
-                        secValue.push({
-                            id: generateUUID(),
-                            value: attr.value,
-                        });
-                    }
+                    selectAttr = {
+                        ...selectAttr,
+                        [typeSelectAttr]: {
+                            attribute: ta.value.attribute,
+                            value: [
+                                ...(
+                                    selectAttr[typeSelectAttr]?.value || []
+                                ).filter((e) => e.id !== ta.attributeValueId),
+                                ta.value,
+                            ],
+                        },
+                    };
                 });
             });
-
-            selectAttr.first.values = firstValue;
-            selectAttr.second.values = secValue;
         }
 
-        SetProductTypes(convertToUpdate(types));
-        SetSelectedAttr(selectAttr);
+        return selectAttr;
     };
 
     const discardChange = () => {
-        detectSelectAttr(types);
+        SetSelectedAttr(detectSelectAttr(types));
+        SetProductTypes(convertToUpdate(types));
         SetIsChange(false);
     };
 
     const saveChanges = () => {
-        form.setValue("types", productTypes);
+        form.setValue(
+            "types.types",
+            productTypes.map(({ sku, ...itemInfo }) => ({
+                ...itemInfo,
+                ...(sku ? { sku } : {}),
+            }))
+        );
         SetIsChange(false);
     };
 
     useMemo(() => {
-        detectSelectAttr(types);
+        SetProductTypes(convertToUpdate(types));
+        SetSelectedAttr(detectSelectAttr(types));
     }, [types]);
 
     return (
@@ -294,6 +278,7 @@ export default function UpdateProductTypeTab({
                                     )}
                                 </div>
                             </FormControl>
+                            <FormMessage />
                         </FormItem>
                     )}
                 />

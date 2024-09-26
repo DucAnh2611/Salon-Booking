@@ -7,6 +7,10 @@ export class GetServiceShiftEmployeeDto {
     serviceId: string;
 
     @IsNotEmpty()
+    @IsUUID('all')
+    workingHourId: string;
+
+    @IsNotEmpty()
     @Transform(({ value }) => new Date(value))
     @IsDate()
     bookingTime: Date;

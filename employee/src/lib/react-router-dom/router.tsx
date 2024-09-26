@@ -9,6 +9,8 @@ import { HomeScreen } from "@/screens/home";
 import LoginScreen from "@/screens/login";
 import { default as MediaScreen } from "@/screens/media";
 import NotFound from "@/screens/notFound";
+import OrderScreen from "@/screens/order";
+import OrderDetailScreen from "@/screens/order/detail";
 import ProductScreen from "@/screens/product";
 import CreateProductScreen from "@/screens/product/create";
 import UpdateProductScreen from "@/screens/product/update";
@@ -122,6 +124,19 @@ export const router = createBrowserRouter([
                     {
                         path: "u/:id",
                         element: <UpdateWorkingHourScreen />,
+                    },
+                ],
+            },
+            {
+                path: ROUTER_PATH.ORDER,
+                children: [
+                    {
+                        path: "",
+                        element: <OrderScreen />,
+                    },
+                    {
+                        path: ":id",
+                        element: <OrderDetailScreen />,
                     },
                 ],
             },

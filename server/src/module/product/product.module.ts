@@ -7,7 +7,9 @@ import { ProductTypesModule } from '../product-types/product-types.module';
 import { RolePermissionModule } from '../role-permission/role-permission.module';
 import { RoleModule } from '../role/role.module';
 import { ProductAdminController } from './controller/product-admin.controller';
-import { ProductService } from './product.service';
+import { ProductClientController } from './controller/product.controller';
+import { ProductClientService } from './service/product-client.service';
+import { ProductService } from './service/product.service';
 
 @Module({
     imports: [
@@ -19,8 +21,8 @@ import { ProductService } from './product.service';
         RoleModule,
         RolePermissionModule,
     ],
-    controllers: [ProductAdminController],
-    providers: [ProductService],
-    exports: [ProductService],
+    controllers: [ProductAdminController, ProductClientController],
+    providers: [ProductService, ProductClientService],
+    exports: [ProductService, ProductClientService],
 })
 export class ProductModule {}

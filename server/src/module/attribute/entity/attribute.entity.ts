@@ -1,7 +1,7 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
+import { AttributeValueEntity } from '../../attribute-value/entity/attribute-value.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
-import { ProductTypesAttributeEntity } from '../../product-types-attribute/entity/product-types-attribute.entity';
 
 @Entity('attribute')
 export class AttributeEntity extends ModifyEntity {
@@ -20,8 +20,8 @@ export class AttributeEntity extends ModifyEntity {
     employeeUpdate: EmployeeEntity;
 
     @OneToMany(
-        () => ProductTypesAttributeEntity,
-        (productTypesAttributeEntity: ProductTypesAttributeEntity) => productTypesAttributeEntity.attribute,
+        () => AttributeValueEntity,
+        (attributeValueEntity: AttributeValueEntity) => attributeValueEntity.attribute,
     )
-    productTypesAttribute: ProductTypesAttributeEntity[];
+    attributeValue: AttributeValueEntity[];
 }

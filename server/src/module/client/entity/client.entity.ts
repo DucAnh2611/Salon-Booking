@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
 import { BaseEntity } from '../../../common/enitty/base.entity';
 import { CartProductEntity } from '../../cart-product/entity/cart-product.entity';
 import { CartServiceEntity } from '../../cart-service/entity/cart-service.entity';
+import { OrderEntity } from '../../order-base/entity/order-base.entity';
 import { UserEntity } from '../../user/entity/user.entity';
 
 @Entity('client')
@@ -21,6 +22,9 @@ export class ClientEntity extends BaseEntity {
     @OneToOne(() => UserEntity, (userEntity: UserEntity) => userEntity.employee, { eager: true })
     @JoinColumn({ name: 'userId' })
     userBase: UserEntity;
+
+    @OneToMany(() => OrderEntity, (orderEntity: OrderEntity) => orderEntity.client)
+    orderOwner: OrderEntity[];
 
     @OneToMany(() => CartProductEntity, (cartProductEntity: CartProductEntity) => cartProductEntity.client)
     cartProduct: CartProductEntity[];

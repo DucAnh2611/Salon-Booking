@@ -1,12 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { ProductBaseEntity } from '../product-base/entity/product-base.entity';
 import { ProductTypesEntity } from '../product-types/entity/product-types.entity';
 import { CreateCartProductItemDto } from './dto/cart-product-item-create.dto';
+import { GetCartProductAmountDto } from './dto/cart-product-item-get.dto';
 import { UpdateCartProductItemDto } from './dto/cart-product-item-update.dto';
 import { CartProductItemEntity } from './entity/cart-product-item.entity';
 
@@ -23,9 +24,10 @@ export class CartProductItemService {
         return this.cartProductItemRepository.findOne({ where: { id }, loadEagerRelations: false });
     }
 
-    async getTotalAmount(cartProductId: string) {
+    async getTotalAmount(body: GetCartProductAmountDto) {
+        const { itemIds, cartProductId } = body;
         const itemLists = await this.cartProductItemRepository.find({
-            where: { cartProductId },
+            where: { cartProductId, id: In(itemIds) },
             loadEagerRelations: false,
             relations: {
                 product: true,
@@ -45,6 +47,11 @@ export class CartProductItemService {
         }, 0);
 
         return sum;
+    }
+
+    async removeList(cartProductId: string, itemIds: string[]) {
+        const deleted = await this.cartProductItemRepository.delete({ cartProductId, id: In(itemIds) });
+        return deleted;
     }
 
     async removeAll(cartProductId: string) {
@@ -80,7 +87,7 @@ export class CartProductItemService {
                 throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PRODUCT_TYPE });
             }
 
-            if (productType.quantity <= quantity) {
+            if (productType.quantity < quantity) {
                 throw new BadRequest({ message: DataErrorCodeEnum.PRODUCT_TYPES_OUT_OF_STOCK });
             }
 
@@ -108,7 +115,7 @@ export class CartProductItemService {
             throw new BadRequest({ message: DataErrorCodeEnum.PRODUCT_TYPE_REQUIRE });
         }
 
-        if (product.quantity <= quantity) {
+        if (product.quantity < quantity) {
             throw new BadRequest({ message: DataErrorCodeEnum.PRODUCT_OUT_OF_STOCK });
         }
 
@@ -128,33 +135,40 @@ export class CartProductItemService {
                 },
                 productType: {
                     productTypesAttribute: {
+                        value: true,
                         thumbnail: true,
                     },
                 },
             },
+            withDeleted: true,
         });
     }
 
     async add(cartProductId: string, body: CreateCartProductItemDto) {
         const { productId, productTypeId, quantity } = body;
 
-        const instance = this.cartProductItemRepository.create({
+        const isExistInCart = await this.isExistProduct(cartProductId, productId, productTypeId);
+
+        let instance = this.cartProductItemRepository.create({
             productId,
             productTypeId,
             cartProductId: cartProductId,
             quantity,
         });
 
-        const isExistInCart = await this.isExistProduct(cartProductId, productId, productTypeId);
         if (isExistInCart) {
+            instance = { ...isExistInCart };
+
             instance.quantity += isExistInCart.quantity;
         }
+
+        await this.isValidProduct({ productId: productId, productTypeId, quantity: instance.quantity });
 
         return this.cartProductItemRepository.save(instance);
     }
 
     async update(cartProductId: string, body: UpdateCartProductItemDto) {
-        const { id, quantity, productTypeId } = body;
+        const { id, quantity } = body;
 
         const isExist = await this.isExist(id);
         if (!isExist) {
@@ -163,12 +177,11 @@ export class CartProductItemService {
         const instance = this.cartProductItemRepository.create({
             ...isExist,
             quantity,
-            productTypeId,
         });
 
-        await this.isValidProduct({ productId: isExist.productId, productTypeId, quantity });
+        await this.isValidProduct({ productId: isExist.productId, productTypeId: isExist.productTypeId, quantity });
 
-        const isExistProduct = await this.isExistProduct(cartProductId, isExist.productId, productTypeId);
+        const isExistProduct = await this.isExistProduct(cartProductId, isExist.productId, isExist.productTypeId);
         if (isExistProduct) {
             if (id !== isExistProduct.id) {
                 throw new BadRequest({ message: DataErrorCodeEnum.EXISTED_PRODUCT_CART_ITEM });

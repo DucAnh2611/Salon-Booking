@@ -7,6 +7,10 @@ import { HashPasswordUtil } from '../../../shared/utils/hash-password.utils';
 import { ClientEntity } from '../../client/entity/client.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { MediaEntity } from '../../media/entity/media.entity';
+import { OrderRefundRequestEntity } from '../../oder-refund-request/entity/order-refund-request.entity';
+import { OrderEntity } from '../../order-base/entity/order-base.entity';
+import { OrderRefundStateEntity } from '../../order-refund-state/entity/order-refund-state.entity';
+import { OrderStateEntity } from '../../order-state/entity/order-state.entity';
 import { RoleEntity } from '../../role/entity/role.entity';
 
 @Entity('user')
@@ -48,6 +52,33 @@ export class UserEntity extends BaseEntity {
 
     @OneToMany(() => MediaEntity, (mediaEntity: MediaEntity) => mediaEntity.userUpdate, { nullable: true })
     updateMedia: MediaEntity[];
+
+    @OneToMany(() => OrderStateEntity, (orderStateEntity: OrderStateEntity) => orderStateEntity.userCreate)
+    createOrderState: OrderStateEntity[];
+
+    @OneToMany(
+        () => OrderRefundRequestEntity,
+        (orderRefundRequestEntity: OrderRefundRequestEntity) => orderRefundRequestEntity.userUpdate,
+    )
+    createOrderRefund: OrderRefundRequestEntity[];
+
+    @OneToMany(
+        () => OrderRefundRequestEntity,
+        (orderRefundRequestEntity: OrderRefundRequestEntity) => orderRefundRequestEntity.userUpdate,
+    )
+    updateOrderRefund: OrderRefundRequestEntity[];
+
+    @OneToMany(
+        () => OrderRefundStateEntity,
+        (orderRefundStateEntity: OrderRefundStateEntity) => orderRefundStateEntity.userCreate,
+    )
+    createOrderRefundState: OrderRefundStateEntity[];
+
+    @OneToMany(() => OrderEntity, (orderEntity: OrderEntity) => orderEntity.userUpdate)
+    createOrder: OrderEntity[];
+
+    @OneToMany(() => OrderEntity, (orderEntity: OrderEntity) => orderEntity.userCreate)
+    updateOrder: OrderEntity[];
 
     //TODO - Add client relationShip
     @ManyToOne(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.userRole, { nullable: true })

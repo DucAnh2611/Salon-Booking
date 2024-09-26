@@ -98,15 +98,23 @@ export class AuthService {
     }
 
     async clientRegister(client: RegisterClientDto) {
-        const exist = await this.IsExist({
-            query: { email: client.email },
-            type: ETypeExistAuth.CLIENT,
-        });
-        if (exist) throw new BadRequest({ message: DataErrorCodeEnum.EXIST });
-        const { email, ...userInfo } = client;
+        const [existEmail, existPhone] = await Promise.all([
+            this.IsExist({
+                query: { email: client.email },
+                type: ETypeExistAuth.CLIENT,
+            }),
+            this.IsExist({
+                query: { userBase: { phone: client.phone } },
+                type: ETypeExistAuth.CLIENT,
+            }),
+        ]);
+        if ((client.email && existEmail) || (client.phone && existPhone))
+            throw new BadRequest({ message: DataErrorCodeEnum.EXISTED_CLIENT });
+
+        const { email, phone, ...userInfo } = client;
         const { id: roleId } = await this.roleService.getRole({ title: ROLE_TITLE.client });
 
-        const user = await this.userService.create({ ...userInfo, roleId });
+        const user = await this.userService.create({ ...userInfo, roleId, phone });
         if (!user) throw new InternalServer();
 
         const newClient = await this.clientService.create({
@@ -192,7 +200,6 @@ export class AuthService {
             default:
                 throw new InternalServer();
         }
-
         return !!isExist;
     }
 }

@@ -85,12 +85,8 @@ export const listNavigate: IItemNavigate[] = [
         title: "Đơn hàng",
         children: [
             {
-                title: "Sản phẩm",
-                path: `${ROUTER_PATH.ORDER_PRODUCT}`,
-            },
-            {
-                title: "Dịch vụ",
-                path: `${ROUTER_PATH.ORDER_SERVICE}`,
+                title: "Danh sách đơn hàng",
+                path: `${ROUTER_PATH.ORDER}`,
             },
         ],
     },

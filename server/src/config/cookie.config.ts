@@ -7,10 +7,12 @@ export const cookieConfig = {
     name: env.COOKIE_NAME,
     expire: env.COOKIE_EXPIRE,
     accesstoken: {
-        name: env.COOKIE_ACCESSTOKEN_NAME,
+        client: env.COOKIE_ACCESSTOKEN_CLIENT_NAME,
+        manager: env.COOKIE_ACCESSTOKEN_MANAGER_NAME,
     },
     refreshtoken: {
-        name: env.COOKIE_ACCESSTOKEN_EXPIRE,
+        client: env.COOKIE_REFRESHTOKEN_CLIENT_NAME,
+        manager: env.COOKIE_REFRESHTOKEN_MANAGER_NAME,
     },
     options: (options: Partial<CookieOptions>): CookieOptions => {
         return {

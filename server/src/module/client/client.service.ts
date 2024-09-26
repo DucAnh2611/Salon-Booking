@@ -30,7 +30,21 @@ export class ClientService {
         private readonly jwtTokenUtil: JwtTokenUtil,
     ) {}
 
-    async create(newClient: CreateClientDto) {
+    me(clientId: string) {
+        return this.clientRepository.findOne({
+            where: { id: clientId },
+            loadEagerRelations: false,
+            relations: {
+                userBase: {
+                    userAvatar: true,
+                },
+                cartProduct: true,
+                cartService: true,
+            },
+        });
+    }
+
+    async create(newClient: Omit<CreateClientDto, 'phone'>) {
         const clientInstance = this.clientRepository.create({
             ...newClient,
             phoneVerified: false,
@@ -42,10 +56,12 @@ export class ClientService {
     }
 
     async findOneBy(query: FindOptionsWhere<ClientEntity>) {
+        const { userBase, ...q } = query;
         return this.clientRepository.findOne({
             where: {
-                ...query,
+                ...q,
                 userBase: {
+                    ...(userBase as object),
                     role: {
                         title: ROLE_TITLE.client,
                     },

@@ -10,6 +10,7 @@ import { CategoryService } from '../category/category.service';
 import { ServiceMediaService } from '../service-media/service-media.service';
 import { FindServiceAdminDto } from '../service/dto/service-get.dto';
 import { CreateServiceBaseDto } from './dto/service-base-create.dto';
+import { FindServiceBaseDto } from './dto/service-base-get.dto';
 import { UpdateServiceBaseDto } from './dto/service-base-update.dto';
 import { ServiceEntity } from './entity/service.entity';
 
@@ -20,6 +21,42 @@ export class ServiceBaseService {
         private readonly categoryService: CategoryService,
         private readonly serviceMediaService: ServiceMediaService,
     ) {}
+
+    async findClient(body: FindServiceBaseDto) {
+        const { key = '', limit, page, price, categoryIds } = body;
+        const queryBuilder = this.seriviceBaseRepository.createQueryBuilder('s');
+
+        const q = queryBuilder
+            .where('s.name LIKE :name', { name: `%${key}%` })
+            .andWhere(`s.price >= :from ${price.to ? 'AND s.price <= :to ' : ''}`, price)
+            .orWhere(`s.price >= :from ${price.to ? 'AND s.price <= :to ' : ''}`, price);
+
+        if (categoryIds && categoryIds.length) {
+            q.andWhere('p.categoryId IN :...ids', { ids: categoryIds });
+        }
+
+        const [items, count] = await q
+            .skip((page - 1) * limit)
+            .take(limit)
+            .getManyAndCount();
+
+        const mapMedia = await Promise.all(
+            items.map(async item => {
+                const media = await this.serviceMediaService.getListByService(item.id);
+                return {
+                    ...item,
+                    serviceMedia: media,
+                };
+            }),
+        );
+
+        return {
+            items: mapMedia,
+            count,
+            limit,
+            page,
+        };
+    }
 
     isValid(serviceId: string) {
         return this.seriviceBaseRepository.findOne({ where: { id: serviceId }, loadEagerRelations: false });
@@ -47,6 +84,27 @@ export class ServiceBaseService {
                     },
                     eRole: true,
                 },
+            },
+        });
+
+        if (!service) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_SERVICE });
+        }
+
+        const media = await this.serviceMediaService.getListByService(id);
+
+        return {
+            ...service,
+            media,
+        };
+    }
+
+    async detailClient(id: string) {
+        const service = await this.seriviceBaseRepository.findOne({
+            where: { id },
+            loadEagerRelations: false,
+            relations: {
+                category: true,
             },
         });
 
@@ -90,6 +148,16 @@ export class ServiceBaseService {
         });
 
         return { list, count, page, limit };
+    }
+
+    async feature() {
+        return this.seriviceBaseRepository.find({
+            where: {},
+            loadEagerRelations: false,
+            relations: {
+                media: true,
+            },
+        });
     }
 
     async find(query: FindServiceAdminDto) {

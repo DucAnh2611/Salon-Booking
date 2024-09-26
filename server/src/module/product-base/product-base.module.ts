@@ -9,7 +9,8 @@ import { RolePermissionModule } from '../role-permission/role-permission.module'
 import { RoleModule } from '../role/role.module';
 import { ProductBaseAdminController } from './controller/product-base-admin.controller';
 import { ProductBaseEntity } from './entity/product-base.entity';
-import { ProductBaseService } from './product-base.service';
+import { ProductBaseClientService } from './service/product-base-client.service';
+import { ProductBaseService } from './service/product-base.service';
 
 @Module({
     imports: [
@@ -21,7 +22,7 @@ import { ProductBaseService } from './product-base.service';
         RolePermissionModule,
     ],
     controllers: [ProductBaseAdminController],
-    providers: [ProductBaseService],
-    exports: [ProductBaseService],
+    providers: [ProductBaseService, ProductBaseClientService],
+    exports: [ProductBaseService, ProductBaseClientService],
 })
 export class ProductBaseModule {}

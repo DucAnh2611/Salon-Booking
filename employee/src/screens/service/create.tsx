@@ -28,8 +28,6 @@ export default function CreateServiceScreen() {
         payload.base.price = parseInt(payload.base.price.toString());
         payload.base.duration = parseInt(payload.base.duration.toString());
 
-        console.log(payload);
-
         SetSubmit(true);
         dispatch(createServiceApi(payload));
     };
