@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
-import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { ROLE_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../common/enum/permission.enum';
+import { UserTypeEnum } from '../../common/enum/user.enum';
 import { AppRequest } from '../../common/interface/custom-request.interface';
 import { TargetActionRequire } from '../../shared/decorator/permission.decorator';
 import { UserType } from '../../shared/decorator/user-types.decorator';
@@ -26,7 +26,7 @@ export class RoleController {
             target: PermissionTargetEnum.ROLE,
         },
     ])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     async get(@Query() query: FindRoleDto) {
         const data = await this.roleService.findAdmin(query);
         return data;
@@ -34,7 +34,7 @@ export class RoleController {
 
     @Get(ROLE_ROUTE.ROLE_INFO)
     @TargetActionRequire([{ action: [PermissionActionEnum.READ], target: PermissionTargetEnum.ROLE }])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     async info(@Param() param: GetOneRoleDto) {
         const { id } = param;
         return this.roleService.detail(id);
@@ -47,7 +47,7 @@ export class RoleController {
             target: PermissionTargetEnum.ROLE,
         },
     ])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     add(@Req() req: AppRequest, @Body() newRole: CreateRoleDto) {
         const { accessPayload } = req;
         return this.roleService.create(newRole, accessPayload.employeeId);
@@ -60,7 +60,7 @@ export class RoleController {
             target: PermissionTargetEnum.ROLE,
         },
     ])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     update(@Req() req: AppRequest, @Param() param: GetOneRoleDto, @Body() newRole: UpdateRoleDto) {
         const { accessPayload } = req;
         return this.roleService.update(param.id, newRole, accessPayload.employeeId);
@@ -73,7 +73,7 @@ export class RoleController {
             target: PermissionTargetEnum.ROLE,
         },
     ])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     deleteOne(@Param() param: GetOneRoleDto) {
         return this.roleService.softDelete([param.id]);
     }
@@ -85,7 +85,7 @@ export class RoleController {
             target: PermissionTargetEnum.ROLE,
         },
     ])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     deleteMany(@Body() body: DeleteManyRoleDtop) {
         const { roleIds } = body;
         return this.roleService.softDelete(roleIds);

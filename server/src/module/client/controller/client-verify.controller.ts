@@ -1,8 +1,8 @@
 import { Body, Controller, Get, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { CLIENT_ROUTE, ROUTER } from '../../../common/constant/router.constant';
 import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { appConfig } from '../../../config/app.config';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
@@ -17,7 +17,7 @@ export class ClientVerifyController {
     constructor(private readonly clientService: ClientService) {}
 
     @Get(CLIENT_ROUTE.VERIFY_EMAIL)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     @UseGuards(AccessTokenGuard, UserTypeGuard)
     async verifyEmail(@Req() req: AppRequest) {
         const { email } = req.accessPayload;
@@ -28,7 +28,7 @@ export class ClientVerifyController {
     }
 
     @Post(CLIENT_ROUTE.VERIFY_EMAIL_OTP)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     @UseGuards(AccessTokenGuard, UserTypeGuard)
     async verifyOTPEmail(@Body() body: ClientOTPDto, @Req() req: AppRequest) {
         const { otp } = body;

@@ -147,6 +147,10 @@ export class OrderRefundRequestService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_REFUND_REQUEST });
         }
 
+        if (isExist.status === OrderRefundRequestStatusEnum.APPROVED) {
+            throw new BadRequest({ message: DataErrorCodeEnum.APPROVED_REFUND_REQUEST });
+        }
+
         await this.orderRefundRequestRepository.update(
             { id: requestId, orderId },
             {

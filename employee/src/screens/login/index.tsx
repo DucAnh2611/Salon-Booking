@@ -41,6 +41,7 @@ function LoginScreen() {
     const [showPw, SetShowPw] = useState<boolean>(false);
 
     const toggleShowPassword = (e: MouseEvent<HTMLButtonElement>) => {
+        e.preventDefault();
         SetShowPw((show) => !show);
     };
 
@@ -104,7 +105,7 @@ function LoginScreen() {
                                     <FormItem>
                                         <FormLabel>Mật khẩu</FormLabel>
                                         <FormControl>
-                                            <div className="relative w-full h-fit">
+                                            <div className="relative w-full h-fit flex gap-2">
                                                 <Input
                                                     placeholder="Mật khẩu"
                                                     type={
@@ -117,7 +118,6 @@ function LoginScreen() {
                                                 <Button
                                                     type="button"
                                                     variant="outline"
-                                                    className="absolute right-1 top-1/2 -translate-y-1/2 p-4 h-5 w-5 flex items-center justify-center"
                                                     onClick={toggleShowPassword}
                                                     size="icon"
                                                 >

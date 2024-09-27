@@ -373,17 +373,12 @@ export class OrderService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER_TRANSACTION });
         }
 
-        const [_updateBase, _updateTransaction, _addConfirmState] = await Promise.all([
+        const [_updateBase, _updateTransaction] = await Promise.all([
             this.orderBaseService.paidSuccessfull(userId, orderId, order.totalPaid + paymentInfo.amountPaid),
             this.orderTransactionService.updateTransaction(pendingTransaction.id, {
                 paidAmount: paymentInfo.amountPaid,
                 status: OrderPaymentStatusEnum.PAID,
                 paymentTransactions: paymentInfo.transactions,
-            }),
-            this.orderStateService.addState({
-                userId,
-                orderId: orderId,
-                state: OrderStatusEnum.PAID_PAYMENT,
             }),
         ]);
 
@@ -400,6 +395,7 @@ export class OrderService {
                         state: OrderStatusEnum.CONFIRMED,
                         userId,
                     });
+                    await this.orderBaseService.updateState(order.id, OrderStatusEnum.CONFIRMED, userId);
                 }
                 break;
             case OrderType.SERVICE:
@@ -459,7 +455,7 @@ export class OrderService {
         }
 
         const [_updateRemain, _cancelTransaction] = await Promise.all([
-            this.orderBaseService.paidFailed(userId, orderId, order.totalPaid + paymentInfo.amountPaid),
+            this.orderBaseService.paidFailed(userId, orderId, order.totalPaid),
             this.orderTransactionService.updateTransaction(pendingTransaction.id, {
                 paidAmount: paymentInfo.amountPaid,
                 paymentTransactions: paymentInfo.transactions,
@@ -500,7 +496,7 @@ export class OrderService {
         }
 
         const [_updateRemain, _cancelTransaction] = await Promise.all([
-            this.orderBaseService.paidFailed(userId, orderId, order.totalPaid + paymentInfo.amountPaid),
+            this.orderBaseService.paidFailed(userId, orderId, order.totalPaid),
             this.orderTransactionService.cancelTransaction(
                 transactionId,
                 paymentInfo.amountPaid,
@@ -574,10 +570,6 @@ export class OrderService {
             throw new BadRequest({ message: DataErrorCodeEnum.ORDER_FORBIDDEN });
         }
 
-        if (order.totalPaid == order.total) {
-            throw new BadRequest({ message: DataErrorCodeEnum.FULFULLED_PAID_AMOUNT });
-        }
-
         const refundRequest = await this.orderRefundRequestService.initRefundRequest(userId, {
             orderId,
             transactionId: body.transactionId,
@@ -636,7 +628,6 @@ export class OrderService {
         if (!order) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
         }
-        await this.orderBaseService.updateTotalPaid(order.id, order.totalPaid - orderRefundRequest.amount, userId);
 
         await Promise.all([
             this.orderRefundRequestService.updateRefundRequest({

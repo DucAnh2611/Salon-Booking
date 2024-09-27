@@ -48,6 +48,12 @@ export const API_URLS = {
             endPoint: "auth/client-login",
             withCredentials: true,
         }),
+        LOGOUT: () => ({
+            method: "GET",
+            headers: HEADERS.header(),
+            endPoint: "auth/logout-client",
+            withCredentials: true,
+        }),
         REGISTER: () => ({
             method: "POST",
             headers: HEADERS.header(),
@@ -58,12 +64,6 @@ export const API_URLS = {
             method: "GET",
             headers: HEADERS.DEFAULT_HEADER,
             endPoint: "auth/refresh-token",
-            withCredentials: true,
-        }),
-        LOGOUT: () => ({
-            method: "GET",
-            headers: HEADERS.DEFAULT_HEADER,
-            endPoint: "auth/logout",
             withCredentials: true,
         }),
     },
@@ -112,6 +112,15 @@ export const API_URLS = {
             }),
             withCredentials: true,
         }),
+        FIND: () => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["product-client"],
+            }),
+            withCredentials: true,
+        }),
     },
     SERVICE: {
         FEATURED: () => ({
@@ -129,6 +138,15 @@ export const API_URLS = {
             endPoint: joinString({
                 joinString: "/",
                 strings: ["service-client", "i", id],
+            }),
+            withCredentials: true,
+        }),
+        FIND: () => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["service-client"],
             }),
             withCredentials: true,
         }),

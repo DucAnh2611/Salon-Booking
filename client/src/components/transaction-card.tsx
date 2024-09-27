@@ -1,5 +1,9 @@
 import { ORDER_PAYMENT_STATUS } from "@/constant/order.constant";
-import { EOrderPaymentStatus, EOrderPaymentType } from "@/enum/order.enum";
+import {
+    EOrderPaymentStatus,
+    EOrderPaymentType,
+    EOrderStatus,
+} from "@/enum/order.enum";
 import useOrderTracking from "@/hook/useOrderTracking.hook";
 import { ITransactionOrder } from "@/interface/transaction.interface";
 import { getTimeDifference } from "@/lib/date";
@@ -52,6 +56,21 @@ export default function TransactionCard({
 
     const onSuccessCreatRefundRequet = () => {
         reload("transaction");
+    };
+
+    const getAmountRefund = () => {
+        if (order) {
+            if (order.status === EOrderStatus.CANCELLED) {
+                return transaction.paidAmount;
+            } else {
+                if (transaction.status === EOrderPaymentStatus.PAID) {
+                    return transaction.paidAmount - transaction.orderAmount;
+                } else {
+                    return transaction.paidAmount;
+                }
+            }
+        }
+        return 0;
     };
 
     useEffect(() => {
@@ -154,13 +173,7 @@ export default function TransactionCard({
                                 Tiền hoàn lại:
                             </span>
                             <span className="font-medium ">
-                                {formatMoney(
-                                    transaction.status ===
-                                        EOrderPaymentStatus.PAID
-                                        ? transaction.paidAmount -
-                                              transaction.orderAmount
-                                        : transaction.paidAmount
-                                )}
+                                {formatMoney(getAmountRefund())}
                             </span>
                         </div>
                         {open ? (
@@ -176,22 +189,19 @@ export default function TransactionCard({
                                         </Button>
                                     }
                                     order={order}
-                                    amount={
-                                        transaction.status ===
-                                        EOrderPaymentStatus.PAID
-                                            ? transaction.paidAmount -
-                                              transaction.orderAmount
-                                            : transaction.paidAmount
-                                    }
+                                    amount={getAmountRefund()}
                                     transaction={transaction}
                                     onSuccess={onSuccessCreatRefundRequet}
                                 />
                             ) : (
-                                <div className="w-full text-sm flex flex-row gap-1">
-                                    <span className="font-medium italic text-xs text-muted-foreground">
-                                        Yêu cầu hoàn tiền đã được ghi nhận
-                                    </span>
-                                </div>
+                                transaction.status !==
+                                    EOrderPaymentStatus.PAID && (
+                                    <div className="w-full text-sm flex flex-row gap-1">
+                                        <span className="font-medium italic text-xs text-muted-foreground">
+                                            Yêu cầu hoàn tiền đã được ghi nhận
+                                        </span>
+                                    </div>
+                                )
                             )
                         ) : (
                             <></>

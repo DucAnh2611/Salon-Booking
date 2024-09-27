@@ -153,13 +153,12 @@ export class CartProductItemService {
             productId,
             productTypeId,
             cartProductId: cartProductId,
-            quantity,
+            quantity: quantity,
         });
 
         if (isExistInCart) {
             instance = { ...isExistInCart };
-
-            instance.quantity += isExistInCart.quantity;
+            instance.quantity += quantity;
         }
 
         await this.isValidProduct({ productId: productId, productTypeId, quantity: instance.quantity });

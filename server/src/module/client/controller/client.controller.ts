@@ -1,6 +1,6 @@
 import { Controller, Get, Request, UseGuards } from '@nestjs/common';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { CLIENT_ROUTE, ROUTER } from '../../../common/constant/router.constant';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
 import { AccessTokenClientGuard } from '../../../shared/guard/accessToken.guard';
@@ -13,7 +13,7 @@ export class ClientController {
     constructor(private readonly clientService: ClientService) {}
 
     @Get(CLIENT_ROUTE.ME)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     me(@Request() req: AppRequest) {
         const { clientId } = req.accessPayload;
 

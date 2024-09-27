@@ -1,9 +1,11 @@
 import { API_URLS } from "@/constant/api.constant";
 import {
     IApiProductOnStock,
-    IProduct,
+    IApiSearchProduct,
     IProductInfo,
+    IProductItemFeature,
     IProductOnStock,
+    ISearchProductResponse,
 } from "@/interface/product.interface";
 import { apiCall } from "../apiCall";
 
@@ -11,7 +13,7 @@ import { apiCall } from "../apiCall";
 export const featureProducts = async () => {
     const api = API_URLS.PRODUCT.FEATURED();
 
-    const resApi = await apiCall<IProduct[]>({ ...api });
+    const resApi = await apiCall<IProductItemFeature[]>({ ...api });
 
     return resApi;
 };
@@ -30,6 +32,18 @@ export const productOnStock = async (body: IApiProductOnStock) => {
     const api = API_URLS.PRODUCT.ON_STOCK();
 
     const resApi = await apiCall<IProductOnStock>({ ...api, payload: body });
+
+    return resApi;
+};
+
+/** @FIND */
+export const findProduct = async (body: IApiSearchProduct) => {
+    const api = API_URLS.PRODUCT.FIND();
+
+    const resApi = await apiCall<ISearchProductResponse>({
+        ...api,
+        payload: body,
+    });
 
     return resApi;
 };

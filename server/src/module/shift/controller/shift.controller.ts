@@ -1,6 +1,6 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { ROUTER, SHIFT_ROUTE } from '../../../common/constant/router.constant';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
 import { AccessTokenClientGuard } from '../../../shared/guard/accessToken.guard';
 import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
@@ -13,7 +13,7 @@ export class ShiftClientController {
     constructor(private readonly shiftService: ShiftService) {}
 
     @Post(SHIFT_ROUTE.BOOKING)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     getShiftForBookignDate(@Body() body: GetShiftFromBookingTimeDto) {
         return this.shiftService.getShiftFromBookingDate(body);
     }

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
-import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { ROLE_PERMISSION_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../common/enum/permission.enum';
+import { UserTypeEnum } from '../../common/enum/user.enum';
 import { AppRequest } from '../../common/interface/custom-request.interface';
 import { TargetActionRequire } from '../../shared/decorator/permission.decorator';
 import { UserType } from '../../shared/decorator/user-types.decorator';
@@ -19,7 +19,7 @@ export class RolePermissionController {
 
     @Get(ROLE_PERMISSION_ROUTE.INFO)
     @TargetActionRequire([{ target: PermissionTargetEnum.ROLE_PERMISSION, action: [PermissionActionEnum.READ] }])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     async detail(@Param() param: GetOneRolePermissionDto) {
         const { roleId } = param;
         const list = await this.rolePermissionService.getRolePermissionsByRoleId(roleId);
@@ -29,7 +29,7 @@ export class RolePermissionController {
 
     @Post(ROLE_PERMISSION_ROUTE.ADD)
     @TargetActionRequire([{ target: PermissionTargetEnum.ROLE_PERMISSION, action: [PermissionActionEnum.CREATE] }])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     attach(@Body() rolePermisison: AttachPermissionDto, @Req() req: AppRequest) {
         const { accessPayload } = req;
         const { permissionIds, roleId } = rolePermisison;
@@ -48,7 +48,7 @@ export class RolePermissionController {
             action: [PermissionActionEnum.UPDATE, PermissionActionEnum.DELETE, PermissionActionEnum.CREATE],
         },
     ])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     update(@Body() rolePermisison: AttachPermissionDto, @Req() req: AppRequest) {
         const { accessPayload } = req;
         const { permissionIds, roleId } = rolePermisison;

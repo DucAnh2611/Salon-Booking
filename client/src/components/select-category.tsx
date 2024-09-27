@@ -8,11 +8,13 @@ import { Label } from "./ui/label";
 interface ISelectCategoryProps {
     categoryTree: ICategory;
     onSelect: (category: ICategory) => void;
+    checked: boolean;
 }
 
 export default function SelectCategory({
     categoryTree,
     onSelect,
+    checked = false,
 }: ISelectCategoryProps) {
     const onCheck = (check: CheckedState) => {
         onSelect(categoryTree);
@@ -21,7 +23,7 @@ export default function SelectCategory({
     return (
         <div>
             <div className=" flex gap-2">
-                <Checkbox onCheckedChange={onCheck} />
+                <Checkbox onCheckedChange={onCheck} checked={checked} />
                 <Label>{categoryTree.title}</Label>
             </div>
         </div>

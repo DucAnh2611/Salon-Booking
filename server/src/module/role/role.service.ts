@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, In, Like, Repository } from 'typeorm';
-import { ROLE_TITLE } from '../../common/constant/role.constant';
+import { Equal, In, Like, MoreThanOrEqual, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
+import { UserTypeEnum } from '../../common/enum/user.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { RolePermissionService } from '../role-permission/role-permission.service';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -72,7 +72,7 @@ export class RoleService {
 
     async findAdmin(query: FindRoleDto) {
         const [items, count] = await this.roleRepository.findAndCount({
-            where: { title: Like(`%${query.key}%`) },
+            where: { title: Like(`%${query.key}%`), level: MoreThanOrEqual(2) },
             take: query.limit,
             skip: (query.page - 1) * query.limit,
             loadEagerRelations: false,
@@ -110,7 +110,7 @@ export class RoleService {
     async isValidParent(parentId: string) {
         const [staff, parent] = await Promise.all([
             this.roleRepository.findOne({
-                where: { title: Equal(ROLE_TITLE.staff) },
+                where: { title: Equal(UserTypeEnum.STAFF), deletable: false },
                 loadEagerRelations: false,
             }),
             this.roleRepository.findOne({ where: { id: parentId }, loadEagerRelations: false }),

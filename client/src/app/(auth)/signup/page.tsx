@@ -21,16 +21,17 @@ function SignupPage() {
 
     const redirect = search.get("redirect");
 
-    const onClickActionSuccess = () => {
-        router.push("/login" + !!redirect ? `?redirect=${redirect}` : "");
-    };
-
     const onSuccessSignup = () => {
         toast({
             title: "Đăng ký thành công",
             description: "Đăng ký thành công, chuyển qua trang đăng nhập?",
             action: (
-                <ToastAction altText="Đăng nhập" onClick={onClickActionSuccess}>
+                <ToastAction altText="Đăng nhập" asChild>
+                    <Link
+                        href={
+                            "/login" + !!redirect ? `?redirect=${redirect}` : ""
+                        }
+                    ></Link>
                     Đăng nhập
                 </ToastAction>
             ),

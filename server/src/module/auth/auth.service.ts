@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
+import { UserTypeEnum } from '../../common/enum/user.enum';
 import { AccessTokenPayload, RefreshTokenPayload } from '../../common/interface/auth.interface';
 import { jwtConfig } from '../../config/jwt.config';
 import { BadRequest, InternalServer } from '../../shared/exception/error.exception';
@@ -47,7 +47,7 @@ export class AuthService {
         const accessToken = this.jwtTokenUtil.generateToken<AccessTokenPayload>({
             payload: {
                 phone: userInfo.phone,
-                uRoleId: userInfo.roleId,
+                type: userInfo.type,
                 eRoleId: empInfo.eRoleId,
                 userId: empInfo.userId,
                 employeeId: empInfo.id,
@@ -80,7 +80,7 @@ export class AuthService {
             payload: {
                 phone: userInfo.phone,
                 email: findClient.email,
-                uRoleId: userInfo.roleId,
+                type: userInfo.type,
                 userId: findClient.userId,
                 clientId: findClient.id,
             },
@@ -112,9 +112,8 @@ export class AuthService {
             throw new BadRequest({ message: DataErrorCodeEnum.EXISTED_CLIENT });
 
         const { email, phone, ...userInfo } = client;
-        const { id: roleId } = await this.roleService.getRole({ title: ROLE_TITLE.client });
 
-        const user = await this.userService.create({ ...userInfo, roleId, phone });
+        const user = await this.userService.create({ ...userInfo, type: UserTypeEnum.CLIENT, phone });
         if (!user) throw new InternalServer();
 
         const newClient = await this.clientService.create({
@@ -133,7 +132,7 @@ export class AuthService {
         const { accessPayload, refreshPayload } = {
             accessPayload: {
                 phone: userInfo.phone,
-                uRoleId: userInfo.roleId,
+                type: userInfo.type,
                 userId,
             } as AccessTokenPayload,
             refreshPayload: {
@@ -183,16 +182,12 @@ export class AuthService {
                     where: {
                         ...query,
                         userBase: {
-                            role: {
-                                title: ROLE_TITLE.staff,
-                            },
+                            type: UserTypeEnum.STAFF,
                         },
                     },
                     loadEagerRelations: false,
                     relations: {
-                        userBase: {
-                            role: true,
-                        },
+                        userBase: true,
                     },
                 });
                 break;

@@ -11,17 +11,20 @@ import {
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
 import withoutAuth from "@/hoc/withoutAuth";
+import useUser from "@/hook/useUser.hook";
 import { IFailRequest } from "@/interface/response.interface";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
 function LoginPage() {
     const router = useRouter();
+    const { handleLogin } = useUser();
     const search = useSearchParams();
 
     const redirect = search.get("redirect");
 
     const onSuccessLogin = () => {
+        handleLogin();
         router.push(!!redirect ? `?redirect=${redirect}` : "/");
     };
 

@@ -14,9 +14,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FORMDATA_FIELD_MEDIA } from '../../../common/constant/file.constants';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { CATEGORY_ROUTE, ROUTER } from '../../../common/constant/router.constant';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { multerConfig, multerOptions } from '../../../config/multer.configs';
 import { TargetActionRequire } from '../../../shared/decorator/permission.decorator';
@@ -40,7 +40,7 @@ export class CategoryAdminController {
     ) {}
 
     @Get(CATEGORY_ROUTE.FIND)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.CATEGORY,
@@ -52,7 +52,7 @@ export class CategoryAdminController {
     }
 
     @Post(CATEGORY_ROUTE.CREATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.CATEGORY,
@@ -72,7 +72,7 @@ export class CategoryAdminController {
     }
 
     @Put(CATEGORY_ROUTE.UPDATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.CATEGORY, action: [PermissionActionEnum.UPDATE] }])
     @UseInterceptors(FileInterceptor(FORMDATA_FIELD_MEDIA.IMAGE, multerOptions))
     async update(
@@ -93,9 +93,9 @@ export class CategoryAdminController {
     }
 
     @Delete(CATEGORY_ROUTE.DELETE_ONE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.CATEGORY, action: [PermissionActionEnum.DELETE] }])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     deleteOne(@Req() req: AppRequest, @Param() param: GetParamCategoryDto) {
         const { id: categoryId } = param;
         const { employeeId } = req.accessPayload;
@@ -104,9 +104,9 @@ export class CategoryAdminController {
     }
 
     @Delete(CATEGORY_ROUTE.DELETE_MANY)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.CATEGORY, action: [PermissionActionEnum.DELETE] }])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     deleteMany(@Req() req: AppRequest, @Body() body: DeleteManyCategoryDto) {
         const { ids: categoryIds } = body;
         const { employeeId } = req.accessPayload;

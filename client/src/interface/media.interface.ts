@@ -6,3 +6,9 @@ export interface IMedia {
     title: string;
     type: EFileType;
 }
+
+export interface IMediaThumbnail {
+    media: IMedia | null;
+    mediaId: string | null;
+    isThumbnail: boolean;
+}

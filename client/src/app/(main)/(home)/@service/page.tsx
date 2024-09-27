@@ -1,7 +1,5 @@
-import { Button } from "@/components/ui/button";
+import ServiceFeatureCard from "@/components/service-feature-card";
 import { featureServices } from "@/lib/actions/service.action";
-import { joinString } from "@/lib/string";
-import Link from "next/link";
 
 export default async function MainService() {
     const { response } = await featureServices();
@@ -11,20 +9,10 @@ export default async function MainService() {
     }
 
     return (
-        <div className="grid grid-cols-4 gap-12">
-            {response.result.map((p) => (
-                <div key={p.id}>
-                    <p>{p.name}</p>
-                    <Button asChild>
-                        <Link
-                            href={joinString({
-                                joinString: "/",
-                                strings: ["s", p.id],
-                            })}
-                        >
-                            Chi tiết
-                        </Link>
-                    </Button>
+        <div className="flex gap-5 justify-center pt-3">
+            {response.result.map((s) => (
+                <div key={s.id} className="w-[300px]">
+                    <ServiceFeatureCard service={s} />
                 </div>
             ))}
         </div>

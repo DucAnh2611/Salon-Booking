@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Like, Repository } from 'typeorm';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../../common/enum/data-success-code.enum';
 import { SortByEnum } from '../../../common/enum/query.enum';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { multerConfig } from '../../../config/multer.configs';
 import { BadRequest } from '../../../shared/exception/error.exception';
 import { ParseOrderString } from '../../../shared/utils/parse-dynamic-queyry.utils';
@@ -40,14 +40,10 @@ export class MediaAdminService {
                 title: Like(`%${key}%`),
                 type: type ? type : In(Object.values(MediaTypesEnum).map(v => v)),
                 userCreate: {
-                    role: {
-                        title: ROLE_TITLE.staff,
-                    },
+                    type: UserTypeEnum.STAFF,
                 },
                 userUpdate: {
-                    role: {
-                        title: ROLE_TITLE.staff,
-                    },
+                    type: UserTypeEnum.STAFF,
                 },
             },
             order: { ...order },
@@ -57,11 +53,9 @@ export class MediaAdminService {
             relations: {
                 userAvatar: true,
                 userCreate: {
-                    role: true,
                     employee: true,
                 },
                 userUpdate: {
-                    role: true,
                     employee: true,
                 },
             },

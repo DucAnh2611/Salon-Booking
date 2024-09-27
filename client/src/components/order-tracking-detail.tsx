@@ -115,6 +115,8 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
                 return () => {
                     clearInterval(timeCountInterval);
                 };
+            } else if (!order.confirmExpired) {
+                SetIsExpired(false);
             } else {
                 SetIsExpired(true);
             }
@@ -158,6 +160,9 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
                     <p className="flex-1 break-words whitespace-normal text-background text-sm font-medium text-black">
                         Đơn hàng này hiện chưa được thanh toán, vui lòng thanh
                         toán để hoàn tất việc đặt hàng.
+                        <br />
+                        {order.confirmExpired &&
+                            `Lưu ý: cần xác nhận đơn hàng trong ${timeLeft}`}
                     </p>
                     <Button
                         variant="outline"
@@ -443,10 +448,7 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
                             onSuccess={onSuccessReceive}
                             orderId={order.id}
                             trigger={
-                                <Button
-                                    className="w-full col-span-2"
-                                    variant="default"
-                                >
+                                <Button className="w-full" variant="default">
                                     Đã nhận được hàng
                                 </Button>
                             }

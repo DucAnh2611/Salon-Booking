@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Like, Repository } from 'typeorm';
+import { Between, ILike, In, Like, MoreThanOrEqual, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../../common/enum/data-success-code.enum';
 import { SortByEnum } from '../../../common/enum/query.enum';
@@ -9,6 +9,7 @@ import { BadRequest } from '../../../shared/exception/error.exception';
 import { ParseOrderString } from '../../../shared/utils/parse-dynamic-queyry.utils';
 import { CategoryService } from '../../category/category.service';
 import { MediaService } from '../../media/service/media.service';
+import { OrderProductItemEntity } from '../../order-product-item/entity/order-product-item.entity';
 import { CreateProductMediaDto } from '../../product-media/dto/product-media-create.dto';
 import { ProductMediaService } from '../../product-media/product-media.service';
 import { ProductTypesEntity } from '../../product-types/entity/product-types.entity';
@@ -24,6 +25,8 @@ export class ProductBaseService {
     constructor(
         @InjectRepository(ProductBaseEntity) private readonly productBaseRepository: Repository<ProductBaseEntity>,
         @InjectRepository(ProductTypesEntity) private readonly productTypesRepository: Repository<ProductTypesEntity>,
+        @InjectRepository(OrderProductItemEntity)
+        private readonly orderProductItemRepository: Repository<OrderProductItemEntity>,
         private readonly categoryService: CategoryService,
         private readonly mediaService: MediaService,
         private readonly productMediaService: ProductMediaService,
@@ -105,33 +108,31 @@ export class ProductBaseService {
 
     async find(query: FindProductBaseDto) {
         const { key = '', limit, page, orderBy, price, categoryIds } = query;
-        const queryBuilder = this.productBaseRepository.createQueryBuilder('p');
 
-        const q = queryBuilder
-            .where('p.name LIKE :name', { name: `%${key}%` })
-            .andWhere(`p.price >= :from ${price.to ? 'AND p.price <= :to ' : ''}`, price)
-            .orWhere(`p.price >= :from ${price.to ? 'AND p.price <= :to ' : ''}`, price);
-
-        if (categoryIds && categoryIds.length) {
-            q.andWhere('p.categoryId IN :...ids', { ids: categoryIds });
-        }
-
-        const order = orderBy ? ParseOrderString(orderBy) : { createdAt: SortByEnum.ASC };
-        Object.entries(order).forEach(([field, type]: [field: string, type: SortByEnum]) => {
-            q.orderBy(`p.${field}`, type);
+        const [items, count] = await this.productBaseRepository.findAndCount({
+            where: {
+                name: ILike(`%${key}%`),
+                price: price.to ? Between(price.from, price.to) : MoreThanOrEqual(price.from),
+                ...(categoryIds.length ? { categoryId: In(categoryIds) } : {}),
+            },
+            loadEagerRelations: false,
+            order: { createdAt: SortByEnum.ASC },
+            relations: {
+                types: true,
+            },
+            skip: (page - 1) * limit,
+            take: limit,
         });
-
-        const [items, count] = await q
-            .skip((page - 1) * limit)
-            .take(limit)
-            .getManyAndCount();
 
         const mapMedia = await Promise.all(
             items.map(async item => {
                 const media = await this.productMediaService.getListDetailForProduct(item.id);
+                const buyingCounts = await this.orderProductItemRepository.sum('quantity', { productId: item.id });
+
                 return {
                     ...item,
                     productMedia: media,
+                    buyingCounts,
                 };
             }),
         );

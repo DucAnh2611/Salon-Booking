@@ -13,6 +13,16 @@ export class FindServiceByPriceDto {
     @IsPositive()
     to?: number;
 }
+export class FindServiceByDurationDto {
+    @IsNotEmpty()
+    @IsNumber()
+    from: number = 0;
+
+    @IsOptional()
+    @IsNumber()
+    @IsPositive()
+    to?: number;
+}
 
 export class FindServiceBaseDto extends PaginationQuery {
     @IsOptional()
@@ -23,6 +33,11 @@ export class FindServiceBaseDto extends PaginationQuery {
     @ValidateNested()
     @Type(() => FindServiceByPriceDto)
     price: FindServiceByPriceDto;
+
+    @IsNotEmpty()
+    @ValidateNested()
+    @Type(() => FindServiceByDurationDto)
+    duration: FindServiceByDurationDto;
 
     @IsOptional()
     @IsUUID('all', { each: true })

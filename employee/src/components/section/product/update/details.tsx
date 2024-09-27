@@ -101,7 +101,7 @@ export default function UpdateProductDetailTab({
 
     const handleUpdate = (type: "new" | "prev") => (item: IProductDetail) => {
         if (type === "new") {
-            SetProductDetail((details) =>
+            SetNewProductDetails((details) =>
                 details.map((detail) => {
                     if (detail.id === item.id) {
                         return item;
@@ -110,7 +110,7 @@ export default function UpdateProductDetailTab({
                 })
             );
         } else if (type === "prev") {
-            SetNewProductDetails((details) =>
+            SetProductDetail((details) =>
                 details.map((detail) => {
                     if (detail.id === item.id) {
                         return item;
@@ -134,6 +134,7 @@ export default function UpdateProductDetailTab({
                 value,
             })),
         ];
+
         form.setValue("details", formDetails);
         SetIsChange(false);
     };

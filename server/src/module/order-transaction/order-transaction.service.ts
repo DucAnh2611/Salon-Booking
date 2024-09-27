@@ -5,6 +5,7 @@ import PayOS from '@payos/node';
 import { Queue } from 'bull';
 import { Repository } from 'typeorm';
 import { LOGGER_CONSTANT_NAME } from '../../common/constant/logger.constant';
+import { FAIL_STATE_LIST } from '../../common/constant/order.contant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { OrderPaymentStatusEnum } from '../../common/enum/order.enum';
@@ -218,6 +219,9 @@ export class OrderTransactionService {
             where: { orderId, order: { clientId } },
             order: { createdAt: SortByEnum.DESC },
             loadEagerRelations: false,
+            relations: {
+                order: true,
+            },
         });
 
         const mapCanCreateRefund = await Promise.all(
@@ -233,6 +237,9 @@ export class OrderTransactionService {
 
                 if (tran.paidAmount !== tran.orderAmount && tran.paidAmount > 0) {
                     canCreateRefundFinal = await this.orderRefundRequestService.canCreateRefund(tran.orderId, tran.id);
+                }
+                if (tran.paidAmount >= tran.orderAmount && FAIL_STATE_LIST.includes(tran.order.status)) {
+                    canCreateRefundFinal = true;
                 }
 
                 return {
@@ -255,6 +262,6 @@ export class OrderTransactionService {
             loadEagerRelations: false,
         });
 
-        Promise.all(items.map(item => this.paymentCancelQueue.add('cancelPayment', item)));
+        await Promise.all(items.map(item => this.paymentCancelQueue.add('cancelPayment', item)));
     }
 }

@@ -6,6 +6,7 @@ import { SortByEnum } from '../../../common/enum/query.enum';
 import { BadRequest } from '../../../shared/exception/error.exception';
 import { CategoryService } from '../../category/category.service';
 import { MediaService } from '../../media/service/media.service';
+import { OrderProductItemEntity } from '../../order-product-item/entity/order-product-item.entity';
 import { ProductMediaService } from '../../product-media/product-media.service';
 import { ProductTypesEntity } from '../../product-types/entity/product-types.entity';
 import { ProductBaseEntity } from '../entity/product-base.entity';
@@ -13,6 +14,8 @@ import { ProductBaseEntity } from '../entity/product-base.entity';
 @Injectable()
 export class ProductBaseClientService {
     constructor(
+        @InjectRepository(OrderProductItemEntity)
+        private readonly orderProductItemRepository: Repository<OrderProductItemEntity>,
         @InjectRepository(ProductBaseEntity) private readonly productBaseRepository: Repository<ProductBaseEntity>,
         @InjectRepository(ProductTypesEntity) private readonly productTypesRepository: Repository<ProductTypesEntity>,
         private readonly categoryService: CategoryService,
@@ -24,11 +27,11 @@ export class ProductBaseClientService {
         return this.productBaseRepository.findOne({ where: { id }, loadEagerRelations: false });
     }
 
-    featured() {
-        return this.productBaseRepository.find({
+    async featured() {
+        const items = await this.productBaseRepository.find({
             where: {},
             loadEagerRelations: false,
-            take: 5,
+            take: 4,
             skip: 0,
             order: { createdAt: SortByEnum.DESC },
             relations: {
@@ -38,6 +41,21 @@ export class ProductBaseClientService {
                 },
             },
         });
+
+        const mapMedia = await Promise.all(
+            items.map(async item => {
+                const media = await this.productMediaService.getListDetailForProduct(item.id);
+                const buyingCounts = await this.orderProductItemRepository.sum('quantity', { productId: item.id });
+
+                return {
+                    ...item,
+                    productMedia: media,
+                    buyingCounts,
+                };
+            }),
+        );
+
+        return mapMedia;
     }
 
     async inStock(id: string) {
@@ -50,6 +68,10 @@ export class ProductBaseClientService {
         return { quantity: product.quantity };
     }
 
+    relatedProduct(id: string) {
+        return [];
+    }
+
     async detail(id: string) {
         const productBase = await this.productBaseRepository.findOne({
             where: {
@@ -60,7 +82,9 @@ export class ProductBaseClientService {
                     image: true,
                 },
                 productDetail: true,
-                productMedia: true,
+                productMedia: {
+                    media: true,
+                },
                 types: {
                     productTypesAttribute: {
                         thumbnail: true,

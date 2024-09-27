@@ -82,6 +82,10 @@ export default function DialogCreateRefund({
         form.setValue("bankAccount", "");
     };
 
+    const test = () => {
+        console.log(form.getValues());
+    };
+
     const onSubmit = async () => {
         if (!confirm) return;
         const { amount, bankAccount, bankBin, bankName, desc } =
@@ -264,6 +268,7 @@ export default function DialogCreateRefund({
                                         <Button
                                             type="submit"
                                             disabled={!confirm}
+                                            onClick={test}
                                         >
                                             Gửi yêu cầu
                                         </Button>

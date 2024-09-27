@@ -1,4 +1,7 @@
+"use client";
+
 import useUser from "@/hook/useUser.hook";
+import { logout } from "@/lib/actions/auth.action";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { Badge } from "./ui/badge";
@@ -10,11 +13,24 @@ import {
     DropdownMenuSeparator,
     DropdownMenuTrigger,
 } from "./ui/dropdown-menu";
+import { toast } from "./ui/use-toast";
 import UserAvatar from "./user-avatar";
 
 export default function UserAuth() {
-    const { me } = useUser();
+    const { me, handleLogout } = useUser();
     const search = useSearchParams();
+
+    const handleLogoutBtn = async () => {
+        const { response } = await logout();
+
+        if (response) {
+            handleLogout();
+            toast({
+                title: "Thành công",
+                description: "Đăng xuất thành công",
+            });
+        }
+    };
 
     if (!me)
         return (
@@ -84,6 +100,7 @@ export default function UserAuth() {
                         variant="destructive"
                         className="w-full py-1.5 h-fit justify-start"
                         size="sm"
+                        onClick={handleLogoutBtn}
                     >
                         Đăng xuất
                     </Button>

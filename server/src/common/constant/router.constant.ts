@@ -157,6 +157,7 @@ export const CLIENT_SERVICE_ROUTE = {
 export const CLIENT_PRODUCT_ROUTE = {
     FIND: '',
     DETAIL: 'i/:id',
+    RELATED: 'related/:id',
     FEATURED: 'feature',
     ON_STOCK: 'on-stock',
 };

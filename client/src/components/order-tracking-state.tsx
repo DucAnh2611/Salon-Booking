@@ -45,7 +45,10 @@ export default function OrderTrackingState({}: IOrderTrackingStateProps) {
                             className="gap-2"
                             size="sm"
                             variant="outline"
-                            onClick={() => reload("state")}
+                            onClick={() => {
+                                reload("state");
+                                reload("order");
+                            }}
                             disabled={isLoading}
                         >
                             {isLoading && (

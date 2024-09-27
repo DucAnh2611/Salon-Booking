@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Post, Put, Req, UseGuards } from '@nestjs/common';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { ROUTER, SHIFT_EMPLOYEE_ROUTE } from '../../../common/constant/router.constant';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { TargetActionRequire } from '../../../shared/decorator/permission.decorator';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
@@ -19,7 +19,7 @@ export class ShiftEmployeeAdminController {
     constructor(private readonly shiftEmployeeService: ShiftEmployeeService) {}
 
     @Post(SHIFT_EMPLOYEE_ROUTE.CREATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT_EMPLOYEE, action: [PermissionActionEnum.CREATE] }])
     create(@Req() req: AppRequest, @Body() body: BodyCreateShiftEmployeeDto) {
         const { employeeId } = req.accessPayload;
@@ -28,7 +28,7 @@ export class ShiftEmployeeAdminController {
     }
 
     @Put(SHIFT_EMPLOYEE_ROUTE.UPDATE_STATUS)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT_EMPLOYEE, action: [PermissionActionEnum.UPDATE] }])
     updateStatus(@Req() req: AppRequest, @Body() body: UpdateShiftEmployeeDto) {
         const { employeeId } = req.accessPayload;
@@ -37,14 +37,14 @@ export class ShiftEmployeeAdminController {
     }
 
     @Delete(SHIFT_EMPLOYEE_ROUTE.DELETE_ONE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT_EMPLOYEE, action: [PermissionActionEnum.DELETE] }])
     deleteOne(@Req() req: AppRequest, @Body() { employeeId, shiftId }: DeleteOneShiftEmployeeDto) {
         return this.shiftEmployeeService.deleteOne(shiftId, employeeId);
     }
 
     @Delete(SHIFT_EMPLOYEE_ROUTE.DELETE_MANY)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT_EMPLOYEE, action: [PermissionActionEnum.DELETE] }])
     deleteMany(@Req() req: AppRequest, @Body() body: DeleteShiftEmployeeDto) {
         return this.shiftEmployeeService.deleteMany(body);

@@ -1,7 +1,7 @@
 import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { CLIENT_ORDER_ROUTE, ROUTER } from '../../../common/constant/router.constant';
 import { OrderStatusEnum } from '../../../common/enum/order.enum';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
 import { AccessTokenClientGuard } from '../../../shared/guard/accessToken.guard';
@@ -24,7 +24,7 @@ export class OrderController {
     constructor(private readonly orderService: OrderService) {}
 
     @Get(CLIENT_ORDER_ROUTE.TRACKING)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     tracking(@Req() req: AppRequest, @Param() param: GetOrderTrackingParamDto) {
         const { clientId } = req.accessPayload;
         const { code } = param;
@@ -33,7 +33,7 @@ export class OrderController {
     }
 
     @Get(CLIENT_ORDER_ROUTE.TRACKING_STATE)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     trackingState(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { clientId } = req.accessPayload;
         const { id: orderId } = param;
@@ -42,7 +42,7 @@ export class OrderController {
     }
 
     @Get(CLIENT_ORDER_ROUTE.TRACKING_PRODUCT)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     trackingProducts(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { clientId } = req.accessPayload;
         const { id: orderId } = param;
@@ -51,7 +51,7 @@ export class OrderController {
     }
 
     @Get(CLIENT_ORDER_ROUTE.TRACKING_SERVICE)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     trackingServices(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { clientId } = req.accessPayload;
         const { id: orderId } = param;
@@ -60,7 +60,7 @@ export class OrderController {
     }
 
     @Get(CLIENT_ORDER_ROUTE.TRACKING_REFUND)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     trackingRefunds(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { clientId } = req.accessPayload;
         const { id: orderId } = param;
@@ -69,7 +69,7 @@ export class OrderController {
     }
 
     @Get(CLIENT_ORDER_ROUTE.TRACKING_TRANSACTION)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     trackingTransaction(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { clientId } = req.accessPayload;
         const { id: orderId } = param;
@@ -78,7 +78,7 @@ export class OrderController {
     }
 
     @Post(CLIENT_ORDER_ROUTE.SEARCH)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     search(@Req() req: AppRequest, @Body() body: FindOrderClientDto) {
         const { clientId } = req.accessPayload;
 
@@ -86,21 +86,21 @@ export class OrderController {
     }
 
     @Post(CLIENT_ORDER_ROUTE.PLACE_PRODUCT)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     placeOrderProductSchema(@Req() req: AppRequest, @Body() body: CreateOrderProductDto) {
         const { clientId, userId } = req.accessPayload;
         return this.orderService.createOrderProduct(userId, clientId, body);
     }
 
     @Post(CLIENT_ORDER_ROUTE.PLACE_SERVICE)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     placeOrderService(@Req() req: AppRequest, @Body() body: CreateOrderServiceDto) {
         const { clientId, userId } = req.accessPayload;
         return this.orderService.createOrderService(userId, clientId, body);
     }
 
     @Get(CLIENT_ORDER_ROUTE.CONFIRM_ORDER_SERVICE)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     confirmOrderService(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { clientId, userId } = req.accessPayload;
         const { id: orderId } = param;
@@ -109,7 +109,7 @@ export class OrderController {
     }
 
     @Get(CLIENT_ORDER_ROUTE.FAIL_TRANSACTION)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     failTransaction(
         @Req() req: AppRequest,
         @Param() param: GetOrderParamDto,
@@ -122,7 +122,7 @@ export class OrderController {
     }
 
     @Get(CLIENT_ORDER_ROUTE.SUCCESS_TRANSACTION)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     successTransaction(
         @Req() req: AppRequest,
         @Param() param: GetOrderParamDto,
@@ -135,7 +135,7 @@ export class OrderController {
     }
 
     @Post(CLIENT_ORDER_ROUTE.CANCEL_TRANSACTION)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     cancelTransaction(@Req() req: AppRequest, @Param() param: GetOrderParamDto, @Body() body: CancelTransactionDto) {
         const { clientId, userId } = req.accessPayload;
         const { id: orderId } = param;
@@ -144,7 +144,7 @@ export class OrderController {
     }
 
     @Get(CLIENT_ORDER_ROUTE.GET_PAYMENT_LINK_PRODUCT)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     getPaymentLinkProduct(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { clientId, userId } = req.accessPayload;
         const { id: orderId } = param;
@@ -153,7 +153,7 @@ export class OrderController {
     }
 
     @Get(CLIENT_ORDER_ROUTE.GET_PAYMENT_LINK_SERVICE)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     getPaymentLinkService(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { clientId, userId } = req.accessPayload;
         const { id: orderId } = param;
@@ -162,7 +162,7 @@ export class OrderController {
     }
 
     @Post(CLIENT_ORDER_ROUTE.CANCEL_ORDER)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     cancelOrder(@Req() req: AppRequest, @Body() body: ClientCancelOrderStateDto) {
         const { clientId, userId } = req.accessPayload;
 
@@ -170,7 +170,7 @@ export class OrderController {
     }
 
     @Post(CLIENT_ORDER_ROUTE.RECEIVE_ORDER)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     receiveOrder(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { clientId, userId } = req.accessPayload;
         const { id: orderId } = param;
@@ -182,7 +182,7 @@ export class OrderController {
     }
 
     @Post(CLIENT_ORDER_ROUTE.RETURN_ORDER)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     returnOrder(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { clientId, userId } = req.accessPayload;
         const { id: orderId } = param;
@@ -194,7 +194,7 @@ export class OrderController {
     }
 
     @Post(CLIENT_ORDER_ROUTE.CREATE_REQUEST_REFUND)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     createRequestRefund(@Req() req: AppRequest, @Body() body: CreateOrderRefundRequestDto) {
         const { clientId, userId } = req.accessPayload;
 
@@ -202,7 +202,7 @@ export class OrderController {
     }
 
     @Post(CLIENT_ORDER_ROUTE.CANCEL_REQUEST_REFUND)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     cancelRequestRefund(@Req() req: AppRequest, @Body() body: CancelOrderRefundRequestDto) {
         const { clientId, userId } = req.accessPayload;
 
@@ -210,7 +210,7 @@ export class OrderController {
     }
 
     @Post(CLIENT_ORDER_ROUTE.RECEIVE_REFUND)
-    @UserType(ROLE_TITLE.client)
+    @UserType(UserTypeEnum.CLIENT)
     receivedRefund(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { userId } = req.accessPayload;
         const { id: requestId } = param;

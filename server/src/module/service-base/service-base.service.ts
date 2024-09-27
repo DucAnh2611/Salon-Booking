@@ -1,13 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Like, Repository } from 'typeorm';
+import { Between, ILike, In, Like, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { OrderStatusEnum } from '../../common/enum/order.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { ParseOrderString } from '../../shared/utils/parse-dynamic-queyry.utils';
 import { CategoryService } from '../category/category.service';
+import { OrderServiceItemEntity } from '../order-service-item/entity/order-service-item.entity';
 import { ServiceMediaService } from '../service-media/service-media.service';
+import { ServiceStepEntity } from '../service-step/entity/service-step.entity.entity';
 import { FindServiceAdminDto } from '../service/dto/service-get.dto';
 import { CreateServiceBaseDto } from './dto/service-base-create.dto';
 import { FindServiceBaseDto } from './dto/service-base-get.dto';
@@ -18,34 +21,46 @@ import { ServiceEntity } from './entity/service.entity';
 export class ServiceBaseService {
     constructor(
         @InjectRepository(ServiceEntity) private readonly seriviceBaseRepository: Repository<ServiceEntity>,
+        @InjectRepository(ServiceStepEntity) private readonly seriviceStepRepository: Repository<ServiceStepEntity>,
+        @InjectRepository(OrderServiceItemEntity)
+        private readonly orderServiceItemRepository: Repository<OrderServiceItemEntity>,
         private readonly categoryService: CategoryService,
         private readonly serviceMediaService: ServiceMediaService,
     ) {}
 
     async findClient(body: FindServiceBaseDto) {
-        const { key = '', limit, page, price, categoryIds } = body;
-        const queryBuilder = this.seriviceBaseRepository.createQueryBuilder('s');
+        const { key = '', limit, page, price, duration, categoryIds } = body;
 
-        const q = queryBuilder
-            .where('s.name LIKE :name', { name: `%${key}%` })
-            .andWhere(`s.price >= :from ${price.to ? 'AND s.price <= :to ' : ''}`, price)
-            .orWhere(`s.price >= :from ${price.to ? 'AND s.price <= :to ' : ''}`, price);
-
-        if (categoryIds && categoryIds.length) {
-            q.andWhere('p.categoryId IN :...ids', { ids: categoryIds });
-        }
-
-        const [items, count] = await q
-            .skip((page - 1) * limit)
-            .take(limit)
-            .getManyAndCount();
+        const [items, count] = await this.seriviceBaseRepository.findAndCount({
+            where: {
+                name: ILike(`%${key}%`),
+                price: price.to ? Between(price.from, price.to) : MoreThanOrEqual(price.from),
+                duration: duration.to ? Between(duration.from, duration.to) : MoreThanOrEqual(duration.from),
+                ...(categoryIds.length ? { categoryId: In(categoryIds) } : {}),
+            },
+            loadEagerRelations: false,
+            order: { createdAt: SortByEnum.ASC },
+            skip: (page - 1) * limit,
+            take: limit,
+        });
 
         const mapMedia = await Promise.all(
             items.map(async item => {
                 const media = await this.serviceMediaService.getListByService(item.id);
+                const stepCounts = await this.seriviceStepRepository.count({
+                    where: { serviceId: item.id },
+                    loadEagerRelations: false,
+                });
+                const bookingCounts = await this.orderServiceItemRepository.count({
+                    where: { serviceId: item.id, order: { status: Not(In([OrderStatusEnum.CANCELLED])) } },
+                    loadEagerRelations: false,
+                });
+
                 return {
                     ...item,
                     serviceMedia: media,
+                    stepCounts,
+                    bookingCounts,
                 };
             }),
         );
@@ -151,13 +166,35 @@ export class ServiceBaseService {
     }
 
     async feature() {
-        return this.seriviceBaseRepository.find({
+        const items = await this.seriviceBaseRepository.find({
             where: {},
             loadEagerRelations: false,
-            relations: {
-                media: true,
-            },
+            order: { createdAt: SortByEnum.DESC },
+            take: 4,
         });
+
+        const mapMedia = await Promise.all(
+            items.map(async item => {
+                const media = await this.serviceMediaService.getListByService(item.id);
+                const stepCounts = await this.seriviceStepRepository.count({
+                    where: { serviceId: item.id },
+                    loadEagerRelations: false,
+                });
+                const bookingCounts = await this.orderServiceItemRepository.count({
+                    where: { serviceId: item.id, order: { status: Not(In([OrderStatusEnum.CANCELLED])) } },
+                    loadEagerRelations: false,
+                });
+
+                return {
+                    ...item,
+                    serviceMedia: media,
+                    stepCounts,
+                    bookingCounts,
+                };
+            }),
+        );
+
+        return mapMedia;
     }
 
     async find(query: FindServiceAdminDto) {

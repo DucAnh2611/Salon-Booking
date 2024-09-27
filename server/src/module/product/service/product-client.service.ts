@@ -26,6 +26,12 @@ export class ProductClientService {
         };
     }
 
+    async relatedProduct(productId: string) {
+        const related = this.productBaseClientService.relatedProduct(productId);
+
+        return related;
+    }
+
     featured() {
         return this.productBaseClientService.featured();
     }

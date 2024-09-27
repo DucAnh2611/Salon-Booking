@@ -1,6 +1,6 @@
-import { ROLE_TITLE } from '../../../../common/constant/role.constant';
 import { GenderEnum } from '../../../../common/enum/gender.enum';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../../../common/enum/permission.enum';
+import { UserTypeEnum } from '../../../../common/enum/user.enum';
 import { CreatePermissionDto } from '../../../permission/dto/create-permission.dto';
 import { TSeedData, TSeedRolePermisison } from '../type/seed.type';
 
@@ -14,30 +14,15 @@ export const SEED_DATA: TSeedData = {
             firstname: 'Duc',
             lastname: 'Anh',
             username: 'admin1',
-            role: ROLE_TITLE.staff,
-            eRole: ROLE_TITLE.admin,
+            type: UserTypeEnum.STAFF,
+            role: 'admin',
         },
     ],
     role: [
         {
-            title: ROLE_TITLE.admin,
+            title: 'admin',
             parent: null,
             deletable: false,
-        },
-        {
-            title: ROLE_TITLE.client,
-            parent: null,
-            deletable: false,
-        },
-        {
-            title: ROLE_TITLE.staff,
-            parent: ROLE_TITLE.admin,
-            deletable: false,
-        },
-        {
-            title: ROLE_TITLE.employee,
-            parent: ROLE_TITLE.staff,
-            deletable: true,
         },
     ],
     permission: Object.values(PermissionActionEnum).reduce((prev: CreatePermissionDto[], action) => {
@@ -55,7 +40,7 @@ export const SEED_DATA: TSeedData = {
                 });
                 return prev;
             }, []),
-            role: ROLE_TITLE.admin,
+            role: 'admin',
         },
         {
             data: [
@@ -64,7 +49,7 @@ export const SEED_DATA: TSeedData = {
                     action: [PermissionActionEnum.READ],
                 },
             ],
-            role: ROLE_TITLE.employee,
+            role: 'admin',
         },
     ],
 };

@@ -1,10 +1,12 @@
+import { UserTypeEnum } from '../enum/user.enum';
+
 export interface AccessTokenPayload {
     userId: string;
     employeeId?: string;
     clientId?: string;
     email?: string;
     phone?: string;
-    uRoleId: string;
+    type?: UserTypeEnum;
     eRoleId?: string;
 }
 

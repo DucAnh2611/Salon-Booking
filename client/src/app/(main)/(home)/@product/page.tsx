@@ -1,7 +1,5 @@
-import { Button } from "@/components/ui/button";
+import ProductFeatureCard from "@/components/product-feature-card";
 import { featureProducts } from "@/lib/actions/product.action";
-import { joinString } from "@/lib/string";
-import Link from "next/link";
 
 export default async function MainProduct() {
     const { response } = await featureProducts();
@@ -11,20 +9,10 @@ export default async function MainProduct() {
     }
 
     return (
-        <div className="grid grid-cols-4 gap-12">
+        <div className="flex gap-5 justify-center pt-3">
             {response.result.map((p) => (
-                <div key={p.id}>
-                    <p>{p.name}</p>
-                    <Button asChild>
-                        <Link
-                            href={joinString({
-                                joinString: "/",
-                                strings: ["p", p.id],
-                            })}
-                        >
-                            Chi tiết
-                        </Link>
-                    </Button>
+                <div key={p.id} className="w-[300px] h-fit">
+                    <ProductFeatureCard product={p} />
                 </div>
             ))}
         </div>

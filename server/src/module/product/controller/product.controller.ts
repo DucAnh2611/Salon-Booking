@@ -29,6 +29,12 @@ export class ProductClientController {
         return this.productClientService.featured();
     }
 
+    @Get(CLIENT_PRODUCT_ROUTE.RELATED)
+    related(@Param() params: GetProductDetailParamDto) {
+        const { id } = params;
+        return this.productClientService.relatedProduct(id);
+    }
+
     @Post(CLIENT_PRODUCT_ROUTE.ON_STOCK)
     onStock(@Body() body: GetProductInStockQueryDto) {
         return this.productClientService.onStock(body);

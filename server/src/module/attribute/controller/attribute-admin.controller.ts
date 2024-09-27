@@ -1,8 +1,8 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { ATTRIBUTE_ROUTE, ROUTER } from '../../../common/constant/router.constant';
 import { DataSuccessCodeEnum } from '../../../common/enum/data-success-code.enum';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { TargetActionRequire } from '../../../shared/decorator/permission.decorator';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
@@ -22,7 +22,7 @@ export class AttributeAdminController {
     constructor(private readonly attributeService: AttributeService) {}
 
     @Get(ATTRIBUTE_ROUTE.FIND)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.ATTRIBUTE,
@@ -34,7 +34,7 @@ export class AttributeAdminController {
     }
 
     @Post(ATTRIBUTE_ROUTE.CREATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.ATTRIBUTE,
@@ -47,7 +47,7 @@ export class AttributeAdminController {
     }
 
     @Put(ATTRIBUTE_ROUTE.UPDATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.ATTRIBUTE,
@@ -63,7 +63,7 @@ export class AttributeAdminController {
     }
 
     @Delete(ATTRIBUTE_ROUTE.DELETE_ONE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.ATTRIBUTE,
@@ -80,7 +80,7 @@ export class AttributeAdminController {
     }
 
     @Delete(ATTRIBUTE_ROUTE.DELETE_MANY)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.ATTRIBUTE,

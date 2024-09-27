@@ -8,10 +8,50 @@ import useCategory from "@/hook/useCategory.hook";
 import useSearchProduct from "@/hook/useSearchProduct.hook";
 import { ICategory } from "@/interface/category.interface";
 import { Filter, Minus } from "lucide-react";
+import { ChangeEvent, useState } from "react";
 
 export default function FilterProductPage() {
     const { categoryTree } = useCategory();
     const { filter, setFilter } = useSearchProduct();
+
+    const [from, SetFrom] = useState<number>(filter.price.from);
+    const [to, SetTo] = useState<number>(filter.price.to || 0);
+
+    const handleChangeFrom = (e: ChangeEvent<HTMLInputElement>) => {
+        const value = parseInt(e.target.value) || 0;
+        SetFrom(value < 0 ? 0 : value);
+    };
+
+    const handleChangeTo = (e: ChangeEvent<HTMLInputElement>) => {
+        const value = parseInt(e.target.value) || 0;
+        SetTo(value < 0 ? 0 : value);
+    };
+
+    const onResetPrice = () => {
+        SetFrom(0);
+        SetTo(0);
+        setFilter("price", {
+            from: 0,
+        });
+    };
+
+    const onConfirm = () => {
+        setFilter("price", {
+            from,
+            ...(to ? { to } : {}),
+        });
+    };
+
+    const onSelectCategory = (category: ICategory) => {
+        setFilter(
+            "categoryIds",
+            filter.categoryIds
+                ? filter.categoryIds.find((i) => i === category.id)
+                    ? filter.categoryIds.filter((i) => i !== category.id)
+                    : [...filter.categoryIds, category.id]
+                : []
+        );
+    };
 
     return (
         <div className="w-full h-fit flex flex-col gap-3">
@@ -28,12 +68,20 @@ export default function FilterProductPage() {
                 <div>
                     <p className="text-base whitespace-nowrap">Danh mục</p>
                 </div>
-                <div className="h-fit">
+                <div className="h-fit flex flex-col gap-2">
                     {categoryTree.map((category) => (
                         <SelectCategory
                             key={category.id}
                             categoryTree={category}
-                            onSelect={(category: ICategory) => {}}
+                            onSelect={onSelectCategory}
+                            checked={
+                                !!(
+                                    filter.categoryIds &&
+                                    filter.categoryIds.find(
+                                        (i) => i === category.id
+                                    )
+                                )
+                            }
                         />
                     ))}
                 </div>
@@ -51,18 +99,34 @@ export default function FilterProductPage() {
                             placeholder="Từ"
                             className="focus-visible:ring-transparent"
                             type="number"
-                            value={filter.price.from}
+                            value={from}
+                            onChange={handleChangeFrom}
                         />
                         <Minus size={15} />
                         <Input
                             placeholder="Đến"
                             className="focus-visible:ring-transparent"
                             type="number"
-                            value={filter.price.to || 0}
+                            value={to}
+                            onChange={handleChangeTo}
                         />
                     </div>
-                    <div>
-                        <Button className="w-full" size="sm">
+                    <div className="flex gap-2">
+                        {(!!from || !!to) && (
+                            <Button
+                                className="flex-1"
+                                size="sm"
+                                onClick={onResetPrice}
+                                variant="destructive"
+                            >
+                                Xóa
+                            </Button>
+                        )}
+                        <Button
+                            className="flex-1"
+                            size="sm"
+                            onClick={onConfirm}
+                        >
                             Áp dụng
                         </Button>
                     </div>

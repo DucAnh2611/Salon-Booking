@@ -4,7 +4,7 @@ import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { AppRequest } from '../../common/interface/custom-request.interface';
 import { RoleService } from '../../module/role/role.service';
 import { UserType } from '../decorator/user-types.decorator';
-import { BadRequest, Forbidden } from '../exception/error.exception';
+import { Forbidden } from '../exception/error.exception';
 
 @Injectable()
 export class UserTypeGuard implements CanActivate {
@@ -22,12 +22,7 @@ export class UserTypeGuard implements CanActivate {
 
         const { accessPayload } = request;
 
-        const userRole = await this.roleService.getById(accessPayload.uRoleId);
-        if (!userRole) {
-            throw new BadRequest({ message: DataErrorCodeEnum.INVALID_USER_ROLE });
-        }
-
-        const isValid = userType === userRole.title;
+        const isValid = accessPayload.type === userType;
 
         if (!isValid) {
             throw new Forbidden({
