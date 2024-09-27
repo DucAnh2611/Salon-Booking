@@ -18,6 +18,12 @@ export default function UpdateProductScreen() {
         dispath(detailProductApi(id));
     };
 
+    const onSuccess = () => {
+        if (id) {
+            dispath(detailProductApi(id));
+        }
+    };
+
     const form = useForm<z.infer<typeof updateProductSchema>>({
         defaultValues: {
             base: {
@@ -51,5 +57,7 @@ export default function UpdateProductScreen() {
             </div>
         );
 
-    return <UpdateProductTab form={form} detail={detail} />;
+    return (
+        <UpdateProductTab form={form} detail={detail} onSuccess={onSuccess} />
+    );
 }

@@ -3,6 +3,7 @@ import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneT
 import { DEFAULT_VALUE_ENTITY } from '../../../common/constant/entity.constant';
 import { BaseEntity } from '../../../common/enitty/base.entity';
 import { GenderEnum } from '../../../common/enum/gender.enum';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { HashPasswordUtil } from '../../../shared/utils/hash-password.utils';
 import { ClientEntity } from '../../client/entity/client.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
@@ -11,7 +12,6 @@ import { OrderRefundRequestEntity } from '../../oder-refund-request/entity/order
 import { OrderEntity } from '../../order-base/entity/order-base.entity';
 import { OrderRefundStateEntity } from '../../order-refund-state/entity/order-refund-state.entity';
 import { OrderStateEntity } from '../../order-state/entity/order-state.entity';
-import { RoleEntity } from '../../role/entity/role.entity';
 
 @Entity('user')
 export class UserEntity extends BaseEntity {
@@ -32,8 +32,8 @@ export class UserEntity extends BaseEntity {
     @Column('varchar', { length: 100, nullable: false })
     lastname: string;
 
-    @Column('uuid', { nullable: false })
-    roleId: string;
+    @Column('enum', { enum: UserTypeEnum, default: UserTypeEnum[UserTypeEnum.CLIENT] })
+    type: UserTypeEnum;
 
     @Column('text', { nullable: false })
     phone: string;
@@ -79,11 +79,6 @@ export class UserEntity extends BaseEntity {
 
     @OneToMany(() => OrderEntity, (orderEntity: OrderEntity) => orderEntity.userCreate)
     updateOrder: OrderEntity[];
-
-    //TODO - Add client relationShip
-    @ManyToOne(() => RoleEntity, (roleEntity: RoleEntity) => roleEntity.userRole, { nullable: true })
-    @JoinColumn({ name: 'roleId' })
-    role: RoleEntity;
 
     @ManyToOne(() => MediaEntity, (mediaEntity: MediaEntity) => mediaEntity.userAvatar)
     @JoinColumn({ name: 'avatar' })

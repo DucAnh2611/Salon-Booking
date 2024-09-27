@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { ROUTER, SERVICE_ROUTE } from '../../../common/constant/router.constant';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { TargetActionRequire } from '../../../shared/decorator/permission.decorator';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
@@ -21,14 +21,14 @@ export class ServiceAdminController {
     constructor(private readonly serviceService: ServiceAdminService) {}
 
     @Get(SERVICE_ROUTE.GET)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SERVICE, action: [PermissionActionEnum.READ] }])
     find(@Query() query: FindServiceAdminDto) {
         return this.serviceService.findAdmin(query);
     }
 
     @Get(SERVICE_ROUTE.DETAIL)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SERVICE, action: [PermissionActionEnum.READ] }])
     detail(@Param() param: GetProductBaseParamDto) {
         const { id } = param;
@@ -36,7 +36,7 @@ export class ServiceAdminController {
     }
 
     @Post(SERVICE_ROUTE.CREATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SERVICE, action: [PermissionActionEnum.CREATE] }])
     create(@Req() req: AppRequest, @Body() body: CreateServiceDto) {
         const { accessPayload } = req;
@@ -46,7 +46,7 @@ export class ServiceAdminController {
     }
 
     @Put(SERVICE_ROUTE.UPDATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SERVICE, action: [PermissionActionEnum.UPDATE] }])
     update(@Req() req: AppRequest, @Body() body: UpdateServiceDto) {
         const { accessPayload } = req;
@@ -56,7 +56,7 @@ export class ServiceAdminController {
     }
 
     @Delete(SERVICE_ROUTE.DELETE_ONE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SERVICE, action: [PermissionActionEnum.DELETE] }])
     deleteOne(@Req() req: AppRequest, @Param() param: GetServiceParamDto) {
         const { id } = param;
@@ -64,7 +64,7 @@ export class ServiceAdminController {
     }
 
     @Delete(SERVICE_ROUTE.DELETE_MANY)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SERVICE, action: [PermissionActionEnum.DELETE] }])
     DeleteMany(@Req() req: AppRequest, @Body() body: DeleteServiceDto) {
         const { ids } = body;

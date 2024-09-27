@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Like, Repository } from 'typeorm';
-import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { EmployeeStatusEnum } from '../../common/enum/employee.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
+import { UserTypeEnum } from '../../common/enum/user.enum';
 import { BadRequest, InternalServer } from '../../shared/exception/error.exception';
 import { ParseOrderString } from '../../shared/utils/parse-dynamic-queyry.utils';
 import { trimStringInObject } from '../../shared/utils/trim-object.utils';
@@ -116,20 +116,16 @@ export class EmployeeService {
 
     async createEmployee(employeeId: string, newEmployee: CreateEmployeeDto) {
         const { username, eRoleId, ...userInfo } = trimStringInObject<CreateEmployeeDto>(newEmployee);
-        const [{ id: roleId }, eRole, clientRole] = await Promise.all([
-            this.roleService.getRole({ title: ROLE_TITLE.staff }),
-            this.roleService.getById(eRoleId),
-            this.roleService.getRole({ title: ROLE_TITLE.client }),
-        ]);
+        const [eRole] = await Promise.all([this.roleService.getById(eRoleId)]);
 
-        if (!eRole || eRoleId === clientRole.id) {
+        if (!eRole) {
             throw new BadRequest({ message: DataErrorCodeEnum.INVALID_STAFF_ROLE });
         }
 
         // check is eRoleId is employee id (level lower than level of staff)
         await this.roleService.isValidParent(eRoleId);
 
-        const createdUser = await this.userService.create({ ...userInfo, roleId });
+        const createdUser = await this.userService.create({ ...userInfo, type: UserTypeEnum.STAFF });
         if (!createdUser) throw new InternalServer();
 
         const { id: createdUserId } = createdUser;
@@ -172,7 +168,7 @@ export class EmployeeService {
                     eRole: true,
                 },
             }),
-            this.roleService.getRole({ title: ROLE_TITLE.admin }),
+            this.roleService.getRole({ title: 'admin', deletable: false }),
         ]);
 
         if (employeeRole.eRole.id === roleAdmin.id && employee.eRoleId !== roleAdmin.id) {
@@ -218,7 +214,7 @@ export class EmployeeService {
             throw new BadRequest({ message: DataErrorCodeEnum.SELF_DELETE_EMPLOYEE });
         }
 
-        if (exist.some(emp => emp.eRole.title === ROLE_TITLE.admin)) {
+        if (exist.some(emp => emp.eRole.title === 'admin' && !emp.eRole.deletable)) {
             throw new BadRequest({ message: DataErrorCodeEnum.DELETE_ADMIN });
         }
 
@@ -241,7 +237,7 @@ export class EmployeeService {
                 where: { id: targetId },
                 loadEagerRelations: false,
             }),
-            this.roleService.getRole({ title: ROLE_TITLE.admin }),
+            this.roleService.getRole({ title: 'admin', deletable: false }),
         ]);
 
         if (!target) {

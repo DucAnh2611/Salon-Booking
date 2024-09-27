@@ -29,13 +29,13 @@ export default function OrderServiceContactTab({
                 render={({ field }) => (
                     <FormItem>
                         <FormLabel>
-                            Tên người nhận hàng
+                            Tên người đặt
                             <RequireField />
                         </FormLabel>
                         <FormControl>
                             <Input
                                 {...field}
-                                placeholder="Tên người nhận hàng"
+                                placeholder="Tên người đặt"
                                 className="text-left"
                             />
                         </FormControl>

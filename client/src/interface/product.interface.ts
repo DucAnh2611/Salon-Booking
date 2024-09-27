@@ -12,7 +12,7 @@ export interface IProduct {
 }
 
 export interface IProductInfo {
-    base: IProductInfoBase;
+    base: IProductInfoBase | null;
     types: IProductInfoTypes[];
     detail: IProductInfoDetail[];
 }
@@ -21,7 +21,7 @@ export interface IProductInfoBase {
     id: string;
     price: number;
     quantity: number;
-    name: number;
+    name: string;
     description: number;
     productMedia: IProductMedia[];
 }
@@ -66,9 +66,9 @@ export interface IProductTypeAttribute {
 
 export interface IProductMedia {
     productId: string;
-    mediaId: string;
+    mediaId: string | null;
     isThumbnail: boolean;
-    media: IMedia;
+    media: IMedia | null;
 }
 
 export interface IApiProductOnStock {
@@ -128,4 +128,21 @@ export interface IApiSearchProduct {
     orderBy?: string;
     page: number;
     limit: number;
+}
+
+export interface IProductItemSearch extends IProduct {
+    buyingCounts: number;
+    types: IProductTypes[];
+}
+
+export interface ISearchProductResponse {
+    items: IProductItemSearch[];
+    count: number;
+    page: number;
+    limit: number;
+}
+
+export interface IProductItemFeature extends IProduct {
+    buyingCounts: number;
+    types: IProductTypes[];
 }

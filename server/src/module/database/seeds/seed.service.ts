@@ -69,11 +69,11 @@ export class SeedService {
 
         datas.users = await Promise.all(
             data.map(async (curr: TSeedEmployeeData) => {
-                const { username, role, eRole, ...userInfo } = curr;
+                const { username, role, type, ...userInfo } = curr;
 
                 const newUser = this.userRepository.create({
                     ...userInfo,
-                    roleId: roles.find(r => r.title === role).id,
+                    type,
                 });
 
                 return this.userRepository.save(newUser);
@@ -82,13 +82,13 @@ export class SeedService {
 
         datas.employees = await Promise.all(
             data.map((curr: TSeedEmployeeData, id: number) => {
-                const { username, role, eRole, ...userInfo } = curr;
+                const { username, role, type, ...userInfo } = curr;
 
                 if (role) {
                     const newEmp = this.employeeRepository.create({
                         username: username,
                         userId: datas.users[id].id,
-                        eRoleId: roles.find(role => role.title === eRole).id,
+                        eRoleId: roles.find(r => role === r.title).id,
                     });
 
                     return this.employeeRepository.save(newEmp);

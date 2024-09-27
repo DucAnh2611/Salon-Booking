@@ -14,9 +14,9 @@ import {
 } from '@nestjs/common';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { FORMDATA_FIELD_MEDIA } from '../../../common/constant/file.constants';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { MEDIA_ROUTE, ROUTER } from '../../../common/constant/router.constant';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { multerConfig, multerOptions } from '../../../config/multer.configs';
 import { TargetActionRequire } from '../../../shared/decorator/permission.decorator';
@@ -36,14 +36,14 @@ export class MediaAdminController {
 
     @Get(MEDIA_ROUTE.FIND)
     @TargetActionRequire([{ target: PermissionTargetEnum.MEDIA, action: [PermissionActionEnum.READ] }])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     list(@Query() query: FindMediaAdminQuery) {
         return this.mediaService.find(query);
     }
 
     @Post(MEDIA_ROUTE.UPLOAD)
     @TargetActionRequire([{ target: PermissionTargetEnum.MEDIA, action: [PermissionActionEnum.CREATE] }])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @UseInterceptors(FilesInterceptor(FORMDATA_FIELD_MEDIA.MEDIAS, multerConfig.maxFile, multerOptions))
     uploads(@Req() req: AppRequest, @UploadedFiles() files: Express.Multer.File[]) {
         const { userId } = req.accessPayload;
@@ -52,7 +52,7 @@ export class MediaAdminController {
 
     @Put(MEDIA_ROUTE.UPDATE)
     @TargetActionRequire([{ target: PermissionTargetEnum.MEDIA, action: [PermissionActionEnum.UPDATE] }])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     update(@Req() req: AppRequest, @Param() param: GetMediaParamDto, @Body() body: MediaUpdateDto) {
         const { userId } = req.accessPayload;
         const { id: mediaId } = param;
@@ -62,7 +62,7 @@ export class MediaAdminController {
 
     @Delete(MEDIA_ROUTE.DELETE)
     @TargetActionRequire([{ target: PermissionTargetEnum.MEDIA, action: [PermissionActionEnum.UPDATE] }])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     delete(@Req() req: AppRequest, @Body() body: DeleteMediaDto) {
         return this.mediaService.delete(body);
     }

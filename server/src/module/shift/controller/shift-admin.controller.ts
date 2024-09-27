@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { ROUTER, SHIFT_ROUTE } from '../../../common/constant/router.constant';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { TargetActionRequire } from '../../../shared/decorator/permission.decorator';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
@@ -19,7 +19,7 @@ export class ShiftAdminController {
     constructor(private readonly shiftService: ShiftService) {}
 
     @Get(SHIFT_ROUTE.DETAIL)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT, action: [PermissionActionEnum.READ] }])
     detail(@Req() req: AppRequest, @Param() param: GetShiftParamDto) {
         const { id } = param;
@@ -28,7 +28,7 @@ export class ShiftAdminController {
     }
 
     @Post(SHIFT_ROUTE.CREATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT, action: [PermissionActionEnum.CREATE] }])
     create(@Req() req: AppRequest, @Body() body: CreateShiftDto) {
         const { employeeId } = req.accessPayload;
@@ -37,7 +37,7 @@ export class ShiftAdminController {
     }
 
     @Put(SHIFT_ROUTE.UPDATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT, action: [PermissionActionEnum.UPDATE] }])
     update(@Req() req: AppRequest, @Body() body: UpdateShiftDto) {
         const { employeeId } = req.accessPayload;
@@ -46,7 +46,7 @@ export class ShiftAdminController {
     }
 
     @Delete(SHIFT_ROUTE.DELETE_ONE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.SHIFT, action: [PermissionActionEnum.DELETE] }])
     deleteOne(@Req() req: AppRequest, @Param() param: GetShiftParamDto) {
         const { id: shiftId } = param;

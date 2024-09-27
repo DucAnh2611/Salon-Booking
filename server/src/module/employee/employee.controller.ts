@@ -14,10 +14,10 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FORMDATA_FIELD_MEDIA } from '../../common/constant/file.constants';
-import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { EMPLOYEE_ROUTE, ROUTER } from '../../common/constant/router.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../common/enum/permission.enum';
+import { UserTypeEnum } from '../../common/enum/user.enum';
 import { AppRequest } from '../../common/interface/custom-request.interface';
 import { multerConfig, multerOptions } from '../../config/multer.configs';
 import { TargetActionRequire } from '../../shared/decorator/permission.decorator';
@@ -42,7 +42,7 @@ export class EmployeeController {
     ) {}
 
     @Get(EMPLOYEE_ROUTE.ME)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.READ] }])
     me(@Req() req: AppRequest) {
         const { employeeId } = req.accessPayload;
@@ -50,14 +50,14 @@ export class EmployeeController {
     }
 
     @Get(EMPLOYEE_ROUTE.FIND)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.READ] }])
     find(@Req() req: AppRequest, @Query() query: FindEmployeeQueryDto) {
         return this.employeeService.findEmployee(query);
     }
 
     @Get(EMPLOYEE_ROUTE.INFO)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.READ] }])
     info(@Param() param: GetEmployeeParamDto) {
         const { id } = param;
@@ -65,7 +65,7 @@ export class EmployeeController {
     }
 
     @Post(EMPLOYEE_ROUTE.ADD)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.CREATE] }])
     @UseInterceptors(FileInterceptor(FORMDATA_FIELD_MEDIA.IMAGE, multerOptions))
     async create(@Req() req: AppRequest, @Body() body: CreateEmployeeDto, @UploadedFile() file?: Express.Multer.File) {
@@ -85,7 +85,7 @@ export class EmployeeController {
         return this.employeeService.createEmployee(employeeId, body);
     }
     @Put(EMPLOYEE_ROUTE.RESET_PW)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.UPDATE] }])
     async resetPw(@Req() req: AppRequest, @Body() body: ResetEmployeePasswordDto) {
         const { employeeId: requestEmployeeId } = req.accessPayload;
@@ -94,7 +94,7 @@ export class EmployeeController {
     }
 
     @Put(EMPLOYEE_ROUTE.UPDATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.UPDATE] }])
     @UseInterceptors(FileInterceptor(FORMDATA_FIELD_MEDIA.IMAGE, multerOptions))
     async update(
@@ -125,7 +125,7 @@ export class EmployeeController {
     }
 
     @Delete(EMPLOYEE_ROUTE.DELETE_ONE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.DELETE] }])
     deleteOne(@Req() req: AppRequest, @Param() param: GetEmployeeParamDto) {
         const { id: deleteId } = param;
@@ -135,7 +135,7 @@ export class EmployeeController {
     }
 
     @Delete(EMPLOYEE_ROUTE.DELETE_MANY)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.DELETE] }])
     deleteMany(@Req() req: AppRequest, @Body() body: DeleteEmployeeDto) {
         const { ids } = body;

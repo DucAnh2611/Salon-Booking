@@ -19,7 +19,7 @@ export const SearchProductContext = createContext<ISearchProductContext>({
             from: 0,
         },
         categoryIds: [],
-        page: 0,
+        page: 1,
         limit: 20,
     },
     setFilter: <T extends keyof IApiSearchProduct>(
@@ -37,7 +37,7 @@ export default function SearchProductContextProvider({
             from: 0,
         },
         categoryIds: [],
-        page: 0,
+        page: 1,
         limit: 20,
     });
 
@@ -45,7 +45,7 @@ export default function SearchProductContextProvider({
         key: T,
         value: IApiSearchProduct[T]
     ) => {
-        SetFilter((f) => ({ ...f, [key]: value }));
+        SetFilter((f) => ({ ...f, page: 1, [key]: value }));
     };
 
     return (

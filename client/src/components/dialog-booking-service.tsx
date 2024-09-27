@@ -232,7 +232,7 @@ export default function DialogBookingService({
     return (
         <Dialog open={open} onOpenChange={handleOpen}>
             <DialogTrigger>{trigger}</DialogTrigger>
-            <DialogContent>
+            <DialogContent className="">
                 <DialogHeader>
                     <DialogTitle>Thời gian và nhân viên phục vụ</DialogTitle>
                     <DialogDescription>
@@ -257,8 +257,8 @@ export default function DialogBookingService({
                                         variant="outline"
                                         type="button"
                                     >
-                                        {bookingDate
-                                            ? format(bookingDate, "yyyy/MM/dd")
+                                        {selectDate
+                                            ? format(selectDate, "yyyy/MM/dd")
                                             : "Ngày sử dụng dịch vụ"}
                                     </Button>
                                 }
@@ -266,10 +266,10 @@ export default function DialogBookingService({
                             />
                         </div>
                     </div>
-                    {bookingDate && workingHour && !workingHour.available && (
+                    {selectDate && workingHour && !workingHour.available && (
                         <div>
                             <p>
-                                {format(bookingDate, "yyyy/MM/dd")} Không khả
+                                {format(selectDate, "yyyy/MM/dd")} Không khả
                                 dụng
                             </p>
                         </div>
@@ -338,7 +338,7 @@ export default function DialogBookingService({
                             </div>
                         )}
                     {bookingShift && (
-                        <div>
+                        <div className="w-full">
                             <Label>
                                 Khung giờ
                                 <RequireField />

@@ -33,3 +33,12 @@ export const signupApi = async (body: IApiSignup) => {
 
     return apiRes;
 };
+
+/** @LOGOUT */
+export const logout = async () => {
+    const api = API_URLS.AUTH.LOGOUT();
+
+    const apiRes = await apiCall({ ...api });
+
+    return apiRes;
+};

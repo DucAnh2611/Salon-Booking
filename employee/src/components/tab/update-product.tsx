@@ -25,11 +25,13 @@ import { Form } from "../ui/form";
 
 interface IUpdateProductTabProps {
     detail: IProductInfo;
+    onSuccess: () => void;
 }
 
 export default function UpdateProductTab({
     form,
     detail,
+    onSuccess,
 }: Omit<IProductTabUpdateProps, "sessionId"> & IUpdateProductTabProps) {
     const dispatch = useAppDispatch();
     const { isUpdating, isFailure } = useAppSelector(productSelector);
@@ -145,7 +147,7 @@ export default function UpdateProductTab({
     useEffect(() => {
         if (submit && !isUpdating && !isFailure) {
             SetSubmit(false);
-            window.location.reload();
+            onSuccess();
         }
         if (submit && !isUpdating && isFailure) {
             SetSubmit(false);

@@ -1,6 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { ADMIN_ORDER_ROUTE, ROUTER } from '../../../common/constant/router.constant';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { TargetActionRequire } from '../../../shared/decorator/permission.decorator';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
@@ -19,14 +19,14 @@ export class OrderAdminController {
 
     @Post(ADMIN_ORDER_ROUTE.LIST)
     @TargetActionRequire([])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     getOrderProduct(@Body() body: FindOrderAdminDto) {
         return this.orderAdminService.orderList(body);
     }
 
     @Get(ADMIN_ORDER_ROUTE.DETAIL)
     @TargetActionRequire([])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     getOrderProductDetail(@Param() param: GetOrderParamDto) {
         const { id } = param;
 
@@ -34,7 +34,7 @@ export class OrderAdminController {
     }
     @Get(ADMIN_ORDER_ROUTE.STATE)
     @TargetActionRequire([])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     trackingState(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { id: orderId } = param;
 
@@ -43,7 +43,7 @@ export class OrderAdminController {
 
     @Get(ADMIN_ORDER_ROUTE.PRODUCT)
     @TargetActionRequire([])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     trackingProducts(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { id: orderId } = param;
 
@@ -52,7 +52,7 @@ export class OrderAdminController {
 
     @Get(ADMIN_ORDER_ROUTE.SERVICE)
     @TargetActionRequire([])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     trackingServices(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { id: orderId } = param;
 
@@ -61,7 +61,7 @@ export class OrderAdminController {
 
     @Get(ADMIN_ORDER_ROUTE.REFUND)
     @TargetActionRequire([])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     trackingRefunds(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { id: orderId } = param;
 
@@ -70,7 +70,7 @@ export class OrderAdminController {
 
     @Get(ADMIN_ORDER_ROUTE.TRANSACTION)
     @TargetActionRequire([])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     trackingTransaction(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { id: orderId } = param;
 
@@ -79,7 +79,7 @@ export class OrderAdminController {
 
     @Get(ADMIN_ORDER_ROUTE.ORDER_STATE_LIST)
     @TargetActionRequire([])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     orderStateList(@Req() req: AppRequest, @Query() query: GetOrderStateListQueryDto) {
         const { type } = query;
 
@@ -88,7 +88,7 @@ export class OrderAdminController {
 
     @Put(ADMIN_ORDER_ROUTE.UPDATE_ORDER_STATE)
     @TargetActionRequire([])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     updateOrderState(@Req() req: AppRequest, @Body() body: StaffUpdateOrderStateDto) {
         const { userId } = req.accessPayload;
 
@@ -97,7 +97,7 @@ export class OrderAdminController {
 
     @Post(ADMIN_ORDER_ROUTE.APPROVE_ORDER_REFUND)
     @TargetActionRequire([])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     approveOrderRefund(@Req() req: AppRequest, @Body() body: ApprovedRefundRequestDto) {
         const { userId } = req.accessPayload;
 
@@ -106,7 +106,7 @@ export class OrderAdminController {
 
     @Post(ADMIN_ORDER_ROUTE.DECLINE_ORDER_REFUND)
     @TargetActionRequire([])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     declineOrderRefund(@Req() req: AppRequest, @Body() body: DeclineRefundRequestDto) {
         const { userId } = req.accessPayload;
 
@@ -115,7 +115,7 @@ export class OrderAdminController {
 
     @Get(ADMIN_ORDER_ROUTE.CREATE_OR_PAYMENT)
     @TargetActionRequire([])
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     createQrPayment(@Req() req: AppRequest, @Param() param: GetRequestRefundParamDto) {
         const { userId } = req.accessPayload;
         const { id } = param;

@@ -1,7 +1,7 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { ROUTER, WORKING_HOUR_ROUTE } from '../../../common/constant/router.constant';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { TargetActionRequire } from '../../../shared/decorator/permission.decorator';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
@@ -20,7 +20,7 @@ export class WorkingHourAdminController {
     constructor(private readonly workingHourService: WorkingHourService) {}
 
     @Get(WORKING_HOUR_ROUTE.FIND)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.WORKING_HOUR,
@@ -32,7 +32,7 @@ export class WorkingHourAdminController {
     }
 
     @Get(WORKING_HOUR_ROUTE.DETAIL)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.WORKING_HOUR,
@@ -46,7 +46,7 @@ export class WorkingHourAdminController {
     }
 
     @Post(WORKING_HOUR_ROUTE.CREATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.WORKING_HOUR,
@@ -61,7 +61,7 @@ export class WorkingHourAdminController {
     }
 
     @Get(WORKING_HOUR_ROUTE.TOGGLE_OFF)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.WORKING_HOUR,
@@ -76,7 +76,7 @@ export class WorkingHourAdminController {
     }
 
     @Put(WORKING_HOUR_ROUTE.UPDATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.WORKING_HOUR,
@@ -91,7 +91,7 @@ export class WorkingHourAdminController {
     }
 
     @Delete(WORKING_HOUR_ROUTE.DELETE_ONE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.WORKING_HOUR,
@@ -105,7 +105,7 @@ export class WorkingHourAdminController {
     }
 
     @Delete(WORKING_HOUR_ROUTE.DELETE_MANY)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.WORKING_HOUR,

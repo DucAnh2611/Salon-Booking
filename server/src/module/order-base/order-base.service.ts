@@ -176,7 +176,12 @@ export class OrderBaseService {
 
         await this.orderBaseRepository.update(
             { id: orderId },
-            { paid: true, status: OrderStatusEnum.PAID_PAYMENT, totalPaid: paidAmount, updatedBy: userId },
+            {
+                paid: true,
+                status: OrderStatusEnum.PAID_PAYMENT,
+                totalPaid: paidAmount,
+                updatedBy: userId,
+            },
         );
 
         return DataSuccessCodeEnum.OK;

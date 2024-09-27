@@ -1,6 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID } from 'class-validator';
 import { GenderEnum } from '../../../common/enum/gender.enum';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 
 export class CreateUserDto {
     @IsOptional()
@@ -32,5 +33,5 @@ export class CreateUserDto {
     @IsUUID('all')
     avatar?: string;
 
-    roleId?: string;
+    type?: UserTypeEnum;
 }

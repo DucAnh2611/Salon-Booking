@@ -30,8 +30,6 @@ export class PermissionGuard implements CanActivate {
 
         if (accessPayload.eRoleId) {
             tempRole = await this.roleService.getById(accessPayload.eRoleId);
-        } else {
-            tempRole = await this.roleService.getById(accessPayload.uRoleId);
         }
 
         if (!tempRole) {

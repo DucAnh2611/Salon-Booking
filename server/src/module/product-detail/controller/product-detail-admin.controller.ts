@@ -1,7 +1,7 @@
 import { Body, Controller, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
-import { ROLE_TITLE } from '../../../common/constant/role.constant';
 import { PRODUCT_DETAIL_ROUTE, ROUTER } from '../../../common/constant/router.constant';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
+import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { TargetActionRequire } from '../../../shared/decorator/permission.decorator';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
@@ -19,7 +19,7 @@ export class ProductDetailAdminController {
     constructor(private readonly productDetailService: ProductDetailService) {}
 
     @Post(PRODUCT_DETAIL_ROUTE.CREATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.PRODUCT,
@@ -35,7 +35,7 @@ export class ProductDetailAdminController {
     }
 
     @Put(PRODUCT_DETAIL_ROUTE.UPDATE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.PRODUCT,
@@ -51,7 +51,7 @@ export class ProductDetailAdminController {
     }
 
     @Put(PRODUCT_DETAIL_ROUTE.DELETE_ONE)
-    @UserType(ROLE_TITLE.staff)
+    @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([
         {
             target: PermissionTargetEnum.PRODUCT,
