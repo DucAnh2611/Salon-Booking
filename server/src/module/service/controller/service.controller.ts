@@ -19,6 +19,12 @@ export class ServiceController {
         return this.serviceService.detail(id);
     }
 
+    @Get(CLIENT_SERVICE_ROUTE.RELATED)
+    related(@Param() param: GetServiceParamDto) {
+        const { id } = param;
+        return this.serviceService.related(id);
+    }
+
     @Post(CLIENT_SERVICE_ROUTE.FIND)
     find(@Body() body: FindServiceBaseDto) {
         return this.serviceService.find(body);

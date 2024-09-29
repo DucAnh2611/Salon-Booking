@@ -62,7 +62,7 @@ export default function ProductDetailMedia({
                                         })}
                                         width={500}
                                         height={300}
-                                        className="w-full h-full object-cover"
+                                        className="w-full h-full object-contain"
                                     />
                                 ) : (
                                     <video
@@ -75,6 +75,7 @@ export default function ProductDetailMedia({
                                         })}
                                         controls={false}
                                         autoPlay
+                                        className="w-full h-full object-contain"
                                     />
                                 )}
                             </div>
@@ -90,7 +91,7 @@ export default function ProductDetailMedia({
                 {medias[select].media && (
                     <div
                         className={cn(
-                            "w-full h-full overflow-hidden cursor-pointer opacity-100 duration-100 box-border bg-muted relative rounded-md "
+                            "w-full h-full overflow-hidden cursor-pointer opacity-100 duration-100 box-border bg-muted relative rounded-md border"
                         )}
                     >
                         {medias.length > 1 && (
@@ -125,7 +126,7 @@ export default function ProductDetailMedia({
                                 })}
                                 width={1000}
                                 height={1000}
-                                className="w-full h-full object-cover"
+                                className="w-full h-full object-contain"
                             />
                         ) : (
                             <video
@@ -138,6 +139,7 @@ export default function ProductDetailMedia({
                                 })}
                                 controls={false}
                                 autoPlay
+                                className="w-full h-full object-contain"
                             />
                         )}
                     </div>

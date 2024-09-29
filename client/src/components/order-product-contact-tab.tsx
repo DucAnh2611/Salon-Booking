@@ -105,7 +105,7 @@ export default function OrderProductContactTab({
                                     <Input
                                         {...field}
                                         placeholder="Địa chỉ nhận hàng"
-                                        className="text-left"
+                                        className="text-left cursor-pointer"
                                     />
                                 }
                             />

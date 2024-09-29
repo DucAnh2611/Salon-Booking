@@ -7,18 +7,18 @@ import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { appConfig } from '../../../config/app.config';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
 import { BadRequest } from '../../../shared/exception/error.exception';
-import { AccessTokenGuard } from '../../../shared/guard/accessToken.guard';
+import { AccessTokenClientGuard } from '../../../shared/guard/accessToken.guard';
 import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
-import { ClientService } from '../client.service';
 import { ClientOTPDto, ClientOTPTokenDto } from '../dto/client-otp.dto';
+import { ClientService } from '../service/client.service';
 
 @Controller(ROUTER.CLIENT)
 export class ClientVerifyController {
     constructor(private readonly clientService: ClientService) {}
 
     @Get(CLIENT_ROUTE.VERIFY_EMAIL)
+    @UseGuards(AccessTokenClientGuard, UserTypeGuard)
     @UserType(UserTypeEnum.CLIENT)
-    @UseGuards(AccessTokenGuard, UserTypeGuard)
     async verifyEmail(@Req() req: AppRequest) {
         const { email } = req.accessPayload;
         if (!email) {
@@ -28,8 +28,8 @@ export class ClientVerifyController {
     }
 
     @Post(CLIENT_ROUTE.VERIFY_EMAIL_OTP)
+    @UseGuards(AccessTokenClientGuard, UserTypeGuard)
     @UserType(UserTypeEnum.CLIENT)
-    @UseGuards(AccessTokenGuard, UserTypeGuard)
     async verifyOTPEmail(@Body() body: ClientOTPDto, @Req() req: AppRequest) {
         const { otp } = body;
         const { email } = req.accessPayload;
@@ -44,7 +44,7 @@ export class ClientVerifyController {
         return this.clientService.verifyEmailOTP({ email, otp });
     }
 
-    @Get(CLIENT_ROUTE.VERIFY_EMAIL_OTP)
+    @Get(CLIENT_ROUTE.VERIFY_EMAIL_URL)
     async getOTPToken(@Query() query: ClientOTPTokenDto, @Res() res: Response) {
         const { token } = query;
         if (!token) {

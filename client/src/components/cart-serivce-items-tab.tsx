@@ -2,6 +2,7 @@ import useCartService from "@/hook/useCartService.hook";
 import { IServiceItemCart } from "@/interface/service.interface";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { Trash } from "lucide-react";
+import CartServiceItem from "./cart-service-item";
 import DialogDeleteItemServiceCart from "./dialog-delete-item-service-cart";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
@@ -76,7 +77,7 @@ export default function CartServiceItemTab() {
             <div className="flex flex-col w-full h-fit gap-2">
                 {cart.services.map((serviceItem) => (
                     <div key={serviceItem.id} className="border">
-                        <div className="flex justify-between w-full border-b p-3 box-border py-4">
+                        <div className="flex justify-between w-full border-b p-2 box-border">
                             <div className="flex gap-2 items-center">
                                 <Checkbox
                                     id={serviceItem.id}
@@ -103,9 +104,8 @@ export default function CartServiceItemTab() {
                                 />
                             </div>
                         </div>
-                        <div className="p-3 box-border w-full ">
-                            <div>Product Id: {serviceItem.service.id}</div>
-                            <div>Product Id: {serviceItem.service.name}</div>
+                        <div>
+                            <CartServiceItem serviceItem={serviceItem} />
                         </div>
                     </div>
                 ))}

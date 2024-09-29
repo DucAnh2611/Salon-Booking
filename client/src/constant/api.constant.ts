@@ -94,6 +94,15 @@ export const API_URLS = {
             endPoint: "product-client/feature",
             withCredentials: true,
         }),
+        RELATED: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["product-client", "related", id],
+            }),
+            withCredentials: true,
+        }),
         DETAIL: (id: string) => ({
             method: "GET",
             headers: HEADERS.header(),
@@ -147,6 +156,15 @@ export const API_URLS = {
             endPoint: joinString({
                 joinString: "/",
                 strings: ["service-client"],
+            }),
+            withCredentials: true,
+        }),
+        RELATED: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["service-client", "related", id],
             }),
             withCredentials: true,
         }),

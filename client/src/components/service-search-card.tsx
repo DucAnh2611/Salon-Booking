@@ -1,4 +1,4 @@
-import { ISerivceItemSearch } from "@/interface/service.interface";
+import { IServiceItemSearch } from "@/interface/service.interface";
 import { formatMoney } from "@/lib/money";
 import { joinString } from "@/lib/string";
 import Link from "next/link";
@@ -7,16 +7,16 @@ import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 
 interface IServiceSearchCard {
-    service: ISerivceItemSearch;
+    service: IServiceItemSearch;
 }
 
 export default function ServiceSearchCard({ service }: IServiceSearchCard) {
     return (
-        <Card className="w-full h-full box-border p-3 cursor-pointer group hover:bg-muted">
+        <Card className="w-full h-full box-border p-3 group hover:bg-muted">
             <div className="w-full h-full flex flex-col gap-2">
                 <div className="w-full flex-1 overflow-hidden border rounded  relative">
                     <div className="group-hover:scale-110 duration-100 w-full h-full">
-                        <ThumbnailMedia medias={service.serviceMedia} />
+                        <ThumbnailMedia medias={service.media} />
                     </div>
                     <div className="absolute left-0 top-0 flex gap-2 w-full justify-between p-2 box-border">
                         {service.stepCounts ? (

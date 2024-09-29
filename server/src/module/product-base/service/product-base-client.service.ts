@@ -1,11 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Not, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
 import { SortByEnum } from '../../../common/enum/query.enum';
 import { BadRequest } from '../../../shared/exception/error.exception';
 import { CategoryService } from '../../category/category.service';
-import { MediaService } from '../../media/service/media.service';
 import { OrderProductItemEntity } from '../../order-product-item/entity/order-product-item.entity';
 import { ProductMediaService } from '../../product-media/product-media.service';
 import { ProductTypesEntity } from '../../product-types/entity/product-types.entity';
@@ -19,14 +18,12 @@ export class ProductBaseClientService {
         @InjectRepository(ProductBaseEntity) private readonly productBaseRepository: Repository<ProductBaseEntity>,
         @InjectRepository(ProductTypesEntity) private readonly productTypesRepository: Repository<ProductTypesEntity>,
         private readonly categoryService: CategoryService,
-        private readonly mediaService: MediaService,
         private readonly productMediaService: ProductMediaService,
     ) {}
 
     isValid(id: string) {
         return this.productBaseRepository.findOne({ where: { id }, loadEagerRelations: false });
     }
-
     async featured() {
         const items = await this.productBaseRepository.find({
             where: {},
@@ -68,8 +65,37 @@ export class ProductBaseClientService {
         return { quantity: product.quantity };
     }
 
-    relatedProduct(id: string) {
-        return [];
+    async relatedProduct(relatedCategoryIds: string[], productId?: string) {
+        const related = await this.productBaseRepository.find({
+            where: {
+                ...(productId ? { id: Not(productId) } : {}),
+                ...(relatedCategoryIds.length ? { categoryId: In(relatedCategoryIds) } : {}),
+            },
+            loadEagerRelations: false,
+            relations: {
+                types: true,
+                productMedia: {
+                    media: true,
+                },
+            },
+            take: 10,
+            skip: 0,
+        });
+
+        const mapMedia = await Promise.all(
+            related.map(async item => {
+                const media = await this.productMediaService.getListDetailForProduct(item.id);
+                const buyingCounts = await this.orderProductItemRepository.sum('quantity', { productId: item.id });
+
+                return {
+                    ...item,
+                    productMedia: media,
+                    buyingCounts,
+                };
+            }),
+        );
+
+        return mapMedia;
     }
 
     async detail(id: string) {

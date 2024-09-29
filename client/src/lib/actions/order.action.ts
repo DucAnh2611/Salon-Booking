@@ -12,6 +12,7 @@ import {
 } from "@/interface/order.interface";
 import { IProductItemOrder } from "@/interface/product.interface";
 import { IRefundOrder } from "@/interface/refund.interface";
+import { IserviceItemOrder } from "@/interface/service.interface";
 import { ITransactionOrder } from "@/interface/transaction.interface";
 import { apiCall } from "../apiCall";
 
@@ -86,7 +87,7 @@ export const trackingOrderProduct = async (id: string) => {
 export const trackingOrderService = async (id: string) => {
     const api = API_URLS.ORDER.TRACKING_SERVICE(id);
 
-    const resApi = await apiCall({
+    const resApi = await apiCall<IserviceItemOrder[]>({
         ...api,
     });
 

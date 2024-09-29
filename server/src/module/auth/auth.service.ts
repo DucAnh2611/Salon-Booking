@@ -8,8 +8,8 @@ import { jwtConfig } from '../../config/jwt.config';
 import { BadRequest, InternalServer } from '../../shared/exception/error.exception';
 import { HashPasswordUtil } from '../../shared/utils/hash-password.utils';
 import { JwtTokenUtil } from '../../shared/utils/token.utils';
-import { ClientService } from '../client/client.service';
 import { RegisterClientDto } from '../client/dto/client-create.dto';
+import { ClientService } from '../client/service/client.service';
 import { EmployeeEntity } from '../employee/entity/employee.entity';
 import { MailService } from '../mail/mail.service';
 import { RoleService } from '../role/role.service';
@@ -68,6 +68,10 @@ export class AuthService {
     async clientLogin(emp: LoginClientDto) {
         const findClient = await this.clientService.findByEmail(emp.email);
         if (!findClient) throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST });
+
+        if (findClient.lockAccount) {
+            throw new BadRequest({ message: DataErrorCodeEnum.ACCOUNT_LOCK });
+        }
 
         const userInfo = await this.userService.findOneById(findClient.userId);
 

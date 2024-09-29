@@ -1,3 +1,4 @@
+import { EServiceEmployeeExperience } from "@/enum/shift-employee.enum";
 import { EShiftEmployeeStatus } from "@/enum/shift.enum";
 import { IUserBase } from "./user.interface";
 
@@ -13,4 +14,5 @@ export interface IEmployeeShift {
     employee: IEmployee;
 
     status: EShiftEmployeeStatus;
+    experience: EServiceEmployeeExperience;
 }

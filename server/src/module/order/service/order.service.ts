@@ -657,7 +657,7 @@ export class OrderService {
             (order.status === OrderStatusEnum.PAID_PAYMENT || order.status === OrderStatusEnum.PENDING);
 
         return {
-            cancelable: CAN_CANCEL_LIST.includes(order.status) && !isPendingTransaction,
+            cancelable: [...CAN_CANCEL_LIST, OrderStatusEnum.CONFIRMED].includes(order.status) && !isPendingTransaction,
             returnable: CAN_RETURN_LIST.includes(order.status) && order.type === OrderType.PRODUCT,
             receivable: order.type === OrderType.PRODUCT && order.status === OrderStatusEnum.SHIPPED,
             createPayment:

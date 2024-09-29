@@ -11,10 +11,13 @@ import { ScheduleModule as CronModule } from '@nestjs/schedule';
 import { AttributeModule } from './module/attribute/attribute.module';
 import { CartModule } from './module/cart/cart.module';
 import { CategoryModule } from './module/category/category.module';
+import { ClientModule } from './module/client/client.module';
 import { EmployeeModule } from './module/employee/employee.module';
 import { I18nAppModule } from './module/i18n/i18n.module';
 import { AppLoggerModule } from './module/logger/logger.module';
 import { AppLoggerService } from './module/logger/logger.service';
+import { MailModule } from './module/mail/mail.module';
+import { MailerAppModule } from './module/mailer/mailer.module';
 import { MediaModule } from './module/media/media.module';
 import { OrderModule } from './module/order/order.module';
 import { PermissionModule } from './module/permission/permission.module';
@@ -32,6 +35,8 @@ import { AppResponseInterceptor } from './shared/interceptor';
         ConfigModule.forRoot({ isGlobal: true }),
         CronModule.forRoot(),
         I18nAppModule,
+        MailerAppModule,
+        MailModule,
 
         // RedisModule,
         DatabaseModule,
@@ -40,6 +45,7 @@ import { AppResponseInterceptor } from './shared/interceptor';
 
         MediaModule,
 
+        ClientModule,
         AuthModule,
         RoleModule,
         RolePermissionModule,

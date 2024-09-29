@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { EmployeeService } from '../employee/employee.service';
 import { ServiceBaseService } from '../service-base/service-base.service';
@@ -24,6 +25,23 @@ export class ServiceEmployeeService {
 
     listByServiceId(serviceId: string) {
         return this.serviceEmployeeRepository.find({ where: { serviceId }, loadEagerRelations: false });
+    }
+
+    getSnapShot(serviceId: string, employeeId: string) {
+        return this.serviceEmployeeRepository.findOne({
+            where: { serviceId, employeeId },
+            loadEagerRelations: false,
+            relations: {
+                employee: {
+                    userBase: {
+                        userAvatar: true,
+                    },
+                },
+            },
+            order: {
+                experience: SortByEnum.ASC,
+            },
+        });
     }
 
     async detailByServiceId(serviceId: string) {

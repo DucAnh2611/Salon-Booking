@@ -10,13 +10,12 @@ import {
     getShiftBookingTime,
     getShiftEmployeeBooking,
 } from "@/lib/actions/shift.action";
-import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ReactNode, useEffect, useState } from "react";
 import DatePicker from "./date-picker";
 import RequireField from "./required-field";
+import ShiftEmployeeCard from "./shift-employee-card";
 import { Button } from "./ui/button";
-import { Card } from "./ui/card";
 import {
     Dialog,
     DialogContent,
@@ -232,215 +231,229 @@ export default function DialogBookingService({
     return (
         <Dialog open={open} onOpenChange={handleOpen}>
             <DialogTrigger>{trigger}</DialogTrigger>
-            <DialogContent className="">
-                <DialogHeader>
-                    <DialogTitle>Thời gian và nhân viên phục vụ</DialogTitle>
-                    <DialogDescription>
-                        Chọn thời gian và nhân viên phục vụ, nếu trong thời gian
-                        bạn chọn không có nhân viên nào, vui lòng thử lại ở thời
-                        gian khác
-                    </DialogDescription>
-                </DialogHeader>
-                <div className="flex flex-col w-full gap-2">
-                    <div className="">
-                        <Label>
-                            Ngày
-                            <RequireField />
-                        </Label>
-                        <div>
-                            <DatePicker
-                                value={bookingDate}
-                                onChange={handleSelectDate}
-                                trigger={
-                                    <Button
-                                        className="w-full text-left justify-start"
-                                        variant="outline"
-                                        type="button"
-                                    >
-                                        {selectDate
-                                            ? format(selectDate, "yyyy/MM/dd")
-                                            : "Ngày sử dụng dịch vụ"}
-                                    </Button>
-                                }
-                                fromDate={new Date()}
-                            />
+            <DialogContent className="box-border max-w-none w-fit">
+                <div className=" w-[400px]">
+                    <DialogHeader className="">
+                        <DialogTitle>
+                            Thời gian và nhân viên phục vụ
+                        </DialogTitle>
+                        <DialogDescription>
+                            Chọn thời gian và nhân viên phục vụ, nếu trong thời
+                            gian bạn chọn không có nhân viên nào, vui lòng thử
+                            lại ở thời gian khác
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div className="flex flex-col w-full gap-2">
+                        <div className="w-full">
+                            <Label>
+                                Ngày
+                                <RequireField />
+                            </Label>
+                            <div>
+                                <DatePicker
+                                    value={bookingDate}
+                                    onChange={handleSelectDate}
+                                    trigger={
+                                        <Button
+                                            className="w-full text-left justify-start"
+                                            variant="outline"
+                                            type="button"
+                                        >
+                                            {selectDate
+                                                ? format(
+                                                      selectDate,
+                                                      "yyyy/MM/dd"
+                                                  )
+                                                : "Ngày sử dụng dịch vụ"}
+                                        </Button>
+                                    }
+                                    fromDate={new Date()}
+                                />
+                            </div>
                         </div>
-                    </div>
-                    {selectDate && workingHour && !workingHour.available && (
-                        <div>
-                            <p>
-                                {format(selectDate, "yyyy/MM/dd")} Không khả
-                                dụng
-                            </p>
-                        </div>
-                    )}
-                    {workingHour && workingHour.isOff && (
-                        <div>
-                            <p>
-                                {format(workingHour.date, "yyyy/MM/dd")} là ngày
-                                nghỉ
-                            </p>
-                        </div>
-                    )}
-                    {workingHour &&
-                        workingHour.available &&
-                        !workingHour.isOff && (
-                            <div className="">
+                        {selectDate &&
+                            workingHour &&
+                            !workingHour.available && (
+                                <div>
+                                    <p>
+                                        {format(selectDate, "yyyy/MM/dd")} Không
+                                        khả dụng
+                                    </p>
+                                </div>
+                            )}
+                        {workingHour && workingHour.isOff && (
+                            <div>
+                                <p>
+                                    {format(workingHour.date, "yyyy/MM/dd")} là
+                                    ngày nghỉ
+                                </p>
+                            </div>
+                        )}
+                        {workingHour &&
+                            workingHour.available &&
+                            !workingHour.isOff && (
+                                <div className="">
+                                    <Label>
+                                        Ca làm
+                                        <RequireField />
+                                    </Label>
+                                    <div>
+                                        {!workingHour.shifts.length &&
+                                            !loading && (
+                                                <div>
+                                                    <p>
+                                                        Ngày{" "}
+                                                        {format(
+                                                            workingHour.date,
+                                                            "yyyy/MM/dd"
+                                                        )}{" "}
+                                                        không có ca làm nào
+                                                    </p>
+                                                </div>
+                                            )}
+                                        {!!workingHour.shifts.length && (
+                                            <div className="flex w-full overflow-x-auto gap-2">
+                                                {workingHour.shifts.map(
+                                                    (shift) => (
+                                                        <div key={shift.id}>
+                                                            <Button
+                                                                variant={
+                                                                    bookingShift &&
+                                                                    bookingShift.id ===
+                                                                        shift.id
+                                                                        ? "default"
+                                                                        : "outline"
+                                                                }
+                                                                onClick={handleSelectShift(
+                                                                    shift
+                                                                )}
+                                                                type="button"
+                                                            >
+                                                                {format(
+                                                                    shift.start,
+                                                                    "HH:mm"
+                                                                )}{" "}
+                                                                -{" "}
+                                                                {format(
+                                                                    shift.end,
+                                                                    "HH:mm"
+                                                                )}
+                                                            </Button>
+                                                        </div>
+                                                    )
+                                                )}
+                                            </div>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+                        {bookingShift && (
+                            <div className="w-full">
                                 <Label>
-                                    Ca làm
+                                    Khung giờ
                                     <RequireField />
                                 </Label>
-                                <div>
-                                    {!workingHour.shifts.length && !loading && (
-                                        <div>
-                                            <p>
-                                                Ngày{" "}
-                                                {format(
-                                                    workingHour.date,
-                                                    "yyyy/MM/dd"
-                                                )}{" "}
-                                                không có ca làm nào
-                                            </p>
-                                        </div>
-                                    )}
-                                    {!!workingHour.shifts.length && (
-                                        <div className="flex w-full overflow-x-auto gap-2">
-                                            {workingHour.shifts.map((shift) => (
-                                                <div key={shift.id}>
-                                                    <Button
-                                                        variant={
-                                                            bookingShift &&
-                                                            bookingShift.id ===
-                                                                shift.id
-                                                                ? "default"
-                                                                : "outline"
-                                                        }
-                                                        onClick={handleSelectShift(
-                                                            shift
-                                                        )}
-                                                        type="button"
-                                                    >
-                                                        {format(
-                                                            shift.start,
-                                                            "HH:mm"
-                                                        )}{" "}
-                                                        -{" "}
-                                                        {format(
-                                                            shift.end,
-                                                            "HH:mm"
-                                                        )}
-                                                    </Button>
-                                                </div>
-                                            ))}
-                                        </div>
+                                <div className="w-full overflow-hidden overflow-x-auto">
+                                    <div className="grid grid-flow-col grid-rows-3 w-fit gap-2">
+                                        {timeSlot.map((slot) => (
+                                            <div key={slot.getTime()}>
+                                                <Button
+                                                    variant={
+                                                        selectTime &&
+                                                        selectTime === slot
+                                                            ? "default"
+                                                            : "outline"
+                                                    }
+                                                    onClick={handleSelectBookingTime(
+                                                        slot
+                                                    )}
+                                                    type="button"
+                                                    disabled={
+                                                        format(
+                                                            slot,
+                                                            "yyyy/MM/dd"
+                                                        ) ===
+                                                            format(
+                                                                new Date(),
+                                                                "yyyy/MM/dd"
+                                                            ) &&
+                                                        timeInvalidCurrent(slot)
+                                                    }
+                                                >
+                                                    {format(slot, "HH:mm")}
+                                                </Button>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            </div>
+                        )}
+                        {selectDate && bookingShift && (
+                            <div>
+                                <Label>
+                                    Nhân viên
+                                    <RequireField />
+                                </Label>
+                                <div className="w-full flex gap-2 overflow-x-auto">
+                                    {!!shiftEmployee.length ? (
+                                        shiftEmployee.map((emp) => (
+                                            <div
+                                                className="h-fit w-1/2 overflow-hidden cursor-pointer duration-150 active:scale-95"
+                                                key={
+                                                    emp.employeeId + emp.shiftId
+                                                }
+                                                onClick={handleSelectEmployee(
+                                                    emp
+                                                )}
+                                            >
+                                                <ShiftEmployeeCard
+                                                    employee={emp}
+                                                    isSelect={
+                                                        !!bookingEmployee &&
+                                                        bookingEmployee.employeeId ===
+                                                            emp.employeeId
+                                                    }
+                                                />
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <p className="text-xs text-muted-foreground text-center w-full p-4">
+                                            Không có nhân viên phù hợp với
+                                            khoảng thời gian được chọn
+                                        </p>
                                     )}
                                 </div>
                             </div>
                         )}
-                    {bookingShift && (
-                        <div className="w-full">
-                            <Label>
-                                Khung giờ
-                                <RequireField />
-                            </Label>
-                            <div className="w-full overflow-hidden overflow-x-auto">
-                                <div className="grid grid-flow-col grid-rows-3 w-fit gap-2">
-                                    {timeSlot.map((slot) => (
-                                        <div key={slot.getTime()}>
-                                            <Button
-                                                variant={
-                                                    selectTime &&
-                                                    selectTime === slot
-                                                        ? "default"
-                                                        : "outline"
-                                                }
-                                                onClick={handleSelectBookingTime(
-                                                    slot
-                                                )}
-                                                type="button"
-                                                disabled={
-                                                    format(
-                                                        slot,
-                                                        "yyyy/MM/dd"
-                                                    ) ===
-                                                        format(
-                                                            new Date(),
-                                                            "yyyy/MM/dd"
-                                                        ) &&
-                                                    timeInvalidCurrent(slot)
-                                                }
-                                            >
-                                                {format(slot, "HH:mm")}
-                                            </Button>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    )}
-                    {!!shiftEmployee.length && (
-                        <div>
-                            <Label>
-                                Nhân viên
-                                <RequireField />
-                            </Label>
-                            <div className="w-full flex gap-2 overflow-x-auto">
-                                {shiftEmployee.map((emp) => (
-                                    <div
-                                        className="h-[200px] w-[120px] overflow-hidden cursor-pointer"
-                                        key={emp.employeeId + emp.shiftId}
-                                        onClick={handleSelectEmployee(emp)}
-                                    >
-                                        <Card
-                                            className={cn(
-                                                "w-full h-full",
-                                                bookingEmployee &&
-                                                    bookingEmployee.employeeId ===
-                                                        emp.employeeId &&
-                                                    "border-primary"
-                                            )}
-                                        >
-                                            <p>
-                                                {
-                                                    emp.employee.userBase
-                                                        .firstname
-                                                }
-                                                {emp.employee.userBase.lastname}
-                                            </p>
-                                        </Card>
-                                    </div>
-                                ))}
-                            </div>
-                        </div>
-                    )}
-                </div>
-                <DialogFooter>
-                    <div className="flex w-full justify-end gap-2">
-                        <Button
-                            onClick={() => {
-                                handleOpen(false);
-                            }}
-                            variant="outline"
-                            type="button"
-                        >
-                            Hủy
-                        </Button>
-                        <Button
-                            onClick={handleConfirm}
-                            disabled={
-                                !(
-                                    bookingDate &&
-                                    bookingEmployee &&
-                                    bookingEmployee &&
-                                    bookingShift
-                                )
-                            }
-                            type="button"
-                        >
-                            Xác nhận
-                        </Button>
                     </div>
-                </DialogFooter>
+                    <DialogFooter>
+                        <div className="flex w-full justify-end gap-2">
+                            <Button
+                                onClick={() => {
+                                    handleOpen(false);
+                                }}
+                                variant="outline"
+                                type="button"
+                            >
+                                Hủy
+                            </Button>
+                            <Button
+                                onClick={handleConfirm}
+                                disabled={
+                                    !(
+                                        bookingDate &&
+                                        bookingEmployee &&
+                                        bookingEmployee &&
+                                        bookingShift
+                                    )
+                                }
+                                type="button"
+                            >
+                                Xác nhận
+                            </Button>
+                        </div>
+                    </DialogFooter>
+                </div>
             </DialogContent>
         </Dialog>
     );

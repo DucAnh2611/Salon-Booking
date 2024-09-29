@@ -14,7 +14,7 @@ export default async function ProductDetail({ id }: { id: string }) {
     if (!product.base) return <></>;
 
     return (
-        <div className="space-y-5">
+        <div className="space-y-6">
             <Card className="grid grid-cols-2 gap-8 p-4">
                 <div className="col-span-1">
                     <ProductDetailMedia medias={product.base.productMedia} />
@@ -26,6 +26,7 @@ export default async function ProductDetail({ id }: { id: string }) {
                     <p className="text-muted-foreground w-full">
                         {product.base.description}
                     </p>
+
                     <div>
                         <ProductTypeSelect product={product} />
                     </div>

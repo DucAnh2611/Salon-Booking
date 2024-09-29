@@ -5,11 +5,11 @@ import { IServiceItemCartBooking } from "@/interface/service.interface";
 import { IApiCheckOverlapServiceEmployeeItem } from "@/interface/shift.interface";
 import { checkOverlapServiceEmployee } from "@/lib/actions/shift.action";
 import { placeOrderServiceSchema } from "@/schema/order.schema";
-import { format } from "date-fns";
 import { useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
 import { z } from "zod";
 import DialogBookingService from "./dialog-booking-service";
+import OrderServiceItem from "./order-service-item";
 import { Button } from "./ui/button";
 import { FormField, FormMessage } from "./ui/form";
 import { Label } from "./ui/label";
@@ -81,7 +81,7 @@ export default function OrderServiceItemTab({
                         {selectItems.length &&
                             selectBookingItems.map((serviceItem) => (
                                 <div key={serviceItem.id} className="border">
-                                    <div className="gap-2 w-full border-b p-3 box-border py-4 flex justify-between items-center">
+                                    <div className="gap-2 w-full border-b p-2 box-border flex justify-between items-center">
                                         <Label>
                                             {serviceItem.service.name}
                                         </Label>
@@ -99,40 +99,9 @@ export default function OrderServiceItemTab({
                                         />
                                     </div>
                                     <div>
-                                        <p>{serviceItem.service.name}</p>
-                                        <p>{serviceItem.service.price}</p>
-                                        <p>
-                                            Thời lượng:{" "}
-                                            {serviceItem.service.duration} phút
-                                        </p>
-                                    </div>
-                                    <div>
-                                        {serviceItem.bookingTime ? (
-                                            <p>
-                                                {format(
-                                                    serviceItem.bookingTime,
-                                                    "yyyy/MM/dd HH:mm"
-                                                )}
-                                            </p>
-                                        ) : (
-                                            <p>Chưa chọn ngày</p>
-                                        )}
-                                        {serviceItem.employee ? (
-                                            <p>
-                                                {
-                                                    serviceItem.employee
-                                                        .employee.userBase
-                                                        .firstname
-                                                }{" "}
-                                                {
-                                                    serviceItem.employee
-                                                        .employee.userBase
-                                                        .lastname
-                                                }
-                                            </p>
-                                        ) : (
-                                            <p>Chưa chọn Nhân viên</p>
-                                        )}
+                                        <OrderServiceItem
+                                            serviceItem={serviceItem}
+                                        />
                                     </div>
                                 </div>
                             ))}

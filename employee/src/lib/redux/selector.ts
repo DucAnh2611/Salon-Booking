@@ -36,3 +36,5 @@ export const orderStateSelector = (state: TRootState) =>
 
 export const orderRefundSelector = (state: TRootState) =>
     state.orderRefundReducer;
+
+export const clientSelector = (state: TRootState) => state.clientReducer;

@@ -5,6 +5,7 @@ import { IServiceDetail } from "@/interface/service.interface";
 import { addServiceCart } from "@/lib/actions/cart.action";
 import { addServiceToCart } from "@/schema/cart.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { Landmark, ShoppingCart, Undo2 } from "lucide-react";
 import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -56,8 +57,24 @@ export default function AddServiceCart({ service }: IAddServiceCartProps) {
         <div>
             <Form {...form}>
                 <form onSubmit={form.handleSubmit(handleSubmit)}>
-                    <div>
-                        <Button type="submit">Thêm vào giỏ hàng</Button>
+                    <div className="space-y-3 mt-3">
+                        <Button type="submit" className="gap-2 items-center">
+                            <ShoppingCart size={15} />
+                            Thêm vào giỏ hàng
+                        </Button>
+                        <div className="space-y-1">
+                            <div className="flex items-center space-x-2 text-sm font-medium  text-muted-foreground">
+                                <Undo2 size={20} />
+                                <span>
+                                    Hoàn tiền 100% nếu dịch vụ không đúng theo
+                                    mô tả
+                                </span>
+                            </div>
+                            <div className="flex items-center space-x-2 text-sm font-medium  text-muted-foreground">
+                                <Landmark size={20} />
+                                <span>Thanh toán qua tài khoản ngân hàng.</span>
+                            </div>
+                        </div>
                     </div>
                 </form>
             </Form>

@@ -1,6 +1,7 @@
 "use client";
 
 import useOrderTracking from "@/hook/useOrderTracking.hook";
+import OrderDetailProductItem from "./order-detail-product-item";
 
 interface IOrderTrackingProductProps {}
 
@@ -13,15 +14,10 @@ export default function OrderTrackingProduct({}: IOrderTrackingProductProps) {
         <div className="w-full relative">
             {isLoading && <p>Loading...</p>}
             {isError && <p>Error</p>}
-            <div>
+            <div className="space-y-2">
                 {products.map((item) => (
                     <div key={item.id}>
-                        <p>{item.productId}</p>
-                        <p>{item.productSnapshot.name}</p>
-                        <p>{item.productTypeId}</p>
-                        <p>{item.quantity}</p>
-                        <p>{item.unitPrice}</p>
-                        <p>{item.totalPrice}</p>
+                        <OrderDetailProductItem productItem={item} />
                     </div>
                 ))}
             </div>

@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { BankModule } from '../bank/bank.module';
 import { CartProductModule } from '../cart-product/cart-product.module';
 import { CartServiceModule } from '../cart-service/cart-service.module';
+import { ClientModule } from '../client/client.module';
 import { OrderRefundRequestModule } from '../oder-refund-request/order-refund-request.module';
 import { OrderBaseModule } from '../order-base/order-base.module';
 import { OrderProductItemModule } from '../order-product-item/order-product-item.module';
@@ -29,6 +30,7 @@ import { OrderService } from './service/order.service';
         OrderRefundStateModule,
         CartProductModule,
         CartServiceModule,
+        ClientModule,
         ShiftEmployeeModule,
         RoleModule,
         RolePermissionModule,

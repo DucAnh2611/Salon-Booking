@@ -1,4 +1,5 @@
 import ProductDetail from "@/components/product-detail";
+import RelatedProduct from "@/components/related-product";
 
 interface IProductDetailPageProps {
     params: { id: string };
@@ -8,11 +9,9 @@ export default function ProductDetailPage({ params }: IProductDetailPageProps) {
     const { id } = params;
 
     return (
-        <div className="space-y-5">
+        <div className="space-y-12">
             <ProductDetail id={id} />
-            <div>
-                <h1>Sản phẩm liên quan</h1>
-            </div>
+            <RelatedProduct id={id} />
         </div>
     );
 }

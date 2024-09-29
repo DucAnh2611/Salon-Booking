@@ -32,6 +32,8 @@ function LoginPage() {
         toast({
             title: error.code,
             description: error.message,
+            variant: "destructive",
+            duration: 1500,
         });
     };
 

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, In, Like, MoreThanOrEqual, Repository } from 'typeorm';
+import { Equal, In, Like, Not, Repository } from 'typeorm';
+import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
-import { UserTypeEnum } from '../../common/enum/user.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { RolePermissionService } from '../role-permission/role-permission.service';
 import { CreateRoleDto } from './dto/create-role.dto';
@@ -72,7 +72,7 @@ export class RoleService {
 
     async findAdmin(query: FindRoleDto) {
         const [items, count] = await this.roleRepository.findAndCount({
-            where: { title: Like(`%${query.key}%`), level: MoreThanOrEqual(2) },
+            where: { title: Like(`%${query.key}%`), deletable: Not(false) },
             take: query.limit,
             skip: (query.page - 1) * query.limit,
             loadEagerRelations: false,
@@ -108,17 +108,17 @@ export class RoleService {
     }
 
     async isValidParent(parentId: string) {
-        const [staff, parent] = await Promise.all([
+        const [admin, parent] = await Promise.all([
             this.roleRepository.findOne({
-                where: { title: Equal(UserTypeEnum.STAFF), deletable: false },
+                where: { title: Equal(ROLE_TITLE.admin), deletable: false },
                 loadEagerRelations: false,
             }),
             this.roleRepository.findOne({ where: { id: parentId }, loadEagerRelations: false }),
         ]);
-        if (!staff || !parent) {
+        if (!admin || !parent) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ROLE });
         }
-        if (parent.level < staff.level) {
+        if (parent.level < admin.level) {
             throw new BadRequest({ message: DataErrorCodeEnum.PARENT_ROLE_CAN_NOT_HIGHER_THAN_STAFF });
         }
         return true;

@@ -135,7 +135,9 @@ export class CartProductItemService {
                 },
                 productType: {
                     productTypesAttribute: {
-                        value: true,
+                        value: {
+                            attribute: true,
+                        },
                         thumbnail: true,
                     },
                 },

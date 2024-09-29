@@ -43,7 +43,7 @@ export default function ProvinceGroup({}: IProvinceGroupProps) {
                 )}
                 {pSelected && dSelected && wSelected && street && (
                     <div>
-                        <p>
+                        <p className="text-sm text-muted-foreground">
                             {joinString({
                                 joinString: ", ",
                                 strings: [

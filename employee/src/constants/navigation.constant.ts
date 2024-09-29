@@ -8,6 +8,7 @@ import {
     ShieldCheckIcon,
     ShowerHeadIcon,
     UserRoundPenIcon,
+    Users,
 } from "lucide-react";
 import { ROUTER_PATH } from "./router.constant";
 
@@ -44,6 +45,16 @@ export const listNavigate: IItemNavigate[] = [
             {
                 title: "Thêm sản phẩm",
                 path: `${ROUTER_PATH.PRODUCT}/add`,
+            },
+        ],
+    },
+    {
+        Icon: Users,
+        title: "Quản lý khách hàng",
+        children: [
+            {
+                title: "Danh sách khách hàng",
+                path: `${ROUTER_PATH.CLIENT}`,
             },
         ],
     },

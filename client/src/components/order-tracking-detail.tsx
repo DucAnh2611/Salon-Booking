@@ -21,6 +21,7 @@ import DialogConfirmOrder from "./dialog-confirm-order";
 import DialogReceiveOrder from "./dialog-receive-order";
 import DialogReturnOrder from "./dialog-return-order";
 import OrderTrackingProduct from "./order-tracking-product";
+import OrderTrackingService from "./order-tracking-service";
 import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import {
@@ -340,14 +341,16 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
                         <Separator className="my-5" orientation="horizontal" />
                         <div className="w-full">
                             <span className="text-base font-medium">
-                                Danh sách đơn hàng
+                                Danh sách vật phẩm
                             </span>
                             <Separator
                                 className="my-2"
                                 orientation="horizontal"
                             />
                             <div className="w-full">
-                                {order.type === EOrderType.SERVICE && <p></p>}
+                                {order.type === EOrderType.SERVICE && (
+                                    <OrderTrackingService />
+                                )}
                                 {order.type === EOrderType.PRODUCT && (
                                     <OrderTrackingProduct />
                                 )}

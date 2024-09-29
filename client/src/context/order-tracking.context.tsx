@@ -6,11 +6,13 @@ import { IOrderStateTracking } from "@/interface/order-state.interface";
 import { IOrderTracking } from "@/interface/order.interface";
 import { IProductOrderTracking } from "@/interface/product.interface";
 import { IRefundTracking } from "@/interface/refund.interface";
+import { IServiceOrderTracking } from "@/interface/service.interface";
 import { ITransactionTracking } from "@/interface/transaction.interface";
 import {
     trackingOrder,
     trackingOrderProduct,
     trackingOrderRefund,
+    trackingOrderService,
     trackingOrderState,
     trackingOrderTransaction,
 } from "@/lib/actions/order.action";
@@ -31,7 +33,7 @@ interface IOrderTrackingContext {
     refund: IRefundTracking & TrackingDetailLoading;
     transaction: ITransactionTracking & TrackingDetailLoading;
     product: IProductOrderTracking & TrackingDetailLoading;
-    service: object;
+    service: IServiceOrderTracking & TrackingDetailLoading;
     code: string;
     setCode: (code: string) => void;
     reload: (type: TTypeTracking) => void;
@@ -63,7 +65,11 @@ export const OrderTrackingContext = createContext<IOrderTrackingContext>({
         isLoading: true,
         isError: false,
     },
-    service: {},
+    service: {
+        services: [],
+        isLoading: true,
+        isError: false,
+    },
     code: "",
     setCode: (code: string) => {},
     reload: (type: TTypeTracking) => {},
@@ -81,7 +87,6 @@ export default function OrderTrackingProvider({ children }: ILayoutProps) {
         IOrderStateTracking & TrackingDetailLoading
     >({
         states: [],
-
         isError: false,
         isLoading: true,
     });
@@ -89,7 +94,6 @@ export default function OrderTrackingProvider({ children }: ILayoutProps) {
         IRefundTracking & TrackingDetailLoading
     >({
         refunds: [],
-
         isError: false,
         isLoading: true,
     });
@@ -97,7 +101,6 @@ export default function OrderTrackingProvider({ children }: ILayoutProps) {
         ITransactionTracking & TrackingDetailLoading
     >({
         transactions: [],
-
         isError: false,
         isLoading: true,
     });
@@ -105,7 +108,13 @@ export default function OrderTrackingProvider({ children }: ILayoutProps) {
         IProductOrderTracking & TrackingDetailLoading
     >({
         products: [],
-
+        isError: false,
+        isLoading: true,
+    });
+    const [service, SetService] = useState<
+        IServiceOrderTracking & TrackingDetailLoading
+    >({
+        services: [],
         isError: false,
         isLoading: true,
     });
@@ -176,7 +185,28 @@ export default function OrderTrackingProvider({ children }: ILayoutProps) {
         }
     };
 
-    const getService = () => {};
+    const getService = async (id: string) => {
+        SetService((p) => ({
+            ...p,
+            isError: false,
+            isLoading: true,
+        }));
+        const { response } = await trackingOrderService(id);
+
+        if (response) {
+            SetService({
+                services: response.result,
+                isError: false,
+                isLoading: false,
+            });
+        } else {
+            SetService({
+                services: [],
+                isError: true,
+                isLoading: false,
+            });
+        }
+    };
 
     const getTransaction = async (id: string) => {
         SetTransaction((t) => ({
@@ -277,7 +307,7 @@ export default function OrderTrackingProvider({ children }: ILayoutProps) {
             if (order.order.type === EOrderType.PRODUCT) {
                 getProduct(id);
             } else if (order.order.type === EOrderType.SERVICE) {
-                getService();
+                getService(id);
             }
         }
     }, [order.order]);
@@ -290,7 +320,7 @@ export default function OrderTrackingProvider({ children }: ILayoutProps) {
                 refund,
                 product,
                 transaction,
-                service: {},
+                service,
                 code,
                 setCode,
                 reload,

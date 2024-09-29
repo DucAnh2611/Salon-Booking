@@ -1,3 +1,4 @@
+import { ROLE_TITLE } from '../../../../common/constant/role.constant';
 import { GenderEnum } from '../../../../common/enum/gender.enum';
 import { PermissionActionEnum, PermissionTargetEnum } from '../../../../common/enum/permission.enum';
 import { UserTypeEnum } from '../../../../common/enum/user.enum';
@@ -15,12 +16,12 @@ export const SEED_DATA: TSeedData = {
             lastname: 'Anh',
             username: 'admin1',
             type: UserTypeEnum.STAFF,
-            role: 'admin',
+            role: ROLE_TITLE.admin,
         },
     ],
     role: [
         {
-            title: 'admin',
+            title: ROLE_TITLE.admin,
             parent: null,
             deletable: false,
         },
@@ -40,16 +41,7 @@ export const SEED_DATA: TSeedData = {
                 });
                 return prev;
             }, []),
-            role: 'admin',
-        },
-        {
-            data: [
-                {
-                    target: PermissionTargetEnum.EMPLOYEE,
-                    action: [PermissionActionEnum.READ],
-                },
-            ],
-            role: 'admin',
+            role: ROLE_TITLE.admin,
         },
     ],
 };

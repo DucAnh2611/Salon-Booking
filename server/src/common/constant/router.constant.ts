@@ -10,6 +10,7 @@ export const ROUTER = {
     EMPLOYEE: 'employee',
 
     CLIENT: 'client',
+    CLIENT_ADMIN: 'client-staff',
 
     ATTRIBUTE: 'attribute',
     ATTRIBUTE_VALUE: 'attribute-value',
@@ -73,6 +74,11 @@ export const ROLE_PERMISSION_ROUTE = {
     UPDATE: '',
 };
 
+export const CLIENT_ADMIN_ROUTE = {
+    LIST: 'list',
+    UPDATE_LOCK: 'lock',
+};
+
 export const PERMISSION_ROUTE = {
     ALL: 'all',
 };
@@ -99,6 +105,7 @@ export const CLIENT_ROUTE = {
     ME: 'me',
     VERIFY_EMAIL: 'verify-email',
     VERIFY_EMAIL_OTP: 'verify-email-otp',
+    VERIFY_EMAIL_URL: 'verify-email-url',
 };
 
 export const MEDIA_ROUTE = {
@@ -152,6 +159,7 @@ export const CLIENT_SERVICE_ROUTE = {
     FIND: '',
     DETAIL: 'i/:id',
     FEATURED: 'feature',
+    RELATED: 'related/:id',
 };
 
 export const CLIENT_PRODUCT_ROUTE = {
