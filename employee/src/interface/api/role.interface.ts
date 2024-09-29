@@ -39,14 +39,14 @@ export interface IFindRole {
 
 export interface IRoleUpdate {
     title: string;
-    parentId: string | null;
+    parentId?: string | null;
     permissionIds: string[];
     description: string;
 }
 
 export interface IRoleCreate {
     title: string;
-    parentId: string | null;
+    parentId?: string;
     description: string;
     parent: IRole | null;
 }

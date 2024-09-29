@@ -15,6 +15,7 @@ import {
 import { GENDER_TEXT } from "@/constants/gender.constant";
 import { EGender } from "@/enum/gender.enum";
 import { IEmployee, IUser } from "@/interface/api/employee.interface";
+import { IRole } from "@/interface/api/role.interface";
 import { api_media_url } from "@/utils/apiCall";
 import { ColumnDef } from "@tanstack/react-table";
 import {
@@ -113,11 +114,15 @@ export const employeeColumnDef: ColumnDef<IEmployee>[] = [
     },
     {
         header: "Chức vụ",
-        accessorKey: "eRole.title",
+        accessorKey: "eRole",
         size: 30,
         cell: ({ cell }) => {
-            const role = cell.getValue() as string;
-            return <Badge variant="default">{role}</Badge>;
+            const role = cell.getValue() as IRole;
+            return (
+                <Badge variant={role ? "default" : "destructive"}>
+                    {role ? role.title : "Đã xóa"}
+                </Badge>
+            );
         },
     },
     {

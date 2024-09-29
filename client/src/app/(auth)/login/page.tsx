@@ -25,7 +25,13 @@ function LoginPage() {
 
     const onSuccessLogin = () => {
         handleLogin();
-        router.push(!!redirect ? `?redirect=${redirect}` : "/");
+        const delay = setTimeout(() => {
+            router.push(!!redirect ? `?redirect=${redirect}` : "/");
+        }, 2000);
+
+        return () => {
+            clearTimeout(delay);
+        };
     };
 
     const onFailLogin = (error: IFailRequest) => {

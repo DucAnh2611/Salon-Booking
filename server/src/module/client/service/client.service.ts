@@ -108,8 +108,7 @@ export class ClientService {
                 appConfig.url,
                 appConfig.prefix,
                 ROUTER.CLIENT,
-                CLIENT_ROUTE.VERIFY_EMAIL_OTP,
-                `?token=${tokenRedirect}`,
+                `${CLIENT_ROUTE.VERIFY_EMAIL_URL}?token=${tokenRedirect}`,
             ],
         });
 

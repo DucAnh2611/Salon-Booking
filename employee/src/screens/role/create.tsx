@@ -56,7 +56,7 @@ function CreateRoleScreen() {
         error.length && SetError([]);
         SetNewRole({
             ...newRole,
-            parentId: item?.id || null,
+            parentId: item?.id,
             parent: item || null,
         });
     };
@@ -107,17 +107,10 @@ function CreateRoleScreen() {
                 field: "title",
                 message: ZOD_MESSAGE.min(2, "Tến chức vụ"),
             });
-        } else if (newRole.title.length > 20) {
+        } else if (newRole.title.length > 50) {
             error.push({
                 field: "title",
-                message: ZOD_MESSAGE.max(20, "Tến chức vụ"),
-            });
-        }
-
-        if (!newRole.parentId) {
-            error.push({
-                field: "parentId",
-                message: "Chức vụ cha không thể để trống",
+                message: ZOD_MESSAGE.max(50, "Tến chức vụ"),
             });
         }
 
@@ -129,8 +122,11 @@ function CreateRoleScreen() {
         SetSubmit(true);
         dispatch(
             createRoleApi({
-                ...newRole,
+                description: newRole.description,
+                title: newRole.title,
                 permissionIds: tempPermission.map((per) => per.id),
+                ...(newRole.parentId ? { parentId: newRole.parentId } : {}),
+                parent: null,
             })
         );
     };
@@ -213,23 +209,11 @@ function CreateRoleScreen() {
                             )}
                         </div>
                         <div>
-                            <Label>
-                                Chức vụ cha
-                                <RequireField />
-                            </Label>
+                            <Label>Chức vụ</Label>
                             <PopoverSelectParentRole
                                 selected={newRole.parent}
                                 onSelectParent={handleSelectParent}
                             />
-                            {error.some((e) => e.field === "parentId") && (
-                                <p className="text-destructive text-xs mt-1">
-                                    {
-                                        error.find(
-                                            (e) => e.field === "parentId"
-                                        )?.message
-                                    }
-                                </p>
-                            )}
                         </div>
                         <div>
                             <Label>Mô tả</Label>

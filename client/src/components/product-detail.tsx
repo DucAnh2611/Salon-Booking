@@ -7,11 +7,11 @@ export default async function ProductDetail({ id }: { id: string }) {
     const { response, error } = await productDetail(id);
 
     if (!response) {
-        return <p>Failed</p>;
+        return <p>Sản phẩm không tồn tại hoặc đã bị xóa</p>;
     }
 
     const product = response.result;
-    if (!product.base) return <></>;
+    if (!product.base) return <p>Sản phẩm không tồn tại hoặc đã bị xóa</p>;
 
     return (
         <div className="space-y-6">

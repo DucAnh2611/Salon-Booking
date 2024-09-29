@@ -11,7 +11,7 @@ export default async function RelatedProduct({ id }: IRelatedProductProps) {
     const { response, error } = await relatedProducts(id);
 
     if (!response) {
-        return <p>Failed</p>;
+        return <></>;
     }
 
     const related = response.result;

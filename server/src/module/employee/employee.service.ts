@@ -172,9 +172,9 @@ export class EmployeeService {
             this.roleService.getRole({ title: ROLE_TITLE.admin, deletable: false }),
         ]);
 
-        if (employeeRole.eRole.id === roleAdmin.id && employee.eRoleId !== roleAdmin.id) {
+        if (employeeRole.eRole && employeeRole.eRole.id === roleAdmin.id && employee.eRoleId !== roleAdmin.id) {
             throw new BadRequest({ message: DataErrorCodeEnum.CAN_NOT_CHANGE_ADMIN_ROLE });
-        } else if (employeeRole.eRole.id !== roleAdmin.id) {
+        } else if (employeeRole.eRole && employeeRole.eRole.id !== roleAdmin.id) {
             // check is eRoleId is employee roleid (level lower than level of staff)
             await this.roleService.isValidParent(employee.eRoleId);
         }

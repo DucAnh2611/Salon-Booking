@@ -30,7 +30,7 @@ import { updateServiceMediaSchema } from "@/schemas/service.schemas";
 import { api_media_url } from "@/utils/apiCall";
 import { getMediaType } from "@/utils/media-checker.util";
 import { generateUUID } from "@/utils/uuid.utils";
-import { CheckIcon } from "lucide-react";
+import { CheckIcon, ImageOff } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { z } from "zod";
 
@@ -183,7 +183,7 @@ export default function UpdateServiceBaseSection({
         SetMedias(
             base.media.map((media) => ({
                 id: media.mediaId,
-                url: media.media.path,
+                url: media.media?.path || "",
                 isThumbnail: media.isThumbnail,
             }))
         );
@@ -378,30 +378,37 @@ export default function UpdateServiceBaseSection({
                                                     </p>
                                                 )}
                                                 <div className=" w-full h-full group-hover/preview:flex flex-col hidden items-center bg-black bg-opacity-10 justify-center gap-2">
-                                                    <Button
-                                                        type="button"
-                                                        variant={
-                                                            media.isThumbnail
-                                                                ? "default"
-                                                                : "secondary"
-                                                        }
-                                                        className="gap-1 w-[70%]"
-                                                        size="sm"
-                                                        onClick={onToggleThumbnailUrl(
-                                                            media
-                                                        )}
-                                                    >
-                                                        {media.isThumbnail ? (
-                                                            <>
-                                                                <CheckIcon
-                                                                    size={15}
-                                                                />
-                                                                Bỏ chọn làm bìa
-                                                            </>
-                                                        ) : (
-                                                            <>Chọn làm bìa</>
-                                                        )}
-                                                    </Button>
+                                                    {!!media.url && (
+                                                        <Button
+                                                            type="button"
+                                                            variant={
+                                                                media.isThumbnail
+                                                                    ? "default"
+                                                                    : "secondary"
+                                                            }
+                                                            className="gap-1 w-[70%]"
+                                                            size="sm"
+                                                            onClick={onToggleThumbnailUrl(
+                                                                media
+                                                            )}
+                                                        >
+                                                            {media.isThumbnail ? (
+                                                                <>
+                                                                    <CheckIcon
+                                                                        size={
+                                                                            15
+                                                                        }
+                                                                    />
+                                                                    Bỏ chọn làm
+                                                                    bìa
+                                                                </>
+                                                            ) : (
+                                                                <>
+                                                                    Chọn làm bìa
+                                                                </>
+                                                            )}
+                                                        </Button>
+                                                    )}
                                                     <Button
                                                         type="button"
                                                         variant="destructive"
@@ -415,7 +422,17 @@ export default function UpdateServiceBaseSection({
                                                     </Button>
                                                 </div>
                                             </div>
-
+                                            {!media.url && (
+                                                <div
+                                                    className="w-full aspect-square rounded-md overflow-hidden flex justify-center items-center bg-muted"
+                                                    key={
+                                                        Math.random() *
+                                                        Math.random()
+                                                    }
+                                                >
+                                                    <ImageOff size={15} />
+                                                </div>
+                                            )}
                                             {getMediaType(media.url) ===
                                             "image" ? (
                                                 <>

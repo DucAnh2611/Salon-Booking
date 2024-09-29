@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, In, Like, Not, Repository } from 'typeorm';
+import { Equal, ILike, In, Not, Repository } from 'typeorm';
 import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
@@ -72,7 +72,7 @@ export class RoleService {
 
     async findAdmin(query: FindRoleDto) {
         const [items, count] = await this.roleRepository.findAndCount({
-            where: { title: Like(`%${query.key}%`), deletable: Not(false) },
+            where: { title: ILike(`%${query.key}%`), deletable: Not(false) },
             take: query.limit,
             skip: (query.page - 1) * query.limit,
             loadEagerRelations: false,
@@ -125,18 +125,22 @@ export class RoleService {
     }
 
     async create(newRole: CreateRoleDto, userId: string) {
-        const { parentId, permissionIds } = newRole;
+        const { parentId, permissionIds, title, description } = newRole;
 
-        const parent = await this.isExist(parentId);
-        if (!parent) {
-            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PARENT_ROLE });
+        let parent = null;
+
+        if (parentId) {
+            parent = await this.isExist(parentId);
+            if (!parent) {
+                throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PARENT_ROLE });
+            }
+            await this.isValidParent(parent.id);
         }
 
-        await this.isValidParent(parent.id);
-
         const instanceRole = this.roleRepository.create({
-            ...newRole,
-            level: parent.level + 1,
+            title,
+            description: description || '',
+            level: (parent ? parent.level : 0) + 1,
             createdBy: userId,
             updatedBy: userId,
             deletable: true,

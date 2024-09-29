@@ -38,12 +38,18 @@ export default function SheetFilterClient({
             }));
         };
     const handleChangeBoolean =
-        (key: keyof Pick<IFilterClientList, "lockAccount" | "lockOrder">) =>
+        (
+            key: keyof Pick<IFilterClientList, "lockAccount" | "lockOrder">,
+            value?: "on" | "off"
+        ) =>
         () => {
-            SetNewFilter((f) => ({
-                ...f,
-                [key]: !f[key],
-            }));
+            SetNewFilter((f) => {
+                const { [key]: field, ...props } = f;
+                return {
+                    ...props,
+                    ...(value !== undefined ? { [key]: value === "on" } : {}),
+                };
+            });
         };
 
     const handleConfirm = () => {
@@ -119,33 +125,65 @@ export default function SheetFilterClient({
                             className="col-span-4 focus-visible:ring-transparent"
                         />
                     </div>
-                    <div className="w-full grid grid-cols-7 items-center gap-2">
-                        <Label htmlFor="lockAccount" className="col-span-3">
-                            Khóa tài khoản
-                        </Label>
-                        <Toggle
-                            id="lockAccount"
-                            variant="outline"
-                            size="sm"
-                            className={cn(
-                                "col-span-4 gap-1 items-center",
-                                !newFilter.lockAccount
-                                    ? "border-green-500 text-green-500"
-                                    : "border-red-500 text-red-500"
-                            )}
-                            onClick={handleChangeBoolean("lockAccount")}
-                            type="button"
-                        >
-                            {newFilter.lockAccount ? (
-                                <>
-                                    <XIcon size={15} /> <span>Khóa</span>
-                                </>
-                            ) : (
-                                <>
-                                    <Check size={15} /> <span>Hoạt động</span>
-                                </>
-                            )}
-                        </Toggle>
+                    <div className="w-full items-center gap-2">
+                        <Label className="w-full">Khóa tài khoản</Label>
+
+                        <div className="flex gap-3 mt-2">
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className={cn(
+                                    "col-span-4 gap-1 items-center flex-1",
+                                    newFilter.lockAccount === undefined &&
+                                        "border-primary text-primary"
+                                )}
+                                onClick={handleChangeBoolean("lockAccount")}
+                                type="button"
+                            >
+                                Không
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className={cn(
+                                    "col-span-4 gap-1 items-center flex-1",
+                                    newFilter.lockAccount &&
+                                        "border-green-500 text-green-500"
+                                )}
+                                onClick={handleChangeBoolean(
+                                    "lockAccount",
+                                    "on"
+                                )}
+                                type="button"
+                            >
+                                {newFilter.lockAccount !== undefined &&
+                                    newFilter.lockAccount && (
+                                        <Check size={15} />
+                                    )}
+                                <span>Hoạt động</span>
+                            </Button>
+                            <Button
+                                variant="outline"
+                                size="sm"
+                                className={cn(
+                                    "col-span-4 gap-1 items-center flex-1",
+                                    newFilter.lockAccount !== undefined &&
+                                        !newFilter.lockAccount &&
+                                        "border-red-500 text-red-500"
+                                )}
+                                onClick={handleChangeBoolean(
+                                    "lockAccount",
+                                    "off"
+                                )}
+                                type="button"
+                            >
+                                {newFilter.lockAccount !== undefined &&
+                                    !newFilter.lockAccount && (
+                                        <XIcon size={15} />
+                                    )}
+                                <span>Khóa</span>
+                            </Button>
+                        </div>
                     </div>
                     <div className="w-full grid grid-cols-7 items-center gap-2">
                         <Label htmlFor="phone" className="col-span-3">
@@ -161,7 +199,7 @@ export default function SheetFilterClient({
                                     ? "border-green-500 text-green-500"
                                     : "border-red-500 text-red-500"
                             )}
-                            onClick={handleChangeBoolean("lockOrder")}
+                            onClick={handleChangeBoolean("lockOrder", "off")}
                             type="button"
                         >
                             {newFilter.lockOrder ? (

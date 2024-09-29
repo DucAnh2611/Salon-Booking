@@ -1,6 +1,7 @@
 "use client";
 
 import { EGender } from "@/enum/gender.enum";
+import { IFailRequest } from "@/interface/response.interface";
 import { IApiSignup } from "@/interface/user.interface";
 import { signupApi } from "@/lib/actions/auth.action";
 import { calculateYearsAgo } from "@/lib/date";
@@ -30,9 +31,10 @@ const ATLEAST_OLD = 15;
 
 interface ISignupFormProps {
     onSuccess: () => void;
+    onFail: (error: IFailRequest) => void;
 }
 
-export default function SignupForm({ onSuccess }: ISignupFormProps) {
+export default function SignupForm({ onSuccess, onFail }: ISignupFormProps) {
     const [gender, SetGender] = useState<EGender | null>(EGender.OTHER);
     const [birthday, SetBirthday] = useState<Date>(
         calculateYearsAgo(ATLEAST_OLD)
@@ -56,9 +58,11 @@ export default function SignupForm({ onSuccess }: ISignupFormProps) {
             ...formValue,
         };
 
-        const { response } = await signupApi(payload);
+        const { response, error } = await signupApi(payload);
         if (response) {
             onSuccess();
+        } else if (error) {
+            onFail(error);
         }
     };
 

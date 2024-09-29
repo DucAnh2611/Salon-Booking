@@ -25,19 +25,33 @@
             display: inline-block;
             padding: 10px 20px;
             color: #fff;
-            background-color: #007bff;
             text-decoration: none;
             border-radius: 5px;
         }
         .redirect {
             margin-top: 20px;
-            background-color: #4CAF50;
-            color: white;
+            background-color: rgb(255, 166, 0);
+            color: #fff;
             text-align: center;
             border: none;
             text-decoration: none;
             display: inline-block;
             font-size: 16px;
+        }
+        .otp {
+            height: fit-content;
+            width: fit-content;
+            padding: 10px 15px;
+            color: rgb(255, 166, 0);
+            border-radius: 5px;
+            border: 1px solid rgb(197, 197, 197);
+            background-color: #fff;
+        }
+        .otp_holder {
+            width: auto;
+            height: auto;
+            padding: 10px 0px;
+            display: block;
         }
         @media (max-width: 600px) {
             td {
@@ -55,14 +69,17 @@
         </tr>
         <tr>
             <td>
-                Hello {{name}},<br>
-                Please verify your email address by entering the OTP below.
+                Xin chào <strong>{{name}}</strong>,<br>
+                Mã OTP nằm ở phía dưới để xác nhận Email của bạn hoặc bạn có thể chọn Xác thực nhanh để hoàn thành việc xác thực.
+                Lưu ý mã sẽ hết hạn trong <strong>2 phút</strong>
             </td>
         </tr>
         <tr>
-            <td style="text-align:center">
-                Your OTP: <strong>{{otp}}</strong><br>
-                <a href="{{redirectURL}}" class="redirect">Quick Verify</a>
+            <td style="text-align:center" class="otp_holder">
+                <div style="margin: 10px 0px">
+                    Mã OTP: <strong class="otp">{{otp}}</strong>
+                </div>
+                <a href="{{redirectURL}}" class="redirect" style="color:#fff">Xác thực nhanh</a>
             </td>
             
         </tr>

@@ -1,3 +1,4 @@
+import DeleteRoleDialog from "@/components/dialog/role/delete";
 import UpdateRoleDialog from "@/components/dialog/role/update";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -16,6 +17,7 @@ import {
     ArrowUpDown,
     ArrowUpIcon,
     MoreHorizontal,
+    Trash2Icon,
 } from "lucide-react";
 
 export const roleColumnDef: ColumnDef<IRole>[] = [
@@ -175,7 +177,18 @@ export const roleColumnDef: ColumnDef<IRole>[] = [
                             <UpdateRoleDialog role={role} />
                         </DropdownMenuItem>
                         <DropdownMenuItem className="p-0" asChild>
-                            {/* <DeleteCategoryDialog item={category} /> */}
+                            <DeleteRoleDialog
+                                item={role}
+                                trigger={
+                                    <Button
+                                        className="gap-2 items-center w-full text-destructive justify-start py-1 px-2"
+                                        variant="ghost"
+                                        disabled={!role.deletable}
+                                    >
+                                        <Trash2Icon size={15} /> Xóa
+                                    </Button>
+                                }
+                            />
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

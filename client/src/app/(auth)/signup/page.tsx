@@ -9,9 +9,10 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ToastAction } from "@/components/ui/toast";
 import { toast } from "@/components/ui/use-toast";
 import withoutAuth from "@/hoc/withoutAuth";
+import { IFailRequest } from "@/interface/response.interface";
+import { joinString } from "@/lib/string";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -24,17 +25,26 @@ function SignupPage() {
     const onSuccessSignup = () => {
         toast({
             title: "Đăng ký thành công",
-            description: "Đăng ký thành công, chuyển qua trang đăng nhập?",
-            action: (
-                <ToastAction altText="Đăng nhập" asChild>
-                    <Link
-                        href={
-                            "/login" + !!redirect ? `?redirect=${redirect}` : ""
-                        }
-                    ></Link>
-                    Đăng nhập
-                </ToastAction>
-            ),
+            description: "Đăng ký thành công, chuyển qua trang đăng nhập.",
+            duration: 2000,
+        });
+        router.push(
+            joinString({
+                joinString: "",
+                strings: [
+                    "/login",
+                    !!redirect ? `?redirect=${redirect || null}` : "",
+                ],
+            })
+        );
+    };
+
+    const onFail = (error: IFailRequest) => {
+        toast({
+            title: error.code,
+            description: error.message,
+            variant: "destructive",
+            duration: 1500,
         });
     };
 
@@ -50,7 +60,7 @@ function SignupPage() {
                 </CardDescription>
             </CardHeader>
             <CardContent>
-                <SignupForm onSuccess={onSuccessSignup} />
+                <SignupForm onSuccess={onSuccessSignup} onFail={onFail} />
                 <Separator orientation="horizontal" className="my-2 mt-4" />
                 <div className="flex justify-center items-center gap-1">
                     <span className="w-fit text-sm text-muted-foreground">

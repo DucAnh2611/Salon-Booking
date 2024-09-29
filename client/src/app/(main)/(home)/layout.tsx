@@ -17,11 +17,11 @@ export default function HomeLayout({
     policy: React.ReactNode;
 }>) {
     return (
-        <>
+        <div>
             {hero}
             {product}
             {service}
             {policy}
-        </>
+        </div>
     );
 }
