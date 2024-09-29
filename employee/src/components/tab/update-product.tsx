@@ -22,6 +22,7 @@ import UpdateProductDetailTab from "../section/product/update/details";
 import UpdateProductTypeTab from "../section/product/update/types";
 import { Button } from "../ui/button";
 import { Form } from "../ui/form";
+import { toast } from "../ui/use-toast";
 
 interface IUpdateProductTabProps {
     detail: IProductInfo;
@@ -148,6 +149,11 @@ export default function UpdateProductTab({
         if (submit && !isUpdating && !isFailure) {
             SetSubmit(false);
             onSuccess();
+            toast({
+                title: "Thành công",
+                description: "Cập nhật thông tin thành công.",
+                duration: 1000,
+            });
         }
         if (submit && !isUpdating && isFailure) {
             SetSubmit(false);

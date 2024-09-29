@@ -6,6 +6,7 @@ export interface IInitialStateAuth extends IBaseInitialState {
     authentication: boolean;
     loginPayload: ILoginPayload | null | undefined;
     user: IEmployee | null | undefined;
+    retry: boolean;
 }
 
 export interface IActionDedicateAuth {

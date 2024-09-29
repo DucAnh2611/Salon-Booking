@@ -132,151 +132,159 @@ export default function DialogCreateRefund({
         <Dialog open={open} onOpenChange={handleOpen}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
 
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Tạo yêu cầu hoàn tiền</DialogTitle>
-                    <DialogDescription>
-                        Yêu cầu hoàn tiền sẽ được tạo cho hóa đơn
-                        <b className="text-primary mx-2">{order.code}</b>
-                        giao dịch số
-                        <b className="text-primary uppercase mx-2">
-                            {transaction.paymentId}
-                        </b>
-                    </DialogDescription>
-                </DialogHeader>
-                <div>
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)}>
-                            <div>
-                                <FormField
-                                    control={form.control}
-                                    name="bankBin"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>
-                                                Chọn ngân hàng
-                                                <RequireField />
-                                            </FormLabel>
-                                            <FormControl>
-                                                <div>
-                                                    <SelectBanks
-                                                        onSelect={onSelectBank}
-                                                        value={selected}
-                                                    />
-                                                </div>
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                                {selected && (
-                                    <>
-                                        <FormField
-                                            control={form.control}
-                                            name="bankAccount"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        Số tài khoản
-                                                        <RequireField />
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            placeholder="Số tài khoản"
-                                                            {...field}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="bankName"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>
-                                                        Tên tài khoản
-                                                        <RequireField />
-                                                    </FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            placeholder="Tên tài khoản"
-                                                            {...field}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                        <FormField
-                                            control={form.control}
-                                            name="desc"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormLabel>Mô tả</FormLabel>
-                                                    <FormControl>
-                                                        <Input
-                                                            placeholder="Mô tả"
-                                                            {...field}
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </>
-                                )}
-                            </div>
-                            <DialogFooter className="mt-5">
+            <DialogContent className="max-w-none w-fit">
+                <div className="w-[500px]">
+                    <DialogHeader>
+                        <DialogTitle>Tạo yêu cầu hoàn tiền</DialogTitle>
+                        <DialogDescription>
+                            Yêu cầu hoàn tiền sẽ được tạo cho hóa đơn
+                            <b className="text-primary mx-2">{order.code}</b>
+                            giao dịch số
+                            <b className="text-primary uppercase mx-2">
+                                {transaction.paymentId}
+                            </b>
+                        </DialogDescription>
+                    </DialogHeader>
+                    <div>
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)}>
                                 <div>
-                                    <div className="w-full flex gap-3">
-                                        <Checkbox
-                                            id="confirm"
-                                            checked={confirm}
-                                            onCheckedChange={handleConfirm}
-                                        />
-                                        <Label htmlFor="confirm">
-                                            Bằng việc gửi yêu cầu, tôi{" "}
-                                            <b className="text-primary">
-                                                xác nhận
-                                            </b>{" "}
-                                            thông tin ngân hàng của mình là
-                                            chính xác.
-                                        </Label>
-                                    </div>
-                                    <Separator
-                                        orientation="horizontal"
-                                        className="my-2"
+                                    <FormField
+                                        control={form.control}
+                                        name="bankBin"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>
+                                                    Chọn ngân hàng
+                                                    <RequireField />
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <div>
+                                                        <SelectBanks
+                                                            onSelect={
+                                                                onSelectBank
+                                                            }
+                                                            value={selected}
+                                                        />
+                                                    </div>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
                                     />
-                                    <div className="flex w-full justify-end gap-2 items-center">
-                                        <div className="flex-1">
-                                            <span className="font-medium mr-3">
-                                                Số tiền hoàn
-                                            </span>
-                                            <span>{formatMoney(amount)}</span>
-                                        </div>
-                                        <Button
-                                            variant="outline"
-                                            type="button"
-                                            onClick={() => {
-                                                handleOpen(false);
-                                            }}
-                                        >
-                                            Hủy
-                                        </Button>
-                                        <Button
-                                            type="submit"
-                                            disabled={!confirm}
-                                            onClick={test}
-                                        >
-                                            Gửi yêu cầu
-                                        </Button>
-                                    </div>
+                                    {selected && (
+                                        <>
+                                            <FormField
+                                                control={form.control}
+                                                name="bankAccount"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>
+                                                            Số tài khoản
+                                                            <RequireField />
+                                                        </FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder="Số tài khoản"
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name="bankName"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>
+                                                            Tên tài khoản
+                                                            <RequireField />
+                                                        </FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder="Tên tài khoản"
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                            <FormField
+                                                control={form.control}
+                                                name="desc"
+                                                render={({ field }) => (
+                                                    <FormItem>
+                                                        <FormLabel>
+                                                            Mô tả
+                                                        </FormLabel>
+                                                        <FormControl>
+                                                            <Input
+                                                                placeholder="Mô tả"
+                                                                {...field}
+                                                            />
+                                                        </FormControl>
+                                                        <FormMessage />
+                                                    </FormItem>
+                                                )}
+                                            />
+                                        </>
+                                    )}
                                 </div>
-                            </DialogFooter>
-                        </form>
-                    </Form>
+                                <DialogFooter className="mt-5">
+                                    <div>
+                                        <div className="w-full flex gap-3">
+                                            <Checkbox
+                                                id="confirm"
+                                                checked={confirm}
+                                                onCheckedChange={handleConfirm}
+                                            />
+                                            <Label htmlFor="confirm">
+                                                Bằng việc gửi yêu cầu, tôi{" "}
+                                                <b className="text-primary">
+                                                    xác nhận
+                                                </b>{" "}
+                                                thông tin ngân hàng của mình là
+                                                chính xác.
+                                            </Label>
+                                        </div>
+                                        <Separator
+                                            orientation="horizontal"
+                                            className="my-2"
+                                        />
+                                        <div className="flex w-full justify-end gap-2 items-center">
+                                            <div className="flex-1">
+                                                <span className="font-medium mr-3">
+                                                    Số tiền hoàn
+                                                </span>
+                                                <span>
+                                                    {formatMoney(amount)}
+                                                </span>
+                                            </div>
+                                            <Button
+                                                variant="outline"
+                                                type="button"
+                                                onClick={() => {
+                                                    handleOpen(false);
+                                                }}
+                                            >
+                                                Hủy
+                                            </Button>
+                                            <Button
+                                                type="submit"
+                                                disabled={!confirm}
+                                                onClick={test}
+                                            >
+                                                Gửi yêu cầu
+                                            </Button>
+                                        </div>
+                                    </div>
+                                </DialogFooter>
+                            </form>
+                        </Form>
+                    </div>
                 </div>
             </DialogContent>
         </Dialog>

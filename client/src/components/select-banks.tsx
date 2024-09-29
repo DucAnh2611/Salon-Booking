@@ -49,7 +49,9 @@ export default function SelectBanks({ onSelect, value }: ISelectSortProps) {
                     aria-expanded={open}
                     className="w-full justify-between"
                 >
-                    {selected ? selected.name : "Chọn ngân hàng"}
+                    <span className="flex-1 whitespace-nowrap line-clamp-1 text-ellipsis">
+                        {selected ? selected.name : "Chọn ngân hàng"}
+                    </span>
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>

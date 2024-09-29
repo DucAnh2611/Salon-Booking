@@ -26,7 +26,7 @@ export default function NavigationBar() {
     };
 
     useEffect(() => {
-        if (authentication && !user) {
+        if (authentication && !user && !isFailure) {
             dispatch(meApi());
         }
     }, [authentication]);

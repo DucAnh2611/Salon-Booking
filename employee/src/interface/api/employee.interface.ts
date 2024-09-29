@@ -1,6 +1,7 @@
 import { EGender } from "@/enum/gender.enum";
 import { EShiftEmployeeStatus } from "@/enum/shift.enum";
 import { EUserType } from "@/enum/user.enum";
+import { IMedia } from "./media.interface";
 import { IRole } from "./role.interface";
 
 export interface IEmployee {
@@ -36,10 +37,7 @@ export interface IUserEmployee extends IUser {
     userBase: IUser;
 }
 
-export interface IUserAvatar {
-    id: string;
-    path: string;
-}
+export interface IUserAvatar extends IMedia {}
 
 export interface IFindEmployee {
     page: number;

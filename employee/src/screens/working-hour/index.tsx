@@ -36,7 +36,7 @@ export default function CalendarWorkinghourScreen() {
         );
 
     const handleChangMonth = (e: ChangeEvent<HTMLInputElement>) => {
-        const month = Math.floor(parseInt(e.target.value) % 12);
+        const month = Math.floor((parseInt(e.target.value) || 0) % 12);
         SetSelectedDate(new Date(selectedDate.getFullYear(), month));
     };
 
@@ -66,8 +66,8 @@ export default function CalendarWorkinghourScreen() {
                             <Input
                                 type="number"
                                 placeholder="Tháng"
-                                onChange={handleChangMonth}
                                 value={selectedDate.getMonth() + 1}
+                                disabled
                             />
                         </div>
                         <Button variant="secondary" onClick={handleNextMonth}>
