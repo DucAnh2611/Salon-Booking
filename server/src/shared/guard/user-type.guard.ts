@@ -2,16 +2,12 @@ import { CanActivate, ExecutionContext, Injectable } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { AppRequest } from '../../common/interface/custom-request.interface';
-import { RoleService } from '../../module/role/role.service';
 import { UserType } from '../decorator/user-types.decorator';
 import { Forbidden } from '../exception/error.exception';
 
 @Injectable()
 export class UserTypeGuard implements CanActivate {
-    constructor(
-        private reflector: Reflector,
-        private readonly roleService: RoleService,
-    ) {}
+    constructor(private reflector: Reflector) {}
 
     async canActivate(context: ExecutionContext) {
         const userType = this.reflector.get(UserType, context.getHandler());

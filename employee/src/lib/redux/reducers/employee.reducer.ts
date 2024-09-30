@@ -175,6 +175,31 @@ export const employeeReducer = (
                 };
             }
             return state;
+
+        case EReduxType.EMPLOYEE_CREATE:
+            if (isCallingApi(action)) {
+                return {
+                    ...state,
+                    isCreating: true,
+                    isFailure: false,
+                };
+            }
+            if (isSuccessfulApiCall(action)) {
+                return {
+                    ...state,
+                    isCreating: false,
+                    isFailure: false,
+                };
+            }
+            if (isFailedApiCall(action)) {
+                return {
+                    ...state,
+                    isCreating: false,
+                    isFailure: true,
+                };
+            }
+            return state;
+
         default:
             return state;
     }

@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Like, Repository } from 'typeorm';
+import { In, Like, Not, Repository } from 'typeorm';
 import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
@@ -126,6 +126,25 @@ export class EmployeeService {
         // check is eRoleId is employee id (level lower than level of staff)
         await this.roleService.isValidParent(eRoleId);
 
+        const findExistPhone = await this.employeeRepository.findOne({
+            where: {
+                userBase: {
+                    phone: userInfo.phone,
+                    type: UserTypeEnum.STAFF,
+                },
+            },
+            loadEagerRelations: false,
+            relations: { userBase: true },
+        });
+        if (findExistPhone) {
+            throw new BadRequest({ message: DataErrorCodeEnum.DUPLICATE_PHONE_EMPLOYEE });
+        }
+
+        const dupUsername = await this.isExist({ username });
+        if (dupUsername) {
+            throw new BadRequest({ message: DataErrorCodeEnum.DUPLICATE_USERNAME_EMPLOYEE });
+        }
+
         const createdUser = await this.userService.create({ ...userInfo, type: UserTypeEnum.STAFF });
         if (!createdUser) throw new InternalServer();
 
@@ -159,6 +178,21 @@ export class EmployeeService {
         const employeeInfo = await this.getById(targetEmployeeId);
         if (!employeeInfo) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_EMPLOYEE });
+        }
+
+        const findExistPhone = await this.employeeRepository.findOne({
+            where: {
+                id: Not(targetEmployeeId),
+                userBase: {
+                    phone: phone,
+                    type: UserTypeEnum.STAFF,
+                },
+            },
+            loadEagerRelations: false,
+            relations: { userBase: true },
+        });
+        if (findExistPhone) {
+            throw new BadRequest({ message: DataErrorCodeEnum.DUPLICATE_PHONE_EMPLOYEE });
         }
 
         const [employeeRole, roleAdmin] = await Promise.all([

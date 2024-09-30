@@ -91,7 +91,7 @@ export class ClientService {
     }
 
     async update(userId: string, clientId: string, body: ClientUpdateInfoDto, file: Express.Multer.File) {
-        const { phone, email, birthday, firstname, gender, lastname } = body;
+        const { phone, birthday, firstname, gender, lastname } = body;
 
         const checkClient = await this.clientRepository.findOne({
             where: {
@@ -109,7 +109,6 @@ export class ClientService {
         const checkExist = await this.clientRepository.find({
             where: {
                 id: Not(clientId),
-                email,
                 userBase: {
                     phone,
                     type: UserTypeEnum.CLIENT,
@@ -139,8 +138,6 @@ export class ClientService {
         await this.clientRepository.update(
             { id: clientId },
             {
-                email,
-                ...(email !== checkClient.email ? { emailVerified: false } : {}),
                 ...(phone !== checkClient.userBase.phone ? { phoneVerified: false } : {}),
             },
         );

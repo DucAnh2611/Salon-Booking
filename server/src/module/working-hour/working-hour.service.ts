@@ -57,7 +57,7 @@ export class WorkingHourService {
         return this.workingHourRepository.findOne({ where: { id }, loadEagerRelations: false });
     }
 
-    validateTime(date: Date, start: string, end: string) {
+    async validateTime(date: Date, start: string, end: string) {
         const isValidDuration = isTime1Greater(start, end);
         if (isValidDuration) {
             throw new BadRequest({ message: DataErrorCodeEnum.INVALID_TIME_RANGE });
@@ -66,6 +66,17 @@ export class WorkingHourService {
         if (combineDateAndTime(date, start).getTime() - Date.now() < 0) {
             throw new BadRequest({ message: DataErrorCodeEnum.NEGATIVE_DATE });
         }
+
+        // const isOverlapShift = await this.workingHourRepository.find({
+        //     where: {
+        //         shifts: {
+        //             start: LessThanOrEqual(start),
+        //             end: MoreThanOrEqual(end),
+        //         },
+        //     },
+        //     loadEagerRelations: false,
+        //     relations: { shifts: true },
+        // });
 
         return { start: combineDateAndTime(date, start), end: combineDateAndTime(date, end) };
     }
@@ -174,7 +185,7 @@ export class WorkingHourService {
 
         const listInstance = await Promise.all(
             dateList.map(async date => {
-                const { start: startCombine, end: endCombine } = this.validateTime(date, start, end);
+                const { start: startCombine, end: endCombine } = await this.validateTime(date, start, end);
 
                 const isExistDate = await this.isExistByDate(date);
                 if (isExistDate) {
@@ -208,7 +219,7 @@ export class WorkingHourService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_SHIFT });
         }
 
-        const { start: startCombine, end: endCombine } = this.validateTime(exist.date, start, end);
+        const { start: startCombine, end: endCombine } = await this.validateTime(exist.date, start, end);
 
         if (!exist) {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_WORKING_HOUR });

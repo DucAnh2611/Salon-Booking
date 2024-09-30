@@ -536,6 +536,25 @@ export class OrderService {
         });
     }
 
+    async clientReceiveOrder(userId: string, clientId: string, orderId: string) {
+        const order = await this.orderBaseService.get(orderId);
+        if (!order) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
+        }
+
+        const isOwn = await this.orderBaseService.isOwn(orderId, clientId);
+        if (!isOwn) {
+            throw new BadRequest({ message: DataErrorCodeEnum.ORDER_FORBIDDEN });
+        }
+        await this.orderBaseService.updateTotalPaid(orderId, order.total, userId);
+        await this.clientUpdateState(userId, clientId, {
+            orderId,
+            state: OrderStatusEnum.RECEIVED,
+        });
+
+        return DataSuccessCodeEnum.OK;
+    }
+
     async clientConfirmOrder(userId: string, clientId: string, orderId: string) {
         const order = await this.orderBaseService.get(orderId);
         if (!order) {

@@ -1,15 +1,5 @@
 import { Transform } from 'class-transformer';
-import {
-    IsBoolean,
-    IsDate,
-    IsEmail,
-    IsEnum,
-    IsNotEmpty,
-    IsOptional,
-    IsPhoneNumber,
-    IsString,
-    IsUUID,
-} from 'class-validator';
+import { IsBoolean, IsDate, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID } from 'class-validator';
 import { GenderEnum } from '../../../common/enum/gender.enum';
 
 export class ClientUpdateLockDto {
@@ -47,8 +37,4 @@ export class ClientUpdateInfoDto {
     @IsNotEmpty()
     @IsPhoneNumber('VN')
     phone: string;
-
-    @IsNotEmpty()
-    @IsEmail()
-    email: string;
 }

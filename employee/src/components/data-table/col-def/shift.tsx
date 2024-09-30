@@ -55,13 +55,22 @@ export const shiftColumnDef: ColumnDef<IShift>[] = [
         cell: ({ row }) => {
             const shift = row.original;
             return (
-                <Button variant="outline" asChild>
-                    <Link
-                        to={`${ROUTER_PATH.WORKING}/${shift.workingHourId}?shift=${shift.id}`}
-                    >
-                        Xem chi tiết
-                    </Link>
-                </Button>
+                <div className="flex gap-2">
+                    <Button variant="outline" asChild>
+                        <Link
+                            to={`${ROUTER_PATH.WORKING}/${shift.workingHourId}?shift=${shift.id}`}
+                        >
+                            Xem chi tiết
+                        </Link>
+                    </Button>
+                    <Button variant="outline" asChild>
+                        <Link
+                            to={`${ROUTER_PATH.WORKING}/u/${shift.workingHourId}?shift=${shift.id}`}
+                        >
+                            Chỉnh sửa
+                        </Link>
+                    </Button>
+                </div>
             );
         },
     },

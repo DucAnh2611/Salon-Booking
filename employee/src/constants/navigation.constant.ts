@@ -15,12 +15,12 @@ import { ROUTER_PATH } from "./router.constant";
 export const listNavigate: IItemNavigate[] = [
     {
         Icon: ListFilterIcon,
-        title: "Danh mục sản phẩm",
+        title: "Danh mục",
         path: `${ROUTER_PATH.CATEGORY}`,
     },
     {
         Icon: ImagePlayIcon,
-        title: "Quản lý file",
+        title: "Quản lý tệp phương tiện",
         path: `${ROUTER_PATH.MEDIA}`,
     },
     {

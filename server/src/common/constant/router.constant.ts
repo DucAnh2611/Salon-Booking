@@ -44,6 +44,8 @@ export const ROUTER = {
 
     PROVINCE: 'province',
     BANK: 'bank',
+
+    STATISTIC_ADMIN: 'statistic-admin',
 };
 
 export const AUTH_ROUTE = {
@@ -347,4 +349,8 @@ export const PROVINCE_ROUTE = {
 export const VIETQR_ROUTE = {
     BANK_LIST: 'banks',
     QUICK_QR: 'quick-qr',
+};
+
+export const STATISTIC_ADMIN_ROUTE = {
+    DASHBOARD: 'dashboard',
 };

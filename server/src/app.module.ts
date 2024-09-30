@@ -27,6 +27,7 @@ import { RolePermissionModule } from './module/role-permission/role-permission.m
 import { RoleModule } from './module/role/role.module';
 import { ScheduleModule } from './module/schedule/schedule.module';
 import { ServiceModule } from './module/service/service.module';
+import { StatisticModule } from './module/statistic/statistic.module';
 import { ThirdPartyModule } from './module/thirdparty/thirdparty.module';
 import { AppResponseInterceptor } from './shared/interceptor';
 
@@ -62,6 +63,8 @@ import { AppResponseInterceptor } from './shared/interceptor';
         CartModule,
         OrderModule,
         RedisModule,
+
+        StatisticModule,
 
         //Third party module
         ThirdPartyModule,

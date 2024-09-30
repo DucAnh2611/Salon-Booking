@@ -18,6 +18,30 @@ export interface IProduct {
     userUpdate: IEmployeeModify;
     productMedia: IProductMedia[];
 }
+
+export interface IProductSnapshot {
+    id: string;
+    name: string;
+    description: string;
+    quantity: number;
+    price: number;
+    sku: string;
+    brand: string;
+    categoryId: string;
+    createdAt: Date;
+    updatedAt: Date;
+    category: ICategory | null;
+    productMedia: IProductMedia[];
+}
+
+export interface IProductTypeSnapshot {
+    id: string;
+    quantity: number;
+    price: number;
+    sku: string;
+    productTypesAttribute: IProductTypeAttributeInfo[];
+}
+
 export interface IProductInfo {
     base: IProductBaseInfo;
     details: IProductDetailUpdate[];

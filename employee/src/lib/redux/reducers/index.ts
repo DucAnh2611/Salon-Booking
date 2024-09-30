@@ -3,6 +3,7 @@ import { attributeReducer } from "./attribute.reducer";
 import authReducer from "./auth.reducer";
 import { categoryReducer } from "./category.reducer";
 import { clientReducer } from "./client.reducer";
+import { dashboardReducer } from "./dashboard.reducer";
 import { employeeReducer } from "./employee.reducer";
 import { mediaReducer } from "./media.reducer";
 import { orderDetailReducer } from "./order-detail.reducer";
@@ -35,6 +36,7 @@ const rootReducer = combineReducers({
     orderStateReducer,
     orderRefundReducer,
     clientReducer,
+    dashboardReducer,
 });
 
 export default rootReducer;

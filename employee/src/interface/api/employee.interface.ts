@@ -1,4 +1,5 @@
 import { EGender } from "@/enum/gender.enum";
+import { EServiceEmployeeExperience } from "@/enum/service.enum";
 import { EShiftEmployeeStatus } from "@/enum/shift.enum";
 import { EUserType } from "@/enum/user.enum";
 import { IMedia } from "./media.interface";
@@ -11,6 +12,12 @@ export interface IEmployee {
     createdAt: Date;
     updatedAt: Date;
     userBase: IUser;
+}
+
+export interface IEmployeeServiceSnapshot {
+    id: string;
+    employee: IEmployee;
+    experience: EServiceEmployeeExperience;
 }
 
 export interface IEmployeeModify {

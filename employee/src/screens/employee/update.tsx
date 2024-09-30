@@ -160,7 +160,7 @@ export default function UpdateEmployeeScreen() {
                                     className="animate-spin"
                                 />
                             )}
-                            Sửa nhân viên
+                            Cập nhật
                         </Button>
                     </div>
                 </form>

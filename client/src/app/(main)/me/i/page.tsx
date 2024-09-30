@@ -27,7 +27,7 @@ import { clientUpdateSchema } from "@/schema/client.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Check, ImageOff, Loader, LoaderCircle } from "lucide-react";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -249,13 +249,13 @@ export default function Page() {
                                     <FormItem>
                                         <div className="w-full grid grid-cols-3 items-center gap-5">
                                             <FormLabel className="col-span-1 text-right text-muted-foreground text-sm">
-                                                Tên
+                                                Email
                                             </FormLabel>
                                             <FormControl>
                                                 <div className="col-span-2 flex gap-3">
                                                     <Input
                                                         placeholder="Email"
-                                                        {...field}
+                                                        value={field.value}
                                                         className="flex-1"
                                                     />
                                                     {userInfo &&

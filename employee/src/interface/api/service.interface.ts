@@ -14,6 +14,16 @@ export interface IService {
     media: IServiceMedia[];
 }
 
+export interface IServiceSnapshot {
+    id: string;
+    name: string;
+    description: string;
+    duration: number;
+    price: number;
+    categoryId: string;
+    category: ICategory | null;
+    media: IServiceMedia[];
+}
 export interface IServiceMedia {
     serviceId: string;
     mediaId: string;

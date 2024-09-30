@@ -180,10 +180,7 @@ export class OrderController {
         const { clientId, userId } = req.accessPayload;
         const { id: orderId } = param;
 
-        return this.orderService.clientUpdateState(userId, clientId, {
-            orderId,
-            state: OrderStatusEnum.RECEIVED,
-        });
+        return this.orderService.clientReceiveOrder(userId, clientId, orderId);
     }
 
     @Post(CLIENT_ORDER_ROUTE.RETURN_ORDER)

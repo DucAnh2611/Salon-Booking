@@ -477,4 +477,15 @@ export const API_URLS = {
             withCredentials: true,
         }),
     },
+    STATISTIC: {
+        DASHBOARD: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["statistic-admin", "dashboard"],
+            }),
+            withCredentials: true,
+        }),
+    },
 };
