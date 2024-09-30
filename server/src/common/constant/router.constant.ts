@@ -103,6 +103,9 @@ export const OAUTH_ROUTE = {
 
 export const CLIENT_ROUTE = {
     ME: 'me',
+    INFO: 'me/i',
+    UPDATE: 'me/',
+
     VERIFY_EMAIL: 'verify-email',
     VERIFY_EMAIL_OTP: 'verify-email-otp',
     VERIFY_EMAIL_URL: 'verify-email-url',

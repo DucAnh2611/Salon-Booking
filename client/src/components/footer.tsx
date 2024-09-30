@@ -21,33 +21,25 @@ export default function Footer() {
                             <li>
                                 <Link
                                     href="/"
-                                    className="text-sm hover:text-gray-900"
+                                    className="text-sm hover:text-primary duration-100"
                                 >
                                     Trang Chủ
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    href="/services"
-                                    className="text-sm hover:text-gray-900"
+                                    href="/service"
+                                    className="text-sm hover:text-primary duration-100"
                                 >
                                     Dịch Vụ
                                 </Link>
                             </li>
                             <li>
                                 <Link
-                                    href="/products"
-                                    className="text-sm hover:text-gray-900"
+                                    href="/product"
+                                    className="text-sm hover:text-primary duration-100"
                                 >
                                     Sản Phẩm
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/contact"
-                                    className="text-sm hover:text-gray-900"
-                                >
-                                    Liên Hệ
                                 </Link>
                             </li>
                         </ul>
@@ -69,28 +61,28 @@ export default function Footer() {
                         <div className="flex space-x-4">
                             <Link
                                 href="#"
-                                className="text-gray-600 hover:text-gray-900"
+                                className="text-gray-600 hover:text-primary duration-100"
                             >
                                 <Facebook size={24} />
                                 <span className="sr-only">Facebook</span>
                             </Link>
                             <Link
                                 href="#"
-                                className="text-gray-600 hover:text-gray-900"
+                                className="text-gray-600 hover:text-primary duration-100"
                             >
                                 <Twitter size={24} />
                                 <span className="sr-only">Twitter</span>
                             </Link>
                             <Link
                                 href="#"
-                                className="text-gray-600 hover:text-gray-900"
+                                className="text-gray-600 hover:text-primary duration-100"
                             >
                                 <Instagram size={24} />
                                 <span className="sr-only">Instagram</span>
                             </Link>
                             <Link
                                 href="#"
-                                className="text-gray-600 hover:text-gray-900"
+                                className="text-gray-600 hover:text-primary duration-100"
                             >
                                 <Linkedin size={24} />
                                 <span className="sr-only">LinkedIn</span>

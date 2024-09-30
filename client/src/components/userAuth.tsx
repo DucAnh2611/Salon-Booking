@@ -70,6 +70,15 @@ export default function UserAuth() {
                         className="w-full py-1.5 h-fit justify-start font-normal"
                         variant="ghost"
                     >
+                        <Link href="/me">Quản lý tài khoản</Link>
+                    </Button>
+                </DropdownMenuItem>
+                <DropdownMenuItem asChild>
+                    <Button
+                        asChild
+                        className="w-full py-1.5 h-fit justify-start font-normal"
+                        variant="ghost"
+                    >
                         <Link href="/order">Đơn hàng</Link>
                     </Button>
                 </DropdownMenuItem>

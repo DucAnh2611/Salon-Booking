@@ -18,21 +18,21 @@ export default function OrderServiceItem({
 }: IOrderServiceItemProps) {
     return (
         <div className="w-full h-fit box-border p-2">
-            <div className="w-full flex gap-5">
-                <div className="w-[100px] aspect-square rounded overflow-hidden">
+            <div className="w-full flex gap-3">
+                <div className="w-[100px] h-[100px] rounded overflow-hidden">
                     <ThumbnailMedia medias={serviceItem.service.media} />
                 </div>
                 <div className="flex-1">
-                    <p className="text-lg font-medium">
+                    <p className="text-lg font-medium break-words whitespace-normal w-full line-clamp-2">
                         {serviceItem.service.name}
                     </p>
-                    <p className="font-bold text-primary text-base">
+                    <p className="font-bold text-primary text-base break-words whitespace-normal w-full line-clamp-3">
                         {formatMoney(serviceItem.service.price)}
                     </p>
 
-                    <div className="grid grid-cols-7 text-sm gap-2 w-full mt-2">
+                    <div className="grid grid-cols-2 text-sm gap-2 w-full mt-2">
                         <p className="text-primary col-span-1">Thời lượng</p>
-                        <p className="col-span-6">
+                        <p className="col-span-1">
                             {joinString({
                                 joinString: " ",
                                 strings: [
@@ -42,9 +42,9 @@ export default function OrderServiceItem({
                             })}
                         </p>
                     </div>
-                    <div className="grid grid-cols-7 text-sm gap-2 w-full">
+                    <div className="grid grid-cols-2 text-sm gap-2 w-full">
                         <p className="text-primary col-span-1">Ngày đặt</p>
-                        <p className="col-span-6">
+                        <p className="col-span-1">
                             {serviceItem.bookingTime
                                 ? format(
                                       serviceItem.bookingTime,
@@ -61,7 +61,7 @@ export default function OrderServiceItem({
             <div>
                 {serviceItem.employee ? (
                     <div className="w-full flex gap-3">
-                        <div className="w-[100px] aspect-square rounded overflow-hidden bg-muted">
+                        <div className="w-[100px] h-[100px] rounded overflow-hidden bg-muted">
                             {serviceItem.employee.employee.userBase
                                 .userAvatar ? (
                                 <Image

@@ -70,7 +70,7 @@ export default function OrderServiceItemTab({
     }, [selectItems]);
 
     return (
-        <div>
+        <div className="h-fit">
             <FormField
                 control={form.control}
                 name="services"

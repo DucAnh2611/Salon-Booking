@@ -12,6 +12,7 @@ export const multerBaseDir = appConfig.baseDir + process.env.MULTER_DEST;
 
 export const multerConfig = {
     dest: process.env.MULTER_DEST,
+    client: process.env.MULTER_CLIENT_DEST,
     temp: process.env.MULTER_TEMP_DEST,
     user: process.env.MULTER_USER_DEST,
     service: process.env.MULTER_SERVICE_DEST,

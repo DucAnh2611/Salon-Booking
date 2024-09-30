@@ -22,7 +22,7 @@ export default function OrderServiceContactTab({
     form,
 }: IOrderServiceContactTabProps) {
     return (
-        <div className="flex flex-col gap-2 h-full">
+        <div className="flex flex-col gap-2 h-fit">
             <FormField
                 control={form.control}
                 name="contact.name"

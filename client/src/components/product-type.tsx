@@ -227,18 +227,20 @@ export default function ProductTypeSelect({
                     <Separator orientation="horizontal" className="my-2" />
 
                     <div className="w-full space-y-3">
-                        <div className="w-full grid grid-cols-7">
-                            <div className="col-span-2 flex h-fit">
-                                <p className="text-sm text-muted-foreground">
-                                    Danh mục
-                                </p>
+                        {product.base.category && (
+                            <div className="w-full grid grid-cols-7">
+                                <div className="col-span-2 flex h-fit">
+                                    <p className="text-sm text-muted-foreground">
+                                        Danh mục
+                                    </p>
+                                </div>
+                                <div className="col-span-5 flex items-start">
+                                    <p className="text-sm">
+                                        {product.base.category.title}
+                                    </p>
+                                </div>
                             </div>
-                            <div className="col-span-5 flex items-start">
-                                <p className="text-sm">
-                                    {product.base.category.title}
-                                </p>
-                            </div>
-                        </div>
+                        )}
                         {product.detail.map((detail) => (
                             <div
                                 className="w-full grid grid-cols-7"

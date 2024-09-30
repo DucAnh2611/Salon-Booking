@@ -13,14 +13,14 @@ export default function OrderProductItem({
     return (
         <div className="p-4 box-border w-full ">
             <div className="flex gap-3">
-                <div className="w-[100px] aspect-square rounded overflow-hidden">
+                <div className="w-[100px] h-[100px] rounded overflow-hidden">
                     <ThumbnailMedia medias={productItem.product.productMedia} />
                 </div>
-                <div className="flex-1 ">
-                    <p className="font-medium text-lg">
+                <div className="flex-1">
+                    <p className="font-medium text-lg break-words whitespace-normal w-full line-clamp-2">
                         {productItem.product.name}
                     </p>
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-sm text-muted-foreground break-words whitespace-normal w-full line-clamp-3">
                         {productItem.product.description}
                     </p>
                     {productItem.productType && (

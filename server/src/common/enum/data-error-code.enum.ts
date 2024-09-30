@@ -156,4 +156,5 @@ export enum DataErrorCodeEnum {
 
     ACCOUNT_LOCK = 'DE125',
     ORDER_LOCK = 'DE126',
+    EXIST_EMAIL_OR_PHONE = 'DE127',
 }

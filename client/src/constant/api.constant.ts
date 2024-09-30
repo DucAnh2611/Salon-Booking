@@ -67,6 +67,44 @@ export const API_URLS = {
             withCredentials: true,
         }),
     },
+    CLIENT: {
+        VERIFY_EMAIL: () => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["client", "verify-email"],
+            }),
+            withCredentials: true,
+        }),
+        VERIFY_EMAIL_OTP: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["client", "verify-email-otp"],
+            }),
+            withCredentials: true,
+        }),
+        INFO: () => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["client", "me", "i"],
+            }),
+            withCredentials: true,
+        }),
+        UPDATE: () => ({
+            method: "PUT",
+            headers: HEADERS.header_form(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["client", "me"],
+            }),
+            withCredentials: true,
+        }),
+    },
     CATEGORY: {
         TREE: () => ({
             method: "GET",

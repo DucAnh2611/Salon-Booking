@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { JwtTokenUtil } from '../../shared/utils/token.utils';
 import { MailModule } from '../mail/mail.module';
+import { MediaModule } from '../media/media.module';
 import { RedisModule } from '../redis/redis.module';
 import { RolePermissionModule } from '../role-permission/role-permission.module';
 import { RoleModule } from '../role/role.module';
@@ -18,6 +19,7 @@ import { ClientService } from './service/client.service';
     imports: [
         TypeOrmModule.forFeature([ClientEntity]),
         MailModule,
+        MediaModule,
         UserModule,
         RedisModule,
         RoleModule,
