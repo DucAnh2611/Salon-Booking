@@ -1,3 +1,4 @@
+import Footer from "@/components/footer";
 import Navigation from "@/components/navigation";
 import CartProductProvider from "@/context/cart-product.context";
 import CartServiceProvider from "@/context/cart-service.context";
@@ -8,13 +9,12 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <main className="w-full h-screen overflow-hidden flex flex-col">
+        <main className="w-full h-screen overflow-hidden flex flex-col overflow-y-auto">
             <CartProductProvider>
                 <CartServiceProvider>
                     <Navigation />
-                    <section className="w-full flex-1 overflow-hidden overflow-y-auto">
-                        {children}
-                    </section>
+                    <div className="w-full flex-1 h-fit">{children}</div>
+                    <Footer />
                 </CartServiceProvider>
             </CartProductProvider>
         </main>

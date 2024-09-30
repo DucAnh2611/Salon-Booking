@@ -8,19 +8,23 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 import { ROUTER_PATH } from "@/constants/router.constant";
-import { IRoleDetail } from "@/interface/api/role.interface";
+import { IRole, IRoleDetail } from "@/interface/api/role.interface";
 import { deleteRoleApi } from "@/lib/redux/actions/role.action";
 import { categorySelector } from "@/lib/redux/selector";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
-import { LoaderCircleIcon, Trash2Icon } from "lucide-react";
-import { useEffect, useState } from "react";
+import { LoaderCircleIcon } from "lucide-react";
+import { ReactNode, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
 interface DeleteRoleDialogProps {
-    item: IRoleDetail;
+    item: IRoleDetail | IRole;
+    trigger: ReactNode;
 }
 
-export default function DeleteRoleDialog({ item }: DeleteRoleDialogProps) {
+export default function DeleteRoleDialog({
+    item,
+    trigger,
+}: DeleteRoleDialogProps) {
     const { isDeleting, isFailure } = useAppSelector(categorySelector);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
@@ -41,15 +45,7 @@ export default function DeleteRoleDialog({ item }: DeleteRoleDialogProps) {
 
     return (
         <Dialog open={open} onOpenChange={SetOpen}>
-            <DialogTrigger asChild>
-                <Button
-                    className="gap-2 items-center"
-                    variant="destructive"
-                    disabled={!item.deletable}
-                >
-                    <Trash2Icon size={15} /> Xóa
-                </Button>
-            </DialogTrigger>
+            <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent>
                 <DialogHeader>
                     <div className="flex gap-1">

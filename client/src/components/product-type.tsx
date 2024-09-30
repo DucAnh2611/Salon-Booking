@@ -115,7 +115,7 @@ export default function ProductTypeSelect({
 
     const getProductPriceRange = () => {
         if (!product.base) return 0;
-        if (!product.types.length) return product.base.price;
+        if (!product.types.length) return formatMoney(product.base.price);
 
         let [min, max] = [Infinity, 0];
 
@@ -227,17 +227,31 @@ export default function ProductTypeSelect({
                     <Separator orientation="horizontal" className="my-2" />
 
                     <div className="w-full space-y-3">
+                        {product.base.category && (
+                            <div className="w-full grid grid-cols-7">
+                                <div className="col-span-2 flex h-fit">
+                                    <p className="text-sm text-muted-foreground">
+                                        Danh mục
+                                    </p>
+                                </div>
+                                <div className="col-span-5 flex items-start">
+                                    <p className="text-sm">
+                                        {product.base.category.title}
+                                    </p>
+                                </div>
+                            </div>
+                        )}
                         {product.detail.map((detail) => (
                             <div
                                 className="w-full grid grid-cols-7"
                                 key={detail.id}
                             >
-                                <div className="col-span-1 flex h-fit">
+                                <div className="col-span-2 flex h-fit">
                                     <p className="text-sm text-muted-foreground">
                                         {detail.key}
                                     </p>
                                 </div>
-                                <div className="col-span-6 flex items-start">
+                                <div className="col-span-5 flex items-start">
                                     <p className="text-sm">{detail.value}</p>
                                 </div>
                             </div>
@@ -250,12 +264,12 @@ export default function ProductTypeSelect({
                                         key={value.attribute.id}
                                         className="w-full grid grid-cols-7"
                                     >
-                                        <div className="col-span-1 flex items-center">
+                                        <div className="col-span-2 flex items-center">
                                             <p className="text-sm text-muted-foreground">
                                                 {value.attribute.name}
                                             </p>
                                         </div>
-                                        <div className="flex flex-wrap gap-2 col-span-6">
+                                        <div className="flex flex-wrap gap-2 col-span-5">
                                             {value.values.map((v) => (
                                                 <Button
                                                     key={

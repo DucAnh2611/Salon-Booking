@@ -41,7 +41,9 @@ export class ProductBaseEntity extends ModifyEntity {
     @JoinColumn({ name: 'createdBy' })
     userCreate: EmployeeEntity;
 
-    @ManyToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.updateProduct, { eager: true })
+    @ManyToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.updateProduct, {
+        eager: true,
+    })
     @JoinColumn({ name: 'updatedBy' })
     userUpdate: EmployeeEntity;
 

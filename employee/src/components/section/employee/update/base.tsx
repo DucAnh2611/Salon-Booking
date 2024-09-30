@@ -1,6 +1,6 @@
-import SingleDatePicker from "@/components/date-picker/single";
 import SelectGenderDowndown from "@/components/dropdown/select-gender";
 import RequireField from "@/components/require-field";
+import { SelectBirthday } from "@/components/select-birthday";
 import { Button } from "@/components/ui/button";
 import {
     Card,
@@ -46,6 +46,9 @@ export default function BaseEmployeeUpdateSection({
     const [previewUrl, SetPreviewUrl] = useState<string>(
         userAvatar ? `${api_media_url}${userAvatar}` : ""
     );
+    const [selectedBirthday, SetSelectedBirthday] = useState<Date>(
+        new Date(employee.userBase.birthday)
+    );
 
     const handleImage = (e: ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files) return;
@@ -71,7 +74,8 @@ export default function BaseEmployeeUpdateSection({
         SetPreviewUrl("");
     };
 
-    const handleBirthday = (date: Date | undefined) => {
+    const handleBirthday = (date: Date) => {
+        SetSelectedBirthday(date);
         form.setValue("birthday", date);
     };
 
@@ -208,9 +212,9 @@ export default function BaseEmployeeUpdateSection({
                                     <FormItem className="flex-1">
                                         <FormLabel>Sinh nhật</FormLabel>
                                         <FormControl>
-                                            <SingleDatePicker
-                                                selectedDate={field.value}
+                                            <SelectBirthday
                                                 onSelect={handleBirthday}
+                                                selected={selectedBirthday}
                                             />
                                         </FormControl>
                                         <FormMessage />

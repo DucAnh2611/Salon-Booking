@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { multerConfig } from '../../config/multer.configs';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { MediaService } from '../media/service/media.service';
@@ -25,6 +26,9 @@ export class ServiceMediaService {
             where: { serviceId },
             loadEagerRelations: false,
             relations: { media: true },
+            order: {
+                isThumbnail: SortByEnum.DESC,
+            },
         });
     }
 

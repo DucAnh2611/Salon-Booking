@@ -1,5 +1,7 @@
 import { IAttributeValue } from "./attribute.interface";
+import { ICategory } from "./category.interface";
 import { IMedia } from "./media.interface";
+import { IServiceItemSearch } from "./service.interface";
 
 export interface IProduct {
     id: string;
@@ -24,6 +26,9 @@ export interface IProductInfoBase {
     name: string;
     description: number;
     productMedia: IProductMedia[];
+
+    category: ICategory;
+    categoryId: string;
 }
 
 export interface IProductInfoTypes {
@@ -145,4 +150,9 @@ export interface ISearchProductResponse {
 export interface IProductItemFeature extends IProduct {
     buyingCounts: number;
     types: IProductTypes[];
+}
+
+export interface IRelatedProductResponse {
+    products: IProductItemSearch[];
+    services: IServiceItemSearch[];
 }

@@ -112,7 +112,7 @@ export const createEmployeeApi =
     };
 
 /** @EMPLOYEE_UPDATE */
-const updateEmployeeType = EReduxType.EMPLOYEE_CREATE;
+const updateEmployeeType = EReduxType.EMPLOYEE_UPDATE;
 export const updateEmployeeApi =
     (id: string, formData: FormData) => async (dispatch: TAppDispatch) => {
         const api = API_URLS.EMPLOYEE.UPDATE(id);

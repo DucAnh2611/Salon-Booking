@@ -2,6 +2,7 @@ import { EGender } from "../enum/gender.enum";
 import { IMedia } from "./media.interface";
 
 export interface IUserClient {
+    id: string;
     email: string;
     emailVerified: boolean;
     phoneVerified: boolean;

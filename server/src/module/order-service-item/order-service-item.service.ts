@@ -111,7 +111,7 @@ export class OrderServiceItemService {
     async getSnapshot(serviceId: string, employeeId: string) {
         return Promise.all([
             this.serviceBaseService.getSnapshot(serviceId),
-            this.employeeService.getSnapshot(employeeId),
+            this.serviceEmployeeService.getSnapShot(serviceId, employeeId),
         ]);
     }
 
@@ -127,7 +127,7 @@ export class OrderServiceItemService {
             body.map(item => {
                 const { shiftId, employeeId, serviceId, bookingTime } = item;
                 const [serviceSnapshot, employeeSnapShot] = snapshotList.find(
-                    ([service, employee]) => service.id === serviceId && employee.id === employeeId,
+                    ([service, employee]) => service.id === serviceId && employee.employeeId === employeeId,
                 );
 
                 return this.orderServiceItemRepository.create({
@@ -135,7 +135,7 @@ export class OrderServiceItemService {
                     shiftId,
                     bookingTime,
                     serviceSnapshot,
-                    employeeSnapShot,
+                    employeeSnapShot: employeeSnapShot.employee,
                     employeeId,
                     serviceId,
                 });

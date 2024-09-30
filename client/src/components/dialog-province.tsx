@@ -51,27 +51,34 @@ export default function DialogSelectProvince({
         <Dialog open={open} onOpenChange={SetOpen}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent className="max-w-none w-fit">
-                <DialogHeader>
-                    <DialogTitle>Chọn địa chỉ</DialogTitle>
-                </DialogHeader>
-                <div>
-                    <ProvinceGroup />
-                </div>
-                <DialogFooter>
-                    <div className="flex gap-2">
-                        <Button variant="outline" onClick={handleCancel}>
-                            Hủy
-                        </Button>
-                        <Button
-                            onClick={handleConfirm}
-                            disabled={
-                                !(pSelected && dSelected && wSelected && street)
-                            }
-                        >
-                            Xác nhận địa chỉ
-                        </Button>
+                <div className="w-[500px]">
+                    <DialogHeader>
+                        <DialogTitle>Chọn địa chỉ</DialogTitle>
+                    </DialogHeader>
+                    <div className="w-full">
+                        <ProvinceGroup />
                     </div>
-                </DialogFooter>
+                    <DialogFooter className="mt-5">
+                        <div className="flex gap-2">
+                            <Button variant="outline" onClick={handleCancel}>
+                                Hủy
+                            </Button>
+                            <Button
+                                onClick={handleConfirm}
+                                disabled={
+                                    !(
+                                        pSelected &&
+                                        dSelected &&
+                                        wSelected &&
+                                        street
+                                    )
+                                }
+                            >
+                                Xác nhận địa chỉ
+                            </Button>
+                        </div>
+                    </DialogFooter>
+                </div>
             </DialogContent>
         </Dialog>
     );

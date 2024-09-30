@@ -26,24 +26,34 @@ export default function ProvinceGroup({}: IProvinceGroupProps) {
     };
 
     return (
-        <div>
-            <div className="flex flex-col gap-2">
-                <div className="flex gap-2">
-                    <ProvinceCombobox />
-                    {pSelected && <DistrictCombobox />}
-                    {dSelected && <WardCombobox />}
+        <div className="w-full">
+            <div className="flex flex-col gap-2 w-full">
+                <div className="grid grid-cols-3 gap-2 w-full">
+                    <div className="flex-1">
+                        <ProvinceCombobox />
+                    </div>
+                    {pSelected && (
+                        <div className="flex-1">
+                            <DistrictCombobox />
+                        </div>
+                    )}
+                    {dSelected && (
+                        <div className="flex-1">
+                            <WardCombobox />
+                        </div>
+                    )}
                 </div>
                 {wSelected && (
                     <Input
                         placeholder="Số nhà, tên đường"
-                        className="focus-visible:ring-transparent"
+                        className="focus-visible:ring-transparent w-full"
                         value={street}
                         onChange={handleChangeStreet}
                     />
                 )}
                 {pSelected && dSelected && wSelected && street && (
-                    <div>
-                        <p>
+                    <div className="w-full">
+                        <p className="text-sm text-muted-foreground break-words whitespace-normal text-ellipsis">
                             {joinString({
                                 joinString: ", ",
                                 strings: [

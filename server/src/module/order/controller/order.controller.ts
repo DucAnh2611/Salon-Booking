@@ -1,10 +1,13 @@
 import { Body, Controller, Get, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
 import { CLIENT_ORDER_ROUTE, ROUTER } from '../../../common/constant/router.constant';
+import { LockStateEnum } from '../../../common/enum/lock-state.enum';
 import { OrderStatusEnum } from '../../../common/enum/order.enum';
 import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
+import { NotLockState } from '../../../shared/decorator/not-lock-state.decorator';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
 import { AccessTokenClientGuard } from '../../../shared/guard/accessToken.guard';
+import { NotLockStateGuard } from '../../../shared/guard/not-lock-state.guard';
 import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
 import {
     CancelOrderRefundRequestDto,
@@ -18,7 +21,7 @@ import { GetOrderParamDto, GetOrderTrackingParamDto } from '../dto/order-get.dto
 import { ClientCancelOrderStateDto } from '../dto/order-update.dto';
 import { OrderService } from '../service/order.service';
 
-@UseGuards(AccessTokenClientGuard, UserTypeGuard)
+@UseGuards(AccessTokenClientGuard, UserTypeGuard, NotLockStateGuard)
 @Controller(ROUTER.ORDER)
 export class OrderController {
     constructor(private readonly orderService: OrderService) {}
@@ -87,6 +90,7 @@ export class OrderController {
 
     @Post(CLIENT_ORDER_ROUTE.PLACE_PRODUCT)
     @UserType(UserTypeEnum.CLIENT)
+    @NotLockState([LockStateEnum.ORDER])
     placeOrderProductSchema(@Req() req: AppRequest, @Body() body: CreateOrderProductDto) {
         const { clientId, userId } = req.accessPayload;
         return this.orderService.createOrderProduct(userId, clientId, body);
@@ -94,6 +98,7 @@ export class OrderController {
 
     @Post(CLIENT_ORDER_ROUTE.PLACE_SERVICE)
     @UserType(UserTypeEnum.CLIENT)
+    @NotLockState([LockStateEnum.ORDER])
     placeOrderService(@Req() req: AppRequest, @Body() body: CreateOrderServiceDto) {
         const { clientId, userId } = req.accessPayload;
         return this.orderService.createOrderService(userId, clientId, body);
@@ -175,10 +180,7 @@ export class OrderController {
         const { clientId, userId } = req.accessPayload;
         const { id: orderId } = param;
 
-        return this.orderService.clientUpdateState(userId, clientId, {
-            orderId,
-            state: OrderStatusEnum.RECEIVED,
-        });
+        return this.orderService.clientReceiveOrder(userId, clientId, orderId);
     }
 
     @Post(CLIENT_ORDER_ROUTE.RETURN_ORDER)

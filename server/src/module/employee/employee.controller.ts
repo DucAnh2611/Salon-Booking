@@ -43,7 +43,7 @@ export class EmployeeController {
 
     @Get(EMPLOYEE_ROUTE.ME)
     @UserType(UserTypeEnum.STAFF)
-    @TargetActionRequire([{ target: PermissionTargetEnum.EMPLOYEE, action: [PermissionActionEnum.READ] }])
+    @TargetActionRequire([])
     me(@Req() req: AppRequest) {
         const { employeeId } = req.accessPayload;
         return this.employeeService.getMyInfo(employeeId);

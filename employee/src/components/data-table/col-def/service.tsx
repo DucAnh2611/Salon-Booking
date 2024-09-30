@@ -51,28 +51,22 @@ export const serviceColumnDef: ColumnDef<IService>[] = [
         cell: ({ cell }) => {
             const medias = cell.getValue() as IServiceMedia[];
 
+            const thumbnail = medias.find((m) => m.isThumbnail && m.media);
+
+            console.log(thumbnail);
+
             return (
                 <div className="w-full flex items-center justify-center">
-                    {medias.length ? (
-                        getMediaType(
-                            medias.filter((m) => m.isThumbnail)[0].media.path
-                        ) === "image" ? (
+                    {thumbnail ? (
+                        getMediaType(thumbnail.media.path) === "image" ? (
                             <img
-                                src={
-                                    api_media_url +
-                                    medias.filter((m) => m.isThumbnail)[0].media
-                                        .path
-                                }
+                                src={api_media_url + thumbnail.media.path}
                                 alt="product"
                                 className="h-[70px] aspect-square object-cover rounded-md overflow-hidden"
                             />
                         ) : (
                             <video
-                                src={
-                                    api_media_url +
-                                    medias.filter((m) => m.isThumbnail)[0].media
-                                        .path
-                                }
+                                src={api_media_url + thumbnail.media.path}
                                 className="h-[70px] aspect-square object-cover rounded-md overflow-hidden"
                             />
                         )

@@ -7,7 +7,7 @@ import useDebounce from "@/hook/useDebounce.hook";
 import useSearchService from "@/hook/useSearchService.hook";
 import {
     IApiSearchService,
-    ISerivceItemSearch,
+    IServiceItemSearch,
 } from "@/interface/service.interface";
 import { findService } from "@/lib/actions/service.action";
 import { joinString } from "@/lib/string";
@@ -19,7 +19,7 @@ export default function ServicePage() {
     const { filter, setFilter } = useSearchService();
 
     const [key, SetKey] = useState<string>(filter.key);
-    const [services, SerServices] = useState<ISerivceItemSearch[]>([]);
+    const [services, SerServices] = useState<IServiceItemSearch[]>([]);
     const [count, SetCount] = useState<number>(0);
     const [isLoading, SetIsLoading] = useState<boolean>(false);
 

@@ -4,9 +4,9 @@ import OrderProductAmount from "@/components/order-product-amount";
 import OrderProductContactTab from "@/components/order-product-contact-tab";
 import OrderProductItemTab from "@/components/order-product-items-tab";
 import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
 import { EOrderPaymentType } from "@/enum/order.enum";
 import useCartProduct from "@/hook/useCartProduct.hook";
@@ -20,19 +20,6 @@ import { useRouter } from "next/navigation";
 import { useMemo } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
-
-const tabs = [
-    {
-        value: "cart-items",
-        Tab: OrderProductItemTab,
-        title: "Danh sách sản phẩm",
-    },
-    {
-        value: "order-contact",
-        Tab: OrderProductContactTab,
-        title: "Thông tin liên hệ",
-    },
-];
 
 export default function CheckoutProductPage() {
     const router = useRouter();
@@ -115,31 +102,34 @@ export default function CheckoutProductPage() {
                                 className="flex gap-5 w-full h-fit"
                                 onSubmit={form.handleSubmit(handleSubmit)}
                             >
-                                <Card className="flex-1 p-4 box-border">
-                                    <Tabs
-                                        defaultValue={tabs[0].value}
-                                        className="flex flex-col h-full"
-                                    >
-                                        <TabsList className="w-fit h-fit">
-                                            {tabs.map(({ value, title }) => (
-                                                <TabsTrigger
-                                                    key={value}
-                                                    value={value}
-                                                >
-                                                    {title}
-                                                </TabsTrigger>
-                                            ))}
-                                        </TabsList>
-                                        {tabs.map(({ value, Tab }) => (
-                                            <TabsContent
-                                                key={value}
-                                                value={value}
-                                                className="flex-1"
-                                            >
-                                                <Tab form={form} />
-                                            </TabsContent>
-                                        ))}
-                                    </Tabs>
+                                <Card className="flex-1 box-border h-fit">
+                                    <CardHeader className="p-4">
+                                        <CardTitle>
+                                            Danh sách sản phẩm
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <Separator
+                                        className=""
+                                        orientation="horizontal"
+                                    />
+                                    <CardContent className="p-4">
+                                        <OrderProductItemTab />
+                                    </CardContent>
+                                </Card>
+
+                                <Card className="flex-1 box-border h-fit">
+                                    <CardHeader className="p-4">
+                                        <CardTitle>
+                                            Thông tin đặt hàng
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <Separator
+                                        className=""
+                                        orientation="horizontal"
+                                    />
+                                    <CardContent className="p-4">
+                                        <OrderProductContactTab form={form} />
+                                    </CardContent>
                                 </Card>
 
                                 <div className="w-[400px] h-auto">

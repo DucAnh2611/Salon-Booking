@@ -536,6 +536,25 @@ export class OrderService {
         });
     }
 
+    async clientReceiveOrder(userId: string, clientId: string, orderId: string) {
+        const order = await this.orderBaseService.get(orderId);
+        if (!order) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
+        }
+
+        const isOwn = await this.orderBaseService.isOwn(orderId, clientId);
+        if (!isOwn) {
+            throw new BadRequest({ message: DataErrorCodeEnum.ORDER_FORBIDDEN });
+        }
+        await this.orderBaseService.updateTotalPaid(orderId, order.total, userId);
+        await this.clientUpdateState(userId, clientId, {
+            orderId,
+            state: OrderStatusEnum.RECEIVED,
+        });
+
+        return DataSuccessCodeEnum.OK;
+    }
+
     async clientConfirmOrder(userId: string, clientId: string, orderId: string) {
         const order = await this.orderBaseService.get(orderId);
         if (!order) {
@@ -657,7 +676,7 @@ export class OrderService {
             (order.status === OrderStatusEnum.PAID_PAYMENT || order.status === OrderStatusEnum.PENDING);
 
         return {
-            cancelable: CAN_CANCEL_LIST.includes(order.status) && !isPendingTransaction,
+            cancelable: [...CAN_CANCEL_LIST, OrderStatusEnum.CONFIRMED].includes(order.status) && !isPendingTransaction,
             returnable: CAN_RETURN_LIST.includes(order.status) && order.type === OrderType.PRODUCT,
             receivable: order.type === OrderType.PRODUCT && order.status === OrderStatusEnum.SHIPPED,
             createPayment:

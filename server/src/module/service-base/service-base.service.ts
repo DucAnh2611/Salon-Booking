@@ -58,7 +58,7 @@ export class ServiceBaseService {
 
                 return {
                     ...item,
-                    serviceMedia: media,
+                    media: media,
                     stepCounts,
                     bookingCounts,
                 };
@@ -73,12 +73,51 @@ export class ServiceBaseService {
         };
     }
 
+    async related(relatedCategoryIds: string[], serviceId?: string) {
+        const related = await this.seriviceBaseRepository.find({
+            where: {
+                ...(serviceId ? { id: Not(serviceId) } : {}),
+                ...(relatedCategoryIds.length ? { categoryId: In(relatedCategoryIds) } : {}),
+            },
+            loadEagerRelations: false,
+            take: 10,
+            skip: 0,
+        });
+
+        const mapMedia = await Promise.all(
+            related.map(async item => {
+                const media = await this.serviceMediaService.getListByService(item.id);
+                const stepCounts = await this.seriviceStepRepository.count({
+                    where: { serviceId: item.id },
+                    loadEagerRelations: false,
+                });
+                const bookingCounts = await this.orderServiceItemRepository.count({
+                    where: { serviceId: item.id, order: { status: Not(In([OrderStatusEnum.CANCELLED])) } },
+                    loadEagerRelations: false,
+                });
+
+                return {
+                    ...item,
+                    media: media,
+                    stepCounts,
+                    bookingCounts,
+                };
+            }),
+        );
+
+        return mapMedia;
+    }
+
     isValid(serviceId: string) {
         return this.seriviceBaseRepository.findOne({ where: { id: serviceId }, loadEagerRelations: false });
     }
 
     getSnapshot(id: string) {
-        return this.seriviceBaseRepository.findOne({ where: { id }, loadEagerRelations: false });
+        return this.seriviceBaseRepository.findOne({
+            where: { id },
+            loadEagerRelations: false,
+            relations: { category: true, media: { media: true } },
+        });
     }
 
     async detail(id: string) {
@@ -120,6 +159,12 @@ export class ServiceBaseService {
             loadEagerRelations: false,
             relations: {
                 category: true,
+                media: {
+                    media: true,
+                },
+                steps: {
+                    thumbnail: true,
+                },
             },
         });
 
@@ -127,11 +172,8 @@ export class ServiceBaseService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_SERVICE });
         }
 
-        const media = await this.serviceMediaService.getListByService(id);
-
         return {
             ...service,
-            media,
         };
     }
 
@@ -187,7 +229,7 @@ export class ServiceBaseService {
 
                 return {
                     ...item,
-                    serviceMedia: media,
+                    media: media,
                     stepCounts,
                     bookingCounts,
                 };

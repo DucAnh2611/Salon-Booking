@@ -16,8 +16,10 @@ export class MailerService {
 
     private defaultTransporter() {
         this.transporter = nodemailer.createTransport({
+            service: 'gmail',
             host: mailerConfig.host,
             port: mailerConfig.port,
+            pool: true,
             ignoreTLS: mailerConfig.ignoreTLS,
             secure: mailerConfig.secure,
             requireTLS: mailerConfig.requireTLS,

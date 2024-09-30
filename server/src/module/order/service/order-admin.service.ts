@@ -234,6 +234,7 @@ export class OrderAdminService {
                     await this.orderOnJob(orderId);
                     break;
                 case OrderStatusEnum.FINISH:
+                    await this.orderBaseService.updateTotalPaid(orderId, order.total, userId);
                     await this.orderFinish(orderId);
                     break;
                 default:

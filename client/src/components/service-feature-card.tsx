@@ -15,12 +15,12 @@ export default function ServiceFeatureCard({
     service,
 }: IServiceFeatureCardProps) {
     return (
-        <Card className="w-full h-full box-border p-3 cursor-pointer group hover:bg-muted">
+        <Card className="w-full h-full box-border p-3 group hover:bg-muted">
             <div className="w-full h-full flex flex-col gap-2">
                 <div className="w-full flex-1 overflow-hidden border rounded  relative">
                     <div className="w-full h-[200px] overflow-hidden rounded">
                         <div className="w-full h-full group-hover:scale-105 duration-100 ">
-                            <ThumbnailMedia medias={service.serviceMedia} />
+                            <ThumbnailMedia medias={service.media} />
                         </div>
                     </div>
                     <div className="absolute left-0 top-0 flex gap-2 w-full justify-end p-2 box-border">

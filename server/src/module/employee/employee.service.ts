@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Like, Repository } from 'typeorm';
+import { In, Like, Not, Repository } from 'typeorm';
+import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { EmployeeStatusEnum } from '../../common/enum/employee.enum';
@@ -125,6 +126,25 @@ export class EmployeeService {
         // check is eRoleId is employee id (level lower than level of staff)
         await this.roleService.isValidParent(eRoleId);
 
+        const findExistPhone = await this.employeeRepository.findOne({
+            where: {
+                userBase: {
+                    phone: userInfo.phone,
+                    type: UserTypeEnum.STAFF,
+                },
+            },
+            loadEagerRelations: false,
+            relations: { userBase: true },
+        });
+        if (findExistPhone) {
+            throw new BadRequest({ message: DataErrorCodeEnum.DUPLICATE_PHONE_EMPLOYEE });
+        }
+
+        const dupUsername = await this.isExist({ username });
+        if (dupUsername) {
+            throw new BadRequest({ message: DataErrorCodeEnum.DUPLICATE_USERNAME_EMPLOYEE });
+        }
+
         const createdUser = await this.userService.create({ ...userInfo, type: UserTypeEnum.STAFF });
         if (!createdUser) throw new InternalServer();
 
@@ -160,6 +180,21 @@ export class EmployeeService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_EMPLOYEE });
         }
 
+        const findExistPhone = await this.employeeRepository.findOne({
+            where: {
+                id: Not(targetEmployeeId),
+                userBase: {
+                    phone: phone,
+                    type: UserTypeEnum.STAFF,
+                },
+            },
+            loadEagerRelations: false,
+            relations: { userBase: true },
+        });
+        if (findExistPhone) {
+            throw new BadRequest({ message: DataErrorCodeEnum.DUPLICATE_PHONE_EMPLOYEE });
+        }
+
         const [employeeRole, roleAdmin] = await Promise.all([
             this.employeeRepository.findOne({
                 where: { id: targetEmployeeId },
@@ -168,12 +203,12 @@ export class EmployeeService {
                     eRole: true,
                 },
             }),
-            this.roleService.getRole({ title: 'admin', deletable: false }),
+            this.roleService.getRole({ title: ROLE_TITLE.admin, deletable: false }),
         ]);
 
-        if (employeeRole.eRole.id === roleAdmin.id && employee.eRoleId !== roleAdmin.id) {
+        if (employeeRole.eRole && employeeRole.eRole.id === roleAdmin.id && employee.eRoleId !== roleAdmin.id) {
             throw new BadRequest({ message: DataErrorCodeEnum.CAN_NOT_CHANGE_ADMIN_ROLE });
-        } else if (employeeRole.eRole.id !== roleAdmin.id) {
+        } else if (employeeRole.eRole && employeeRole.eRole.id !== roleAdmin.id) {
             // check is eRoleId is employee roleid (level lower than level of staff)
             await this.roleService.isValidParent(employee.eRoleId);
         }
@@ -214,7 +249,7 @@ export class EmployeeService {
             throw new BadRequest({ message: DataErrorCodeEnum.SELF_DELETE_EMPLOYEE });
         }
 
-        if (exist.some(emp => emp.eRole.title === 'admin' && !emp.eRole.deletable)) {
+        if (exist.some(emp => emp.eRole.title === ROLE_TITLE.admin && !emp.eRole.deletable)) {
             throw new BadRequest({ message: DataErrorCodeEnum.DELETE_ADMIN });
         }
 
@@ -237,7 +272,7 @@ export class EmployeeService {
                 where: { id: targetId },
                 loadEagerRelations: false,
             }),
-            this.roleService.getRole({ title: 'admin', deletable: false }),
+            this.roleService.getRole({ title: ROLE_TITLE.admin, deletable: false }),
         ]);
 
         if (!target) {

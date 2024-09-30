@@ -5,9 +5,9 @@ export class CreateRoleDto {
     @IsString()
     title: string;
 
-    @IsNotEmpty()
+    @IsOptional()
     @IsUUID('all')
-    parentId: string;
+    parentId?: string;
 
     @IsOptional()
     @IsString()

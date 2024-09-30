@@ -13,6 +13,7 @@ import { IDispatchDedicateRedux } from "@/interface/redux/dedicate.interface";
 const initialState: IInitialStateAuth = {
     authentication: false,
     user: null,
+    retry: false,
     loginPayload: null,
     isCalling: false,
     isFailure: false,

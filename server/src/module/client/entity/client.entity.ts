@@ -1,4 +1,4 @@
-import { Column, Entity, JoinColumn, OneToMany, OneToOne } from 'typeorm';
+import { Column, CreateDateColumn, Entity, JoinColumn, OneToMany, OneToOne, UpdateDateColumn } from 'typeorm';
 import { BaseEntity } from '../../../common/enitty/base.entity';
 import { CartProductEntity } from '../../cart-product/entity/cart-product.entity';
 import { CartServiceEntity } from '../../cart-service/entity/cart-service.entity';
@@ -18,6 +18,18 @@ export class ClientEntity extends BaseEntity {
 
     @Column('uuid', { name: 'userId' })
     userId: string;
+
+    @Column('boolean', { default: false })
+    lockAccount: boolean;
+
+    @Column('boolean', { default: false })
+    lockOrder: boolean;
+
+    @CreateDateColumn({ type: 'timestamp with time zone', default: new Date() })
+    createdAt: Date;
+
+    @UpdateDateColumn({ type: 'timestamp with time zone', default: new Date() })
+    updatedAt: Date;
 
     @OneToOne(() => UserEntity, (userEntity: UserEntity) => userEntity.employee, { eager: true })
     @JoinColumn({ name: 'userId' })

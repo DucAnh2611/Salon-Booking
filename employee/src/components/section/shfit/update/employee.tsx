@@ -1,5 +1,6 @@
 import DialogAssignEmployeeShift from "@/components/dialog/shift/assign-employee";
 import DialogReassignEmployeeShift from "@/components/dialog/shift/reassign-employee";
+import MediaLoader from "@/components/media-load";
 import PopoverSelectMutipleEmployee from "@/components/popover/employee/select-mutiple";
 import ShiftEmployeeStatus from "@/components/shift-employee-status";
 import { Badge } from "@/components/ui/badge";
@@ -13,7 +14,6 @@ import {
     assignmentRemoveApi,
 } from "@/lib/redux/actions/shift.action";
 import { useAppDispatch } from "@/lib/redux/store";
-import { api_media_url } from "@/utils/apiCall";
 import { useEffect, useState } from "react";
 
 interface IUpdateShiftEmployeeSectionProps {
@@ -132,13 +132,8 @@ export default function UpdateShiftEmployeeSection({
                                         Loại bỏ
                                     </Button>
                                 </div>
-                                <img
-                                    src={
-                                        api_media_url +
-                                        e.employee.userBase.userAvatar?.path
-                                    }
-                                    alt="emp"
-                                    className="w-full h-full object-cover group-hover/emp:scale-105 duration-150"
+                                <MediaLoader
+                                    media={e.employee.userBase.userAvatar}
                                 />
                             </div>
                             <div className="flex flex-col gap-2">

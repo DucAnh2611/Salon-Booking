@@ -29,6 +29,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
 import {
     LoaderCircleIcon,
     PencilLineIcon,
+    Trash2Icon,
     Undo2Icon,
     XIcon,
 } from "lucide-react";
@@ -143,17 +144,10 @@ function UpdateRoleScreen() {
                     field: "title",
                     message: ZOD_MESSAGE.min(2, "Tến chức vụ"),
                 });
-            } else if (tempUpdate.title.length > 20) {
+            } else if (tempUpdate.title.length > 50) {
                 error.push({
                     field: "title",
-                    message: ZOD_MESSAGE.max(20, "Tến chức vụ"),
-                });
-            }
-
-            if (!tempUpdate.parentId) {
-                error.push({
-                    field: "parentId",
-                    message: "Chức vụ cha không thể để trống",
+                    message: ZOD_MESSAGE.max(50, "Tến chức vụ"),
                 });
             }
 
@@ -164,7 +158,9 @@ function UpdateRoleScreen() {
 
             dispatch(
                 updateRoleApi(tempUpdate.id, {
-                    parentId: tempUpdate.parentId,
+                    ...(tempUpdate.parentId
+                        ? { parentId: tempUpdate.parentId }
+                        : {}),
                     title: tempUpdate.title,
                     permissionIds: tempPermission.map((per) => per.id),
                     description: tempUpdate.description || "",
@@ -223,7 +219,20 @@ function UpdateRoleScreen() {
                                 Quay lại danh sách
                             </Button>
 
-                            {detail && <DeleteRoleDialog item={detail} />}
+                            {detail && (
+                                <DeleteRoleDialog
+                                    item={detail}
+                                    trigger={
+                                        <Button
+                                            className="gap-2 items-center"
+                                            variant="destructive"
+                                            disabled={!detail.deletable}
+                                        >
+                                            <Trash2Icon size={15} /> Xóa
+                                        </Button>
+                                    }
+                                />
+                            )}
 
                             {update ? (
                                 <>
@@ -287,24 +296,12 @@ function UpdateRoleScreen() {
                             )}
                         </div>
                         <div>
-                            <Label>
-                                Chức vụ cha
-                                <RequireField />
-                            </Label>
+                            <Label>Chức vụ</Label>
                             <PopoverSelectParentRole
                                 disabled={!update}
                                 selected={tempUpdate.parent}
                                 onSelectParent={handleSelectParent}
                             />
-                            {error.some((e) => e.field === "parentId") && (
-                                <p className="text-destructive text-xs mt-1">
-                                    {
-                                        error.find(
-                                            (e) => e.field === "parentId"
-                                        )?.message
-                                    }
-                                </p>
-                            )}
                         </div>
                         <div>
                             <Label>Ngày tạo</Label>

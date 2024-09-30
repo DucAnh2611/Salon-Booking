@@ -6,8 +6,8 @@ import { updateProductCart } from "@/lib/actions/cart.action";
 import { CheckedState } from "@radix-ui/react-checkbox";
 import { LoaderCircle, Trash } from "lucide-react";
 import { useState } from "react";
+import CartProductItem from "./cart-product-item";
 import DialogDeleteItemProductCart from "./dialog-delete-item-product-cart";
-import QuantityButton from "./quantity-button";
 import { Button } from "./ui/button";
 import { Checkbox } from "./ui/checkbox";
 import { Label } from "./ui/label";
@@ -126,7 +126,7 @@ export default function CartProductItemTab({}: ICartProductItemTabProps) {
             <div className="flex flex-col w-full h-fit gap-2">
                 {cart.products.map((productItem) => (
                     <div key={productItem.id} className="border">
-                        <div className="flex justify-between w-full border-b p-3 box-border py-4">
+                        <div className="flex justify-between w-full border-b p-2 box-border">
                             <div className="flex gap-2 items-center">
                                 <Checkbox
                                     disabled={
@@ -158,33 +158,13 @@ export default function CartProductItemTab({}: ICartProductItemTabProps) {
                                 />
                             </div>
                         </div>
-                        <div className="p-3 box-border w-full ">
-                            <div>Product Id: {productItem.product.id}</div>
-                            {productItem.productType && (
-                                <div>
-                                    Product Type Id:{" "}
-                                    {productItem.productType.id}
-                                </div>
-                            )}
-                            {!!productItem.product.deletedAt ||
-                            (productItem.productType &&
-                                !!productItem.productType.deletedAt) ? (
-                                <div className="flex justify-end">
-                                    <p className="text-sm text-destructive">
-                                        Sản phẩm đã hoặc kiểu loại sản phẩm đã
-                                        bị xóa
-                                    </p>
-                                </div>
-                            ) : (
-                                <div className="flex justify-end">
-                                    <QuantityButton
-                                        value={productItem.quantity}
-                                        onChange={handleChangeQuantity(
-                                            productItem
-                                        )}
-                                    />
-                                </div>
-                            )}
+                        <div>
+                            <CartProductItem
+                                productItem={productItem}
+                                onChangeQuantity={handleChangeQuantity(
+                                    productItem
+                                )}
+                            />
                         </div>
                     </div>
                 ))}

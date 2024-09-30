@@ -3,8 +3,8 @@ import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { ShiftEntity } from '../../shift/entity/shift.entity';
 
-@Index(['date'])
-@Entity('working_hour')
+@Index(['date', 'start', 'end'])
+@Entity('working_date')
 export class WorkingHourEntity extends ModifyEntity {
     @Column('timestamp with time zone')
     date: Date;

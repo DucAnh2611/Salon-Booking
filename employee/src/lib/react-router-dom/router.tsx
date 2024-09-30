@@ -1,6 +1,7 @@
 import { ROUTER_PATH } from "@/constants/router.constant";
 import AdminLayout from "@/layouts/admin.layout";
 import CategoryScreen from "@/screens/category";
+import ClientScreen from "@/screens/client";
 import EmployeeScreen from "@/screens/employee";
 import CreateEmployeeScreen from "@/screens/employee/create";
 import UpdateEmployeeScreen from "@/screens/employee/update";
@@ -56,6 +57,15 @@ export const router = createBrowserRouter([
                     {
                         path: ":id",
                         element: <UpdateRoleScreen />,
+                    },
+                ],
+            },
+            {
+                path: ROUTER_PATH.CLIENT,
+                children: [
+                    {
+                        path: "",
+                        element: <ClientScreen />,
                     },
                 ],
             },

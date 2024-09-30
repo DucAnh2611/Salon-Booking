@@ -5,6 +5,7 @@ import {
     IProductInfo,
     IProductItemFeature,
     IProductOnStock,
+    IRelatedProductResponse,
     ISearchProductResponse,
 } from "@/interface/product.interface";
 import { apiCall } from "../apiCall";
@@ -14,6 +15,15 @@ export const featureProducts = async () => {
     const api = API_URLS.PRODUCT.FEATURED();
 
     const resApi = await apiCall<IProductItemFeature[]>({ ...api });
+
+    return resApi;
+};
+
+/** @RELATED_PRODUCT */
+export const relatedProducts = async (id: string) => {
+    const api = API_URLS.PRODUCT.RELATED(id);
+
+    const resApi = await apiCall<IRelatedProductResponse>({ ...api });
 
     return resApi;
 };

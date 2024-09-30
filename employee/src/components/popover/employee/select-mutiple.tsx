@@ -1,3 +1,4 @@
+import MediaLoader from "@/components/media-load";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
@@ -8,7 +9,7 @@ import {
 import { API_URLS } from "@/constants/api.constant";
 import useDebounce from "@/hooks/useDebounce";
 import { IEmployee, IFindEmployee } from "@/interface/api/employee.interface";
-import { api_media_url, apiCall } from "@/utils/apiCall";
+import { apiCall } from "@/utils/apiCall";
 import { CheckIcon, PlusIcon } from "lucide-react";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 
@@ -112,7 +113,7 @@ export default function PopoverSelectMutipleEmployee({
                     <div>
                         <div className="w-full flex gap-2">
                             <Input
-                                placeholder="Nhập tên kiểu"
+                                placeholder="Nhập tên"
                                 onChange={handleChangeKey}
                             />
                         </div>
@@ -136,14 +137,8 @@ export default function PopoverSelectMutipleEmployee({
                                 >
                                     <div className="flex items-center justify-start gap-2">
                                         <div className="size-10 rounded-full overflow-hidden">
-                                            <img
-                                                src={
-                                                    api_media_url +
-                                                    item.userBase.userAvatar
-                                                        ?.path
-                                                }
-                                                alt="emp"
-                                                className="w-full h-full object-cover"
+                                            <MediaLoader
+                                                media={item.userBase.userAvatar}
                                             />
                                         </div>
                                         <div className="flex-1 text-left">

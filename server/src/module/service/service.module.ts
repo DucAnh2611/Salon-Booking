@@ -1,4 +1,6 @@
 import { Module } from '@nestjs/common';
+import { CategoryModule } from '../category/category.module';
+import { ProductBaseModule } from '../product-base/product-base.module';
 import { RolePermissionModule } from '../role-permission/role-permission.module';
 import { RoleModule } from '../role/role.module';
 import { ServiceBaseModule } from '../service-base/service-base.module';
@@ -16,6 +18,8 @@ import { ServiceService } from './service/service.service';
         ServiceStepModule,
         ServiceMediaModule,
         ServiceEmployeeModule,
+        ProductBaseModule,
+        CategoryModule,
         RoleModule,
         RolePermissionModule,
     ],

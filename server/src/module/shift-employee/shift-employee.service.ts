@@ -89,7 +89,18 @@ export class ShiftEmployeeService {
             },
         });
 
-        return shiftEmployess;
+        const mapExp = await Promise.all(
+            shiftEmployess.map(emp => {
+                const serviceEmployee = serviceEmployees.find(se => se.employeeId === emp.employeeId);
+
+                return {
+                    ...emp,
+                    experience: serviceEmployee.experience,
+                };
+            }),
+        );
+
+        return mapExp;
     }
 
     async saveMany(createId: string, body: BodyCreateShiftEmployeeDto) {

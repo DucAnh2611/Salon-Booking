@@ -58,9 +58,11 @@ export default function DistrictCombobox() {
                     variant="outline"
                     role="combobox"
                     aria-expanded={open}
-                    className="w-[200px] justify-between"
+                    className="w-full justify-between"
                 >
-                    {selected ? selected.name : "Chọn quận, huyện"}
+                    <span className="flex-1 whitespace-nowrap text-ellipsis line-clamp-1">
+                        {selected ? selected.name : "Chọn quận, huyện"}
+                    </span>
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                 </Button>
             </PopoverTrigger>

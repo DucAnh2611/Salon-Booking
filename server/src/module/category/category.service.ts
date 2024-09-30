@@ -49,6 +49,19 @@ export class CategoryService {
         return list;
     }
 
+    async getRelatedCategory(categoryId: string): Promise<CategoryEntity[]> {
+        const category = await this.categoryRepository.findOne({
+            where: { id: categoryId },
+            loadEagerRelations: false,
+        });
+
+        if (!category.parentId) return [category];
+
+        const parent = await this.getRelatedCategory(category.parentId);
+
+        return [category, ...parent];
+    }
+
     async isNested(id: string, parentId: string) {
         const isNested = await this.categoryRepository.findOne({
             where: {

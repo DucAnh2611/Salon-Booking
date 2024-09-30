@@ -8,7 +8,7 @@ import UserAuth from "./userAuth";
 
 export default function Navigation() {
     return (
-        <nav className="w-full h-fit box-border border-b z-10 bg-background">
+        <nav className="w-full h-fit box-border border-b z-10 bg-background sticky top-0 left-0">
             <div className="container px-4 py-3 flex items-center justify-between ">
                 <div className="flex gap-10 items-center">
                     <Link

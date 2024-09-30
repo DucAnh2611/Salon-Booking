@@ -1,11 +1,11 @@
-import { Column, Entity, Index, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
+import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { OrderServiceItemEntity } from '../../order-service-item/entity/order-service-item.entity';
 import { ShiftEmployeeEntity } from '../../shift-employee/entity/shift-employee.entity';
 import { WorkingHourEntity } from '../../working-hour/entity/working-hour.entity';
 
-@Index(['workingHourId'])
+// @Index(['workingDateId'])
 @Entity('shift')
 export class ShiftEntity extends ModifyEntity {
     @Column('timestamp with time zone')
@@ -20,7 +20,7 @@ export class ShiftEntity extends ModifyEntity {
     @Column('timestamp with time zone')
     bookingEnd: Date;
 
-    @Column('uuid')
+    @Column('uuid', { name: 'workingDateId' })
     workingHourId: string;
 
     @OneToMany(() => ShiftEmployeeEntity, (shiftEmployeeEntity: ShiftEmployeeEntity) => shiftEmployeeEntity.shift)
@@ -32,8 +32,10 @@ export class ShiftEntity extends ModifyEntity {
     )
     orderServiceItem: OrderServiceItemEntity[];
 
-    @ManyToOne(() => WorkingHourEntity, (workingHourEntity: WorkingHourEntity) => workingHourEntity.shifts)
-    @JoinColumn({ name: 'workingHourId' })
+    @ManyToOne(() => WorkingHourEntity, (workingHourEntity: WorkingHourEntity) => workingHourEntity.shifts, {
+        nullable: true,
+    })
+    @JoinColumn({ name: 'workingDateId' })
     workingHour: WorkingHourEntity;
 
     @ManyToOne(() => EmployeeEntity, (employeeEntity: EmployeeEntity) => employeeEntity.createShift)

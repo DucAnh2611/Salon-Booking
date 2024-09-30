@@ -1,7 +1,8 @@
 import { API_URLS } from "@/constant/api.constant";
 import {
     IApiSearchService,
-    ISearchserviceResponse,
+    IRelatedServiceResponse,
+    ISearchServiceResponse,
     ISerivceItemFeature,
     IServiceDetail,
 } from "@/interface/service.interface";
@@ -12,6 +13,15 @@ export const featureServices = async () => {
     const api = API_URLS.SERVICE.FEATURED();
 
     const resApi = await apiCall<ISerivceItemFeature[]>({ ...api });
+
+    return resApi;
+};
+
+/** @RELATED_PRODUCT */
+export const relatedServices = async (id: string) => {
+    const api = API_URLS.SERVICE.RELATED(id);
+
+    const resApi = await apiCall<IRelatedServiceResponse>({ ...api });
 
     return resApi;
 };
@@ -29,7 +39,7 @@ export const detailService = async (id: string) => {
 export const findService = async (body: IApiSearchService) => {
     const api = API_URLS.SERVICE.FIND();
 
-    const resApi = await apiCall<ISearchserviceResponse>({
+    const resApi = await apiCall<ISearchServiceResponse>({
         ...api,
         payload: body,
     });

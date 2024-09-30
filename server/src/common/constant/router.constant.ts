@@ -10,6 +10,7 @@ export const ROUTER = {
     EMPLOYEE: 'employee',
 
     CLIENT: 'client',
+    CLIENT_ADMIN: 'client-staff',
 
     ATTRIBUTE: 'attribute',
     ATTRIBUTE_VALUE: 'attribute-value',
@@ -43,6 +44,8 @@ export const ROUTER = {
 
     PROVINCE: 'province',
     BANK: 'bank',
+
+    STATISTIC_ADMIN: 'statistic-admin',
 };
 
 export const AUTH_ROUTE = {
@@ -73,6 +76,11 @@ export const ROLE_PERMISSION_ROUTE = {
     UPDATE: '',
 };
 
+export const CLIENT_ADMIN_ROUTE = {
+    LIST: 'list',
+    UPDATE_LOCK: 'lock',
+};
+
 export const PERMISSION_ROUTE = {
     ALL: 'all',
 };
@@ -97,8 +105,12 @@ export const OAUTH_ROUTE = {
 
 export const CLIENT_ROUTE = {
     ME: 'me',
+    INFO: 'me/i',
+    UPDATE: 'me/',
+
     VERIFY_EMAIL: 'verify-email',
     VERIFY_EMAIL_OTP: 'verify-email-otp',
+    VERIFY_EMAIL_URL: 'verify-email-url',
 };
 
 export const MEDIA_ROUTE = {
@@ -152,6 +164,7 @@ export const CLIENT_SERVICE_ROUTE = {
     FIND: '',
     DETAIL: 'i/:id',
     FEATURED: 'feature',
+    RELATED: 'related/:id',
 };
 
 export const CLIENT_PRODUCT_ROUTE = {
@@ -336,4 +349,8 @@ export const PROVINCE_ROUTE = {
 export const VIETQR_ROUTE = {
     BANK_LIST: 'banks',
     QUICK_QR: 'quick-qr',
+};
+
+export const STATISTIC_ADMIN_ROUTE = {
+    DASHBOARD: 'dashboard',
 };

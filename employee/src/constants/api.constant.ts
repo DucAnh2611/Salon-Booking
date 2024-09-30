@@ -153,6 +153,20 @@ export const API_URLS = {
             withCredentials: true,
         }),
     },
+    CLIENT: {
+        LIST: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `client-staff/list`,
+            withCredentials: true,
+        }),
+        UPDATE_LOCK: () => ({
+            method: "Put",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: `client-staff/lock`,
+            withCredentials: true,
+        }),
+    },
     EMPLOYEE: {
         LIST: (page = 1, limit = 10, key = "", orderBy = "") => ({
             method: "GET",
@@ -459,6 +473,17 @@ export const API_URLS = {
             endPoint: joinString({
                 joinString: "/",
                 strings: ["order", "staff", "order-refund", "create-qr", id],
+            }),
+            withCredentials: true,
+        }),
+    },
+    STATISTIC: {
+        DASHBOARD: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["statistic-admin", "dashboard"],
             }),
             withCredentials: true,
         }),

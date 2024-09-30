@@ -7,14 +7,14 @@ export default async function ProductDetail({ id }: { id: string }) {
     const { response, error } = await productDetail(id);
 
     if (!response) {
-        return <p>Failed</p>;
+        return <p>Sản phẩm không tồn tại hoặc đã bị xóa</p>;
     }
 
     const product = response.result;
-    if (!product.base) return <></>;
+    if (!product.base) return <p>Sản phẩm không tồn tại hoặc đã bị xóa</p>;
 
     return (
-        <div className="space-y-5">
+        <div className="space-y-6">
             <Card className="grid grid-cols-2 gap-8 p-4">
                 <div className="col-span-1">
                     <ProductDetailMedia medias={product.base.productMedia} />
@@ -26,6 +26,7 @@ export default async function ProductDetail({ id }: { id: string }) {
                     <p className="text-muted-foreground w-full">
                         {product.base.description}
                     </p>
+
                     <div>
                         <ProductTypeSelect product={product} />
                     </div>

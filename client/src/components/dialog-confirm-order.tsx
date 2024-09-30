@@ -1,3 +1,5 @@
+"use client";
+
 import { confirmOrder } from "@/lib/actions/order.action";
 import { ReactNode, useState } from "react";
 import { Button } from "./ui/button";

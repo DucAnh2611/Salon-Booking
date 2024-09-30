@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, UpdateResult } from 'typeorm';
+import { Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
@@ -97,7 +97,7 @@ export class OrderProductItemService {
 
     async getProductSnapshot(
         productId: string,
-        productTypeId: string,
+        productTypeId?: string,
     ): Promise<[ProductBaseEntity, ProductTypesEntity | null]> {
         const [product, productType] = await Promise.all([
             this.productBaseRepository.findOne({
@@ -106,21 +106,27 @@ export class OrderProductItemService {
                 relations: {
                     category: true,
                     types: false,
-                    productMedia: true,
+                    productMedia: {
+                        media: true,
+                    },
                     productDetail: true,
                     userCreate: false,
                     userUpdate: false,
                 },
             }),
-            this.productTypesRepository.findOne({
-                where: { id: productTypeId },
-                loadEagerRelations: false,
-                relations: {
-                    productTypesAttribute: {
-                        value: true,
-                    },
-                },
-            }),
+            productTypeId
+                ? this.productTypesRepository.findOne({
+                      where: { id: productTypeId },
+                      loadEagerRelations: false,
+                      relations: {
+                          productTypesAttribute: {
+                              value: {
+                                  attribute: true,
+                              },
+                          },
+                      },
+                  })
+                : null,
         ]);
 
         return [product, productType];
@@ -205,10 +211,10 @@ export class OrderProductItemService {
             list.map(item => {
                 const [product, productType] = snapShotList.find(([p, pt]) => {
                     const sameProduct = p.id === item.productId;
-                    if (item.productTypeId) {
-                        return sameProduct && pt.id === item.productTypeId;
+                    if (item.productTypeId && sameProduct) {
+                        return pt.id === item.productTypeId;
                     }
-                    return sameProduct;
+                    return sameProduct && !item.productTypeId;
                 });
                 let unitPrice = product.price;
                 if (productType) {
@@ -231,19 +237,15 @@ export class OrderProductItemService {
     async restock(orderId: string) {
         const items = await this.orderProductItemRepository.find({ where: { orderId }, loadEagerRelations: false });
 
-        const request: Promise<UpdateResult>[] = [];
-
-        for (const item of items) {
-            const itemId = item.productTypeId ? item.productId : item.productId;
-            request.push(
-                this[item.productTypeId ? 'productBaseRepository' : 'productTypesRepository'].increment(
-                    { id: itemId },
-                    'quantity',
-                    item.quantity,
-                ),
-            );
-        }
-        await Promise.all(request);
+        await Promise.all(
+            items.map(item => {
+                const itemId = item.productTypeId ? item.productTypeId : item.productId;
+                if (item.productTypeId) {
+                    return this.productTypesRepository.increment({ id: itemId }, 'quantity', item.quantity);
+                }
+                return this.productBaseRepository.increment({ id: itemId }, 'quantity', item.quantity);
+            }),
+        );
 
         return DataSuccessCodeEnum.OK;
     }

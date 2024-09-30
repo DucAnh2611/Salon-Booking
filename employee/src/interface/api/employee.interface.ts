@@ -1,5 +1,8 @@
 import { EGender } from "@/enum/gender.enum";
+import { EServiceEmployeeExperience } from "@/enum/service.enum";
 import { EShiftEmployeeStatus } from "@/enum/shift.enum";
+import { EUserType } from "@/enum/user.enum";
+import { IMedia } from "./media.interface";
 import { IRole } from "./role.interface";
 
 export interface IEmployee {
@@ -9,6 +12,12 @@ export interface IEmployee {
     createdAt: Date;
     updatedAt: Date;
     userBase: IUser;
+}
+
+export interface IEmployeeServiceSnapshot {
+    id: string;
+    employee: IEmployee;
+    experience: EServiceEmployeeExperience;
 }
 
 export interface IEmployeeModify {
@@ -24,7 +33,7 @@ export interface IUser {
     phone: string;
     firstname: string;
     lastname: string;
-    roleId: string;
+    type: EUserType;
     avatar: string | null;
     userAvatar: IUserAvatar | null;
 }
@@ -35,10 +44,7 @@ export interface IUserEmployee extends IUser {
     userBase: IUser;
 }
 
-export interface IUserAvatar {
-    id: string;
-    path: string;
-}
+export interface IUserAvatar extends IMedia {}
 
 export interface IFindEmployee {
     page: number;
