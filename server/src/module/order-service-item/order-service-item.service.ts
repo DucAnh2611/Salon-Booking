@@ -135,7 +135,7 @@ export class OrderServiceItemService {
                     shiftId,
                     bookingTime,
                     serviceSnapshot,
-                    employeeSnapShot: employeeSnapShot.employee,
+                    employeeSnapShot: employeeSnapShot,
                     employeeId,
                     serviceId,
                 });

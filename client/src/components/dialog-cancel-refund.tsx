@@ -164,7 +164,7 @@ export default function DialogCancelRefund({
                                                 variant="destructive"
                                                 disabled={loading}
                                             >
-                                                Hủy đơn
+                                                Hủy yêu cầu
                                             </Button>
                                         </div>
                                     </div>

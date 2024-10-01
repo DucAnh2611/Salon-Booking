@@ -108,6 +108,7 @@ export function HomeScreen() {
                 </div>
                 <div className="h-fit w-full box-border">
                     <DashboardChart
+                        selectMonth={selectMonth}
                         statistic={statistic}
                         year={year}
                         month={month}

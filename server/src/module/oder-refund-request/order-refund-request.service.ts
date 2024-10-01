@@ -8,6 +8,7 @@ import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { OrderRefundRequestStatusEnum } from '../../common/enum/order.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
+import { addMinutesToCurrentTime } from '../../shared/utils/date.utils';
 import { BankService } from '../bank/bank.service';
 import { AppLoggerService } from '../logger/logger.service';
 import { OrderRefundStateService } from '../order-refund-state/order-refund-state.service';
@@ -122,6 +123,7 @@ export class OrderRefundRequestService {
             description: note || '',
             updatedBy: userId,
             createdBy: userId,
+            expiredAt: addMinutesToCurrentTime(24),
         });
 
         const newRequest = await this.orderRefundRequestRepository.save(instance);
@@ -149,6 +151,10 @@ export class OrderRefundRequestService {
 
         if (isExist.status === OrderRefundRequestStatusEnum.APPROVED) {
             throw new BadRequest({ message: DataErrorCodeEnum.APPROVED_REFUND_REQUEST });
+        }
+
+        if (isExist.status !== OrderRefundRequestStatusEnum.PENDING) {
+            throw new BadRequest({ message: DataErrorCodeEnum.REFUND_REQUEST_MUST_BE_PENDING });
         }
 
         await this.orderRefundRequestRepository.update(

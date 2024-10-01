@@ -388,4 +388,8 @@ export class OrderAdminService {
             }),
         );
     }
+
+    checkCanProveState(refundId: string) {
+        // add check for can update state on first stage
+    }
 }

@@ -37,7 +37,7 @@ export class StatisticAdminService {
         const startDate = new Date(year, (month || 1) - 1, 1);
         const endDate = new Date(year, month || 12, 0);
 
-        startDate.setDate(startDate.getDate() - 1);
+        // startDate.setDate(startDate.getDate() - 1);
         endDate.setDate(endDate.getDate() + 1);
 
         createWhere = {
@@ -115,7 +115,6 @@ export class StatisticAdminService {
                 .where('orderService.orderId IN (:...orders)', { orders: successOrderService.map(item => item.id) })
                 .orderBy('COUNT(orderService.id)', 'DESC')
                 .take(10)
-                .cache(60 * 1000)
                 .getRawMany();
         } else {
             mostEmployeeBooked = [];
@@ -140,8 +139,7 @@ export class StatisticAdminService {
                 .addGroupBy('orderProduct.productTypeId')
                 .where('orderProduct.orderId IN (:...orders)', { orders: successOrderProduct.map(item => item.id) })
                 .orderBy('SUM(orderProduct.quantity)', 'DESC')
-                .take(10)
-                .cache(60 * 1000);
+                .take(10);
 
             console.log(query.getSql());
 
@@ -162,7 +160,6 @@ export class StatisticAdminService {
                 .where('orderService.orderId IN (:...orders)', { orders: successOrderService.map(item => item.id) })
                 .orderBy('COUNT(orderService.id)', 'DESC')
                 .take(10)
-                .cache(60 * 1000)
                 .getRawMany();
         } else {
             mostServiceBooked = [];

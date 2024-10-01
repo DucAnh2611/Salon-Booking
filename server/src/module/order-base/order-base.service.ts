@@ -51,7 +51,6 @@ export class OrderBaseService {
         const { limit, page, order, filter } = body;
 
         const { from, to, code, ...filterProps } = filter;
-
         return this.orderBaseRepository.findAndCount({
             where: {
                 ...filterProps,

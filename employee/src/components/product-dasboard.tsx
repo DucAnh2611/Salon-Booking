@@ -2,6 +2,7 @@ import { ROUTER_PATH } from "@/constants/router.constant";
 import { IStatisticDashboard } from "@/interface/api/dashboard.interface";
 import { formatMoney } from "@/utils/money";
 import { joinString } from "@/utils/string";
+import { useEffect } from "react";
 import MediaLoader from "./media-load";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Separator } from "./ui/separator";
@@ -20,6 +21,8 @@ export default function ProductDashboard({
             ? product.productTypeSnapshot[0]
             : null,
     }));
+
+    useEffect(() => {}, [statistic]);
 
     return (
         <Card>

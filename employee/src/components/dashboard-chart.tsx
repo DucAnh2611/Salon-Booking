@@ -16,6 +16,7 @@ interface IDashboardChartProps {
     statistic: IStatisticDashboard;
     month?: number;
     year: number;
+    selectMonth: boolean;
 }
 
 const chartConfig = {
@@ -33,6 +34,7 @@ export default function DashboardChart({
     statistic,
     month,
     year,
+    selectMonth,
 }: IDashboardChartProps) {
     return (
         <Card className="w-full h-full">
@@ -42,7 +44,7 @@ export default function DashboardChart({
                         joinString: " ",
                         strings: [
                             "Biểu đồ doanh thu",
-                            !!month ? `tháng ${month}` : "",
+                            selectMonth ? `tháng ${month}` : "",
                             "năm",
                             year.toString(),
                         ],

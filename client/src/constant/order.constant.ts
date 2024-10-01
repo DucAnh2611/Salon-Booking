@@ -57,7 +57,7 @@ export const ORDER_REFUND_REQUEST_STATUS: Record<
     string
 > = {
     [EOrderPaymentStatus.PENDING]: "Chờ duyệt",
-    [EOrderRefundRequestStatus.DECLINE]: "Từ chối yêu cầU",
+    [EOrderRefundRequestStatus.DECLINE]: "Từ chối yêu cầu",
     [EOrderRefundRequestStatus.APPROVED]: "Đã duyệt",
     [EOrderRefundRequestStatus.EXPIRED]: "Hết hạn",
     [EOrderRefundRequestStatus.RECEIVED]: "Đã nhận",

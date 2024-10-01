@@ -11,10 +11,10 @@ import { Separator } from "../ui/separator";
 export default function NavigationPage() {
     return (
         <Card className="w-full h-full rounded-none flex flex-col">
-            <CardHeader className="h-fit p-4">
+            <CardHeader className="h-fit p-4  bg-primary">
                 <Button
                     variant="ghost"
-                    className="text-lg font-bold gap-2 justify-start p-2 h-[50px] hover:bg-transparent"
+                    className="text-lg font-bold gap-2 justify-start p-2 h-[50px] text-background hover:bg-transparent hover:text-background"
                     size="lg"
                     asChild
                 >
@@ -25,7 +25,7 @@ export default function NavigationPage() {
                 </Button>
             </CardHeader>
             <Separator orientation="horizontal" />
-            <CardContent className="flex-1 w-full flex flex-col p-4 pt-0">
+            <CardContent className="flex-1 w-full flex flex-col p-4">
                 <div className="flex-1 flex flex-col overflow-hidden overflow-y-auto gap-2 ">
                     {listNavigate.map((item) => (
                         <div key={Math.random() * new Date().getTime()}>
@@ -33,7 +33,7 @@ export default function NavigationPage() {
                         </div>
                     ))}
                 </div>
-                <CardFooter className="p-0 w-full justify-end flex gap-2">
+                <CardFooter className="p-0 w-full justify-end flex gap-2 text-foreground">
                     <SelectThemeDowndown />
                 </CardFooter>
             </CardContent>
