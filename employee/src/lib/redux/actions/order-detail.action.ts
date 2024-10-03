@@ -7,12 +7,12 @@ import {
 } from "@/helpers/dispatchDedicate";
 import {
     IOrderDetail,
-    IOrderDetailProduct,
     IOrderDetailRefund,
-    IOrderDetailService,
     IOrderDetailState,
     IOrderDetailTransaction,
 } from "@/interface/api/order-detail.interface";
+import { IProductItemOrder } from "@/interface/api/product.interface";
+import { IServiceItemOrder } from "@/interface/api/service.interface";
 import { IActionDedicateOrderDetail } from "@/interface/redux/order-detail.interface";
 import { apiCall } from "@/utils/apiCall";
 import { TAppDispatch } from "../store";
@@ -157,7 +157,7 @@ export const detailOrderProduct =
             )
         );
 
-        const { response } = await apiCall<IOrderDetailProduct[]>({
+        const { response } = await apiCall<IProductItemOrder[]>({
             ...api,
         });
 
@@ -191,7 +191,7 @@ export const detailOrderService =
             )
         );
 
-        const { response } = await apiCall<IOrderDetailService[]>({
+        const { response } = await apiCall<IServiceItemOrder[]>({
             ...api,
         });
 

@@ -144,10 +144,10 @@ export default function UpdateServiceTab({
                             <Button
                                 type="submit"
                                 className="gap-1"
-                                disabled={submit}
+                                disabled={submit && isUpdating && !isFailure}
                                 onClick={handleSubmit(true)}
                             >
-                                {submit && (
+                                {submit && isUpdating && !isFailure && (
                                     <LoaderCircleIcon
                                         size={15}
                                         className="animate-spin"

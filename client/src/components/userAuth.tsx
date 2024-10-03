@@ -53,12 +53,12 @@ export default function UserAuth() {
             <DropdownMenuTrigger>
                 <div className="flex gap-2 items-center">
                     <div className="h-full flex flex-col">
-                        <p className="text-xs font-bold">
+                        <p className="text-xs font-bold text-right w-auto">
                             {me.userBase.lastname} {me.userBase.firstname}
                         </p>
-                        <p className="text-xs">{me.email}</p>
+                        <p className="text-xs  w-auto text-right">{me.email}</p>
                     </div>
-                    <div className="size-10">
+                    <div className="size-10 ">
                         <UserAvatar user={me} />
                     </div>
                 </div>

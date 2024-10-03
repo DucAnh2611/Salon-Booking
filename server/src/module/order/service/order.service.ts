@@ -546,7 +546,8 @@ export class OrderService {
         if (!isOwn) {
             throw new BadRequest({ message: DataErrorCodeEnum.ORDER_FORBIDDEN });
         }
-        await this.orderBaseService.updateTotalPaid(orderId, order.total, userId);
+
+        await this.orderBaseService.paidSuccessfull(userId, orderId, order.total);
         await this.clientUpdateState(userId, clientId, {
             orderId,
             state: OrderStatusEnum.RECEIVED,

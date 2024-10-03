@@ -93,9 +93,9 @@ export default function OrderDetailServiceItem({
                                     joinString: " ",
                                     strings: [
                                         serviceItem.employeeSnapShot.employee
-                                            .userBase.firstname,
-                                        serviceItem.employeeSnapShot.employee
                                             .userBase.lastname,
+                                        serviceItem.employeeSnapShot.employee
+                                            .userBase.firstname,
                                     ],
                                 })}
                             </p>

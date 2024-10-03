@@ -20,6 +20,7 @@ import { MailModule } from './module/mail/mail.module';
 import { MailerAppModule } from './module/mailer/mailer.module';
 import { MediaModule } from './module/media/media.module';
 import { OrderModule } from './module/order/order.module';
+import { OrganizationModule } from './module/organization/organization.module';
 import { PermissionModule } from './module/permission/permission.module';
 import { ProductModule } from './module/product/product.module';
 import { RedisModule } from './module/redis/redis.module';
@@ -36,6 +37,8 @@ import { AppResponseInterceptor } from './shared/interceptor';
         ConfigModule.forRoot({ isGlobal: true }),
         CronModule.forRoot(),
         I18nAppModule,
+        RedisModule,
+
         MailerAppModule,
         MailModule,
 
@@ -62,9 +65,9 @@ import { AppResponseInterceptor } from './shared/interceptor';
 
         CartModule,
         OrderModule,
-        RedisModule,
 
         StatisticModule,
+        OrganizationModule,
 
         //Third party module
         ThirdPartyModule,

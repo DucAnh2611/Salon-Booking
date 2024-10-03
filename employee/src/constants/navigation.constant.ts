@@ -1,6 +1,7 @@
 import { IItemNavigate } from "@/components/item-pane";
 import {
     ArchiveIcon,
+    Building2,
     CalendarClockIcon,
     ImagePlayIcon,
     ListFilterIcon,
@@ -100,5 +101,10 @@ export const listNavigate: IItemNavigate[] = [
                 path: `${ROUTER_PATH.ORDER}`,
             },
         ],
+    },
+    {
+        Icon: Building2,
+        title: "Thông tin doanh nghiệp",
+        path: `${ROUTER_PATH.ORGANIZTAION}`,
     },
 ];

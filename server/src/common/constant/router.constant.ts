@@ -46,6 +46,9 @@ export const ROUTER = {
     BANK: 'bank',
 
     STATISTIC_ADMIN: 'statistic-admin',
+
+    ORGANIZATION_ADMIN: 'organization-admin',
+    ORGANIZATION: 'organization',
 };
 
 export const AUTH_ROUTE = {
@@ -317,6 +320,8 @@ export const ADMIN_ORDER_ROUTE = {
     APPROVE_ORDER_REFUND: 'order-refund/approve',
     DECLINE_ORDER_REFUND: 'order-refund/decline',
     CREATE_OR_PAYMENT: 'order-refund/create-qr/:id',
+
+    MY_JOB: '/job/me',
 };
 
 export const ORDER_ROUTE = {
@@ -353,4 +358,16 @@ export const VIETQR_ROUTE = {
 
 export const STATISTIC_ADMIN_ROUTE = {
     DASHBOARD: 'dashboard',
+};
+
+export const ORGANIZATION_ADMIN_ROUTE = {
+    UPDATE: '',
+    CREATE: '',
+    LIST: 'list',
+    DELETE: ':id',
+    TOGGLE: '/toggle/:id',
+};
+
+export const ORGANIZATION_ROUTE = {
+    CURRENT: '/current',
 };

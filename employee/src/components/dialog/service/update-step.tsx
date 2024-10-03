@@ -17,6 +17,7 @@ import { IServiceStep } from "@/interface/api/service.interface";
 import { cn } from "@/lib";
 import { api_media_url } from "@/utils/apiCall";
 import { getMediaType } from "@/utils/media-checker.util";
+import { joinString } from "@/utils/string";
 import { ChangeEvent, useState } from "react";
 
 interface IDialogUpdateStepService {
@@ -30,7 +31,7 @@ export default function DialogUpdateStepService({
     step,
     onCreate,
     sessionId,
-    defaultMedia = null,
+    defaultMedia,
 }: IDialogUpdateStepService) {
     const [media, SetMedia] = useState<IMediaTempUpload | null>();
     const [open, SetOpen] = useState<boolean>(false);
@@ -52,8 +53,8 @@ export default function DialogUpdateStepService({
         SetNewStep({
             name: step.name,
             description: step.description,
-            thumbnailId: step.thumbnailId,
-            thumbnailUrl: step.thumbnailUrl,
+            thumbnailId: step.thumbnailId || "",
+            thumbnailUrl: defaultMedia ? defaultMedia : step.thumbnailUrl || "",
         });
         SetErr({
             description: "",
@@ -61,13 +62,7 @@ export default function DialogUpdateStepService({
             thumbnailId: "",
             thumbnailUrl: "",
         });
-        if (defaultMedia) {
-            SetMedia({
-                url: defaultMedia,
-                sessionId: sessionId,
-                context: "",
-            });
-        }
+        SetMedia(null);
     };
 
     const handleOnChange =
@@ -92,7 +87,19 @@ export default function DialogUpdateStepService({
 
     const handleSubmit = () => {
         if (newStep.name.length) {
-            onCreate({ ...newStep, thumbnailUrl: media ? media.url : "" });
+            onCreate({
+                ...newStep,
+                ...(media
+                    ? {
+                          thumbnailUrl: media.url,
+                      }
+                    : {
+                          thumbnailUrl:
+                              !newStep.thumbnail && !!step.thumbnailUrl
+                                  ? step.thumbnailUrl
+                                  : "",
+                      }),
+            });
             SetOpen(false);
         } else {
             SetErr({
@@ -103,11 +110,15 @@ export default function DialogUpdateStepService({
     };
 
     const onSelectProductMedia = (temp: IMediaTempUpload[]) => {
-        SetMedia(temp.pop() || null);
+        SetMedia(!!temp.length ? temp[temp.length - 1] : null);
     };
 
     const onRemoveMedia = () => () => {
         SetMedia(null);
+        SetNewStep((s) => ({
+            ...s,
+            thumbnailUrl: "",
+        }));
     };
 
     const handleClose = () => {
@@ -137,11 +148,15 @@ export default function DialogUpdateStepService({
                                     mutiple={false}
                                 />
                             </div>
-                            {media ? (
+                            {media || !!newStep.thumbnailUrl ? (
                                 <div className="w-full ">
                                     <div
                                         className="w-full aspect-video rounded-md overflow-hidden relative group/preview"
-                                        key={media.url}
+                                        key={
+                                            media
+                                                ? media.url
+                                                : newStep.thumbnailUrl || ""
+                                        }
                                     >
                                         <div
                                             className={cn(
@@ -161,20 +176,39 @@ export default function DialogUpdateStepService({
                                             </div>
                                         </div>
 
-                                        {getMediaType(media.url) === "image" ? (
+                                        {getMediaType(
+                                            media
+                                                ? media.url
+                                                : step.thumbnailUrl || ""
+                                        ) === "image" ? (
                                             <>
                                                 <img
-                                                    src={
-                                                        api_media_url +
-                                                        media.url
-                                                    }
+                                                    src={joinString({
+                                                        joinString: "",
+                                                        strings: [
+                                                            api_media_url,
+                                                            media
+                                                                ? media.url
+                                                                : newStep.thumbnailUrl ||
+                                                                  "",
+                                                        ],
+                                                    })}
                                                     alt="product-temp"
                                                     className="w-full h-full object-cover"
                                                 />
                                             </>
                                         ) : (
                                             <video
-                                                src={api_media_url + media.url}
+                                                src={joinString({
+                                                    joinString: "",
+                                                    strings: [
+                                                        api_media_url,
+                                                        media
+                                                            ? media.url
+                                                            : newStep.thumbnailUrl ||
+                                                              "",
+                                                    ],
+                                                })}
                                                 controls
                                                 className="w-full h-full object-cover"
                                             />

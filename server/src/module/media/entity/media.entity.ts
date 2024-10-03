@@ -2,6 +2,7 @@ import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { CategoryEntity } from '../../category/entity/category.entity';
 import { OrderRefundStateEntity } from '../../order-refund-state/entity/order-refund-state.entity';
+import { OrganizationEntity } from '../../organization/entity/organization.entity';
 import { ProductMediaEntity } from '../../product-media/entity/product-media.entity';
 import { ProductTypesAttributeEntity } from '../../product-types-attribute/entity/product-types-attribute.entity';
 import { ServiceMediaEntity } from '../../service-media/entity/service-media.entity';
@@ -54,4 +55,7 @@ export class MediaEntity extends ModifyEntity {
         (orderRefundStateEntity: OrderRefundStateEntity) => orderRefundStateEntity.media,
     )
     orderRefundState: OrderRefundStateEntity[];
+
+    @OneToMany(() => OrganizationEntity, (organizationEntity: OrganizationEntity) => organizationEntity.logo)
+    organization: OrderRefundStateEntity[];
 }

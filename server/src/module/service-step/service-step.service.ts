@@ -35,7 +35,7 @@ export class ServiceStepService {
             relations: {
                 thumbnail: true,
             },
-            order: { step: SortByEnum.DESC },
+            order: { step: SortByEnum.ASC },
         });
     }
 

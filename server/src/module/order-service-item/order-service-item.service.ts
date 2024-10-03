@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { ShiftEmployeeStatusEnum } from '../../common/enum/shift.enum';
@@ -24,6 +24,18 @@ export class OrderServiceItemService {
         private readonly shiftEmployeeService: ShiftEmployeeService,
         private readonly shiftService: ShiftService,
     ) {}
+
+    async employeeJob(employeeId: string, orderIds: string[]) {
+        const jobs = await this.orderServiceItemRepository.find({
+            where: {
+                employeeId: employeeId,
+                orderId: In(orderIds),
+            },
+            loadEagerRelations: false,
+        });
+
+        return jobs;
+    }
 
     async setAvailableEmployeeOrder(orderId: string) {
         const items = await this.orderServiceItemRepository.find({ where: { orderId }, loadEagerRelations: false });
@@ -135,7 +147,7 @@ export class OrderServiceItemService {
                     shiftId,
                     bookingTime,
                     serviceSnapshot,
-                    employeeSnapShot: employeeSnapShot.employee,
+                    employeeSnapShot: employeeSnapShot,
                     employeeId,
                     serviceId,
                 });

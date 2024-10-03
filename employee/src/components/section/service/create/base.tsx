@@ -305,15 +305,25 @@ export default function CreateServiceBaseSection({
                         </div>
 
                         <div className="w-full flex flex-col gap-2">
-                            <div>
-                                <FormLabel className="leading-none text-sm">
-                                    Ảnh, video dịch vụ <RequireField />
-                                </FormLabel>
-                                <SelectMedia
-                                    onSelect={onSelectProductMedia}
-                                    sessionId={sessionId}
-                                />
-                            </div>
+                            <FormField
+                                control={form.control}
+                                name="base.medias"
+                                render={() => (
+                                    <FormItem>
+                                        <div>
+                                            <FormLabel className="leading-none text-sm">
+                                                Ảnh, video dịch vụ{" "}
+                                                <RequireField />
+                                            </FormLabel>
+                                            <SelectMedia
+                                                onSelect={onSelectProductMedia}
+                                                sessionId={sessionId}
+                                            />
+                                        </div>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             {medias && medias.length ? (
                                 <div className="grid-cols-4 grid gap-2">
                                     {medias.map((media) => (

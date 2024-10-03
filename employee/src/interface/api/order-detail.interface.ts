@@ -14,7 +14,3 @@ export interface IOrderDetailTransaction extends ITransaction {}
 export interface IOrderDetailRefund extends IRefund {}
 
 export interface IOrderDetailState extends IOrderState {}
-
-export interface IOrderDetailProduct extends IOrderState {}
-
-export interface IOrderDetailService extends IOrderState {}

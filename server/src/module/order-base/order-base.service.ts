@@ -7,6 +7,7 @@ import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { OrderStatusEnum, OrderType } from '../../common/enum/order.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
+import { GetJobQueryListDto } from '../order/dto/order-get.dto';
 import { CreateOrderBaseDto } from './dto/order-base-create.dto';
 import { FindOrderAdminDto, FindOrderClientDto } from './dto/order-base-get.dto';
 import { OrderEntity } from './entity/order-base.entity';
@@ -14,6 +15,44 @@ import { OrderEntity } from './entity/order-base.entity';
 @Injectable()
 export class OrderBaseService {
     constructor(@InjectRepository(OrderEntity) private readonly orderBaseRepository: Repository<OrderEntity>) {}
+
+    async getOrderRange(emploeeId: string, body: GetJobQueryListDto) {
+        const { from, limit, page, to } = body;
+
+        if (from || to) {
+            if (from) {
+                from.setDate(from.getDate() - 1);
+            }
+            if (to) {
+                to.setDate(to.getDate() + 1);
+            }
+        }
+
+        return this.orderBaseRepository.find({
+            where: {
+                ...(from
+                    ? to
+                        ? { createdAt: Between(from, to) }
+                        : { createdAt: MoreThanOrEqual(from) }
+                    : to
+                      ? { createdAt: LessThanOrEqual(to) }
+                      : {}),
+                services: {
+                    employeeId: emploeeId,
+                },
+                type: OrderType.SERVICE,
+            },
+            loadEagerRelations: false,
+            relations: {
+                services: true,
+            },
+            order: {
+                status: SortByEnum.DESC,
+            },
+            take: limit,
+            skip: (page - 1) * limit,
+        });
+    }
 
     async isOwn(orderId: string, clientId: string) {
         const order = await this.get(orderId);
@@ -51,7 +90,6 @@ export class OrderBaseService {
         const { limit, page, order, filter } = body;
 
         const { from, to, code, ...filterProps } = filter;
-
         return this.orderBaseRepository.findAndCount({
             where: {
                 ...filterProps,

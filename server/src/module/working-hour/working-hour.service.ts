@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
+import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Equal, In, MoreThan, Repository } from 'typeorm';
+import { Equal, In, LessThanOrEqual, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
+import { CRON_EXPRESSION } from '../../common/constant/cron.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
@@ -67,18 +69,29 @@ export class WorkingHourService {
             throw new BadRequest({ message: DataErrorCodeEnum.NEGATIVE_DATE });
         }
 
-        // const isOverlapShift = await this.workingHourRepository.find({
-        //     where: {
-        //         shifts: {
-        //             start: LessThanOrEqual(start),
-        //             end: MoreThanOrEqual(end),
-        //         },
-        //     },
-        //     loadEagerRelations: false,
-        //     relations: { shifts: true },
-        // });
+        const [startD, endDate] = [combineDateAndTime(date, start), combineDateAndTime(date, end)];
 
-        return { start: combineDateAndTime(date, start), end: combineDateAndTime(date, end) };
+        const isOverlapShift = await this.workingHourRepository.find({
+            where: {
+                date: date,
+                shifts: [
+                    {
+                        start: LessThanOrEqual(startD),
+                    },
+                    {
+                        end: MoreThanOrEqual(endDate),
+                    },
+                ],
+            },
+            loadEagerRelations: false,
+            relations: { shifts: true },
+        });
+
+        if (isOverlapShift.length) {
+            throw new BadRequest({ message: DataErrorCodeEnum.WORKING_DATE_OVERLAP_SHIFT });
+        }
+
+        return { start: startD, end: endDate };
     }
 
     getDatesBetween(startDate: Date, endDate: Date) {
@@ -216,22 +229,16 @@ export class WorkingHourService {
 
         const exist = await this.isExist(id);
         if (!exist) {
-            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_SHIFT });
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_WORKING_HOUR });
         }
 
         const { start: startCombine, end: endCombine } = await this.validateTime(exist.date, start, end);
-
-        if (!exist) {
-            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_WORKING_HOUR });
-        }
 
         const isStart = this.isStart(new Date(exist.start));
 
         if (isStart) {
             throw new BadRequest({ message: DataErrorCodeEnum.WORKING_HOUR_START });
         }
-
-        //check if is worrking hour is overlap with some shift? if overlap decline, then ok
 
         const instance = this.workingHourRepository.create({
             ...exist,
@@ -296,4 +303,7 @@ export class WorkingHourService {
 
         return DataSuccessCodeEnum.OK;
     }
+
+    @Cron(CRON_EXPRESSION.EVERY_SUNDAY_START)
+    autoCreateWorkingDate() {}
 }

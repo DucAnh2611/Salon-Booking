@@ -1,5 +1,7 @@
-import { IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
+import { Transform } from 'class-transformer';
+import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 import { OrderType } from '../../../common/enum/order.enum';
+import { PaginationQuery } from '../../../common/type/query.type';
 
 export class GetOrderParamDto {
     @IsNotEmpty()
@@ -36,4 +38,16 @@ export class GetOrderStateListQueryDto {
     @IsNotEmpty()
     @IsEnum(OrderType)
     type: OrderType;
+}
+
+export class GetJobQueryListDto extends PaginationQuery {
+    @IsOptional()
+    @Transform(({ value }) => new Date(value))
+    @IsDate()
+    from?: Date;
+
+    @IsOptional()
+    @Transform(({ value }) => new Date(value))
+    @IsDate()
+    to?: Date;
 }

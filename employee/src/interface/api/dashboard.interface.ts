@@ -44,23 +44,20 @@ export interface IMostProductSold {
     id: string;
     productId: string;
     productTypeId: string | null;
-    // using jsonb merge snapsshot => snapshot[1]
-    productSnapshot: IProductSnapshot[];
-    productTypeSnapshot: IProductTypeSnapshot[] | null;
+    productSnapshot: IProductSnapshot;
+    productTypeSnapshot: IProductTypeSnapshot | null;
     count: string;
 }
 
 export interface IMostServiceBooked {
     serviceId: string;
-    // using jsonb merge snapsshot => snapshot[1]
-    serviceSnapshot: IServiceSnapshot[];
+    serviceSnapshot: IServiceSnapshot;
     count: number;
 }
 
 export interface IMostEmployeeBooked {
     employeeId: string;
-    // using jsonb merge snapsshot => snapshot[1]
-    employeeSnapShot: IEmployeeServiceSnapshot[];
+    employeeSnapshot: IEmployeeServiceSnapshot;
     count: number;
 }
 

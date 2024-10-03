@@ -19,7 +19,7 @@ export default function SummaryDashboard({
                 <div className="relative z-[1]">
                     <CardHeader className="p-4 pb-2">
                         <CardTitle className="text-xl font-medium flex gap-2 items-center">
-                            Thu nhập
+                            Doanh thu
                         </CardTitle>
                     </CardHeader>
                     <CardContent className="p-4 pt-0">

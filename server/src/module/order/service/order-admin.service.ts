@@ -33,7 +33,7 @@ import { OrderStateService } from '../../order-state/order-state.service';
 import { OrderTransactionService } from '../../order-transaction/order-transaction.service';
 import { ShiftEmployeeService } from '../../shift-employee/shift-employee.service';
 import { UserService } from '../../user/user.service';
-import { TrackingDetailOrderDto } from '../dto/order-get.dto';
+import { GetJobQueryListDto, TrackingDetailOrderDto } from '../dto/order-get.dto';
 import {
     ApprovedRefundRequestDto,
     DeclineRefundRequestDto,
@@ -365,6 +365,26 @@ export class OrderAdminService {
             showUnPaid,
             cancelable: CAN_CANCEL_LIST.includes(order.status),
         };
+    }
+
+    async currentJob(employeeId: string, body: GetJobQueryListDto) {
+        const list = await this.orderBaseService.getOrderRange(employeeId, body);
+
+        const jobLists = await this.orderServiceItemService.employeeJob(
+            employeeId,
+            list.map(item => item.id),
+        );
+
+        return list.map(item => {
+            const jobFind = jobLists.find(job => item.id === job.orderId);
+            if (!jobFind) {
+                return item;
+            }
+            return {
+                ...jobFind,
+                orderStatus: item.status,
+            };
+        });
     }
 
     @Cron(CronExpression.EVERY_MINUTE)

@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
 import { useEffect } from "react";
 import Failure from "./failure";
 import Loading from "./loading";
+import OrderDetailProductItem from "./order-detail-product-item";
 import {
     Card,
     CardContent,
@@ -37,7 +38,13 @@ export default function OrderDetailProductCard() {
             <CardContent className="w-full relative">
                 {isCalling && <Loading />}
                 {isFailure && <Failure />}
-                <div>{products.length} items</div>
+                <div className="space-y-2">
+                    {products.map((item) => (
+                        <div key={item.id}>
+                            <OrderDetailProductItem productItem={item} />
+                        </div>
+                    ))}
+                </div>
             </CardContent>
         </Card>
     );

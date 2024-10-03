@@ -32,7 +32,16 @@ export default function CreateServiceStepSection({
     const [steps, SetSteps] = useState<IServiceStepCreate[]>([]);
 
     const handleCreateStep = (newStep: IServiceStep) => {
-        const newSteps = [...steps, { ...newStep, step: steps.length + 1 }];
+        const newSteps = [
+            ...steps,
+            {
+                name: newStep.name,
+                description: newStep.description,
+                thumbnailId: newStep.thumbnailId || "",
+                thumbnailUrl: newStep.thumbnailUrl || "",
+                step: steps.length + 1,
+            },
+        ];
         const sortSteps = newSteps.sort((a, b) => a.step - b.step);
         SetSteps(sortSteps);
     };
@@ -59,6 +68,12 @@ export default function CreateServiceStepSection({
                     return {
                         step: stepNum,
                         ...newStep,
+                        ...(newStep.thumbnailId
+                            ? { thumbnailId: newStep.thumbnailId }
+                            : {}),
+                        ...(newStep.thumbnailUrl
+                            ? { thumbnailUrl: newStep.thumbnailUrl }
+                            : {}),
                     };
                 }
                 return step;
