@@ -95,7 +95,7 @@ export default function DialogCreateStepService({
     };
 
     const onSelectProductMedia = (temp: IMediaTempUpload[]) => {
-        SetMedia(temp.pop() || null);
+        SetMedia(temp.length ? temp[temp.length - 1] : null);
     };
 
     const onRemoveMedia = () => () => {

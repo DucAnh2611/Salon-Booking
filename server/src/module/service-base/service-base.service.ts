@@ -166,6 +166,11 @@ export class ServiceBaseService {
                     thumbnail: true,
                 },
             },
+            order: {
+                steps: {
+                    step: SortByEnum.ASC,
+                },
+            },
         });
 
         if (!service) {

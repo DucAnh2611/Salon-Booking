@@ -1,8 +1,11 @@
 import { ROUTER_PATH } from "@/constants/router.constant";
-import { IStatisticDashboard } from "@/interface/api/dashboard.interface";
+import {
+    IMostProductSold,
+    IStatisticDashboard,
+} from "@/interface/api/dashboard.interface";
 import { formatMoney } from "@/utils/money";
 import { joinString } from "@/utils/string";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import MediaLoader from "./media-load";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Separator } from "./ui/separator";
@@ -14,15 +17,12 @@ interface IProductDashboardProps {
 export default function ProductDashboard({
     statistic,
 }: IProductDashboardProps) {
-    const products = statistic.product.mostProductSold.map((product) => ({
-        ...product,
-        productSnapshot: product.productSnapshot[0],
-        productTypeSnapshot: product.productTypeSnapshot
-            ? product.productTypeSnapshot[0]
-            : null,
-    }));
+    const [products, SetProducts] = useState<IMostProductSold[]>([]);
 
-    useEffect(() => {}, [statistic]);
+    useEffect(() => {
+        const products = statistic.product.mostProductSold;
+        SetProducts(products);
+    }, [statistic]);
 
     return (
         <Card>
@@ -31,10 +31,16 @@ export default function ProductDashboard({
             </CardHeader>
             <Separator orientation="horizontal" />
             <CardContent className="h-fit max-h-[500px] overflow-y-auto">
-                {!!statistic.product.mostProductSold.length ? (
+                {!!products.length ? (
                     <div className="flex flex-col py-2 gap-2">
                         {products.map((productOrder) => (
-                            <div key={productOrder.productId}>
+                            <div
+                                key={
+                                    productOrder.productId +
+                                    productOrder.productTypeId +
+                                    Math.random()
+                                }
+                            >
                                 <a
                                     href={joinString({
                                         joinString: "/",

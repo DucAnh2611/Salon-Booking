@@ -1,7 +1,11 @@
 import { ROUTER_PATH } from "@/constants/router.constant";
-import { IStatisticDashboard } from "@/interface/api/dashboard.interface";
+import {
+    IMostServiceBooked,
+    IStatisticDashboard,
+} from "@/interface/api/dashboard.interface";
 import { formatMoney } from "@/utils/money";
 import { joinString } from "@/utils/string";
+import { useEffect, useState } from "react";
 import MediaLoader from "./media-load";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Separator } from "./ui/separator";
@@ -13,10 +17,11 @@ interface IServiceDashboardProps {
 export default function ServiceDashboard({
     statistic,
 }: IServiceDashboardProps) {
-    const services = statistic.service.mostServiceBooked.map((service) => ({
-        ...service,
-        serviceSnapshot: service.serviceSnapshot[0],
-    }));
+    const [services, SetServices] = useState<IMostServiceBooked[]>([]);
+
+    useEffect(() => {
+        SetServices(statistic.service.mostServiceBooked);
+    }, [statistic]);
 
     return (
         <Card>
@@ -25,7 +30,7 @@ export default function ServiceDashboard({
             </CardHeader>
             <Separator orientation="horizontal" />
             <CardContent className="h-fit max-h-[500px] overflow-y-auto">
-                {!!statistic.product.mostProductSold.length ? (
+                {!!services.length ? (
                     <div className="flex flex-col py-2 gap-2">
                         {services.map((serviceOrder) => (
                             <div key={serviceOrder.serviceId}>

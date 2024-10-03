@@ -34,6 +34,7 @@ export const CAN_NOT_UPDATE_STATE_LIST = [
     ...FAIL_STATE_LIST,
     ...CAN_RETURN_LIST,
     ...CAN_FINISH_LIST,
+    OrderStatusEnum.RECEIVED,
 ];
 
 export const TAX_RATE = 0.08;

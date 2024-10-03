@@ -8,19 +8,25 @@ import {
     OrderType,
 } from '../../../common/enum/order.enum';
 import { ClientEntity } from '../../client/entity/client.entity';
+import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { OrderEntity } from '../../order-base/entity/order-base.entity';
 import { OrderProductItemEntity } from '../../order-product-item/entity/order-product-item.entity';
 import { OrderServiceItemEntity } from '../../order-service-item/entity/order-service-item.entity';
 import { OrderTransactionEntity } from '../../order-transaction/entity/order-transaction.entity';
 import { ProductBaseEntity } from '../../product-base/entity/product-base.entity';
+import { ProductTypesEntity } from '../../product-types/entity/product-types.entity';
 import { ServiceEntity } from '../../service-base/entity/service.entity';
+import { ServiceEmpleeEntity } from '../../service-employee/entity/service-employee.entity';
 import { StatisticDashboardDto } from '../dto/statistic-dashboard.dto';
 
 @Injectable()
 export class StatisticAdminService {
     constructor(
         @InjectRepository(ProductBaseEntity) private readonly productRepo: Repository<ProductBaseEntity>,
+        @InjectRepository(ProductTypesEntity) private readonly productTypeRepo: Repository<ProductTypesEntity>,
+        @InjectRepository(EmployeeEntity) private readonly empRepo: Repository<EmployeeEntity>,
         @InjectRepository(ServiceEntity) private readonly serviceRepo: Repository<ServiceEntity>,
+        @InjectRepository(ServiceEmpleeEntity) private readonly serviceEmployeeRepo: Repository<ServiceEmpleeEntity>,
         @InjectRepository(OrderEntity) private readonly orderRepo: Repository<OrderEntity>,
         @InjectRepository(ClientEntity) private readonly clientRepo: Repository<ClientEntity>,
         @InjectRepository(OrderTransactionEntity) private readonly transactionRepo: Repository<OrderTransactionEntity>,
@@ -109,13 +115,33 @@ export class StatisticAdminService {
             mostEmployeeBooked = await this.orderServiceItemRepo
                 .createQueryBuilder('orderService')
                 .select('orderService.employeeId', 'employeeId')
-                .addSelect('json_agg(orderService.employeeSnapShot)', 'employeeSnapShot')
                 .addSelect('COUNT(orderService.employeeId)', 'count')
                 .groupBy('orderService.employeeId')
                 .where('orderService.orderId IN (:...orders)', { orders: successOrderService.map(item => item.id) })
                 .orderBy('COUNT(orderService.id)', 'DESC')
                 .take(10)
                 .getRawMany();
+
+            mostEmployeeBooked = await Promise.all(
+                mostEmployeeBooked.map(async employeeOrder => {
+                    const snapShot = await this.serviceEmployeeRepo.findOne({
+                        where: { employeeId: employeeOrder.employeeId },
+                        loadEagerRelations: false,
+                        relations: {
+                            employee: {
+                                userBase: {
+                                    userAvatar: true,
+                                },
+                                eRole: true,
+                            },
+                        },
+                    });
+                    return {
+                        ...employeeOrder,
+                        employeeSnapshot: snapShot,
+                    };
+                }),
+            );
         } else {
             mostEmployeeBooked = [];
         }
@@ -132,18 +158,50 @@ export class StatisticAdminService {
                 .createQueryBuilder('orderProduct')
                 .select('orderProduct.productId', 'productId')
                 .addSelect('orderProduct.productTypeId', 'productTypeId')
-                .addSelect('jsonb_agg(orderProduct.productSnapshot)', 'productSnapshot')
-                .addSelect('jsonb_agg(orderProduct.productTypeSnapshot)', 'productTypeSnapshot')
                 .addSelect('SUM(orderProduct.quantity)', 'count')
                 .groupBy('orderProduct.productId')
                 .addGroupBy('orderProduct.productTypeId')
                 .where('orderProduct.orderId IN (:...orders)', { orders: successOrderProduct.map(item => item.id) })
                 .orderBy('SUM(orderProduct.quantity)', 'DESC')
-                .take(10);
-
-            console.log(query.getSql());
+                .take(10)
+                .distinct(true);
 
             mostProductSold = await query.getRawMany();
+
+            mostProductSold = await Promise.all(
+                mostProductSold.map(async productOrder => {
+                    const snapShot = await this.productRepo.findOne({
+                        where: { id: productOrder.productId },
+                        loadEagerRelations: false,
+                        relations: {
+                            productMedia: {
+                                media: true,
+                            },
+                            category: true,
+                        },
+                    });
+                    let typeSnapShot = null;
+                    if (productOrder.productTypeId) {
+                        typeSnapShot = await this.productTypeRepo.findOne({
+                            where: { id: productOrder.productTypeId },
+                            loadEagerRelations: false,
+                            relations: {
+                                productTypesAttribute: {
+                                    value: {
+                                        attribute: true,
+                                    },
+                                },
+                            },
+                        });
+                    }
+
+                    return {
+                        ...productOrder,
+                        productSnapshot: snapShot,
+                        productTypeSnapshot: typeSnapShot,
+                    };
+                }),
+            );
         } else {
             mostProductSold = [];
         }
@@ -154,13 +212,32 @@ export class StatisticAdminService {
             mostServiceBooked = await this.orderServiceItemRepo
                 .createQueryBuilder('orderService')
                 .select('orderService.serviceId', 'serviceId')
-                .addSelect('json_agg(orderService.serviceSnapshot)', 'serviceSnapshot')
                 .addSelect('COUNT(orderService.serviceId)', 'count')
                 .groupBy('orderService.serviceId')
                 .where('orderService.orderId IN (:...orders)', { orders: successOrderService.map(item => item.id) })
                 .orderBy('COUNT(orderService.id)', 'DESC')
                 .take(10)
                 .getRawMany();
+
+            mostServiceBooked = await Promise.all(
+                mostServiceBooked.map(async serviceOrder => {
+                    const snapShot = await this.serviceRepo.findOne({
+                        where: { id: serviceOrder.serviceId },
+                        loadEagerRelations: false,
+                        relations: {
+                            category: true,
+                            media: {
+                                media: true,
+                            },
+                            steps: true,
+                        },
+                    });
+                    return {
+                        ...serviceOrder,
+                        serviceSnapshot: snapShot,
+                    };
+                }),
+            );
         } else {
             mostServiceBooked = [];
         }

@@ -1,16 +1,15 @@
-import { SERVICE_EMPLOYEE_EXP } from "@/constant/service-employee.constant";
-import { IserviceItemOrder } from "@/interface/service.interface";
-import { api_media_url } from "@/lib/apiCall";
-import { formatMoney } from "@/lib/money";
-import { joinString } from "@/lib/string";
+import { SERVICE_EMPLOYEE_EXP_TEXT } from "@/constants/service.constant";
+import { IServiceItemOrder } from "@/interface/api/service.interface";
+import { api_media_url } from "@/utils/apiCall";
+import { formatMoney } from "@/utils/money";
+import { joinString } from "@/utils/string";
 import { format } from "date-fns";
 import { ImageOff } from "lucide-react";
-import Image from "next/image";
 import ThumbnailMedia from "./thumbnail-media";
 import { Separator } from "./ui/separator";
 
 interface IOrderDetailServiceItemProps {
-    serviceItem: IserviceItemOrder;
+    serviceItem: IServiceItemOrder;
 }
 
 export default function OrderDetailServiceItem({
@@ -66,7 +65,7 @@ export default function OrderDetailServiceItem({
                         <div className="w-[100px] aspect-square rounded overflow-hidden bg-muted">
                             {serviceItem.employeeSnapShot.employee.userBase
                                 .userAvatar ? (
-                                <Image
+                                <img
                                     alt="select_s_e"
                                     src={joinString({
                                         joinString: "",
@@ -77,8 +76,6 @@ export default function OrderDetailServiceItem({
                                                 ?.path,
                                         ],
                                     })}
-                                    width={500}
-                                    height={300}
                                     className="w-full h-full object-cover"
                                 />
                             ) : (
@@ -104,7 +101,7 @@ export default function OrderDetailServiceItem({
                                     joinString: " ",
                                     strings: [
                                         "Trình độ: ",
-                                        SERVICE_EMPLOYEE_EXP[
+                                        SERVICE_EMPLOYEE_EXP_TEXT[
                                             serviceItem.employeeSnapShot
                                                 .experience
                                         ],

@@ -1,6 +1,6 @@
 import { EServiceEmployeeExperience } from "@/enum/service.enum";
 import { ICategory } from "./category.interface";
-import { IEmployee, IUserEmployee } from "./employee.interface";
+import { IEmployee, IEmployeeShift, IUserEmployee } from "./employee.interface";
 import { IMedia } from "./media.interface";
 
 export interface IService {
@@ -60,12 +60,14 @@ export interface IServiceStep {
     description: string;
     thumbnailId?: string;
     thumbnailUrl?: string;
+    thumbnail?: IMedia | null;
 }
 
 export interface IServiceStepCreate {
     name: string;
     step: number;
     description: string;
+    thumbnail?: IMedia | null;
     thumbnailId?: string;
     thumbnailUrl?: string;
 }
@@ -143,4 +145,18 @@ export interface IServiceUpdate {
     base: IServiceBaseUpdate;
     employees: IServiceEmployee[];
     steps: IServiceStepUpdate[];
+}
+
+export interface IServiceItemOrder {
+    id: string;
+    serviceCartId: string;
+
+    serviceSnapshot: IService;
+    serviceId: string;
+
+    employeeSnapShot: IEmployeeShift;
+    employeeId: string;
+
+    bookingTime: Date;
+    shiftId: string;
 }

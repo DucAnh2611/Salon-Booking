@@ -82,7 +82,10 @@ export interface IEmployeeDetail {
 
 export interface IEmployeeShift {
     shiftId: string;
+
     employeeId: string;
     employee: IEmployee;
+
     status: EShiftEmployeeStatus;
+    experience: EServiceEmployeeExperience;
 }

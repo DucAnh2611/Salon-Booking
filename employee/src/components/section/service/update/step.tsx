@@ -74,7 +74,12 @@ export default function UpdateServiceStepSection({
                         step: stepNum,
                         name: newStep.name,
                         description: newStep.description,
-                        thumbnailUrl: newStep.thumbnailUrl,
+                        ...(newStep.thumbnailId
+                            ? { thumbnailId: newStep.thumbnailId }
+                            : {}),
+                        ...(newStep.thumbnailUrl
+                            ? { thumbnailUrl: newStep.thumbnailUrl }
+                            : {}),
                     };
                 }
                 return step;
@@ -113,16 +118,14 @@ export default function UpdateServiceStepSection({
     useEffect(() => {
         const newSort = [...stepDetail];
         SetSteps(
-            newSort
-                .sort((a, b) => a.step - b.step)
-                .map((step) => ({
-                    id: step.id,
-                    name: step.name,
-                    description: step.description,
-                    step: step.step,
-                    thumbnailId: step.thumbnailId,
-                    thumbnail: step.thumbnail,
-                }))
+            newSort.map((step) => ({
+                id: step.id,
+                name: step.name,
+                description: step.description,
+                step: step.step,
+                thumbnailId: step.thumbnailId,
+                thumbnail: step.thumbnail,
+            }))
         );
     }, [stepDetail]);
 
@@ -167,7 +170,8 @@ export default function UpdateServiceStepSection({
                                         <div className="relative">
                                             <div className="flex gap-3 items-start mb-2">
                                                 {step.thumbnailId &&
-                                                    step.thumbnail?.path && (
+                                                    step.thumbnail &&
+                                                    step.thumbnail.path && (
                                                         <div className="h-44 aspect-[4/3] rounded overflow-hidden shrink-0">
                                                             {getMediaType(
                                                                 step.thumbnail

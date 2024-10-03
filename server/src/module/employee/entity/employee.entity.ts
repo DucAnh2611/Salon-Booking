@@ -4,6 +4,7 @@ import { EmployeeStatusEnum } from '../../../common/enum/employee.enum';
 import { AttributeEntity } from '../../attribute/entity/attribute.entity';
 import { CategoryEntity } from '../../category/entity/category.entity';
 import { OrderServiceItemEntity } from '../../order-service-item/entity/order-service-item.entity';
+import { OrganizationEntity } from '../../organization/entity/organization.entity';
 import { ProductBaseEntity } from '../../product-base/entity/product-base.entity';
 import { ProductTypesEntity } from '../../product-types/entity/product-types.entity';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
@@ -139,6 +140,12 @@ export class EmployeeEntity extends ModifyEntity {
         (orderServiceItemEntity: OrderServiceItemEntity) => orderServiceItemEntity.employee,
     )
     orderServiceItems: OrderServiceItemEntity[];
+
+    @OneToMany(() => OrganizationEntity, (organizationEntity: OrganizationEntity) => organizationEntity.userCreate)
+    createOrganization: OrganizationEntity[];
+
+    @OneToMany(() => OrganizationEntity, (organizationEntity: OrganizationEntity) => organizationEntity.userUpdate)
+    updateOrganization: OrganizationEntity[];
 
     @OneToMany(() => CategoryEntity, (categoryEntity: CategoryEntity) => categoryEntity.userUpdate)
     updateCategory: CategoryEntity[];

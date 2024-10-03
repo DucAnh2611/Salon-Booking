@@ -33,8 +33,12 @@ export default function NavigationBar() {
 
     if (isCalling) return <p>Loading ...</p>;
 
+    if (!user) {
+        return <p>Loading...</p>;
+    }
+
     return (
-        <div className="w-full h-fit flex items-center justify-end">
+        <div className="w-full h-fit flex items-center justify-end gap-3">
             <div>
                 <DropdownMenu>
                     <DropdownMenuTrigger>
@@ -43,18 +47,18 @@ export default function NavigationBar() {
                             variant="outline"
                         >
                             <p className="text-sm font-normal">
-                                {user?.username}
+                                {user.username}
                             </p>
                             <Avatar className="h-[30px] w-[30px]">
                                 <AvatarImage
                                     src={`${api_media_url}${user?.userBase.userAvatar?.path}`}
-                                    alt={user?.username}
+                                    alt={user.username}
                                 />
                                 <AvatarFallback className="font-semibold text-sm bg-primary">
-                                    {user?.userBase.lastname
+                                    {user.userBase.lastname
                                         .charAt(0)
                                         .toUpperCase()}
-                                    {user?.userBase.firstname
+                                    {user.userBase.firstname
                                         .charAt(0)
                                         .toUpperCase()}
                                 </AvatarFallback>
@@ -79,6 +83,9 @@ export default function NavigationBar() {
                         </DropdownMenuRadioGroup>
                     </DropdownMenuContent>
                 </DropdownMenu>
+            </div>
+            <div>
+                <Button>Công việc của tôi</Button>
             </div>
         </div>
     );

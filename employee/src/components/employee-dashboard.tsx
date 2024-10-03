@@ -1,6 +1,10 @@
 import { ROUTER_PATH } from "@/constants/router.constant";
-import { IStatisticDashboard } from "@/interface/api/dashboard.interface";
+import {
+    IMostEmployeeBooked,
+    IStatisticDashboard,
+} from "@/interface/api/dashboard.interface";
 import { joinString } from "@/utils/string";
+import { useEffect, useState } from "react";
 import MediaLoader from "./media-load";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Separator } from "./ui/separator";
@@ -12,15 +16,11 @@ interface IEmployeeDashboardProps {
 export default function EmployeeDashboard({
     statistic,
 }: IEmployeeDashboardProps) {
-    const employees = statistic.service.mostEmployeeBooked.map(
-        ({ count, employeeId, employeeSnapShot }) => ({
-            count,
-            employeeId,
-            employeeSnapshot: employeeSnapShot[0],
-        })
-    );
+    const [employees, SetEmployees] = useState<IMostEmployeeBooked[]>([]);
 
-    console.log(employees);
+    useEffect(() => {
+        SetEmployees(statistic.service.mostEmployeeBooked);
+    }, [statistic]);
 
     return (
         <Card>
@@ -29,7 +29,7 @@ export default function EmployeeDashboard({
             </CardHeader>
             <Separator orientation="horizontal" />
             <CardContent className="h-fit max-h-[500px] overflow-y-auto">
-                {!!statistic.product.mostProductSold.length ? (
+                {!!employees.length ? (
                     <div className="flex flex-col py-2 gap-2">
                         {employees.map((employeeOrder) => (
                             <div key={employeeOrder.employeeId}>

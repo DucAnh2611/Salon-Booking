@@ -1,11 +1,11 @@
 import { EOrderType } from "@/enum/order.enum";
-import { detailOrderProduct } from "@/lib/redux/actions/order-detail.action";
+import { detailOrderService } from "@/lib/redux/actions/order-detail.action";
 import { orderDetailSelector } from "@/lib/redux/selector";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
 import { useEffect } from "react";
 import Failure from "./failure";
 import Loading from "./loading";
-import OrderDetailProductItem from "./order-detail-product-item";
+import OrderDetailServiceItem from "./order-detail-service-items";
 import {
     Card,
     CardContent,
@@ -14,34 +14,34 @@ import {
     CardTitle,
 } from "./ui/card";
 
-export default function OrderDetailProductCard() {
+export default function OrderDetailServiceCard() {
     const {
         base: { base },
-        product: { products, isCalling, isFailure },
+        service: { services, isCalling, isFailure },
     } = useAppSelector(orderDetailSelector);
     const dispatch = useAppDispatch();
 
     useEffect(() => {
-        if (base && base.type === EOrderType.PRODUCT) {
-            dispatch(detailOrderProduct(base.id));
+        if (base && base.type === EOrderType.SERVICE) {
+            dispatch(detailOrderService(base.id));
         }
     }, [base]);
 
     return (
         <Card className="h-fit">
             <CardHeader>
-                <CardTitle>Thông tin sản phẩm</CardTitle>
+                <CardTitle>Thông tin dịch vụ</CardTitle>
                 <CardDescription>
-                    Thông tin về sản phẩm tại thời gian đặt hàng
+                    Thông tin về dịch vụ, nhân viên phục vụ cho từng dịch vụ.
                 </CardDescription>
             </CardHeader>
             <CardContent className="w-full relative">
                 {isCalling && <Loading />}
                 {isFailure && <Failure />}
-                <div className="space-y-2">
-                    {products.map((item) => (
+                <div className="grid grid-cols-1 gap-3">
+                    {services.map((item) => (
                         <div key={item.id}>
-                            <OrderDetailProductItem productItem={item} />
+                            <OrderDetailServiceItem serviceItem={item} />
                         </div>
                     ))}
                 </div>

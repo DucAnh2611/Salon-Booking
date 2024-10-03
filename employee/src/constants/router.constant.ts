@@ -11,4 +11,5 @@ export const ROUTER_PATH = {
     SHIFT: "/shift",
     ORDER: "/order",
     LOGIN: "/login",
+    ORGANIZTAION: "/organization",
 };

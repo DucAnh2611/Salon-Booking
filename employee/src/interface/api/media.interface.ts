@@ -60,3 +60,9 @@ export interface IMediaProductTempUrlCreate {
     url: string;
     isThumbnail: boolean;
 }
+
+export interface IMediaThumbnail {
+    media: IMedia | null;
+    mediaId: string | null;
+    isThumbnail: boolean;
+}

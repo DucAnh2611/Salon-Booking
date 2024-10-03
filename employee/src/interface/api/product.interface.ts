@@ -17,6 +17,8 @@ export interface IProduct {
     userCreate: IEmployeeModify;
     userUpdate: IEmployeeModify;
     productMedia: IProductMedia[];
+
+    deletedAt: Date;
 }
 
 export interface IProductSnapshot {
@@ -229,4 +231,47 @@ export interface IProductType {
 
 export interface IProductTypeAttribute {
     value: IProductTypeAttributeValueUpdate;
+}
+
+export interface IProductTypeAttributeOrder {
+    id: string;
+    attributeValueId: string;
+    value: IAttributeValueOrder;
+    thumbnail: null | IMedia;
+    thumbnailId: string | null;
+    level: number;
+}
+
+export interface IProductTypes {
+    id: string;
+    quantity: string;
+    productId: string;
+    productTypesAttribute: IProductTypeAttributeOrder[];
+    sku: string | null;
+    price: number;
+    deletedAt: Date;
+}
+
+export interface IAttributeValueOrder {
+    id: string;
+    value: string;
+    attributeId: string;
+    attribute: IAttribute;
+}
+
+export interface IProductItemOrder {
+    id: string;
+    cartProductId: string;
+
+    productSnapshot: IProduct;
+    productId: string;
+
+    productTypeSnapshot: IProductTypes | null;
+    productTypeId: string | null;
+
+    quantity: number;
+    totalPrice: number;
+    unitPrice: number;
+
+    createdAt: Date;
 }

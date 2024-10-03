@@ -1,11 +1,11 @@
 import {
     IOrderDetail,
-    IOrderDetailProduct,
     IOrderDetailRefund,
-    IOrderDetailService,
     IOrderDetailState,
     IOrderDetailTransaction,
 } from "../api/order-detail.interface";
+import { IProductItemOrder } from "../api/product.interface";
+import { IServiceItemOrder } from "../api/service.interface";
 import { IBaseInitialState } from "./base.interface";
 
 export interface IInitialStateOrderDetail {
@@ -45,9 +45,9 @@ interface IStateOrderDetailState extends IBaseInitialState {
 }
 
 interface IStateOrderDetailProduct extends IBaseInitialState {
-    products: IOrderDetailProduct[];
+    products: IProductItemOrder[];
 }
 
 interface IStateOrderDetailService extends IBaseInitialState {
-    services: IOrderDetailService[];
+    services: IServiceItemOrder[];
 }

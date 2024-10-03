@@ -53,8 +53,6 @@ export const serviceColumnDef: ColumnDef<IService>[] = [
 
             const thumbnail = medias.find((m) => m.isThumbnail && m.media);
 
-            console.log(thumbnail);
-
             return (
                 <div className="w-full flex items-center justify-center">
                     {thumbnail ? (

@@ -18,9 +18,11 @@ export const createServiceBaseSchema = z.object({
         .number({ message: ZOD_MESSAGE.number("Thời gian") })
         .int({ message: ZOD_MESSAGE.int("Thời gian") })
         .positive({ message: ZOD_MESSAGE.positive("Thời gian") }),
-    description: z.string().optional().default(""),
+    description: z.string().min(20, { message: ZOD_MESSAGE.min(20, "Mô tả") }),
     categoryId: z.string().min(2, { message: ZOD_MESSAGE.require("Danh mục") }),
-    medias: z.array(serviceMediaSchema),
+    medias: z
+        .array(serviceMediaSchema)
+        .min(1, { message: ZOD_MESSAGE.require("Ảnh, video dịch vụ") }),
 });
 
 export const createServiceEmployeeSchema = z.object({
@@ -68,9 +70,11 @@ export const updateServiceBaseSchema = z.object({
         .number({ message: ZOD_MESSAGE.number("Thời gian") })
         .int({ message: ZOD_MESSAGE.int("Thời gian") })
         .positive({ message: ZOD_MESSAGE.positive("Thời gian") }),
-    description: z.string().optional().default(""),
+    description: z.string().min(20, { message: ZOD_MESSAGE.min(20, "Mô tả") }),
     categoryId: z.string().min(2, { message: ZOD_MESSAGE.require("Danh mục") }),
-    medias: z.array(updateServiceMediaSchema),
+    medias: z
+        .array(updateServiceMediaSchema)
+        .min(1, { message: ZOD_MESSAGE.require("Ảnh, video dịch vụ") }),
 });
 
 export const updateServiceEmployeeSchema = z.object({

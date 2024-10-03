@@ -8,7 +8,12 @@ import { AccessTokenGuard } from '../../../shared/guard/accessToken.guard';
 import { PermissionGuard } from '../../../shared/guard/permission.guard';
 import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
 import { FindOrderAdminDto } from '../../order-base/dto/order-base-get.dto';
-import { GetOrderParamDto, GetOrderStateListQueryDto, GetRequestRefundParamDto } from '../dto/order-get.dto';
+import {
+    GetJobQueryListDto,
+    GetOrderParamDto,
+    GetOrderStateListQueryDto,
+    GetRequestRefundParamDto,
+} from '../dto/order-get.dto';
 import { ApprovedRefundRequestDto, DeclineRefundRequestDto, StaffUpdateOrderStateDto } from '../dto/order-update.dto';
 import { OrderAdminService } from '../service/order-admin.service';
 
@@ -121,5 +126,14 @@ export class OrderAdminController {
         const { id } = param;
 
         return this.orderAdminService.createQr(id);
+    }
+
+    @Post(ADMIN_ORDER_ROUTE.MY_JOB)
+    @TargetActionRequire([])
+    @UserType(UserTypeEnum.STAFF)
+    employeeJob(@Req() req: AppRequest, @Body() body: GetJobQueryListDto) {
+        const { employeeId } = req.accessPayload;
+
+        return this.orderAdminService.currentJob(employeeId, body);
     }
 }
