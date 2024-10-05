@@ -12,6 +12,9 @@ import { default as MediaScreen } from "@/screens/media";
 import NotFound from "@/screens/notFound";
 import OrderScreen from "@/screens/order";
 import OrderDetailScreen from "@/screens/order/detail";
+import OrganizationScreen from "@/screens/organization";
+import OrganizationCreateSreen from "@/screens/organization/create";
+import OrganizationUpdateSreen from "@/screens/organization/update";
 import ProductScreen from "@/screens/product";
 import CreateProductScreen from "@/screens/product/create";
 import UpdateProductScreen from "@/screens/product/update";
@@ -147,6 +150,23 @@ export const router = createBrowserRouter([
                     {
                         path: ":id",
                         element: <OrderDetailScreen />,
+                    },
+                ],
+            },
+            {
+                path: ROUTER_PATH.ORGANIZTAION,
+                children: [
+                    {
+                        path: "",
+                        element: <OrganizationScreen />,
+                    },
+                    {
+                        path: "add",
+                        element: <OrganizationCreateSreen />,
+                    },
+                    {
+                        path: ":id",
+                        element: <OrganizationUpdateSreen />,
                     },
                 ],
             },

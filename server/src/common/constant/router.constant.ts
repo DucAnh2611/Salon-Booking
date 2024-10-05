@@ -362,10 +362,12 @@ export const STATISTIC_ADMIN_ROUTE = {
 
 export const ORGANIZATION_ADMIN_ROUTE = {
     UPDATE: '',
+    DETAIL: ':id',
     CREATE: '',
     LIST: 'list',
     DELETE: ':id',
-    TOGGLE: '/toggle/:id',
+    SELECT_SHOW: '/show',
+    CURRENT: '/current',
 };
 
 export const ORGANIZATION_ROUTE = {

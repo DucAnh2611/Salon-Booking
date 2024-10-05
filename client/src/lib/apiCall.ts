@@ -8,7 +8,7 @@ import {
 } from "@/interface/response.interface";
 import axios, { AxiosError } from "axios";
 
-const { api_base_url, api_prefix } = API;
+export const { api_base_url, api_prefix } = API;
 export const api_media_url = `${api_base_url}${api_prefix}media/`;
 
 type ApiCallProps = {

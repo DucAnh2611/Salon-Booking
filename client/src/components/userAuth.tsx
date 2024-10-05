@@ -4,7 +4,6 @@ import useUser from "@/hook/useUser.hook";
 import { logout } from "@/lib/actions/auth.action";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { Badge } from "./ui/badge";
 import { Button } from "./ui/button";
 import {
     DropdownMenu,
@@ -88,19 +87,7 @@ export default function UserAuth() {
                         className="w-full py-1.5 h-fit justify-start font-normal"
                         variant="ghost"
                     >
-                        <Link href="/cart">
-                            Giỏ hàng
-                            {me.cartProduct.length + me.cartService.length !==
-                                0 && (
-                                <Badge
-                                    variant="destructive"
-                                    className="absolute top-1/2 right-0 -translate-y-1/2 aspect-square p-0 size-4 flex items-center justify-center text-[10px]"
-                                >
-                                    {me.cartProduct.length +
-                                        me.cartService.length}
-                                </Badge>
-                            )}
-                        </Link>
+                        <Link href="/cart">Giỏ hàng</Link>
                     </Button>
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />

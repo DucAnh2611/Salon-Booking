@@ -46,6 +46,8 @@ export default function OrderPage() {
         });
     }, [debouncedValue]);
 
+    document.title = "Danh sách đơn hàng";
+
     return (
         <div className="flex gap-5 h-fit w-full relative">
             <div className="flex-1 h-fit flex flex-col gap-2">

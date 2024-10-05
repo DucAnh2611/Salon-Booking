@@ -155,15 +155,19 @@ export class RoleService {
     async update(roleId: string, newRole: UpdateRoleDto, userId: string) {
         const { parentId, permissionIds } = newRole;
 
-        if (parentId === roleId) {
-            throw new BadRequest({ message: DataErrorCodeEnum.SELF_LINK_ROLE });
-        }
+        let parent = null;
 
-        const parent = await this.isExist(parentId);
-        if (!parent) {
-            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PARENT_ROLE });
+        if (parentId) {
+            if (parentId === roleId) {
+                throw new BadRequest({ message: DataErrorCodeEnum.SELF_LINK_ROLE });
+            }
+
+            parent = await this.isExist(parentId);
+            if (!parent) {
+                throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PARENT_ROLE });
+            }
+            await this.isValidParent(parentId);
         }
-        await this.isValidParent(parentId);
 
         const role = await this.isExist(roleId);
         if (!role)
@@ -179,7 +183,7 @@ export class RoleService {
         const newRoleInfo: RoleEntity = {
             ...role,
             ...newRole,
-            level: parent.level + 1,
+            level: (parent?.level || 0) + 1,
             updatedBy: userId,
         };
 

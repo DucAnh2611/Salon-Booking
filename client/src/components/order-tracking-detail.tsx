@@ -6,7 +6,9 @@ import {
     ORDER_TYPE,
 } from "@/constant/order.constant";
 import { EOrderPaymentType, EOrderStatus, EOrderType } from "@/enum/order.enum";
+import { ESocketEvent, ESocketMessage } from "@/enum/socket.enum";
 import useOrderTracking from "@/hook/useOrderTracking.hook";
+import useSocket from "@/hook/useSocket.hook";
 import { IOrderDetail } from "@/interface/order.interface";
 import { getPaymentLinkProduct } from "@/lib/actions/transaction.action";
 import { getTimeDifference } from "@/lib/date";
@@ -15,7 +17,7 @@ import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { Copy } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 import DialogCancelOrder from "./dialog-cancel-order";
 import DialogConfirmOrder from "./dialog-confirm-order";
 import DialogReceiveOrder from "./dialog-receive-order";
@@ -44,6 +46,8 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
     } = useOrderTracking();
     const [timeLeft, SetTimeLeft] = useState<string>("00:00");
     const [isExpired, SetIsExpired] = useState<boolean>(false);
+
+    const { socket, isConnected } = useSocket();
 
     const handleCopyCode = (orderCp: IOrderDetail) => () => {
         window.navigator.clipboard.writeText(orderCp.code);
@@ -124,7 +128,36 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
         }
     }, [order]);
 
-    if (!order) return <></>;
+    useEffect(() => {
+        if (!socket || !isConnected) return;
+
+        if (socket) {
+            console.log(socket);
+            if (order) {
+                socket.emit(ESocketMessage.CLIENT_TRACKING_ORDER, {
+                    orderId: order.id,
+                });
+            }
+
+            socket.on(ESocketEvent.EMPLOYEE_ORDER_UPDATED, () => {
+                reload("order");
+                reload("state");
+                reload("transaction");
+                reload("refund");
+            });
+
+            return () => {
+                if (order) {
+                    socket.emit(ESocketMessage.CLIENT_UNTRACK_ORDER, {
+                        orderId: order.id,
+                    });
+                }
+                socket.off(ESocketEvent.EMPLOYEE_ORDER_UPDATED);
+            };
+        }
+    }, [socket, isConnected, order]);
+
+    if (!order) return <Fragment></Fragment>;
 
     return (
         <div className="w-full">

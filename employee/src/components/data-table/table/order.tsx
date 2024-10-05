@@ -117,6 +117,7 @@ export default function OrderDataTable({
                             type="number"
                             className="w-[40px] text-center h-full"
                             defaultValue={1}
+                            value={page}
                             onChange={(e) => {
                                 let newPage = parseInt(e.target.value) || 1;
 

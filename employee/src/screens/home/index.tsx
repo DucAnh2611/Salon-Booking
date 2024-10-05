@@ -54,9 +54,9 @@ export function HomeScreen() {
             getStatistic(year);
         }
     }, [year, month, selectMonth]);
-    document.title = "Trang chủ";
-
     if (!statistic) return <></>;
+
+    document.title = "Trang chủ";
 
     return (
         <div className="w-full h-fit flex gap-5 relative">

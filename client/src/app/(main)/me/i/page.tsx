@@ -100,6 +100,8 @@ export default function Page() {
         SetUserInfo(null);
         const { response } = await getInfo();
         if (response) {
+            getUserInfo();
+
             SetUserInfo(response.result);
             if (response.result.userBase.userAvatar) {
                 setImageUrl(response.result.userBase.userAvatar.path);

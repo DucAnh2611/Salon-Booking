@@ -39,6 +39,7 @@ import { ShiftEmployeeService } from '../../shift-employee/shift-employee.servic
 import { CreateOrderProductDto, CreateOrderServiceDto } from '../dto/order-create.dto';
 import { TrackingDetailOrderDto } from '../dto/order-get.dto';
 import { ClientCancelOrderStateDto, ClientUpdateOrderStateDto } from '../dto/order-update.dto';
+import { OrderGateway } from '../gateways/order.gateway';
 
 @Injectable()
 export class OrderService {
@@ -53,6 +54,7 @@ export class OrderService {
         private readonly cartProductService: CartProductService,
         private readonly cartServiceService: CartServiceService,
         private readonly shiftEmployeeService: ShiftEmployeeService,
+        private readonly orderGateway: OrderGateway,
     ) {}
 
     /** @Order */
@@ -166,6 +168,13 @@ export class OrderService {
             ]);
         }
 
+        this.orderGateway.placedOrder({
+            orderCode: newOrder.code,
+            orderType: OrderType.PRODUCT,
+            orderId: newOrder.id,
+            employeeIds: [],
+        });
+
         await Promise.all([
             this.cartProductService.removeCartItems(
                 clientId,
@@ -220,6 +229,13 @@ export class OrderService {
                 }),
             ]);
         }
+
+        this.orderGateway.placedOrder({
+            orderCode: newOrder.code,
+            orderType: OrderType.SERVICE,
+            orderId: newOrder.id,
+            employeeIds: services.map(service => service.employeeId),
+        });
 
         const [_rmCart] = await Promise.all([
             this.cartServiceService.removeCartItem(
@@ -289,6 +305,8 @@ export class OrderService {
             default:
                 break;
         }
+
+        this.orderGateway.clientUpdateOrder({ orderId: order.id });
 
         return DataSuccessCodeEnum.OK;
     }
@@ -411,6 +429,8 @@ export class OrderService {
                 break;
         }
 
+        this.orderGateway.clientUpdateOrder({ orderId: order.id });
+
         return DataSuccessCodeEnum.OK;
     }
 
@@ -463,6 +483,8 @@ export class OrderService {
             }),
         ]);
 
+        this.orderGateway.clientUpdateOrder({ orderId: order.id });
+
         return DataSuccessCodeEnum.OK;
     }
 
@@ -504,6 +526,8 @@ export class OrderService {
             ),
         ]);
 
+        this.orderGateway.clientUpdateOrder({ orderId: order.id });
+
         return DataSuccessCodeEnum.OK;
     }
 
@@ -527,6 +551,8 @@ export class OrderService {
         }
 
         await this.orderBaseService.updateState(orderId, state, userId);
+
+        this.orderGateway.clientUpdateOrder({ orderId: order.id });
 
         return this.orderStateService.addState({
             orderId,
@@ -552,6 +578,7 @@ export class OrderService {
             orderId,
             state: OrderStatusEnum.RECEIVED,
         });
+        this.orderGateway.clientUpdateOrder({ orderId: order.id });
 
         return DataSuccessCodeEnum.OK;
     }
@@ -568,12 +595,15 @@ export class OrderService {
         }
         await this.orderBaseService.updateState(orderId, OrderStatusEnum.CONFIRMED, userId);
 
-        return this.orderStateService.addState({
+        await this.orderStateService.addState({
             orderId,
             state: OrderStatusEnum.CONFIRMED,
             userId,
             description: `Đã xác nhận đơn hàng`,
         });
+
+        this.orderGateway.clientUpdateOrder({ orderId: order.id });
+        return DataSuccessCodeEnum.OK;
     }
 
     /** @Order_Refund_Request */
@@ -606,6 +636,8 @@ export class OrderService {
             userId,
         });
 
+        this.orderGateway.clientUpdateOrder({ orderId: order.id });
+
         return refundRequest;
     }
 
@@ -630,6 +662,8 @@ export class OrderService {
             userId,
             note,
         });
+
+        this.orderGateway.clientUpdateOrder({ orderId: order.id });
 
         return DataSuccessCodeEnum.OK;
     }
@@ -661,6 +695,8 @@ export class OrderService {
                 userId,
             }),
         ]);
+
+        this.orderGateway.clientUpdateOrder({ orderId: order.id });
 
         return DataSuccessCodeEnum.OK;
     }

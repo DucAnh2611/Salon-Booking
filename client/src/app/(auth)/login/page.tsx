@@ -42,6 +42,7 @@ function LoginPage() {
             duration: 1500,
         });
     };
+    document.title = "Đăng nhập";
 
     return (
         <Card className="w-fit border-none">

@@ -34,6 +34,7 @@ export default function CartServicePage() {
 
         fetchData();
     }, []);
+    document.title = "Giỏ hàng dịch vụ";
 
     return (
         <div className="w-full flex gap-5">

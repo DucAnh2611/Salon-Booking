@@ -16,6 +16,7 @@ import { ShiftEmployeeModule } from '../shift-employee/shift-employee.module';
 import { UserModule } from '../user/user.module';
 import { OrderAdminController } from './controller/order-admin.controller';
 import { OrderController } from './controller/order.controller';
+import { OrderGateway } from './gateways/order.gateway';
 import { OrderAdminService } from './service/order-admin.service';
 import { OrderService } from './service/order.service';
 
@@ -38,7 +39,7 @@ import { OrderService } from './service/order.service';
         BankModule,
     ],
     controllers: [OrderController, OrderAdminController],
-    providers: [OrderService, OrderAdminService],
+    providers: [OrderService, OrderAdminService, OrderGateway],
     exports: [OrderService],
 })
 export class OrderModule {}

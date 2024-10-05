@@ -105,8 +105,6 @@ function OrderScreen() {
         SetFilter((f) => ({ ...f, code: code }));
     }, [code]);
 
-    document.title = "Đơn hàng";
-
     return (
         <Card>
             <CardHeader>
@@ -117,6 +115,7 @@ function OrderScreen() {
                                 placeholder="Mã đơn hàng"
                                 onChange={handleChangeCode}
                                 className="focus-visible:ring-transparent"
+                                defaultValue={filterState.code}
                             />
                         </div>
                         <DropdownMenu>

@@ -66,8 +66,6 @@ export default function RoleListTab() {
         if (reload) handleReload();
     }, [reload]);
 
-    document.title = "Danh sách chức vụ";
-
     return (
         <Card>
             <CardHeader>

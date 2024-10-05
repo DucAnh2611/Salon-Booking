@@ -1,11 +1,17 @@
 import CategoryProvider from "@/context/category.context";
 import SearchProductContextProvider from "@/context/search-product.context";
 import { ILayoutProps } from "@/interface/layout.interface";
+import { Metadata } from "next";
 import { ReactNode } from "react";
 
 interface IProductLayoutProps extends ILayoutProps {
     filter: ReactNode;
 }
+
+export const metadata: Metadata = {
+    title: "Tìm kiếm sản phẩm",
+    description: "Tìm kiếm sản phẩm",
+};
 
 export default function Layout({ children, filter }: IProductLayoutProps) {
     return (

@@ -3,7 +3,11 @@ import { useEffect, useState } from "react";
 const useDebounce = <T>(
     defaultValue: T,
     delay: number = 500
-): [debounce: T, SetValue: React.Dispatch<React.SetStateAction<T>>] => {
+): [
+    debounce: T,
+    SetValue: React.Dispatch<React.SetStateAction<T>>,
+    value: T
+] => {
     const [value, SetValue] = useState<T>(defaultValue);
     const [debouncedValue, setDebouncedValue] = useState<T>(value);
 
@@ -17,7 +21,7 @@ const useDebounce = <T>(
         };
     }, [value, delay]);
 
-    return [debouncedValue, SetValue];
+    return [debouncedValue, SetValue, value];
 };
 
 export default useDebounce;

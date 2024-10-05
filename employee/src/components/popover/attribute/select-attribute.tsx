@@ -27,7 +27,7 @@ export default function PopoverSelectAttributeProduct({
     const scrollRef = useRef<HTMLDivElement>(null);
 
     const [items, SetItems] = useState<IAttribute[]>([]);
-    const [key, SetKey] = useDebounce<string>("");
+    const [key, SetKey, keyV] = useDebounce<string>("");
     const [limit, SetLimit] = useState<number>(10);
     const [page, SetPage] = useDebounce<number>(1);
     const [count, SetCount] = useState<number>(0);
@@ -168,7 +168,7 @@ export default function PopoverSelectAttributeProduct({
                             <Input
                                 placeholder="Nhập tên kiểu"
                                 onChange={handleChangeKey}
-                                defaultValue={""}
+                                value={keyV}
                             />
                             {select && (
                                 <Button

@@ -35,6 +35,8 @@ export default function CartProductPage() {
         fetchData();
     }, []);
 
+    document.title = "Giỏ hàng sản phẩm";
+
     return (
         <div className="w-full flex gap-5">
             <Card className="h-fit flex-1 p-4 box-border">

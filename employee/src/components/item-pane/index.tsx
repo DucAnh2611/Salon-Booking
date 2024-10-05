@@ -22,13 +22,14 @@ export default function ItemNavigate({ item, level = 1 }: TItemNavigateProps) {
     const navigate = useNavigate();
 
     const [isActive, SetIsActive] = useState<boolean>(false);
-    const [open, SetOpen] = useState<boolean>(false);
+    const [open, SetOpen] = useState<boolean>(true);
 
     const handleClick = () => {
         if (item.children) {
             handleClickOpen();
         }
         if (item.path) {
+            document.title = item.title;
             navigate(item.path);
         }
     };
@@ -43,6 +44,7 @@ export default function ItemNavigate({ item, level = 1 }: TItemNavigateProps) {
             location.pathname === item.path &&
             location.pathname !== "/"
         ) {
+            document.title = item.title;
             SetIsActive(true);
         } else {
             SetIsActive(false);
