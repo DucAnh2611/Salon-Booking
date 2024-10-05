@@ -15,6 +15,8 @@ function TrackingLayout({ children, tracking }: ITrackingLayoutProps) {
 
     const code = search.get("code");
 
+    document.title = "Tra cứu đơn hàng";
+
     return (
         <div className="w-full h-fit py-10 box-border">
             <div className="container px-4 w-full box-border h-fit relative">

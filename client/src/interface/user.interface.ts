@@ -8,8 +8,6 @@ export interface IUserClient {
     phoneVerified: boolean;
     userId: string;
     userBase: IUserBase;
-    cartProduct: any[];
-    cartService: any[];
 }
 
 export interface IUserBase {
@@ -24,13 +22,12 @@ export interface IUserBase {
 }
 
 export interface IAPIUserClientMe {
+    id: string;
     email: string;
     emailVerified: boolean;
     phoneVerified: boolean;
     userId: string;
     userBase: IUserBase;
-    cartProduct: any[];
-    cartService: any[];
 }
 
 export interface IApiLogin {

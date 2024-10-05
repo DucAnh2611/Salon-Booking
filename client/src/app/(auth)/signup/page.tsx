@@ -47,6 +47,7 @@ function SignupPage() {
             duration: 1500,
         });
     };
+    document.title = "Đăng ký";
 
     return (
         <Card className="w-fit border-none">

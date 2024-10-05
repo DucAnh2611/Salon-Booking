@@ -6,7 +6,6 @@ import { ILayoutProps } from "@/interface/layout.interface";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ReactNode } from "react";
-
 interface ICartLayoutProps extends ILayoutProps {
     product: ReactNode;
     service: ReactNode;
@@ -20,10 +19,7 @@ function CartLayout({ product, service }: ICartLayoutProps) {
     return (
         <div className="w-full h-fit py-10 box-border">
             <div className="container px-4 gap-5 flex w-full box-border h-fit">
-                <Tabs
-                    value={type}
-                    className="flex flex-col h-full w-full"
-                >
+                <Tabs value={type} className="flex flex-col h-full w-full">
                     <TabsList className="w-fit h-fit">
                         <TabsTrigger value="product">
                             <Link href={"cart?type=product"}>Sản phẩm</Link>
