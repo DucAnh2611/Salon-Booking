@@ -22,6 +22,7 @@ export const multerConfig = {
     category: process.env.MULTER_CATEGORY_DEST,
     voucher: process.env.MULTER_VOUCHER_DEST,
     common: process.env.MULTER_COMMON_DEST,
+    organization: process.env.MULTER_TEMP_ORGANIZATION,
     order: {
         base: process.env.MULTER_ORDER_DEST,
         refund: process.env.MULTER_ORDER_REFUND,

@@ -3,7 +3,14 @@ import OrderPaymentTab from "@/components/order-payment-tab";
 import OrderStatesCard from "@/components/order-states-card";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { detailOrder } from "@/lib/redux/actions/order-detail.action";
+import { ESocketEvent, ESocketMessage } from "@/enum/socket.enum";
+import useSocket from "@/hooks/useSocket";
+import {
+    detailOrder,
+    detailOrderRefund,
+    detailOrderState,
+    detailOrderTransaction,
+} from "@/lib/redux/actions/order-detail.action";
 import { orderDetailSelector } from "@/lib/redux/selector";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
 import { List } from "lucide-react";
@@ -15,10 +22,37 @@ import {
     useSearchParams,
 } from "react-router-dom";
 
-function OrderDetailMain() {
+function OrderDetailMain({ id }: { id: string }) {
     const navigate = useNavigate();
 
     const [param] = useSearchParams();
+    const dispatch = useAppDispatch();
+
+    const { socket, isConnected } = useSocket();
+
+    useEffect(() => {
+        if (!socket || !isConnected) return;
+
+        if (socket) {
+            socket.emit(ESocketMessage.EMPLOYEE_TRACKING_ORDER, {
+                orderId: id,
+            });
+
+            socket.on(ESocketEvent.CLIENT_ORDER_UPDATED, () => {
+                dispatch(detailOrder(id));
+                dispatch(detailOrderState(id));
+                dispatch(detailOrderRefund(id));
+                dispatch(detailOrderTransaction(id));
+            });
+
+            return () => {
+                socket.emit(ESocketMessage.EMPLOYEE_UNTRACK_ORDER, {
+                    orderId: id,
+                });
+                socket.off(ESocketEvent.CLIENT_ORDER_UPDATED);
+            };
+        }
+    }, [socket, isConnected, id]);
 
     return (
         <div className="flex-1 w-full h-fit">
@@ -85,5 +119,5 @@ export default function OrderDetailScreen() {
 
     if (!id) return <p> no id provided</p>;
 
-    return <OrderDetailMain />;
+    return <OrderDetailMain id={id} />;
 }

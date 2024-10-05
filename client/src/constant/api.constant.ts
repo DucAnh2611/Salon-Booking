@@ -646,4 +646,15 @@ export const API_URLS = {
             withCredentials: true,
         }),
     },
+    ORGANIZATION: {
+        CURRENT: () => ({
+            method: "GET",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["organization", "current"],
+            }),
+            withCredentials: true,
+        }),
+    },
 };

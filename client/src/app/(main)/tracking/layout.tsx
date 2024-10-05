@@ -19,9 +19,7 @@ function TrackingLayout({ children, tracking }: ITrackingLayoutProps) {
         <div className="w-full h-fit py-10 box-border">
             <div className="container px-4 w-full box-border h-fit relative">
                 <OrderTrackingProvider>
-                    <div className="w-full sticky top-0 left-0 z-10 bg-background py-3 shadow-lg">
-                        {children}
-                    </div>
+                    <div className="w-full bg-background mb-5">{children}</div>
                     {!!code && <div className="w-full">{tracking}</div>}
                 </OrderTrackingProvider>
             </div>

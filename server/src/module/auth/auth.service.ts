@@ -12,7 +12,6 @@ import { RegisterClientDto } from '../client/dto/client-create.dto';
 import { ClientService } from '../client/service/client.service';
 import { EmployeeEntity } from '../employee/entity/employee.entity';
 import { MailService } from '../mail/mail.service';
-import { RoleService } from '../role/role.service';
 import { UserService } from '../user/user.service';
 import { LoginClientDto, LoginEmpDto } from './dto/auth-login.dto';
 import { ETypeExistAuth } from './enum/auth.enum';
@@ -23,7 +22,6 @@ export class AuthService {
     constructor(
         private readonly jwtTokenUtil: JwtTokenUtil,
         private readonly userService: UserService,
-        private readonly roleService: RoleService,
         private readonly mailService: MailService,
         private readonly clientService: ClientService,
         @InjectRepository(EmployeeEntity) private readonly employeeRepository: Repository<EmployeeEntity>,

@@ -40,3 +40,8 @@ export const orderRefundSelector = (state: TRootState) =>
 export const clientSelector = (state: TRootState) => state.clientReducer;
 
 export const dashboardSelector = (state: TRootState) => state.dashboardReducer;
+
+export const organizationSelector = (state: TRootState) =>
+    state.organizationReducer;
+
+export const jobSelector = (state: TRootState) => state.jobReducer;

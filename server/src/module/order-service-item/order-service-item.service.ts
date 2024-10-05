@@ -25,6 +25,10 @@ export class OrderServiceItemService {
         private readonly shiftService: ShiftService,
     ) {}
 
+    getEmployeeOrder(orderId: string) {
+        return this.orderServiceItemRepository.find({ where: { orderId }, loadEagerRelations: false });
+    }
+
     async employeeJob(employeeId: string, orderIds: string[]) {
         const jobs = await this.orderServiceItemRepository.find({
             where: {

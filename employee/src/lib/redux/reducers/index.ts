@@ -5,11 +5,13 @@ import { categoryReducer } from "./category.reducer";
 import { clientReducer } from "./client.reducer";
 import { dashboardReducer } from "./dashboard.reducer";
 import { employeeReducer } from "./employee.reducer";
+import { jobReducer } from "./job.reducer";
 import { mediaReducer } from "./media.reducer";
 import { orderDetailReducer } from "./order-detail.reducer";
 import { orderRefundReducer } from "./order-refund.reducer";
 import { orderStateReducer } from "./order-state.reducer";
 import { orderReducer } from "./order.reducer";
+import { organizationReducer } from "./organization.reducer";
 import { permissionReducer } from "./permission.reducer";
 import { productReducer } from "./product.reducer";
 import { roleReducer } from "./role.reducer";
@@ -37,6 +39,8 @@ const rootReducer = combineReducers({
     orderRefundReducer,
     clientReducer,
     dashboardReducer,
+    organizationReducer,
+    jobReducer,
 });
 
 export default rootReducer;

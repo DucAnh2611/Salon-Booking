@@ -64,8 +64,6 @@ function CategoryScreen() {
         }
     }, [categoryState.reload]);
 
-    document.title = "Danh mục sản phẩm";
-
     return (
         <Card>
             <CardHeader className="pb-3">

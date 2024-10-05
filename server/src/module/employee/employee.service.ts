@@ -16,6 +16,7 @@ import { CreateEmployeeDto } from './dto/create-emplotee.dto';
 import { FindEmployeeQueryDto } from './dto/get-employee.dto';
 import { ResetEmployeePasswordDto, UpdateEmployeeDto } from './dto/update-employee.dto';
 import { EmployeeEntity } from './entity/employee.entity';
+import { EmployeeGateway } from './gateway/employee.gateway';
 import { TQueryExistEmployee } from './type/is-exist.type';
 
 @Injectable()
@@ -24,10 +25,11 @@ export class EmployeeService {
         @InjectRepository(EmployeeEntity) private readonly employeeRepository: Repository<EmployeeEntity>,
         private readonly roleService: RoleService,
         private readonly userService: UserService,
+        private readonly employeeGateway: EmployeeGateway,
     ) {}
 
-    getMyInfo(id: string) {
-        return this.employeeRepository.findOne({
+    async getMyInfo(id: string) {
+        const inf = await this.employeeRepository.findOne({
             where: { id },
             loadEagerRelations: false,
             relations: {
@@ -36,6 +38,8 @@ export class EmployeeService {
                 },
             },
         });
+
+        return inf;
     }
 
     async getById(id: string) {

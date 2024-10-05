@@ -1,3 +1,4 @@
+import { vi } from "date-fns/locale";
 import { ReactNode, useEffect, useState } from "react";
 import { Calendar } from "./ui/calendar";
 import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
@@ -32,6 +33,7 @@ export default function DatePicker({
             <PopoverContent className="w-auto p-0">
                 <Calendar
                     mode="single"
+                    locale={vi}
                     selected={date}
                     onSelect={handleChange}
                     fromDate={fromDate}

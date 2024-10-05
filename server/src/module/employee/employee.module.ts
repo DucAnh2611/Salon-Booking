@@ -11,6 +11,7 @@ import { UserModule } from '../user/user.module';
 import { EmployeeController } from './employee.controller';
 import { EmployeeService } from './employee.service';
 import { EmployeeEntity } from './entity/employee.entity';
+import { EmployeeGateway } from './gateway/employee.gateway';
 
 @Module({
     imports: [
@@ -20,7 +21,7 @@ import { EmployeeEntity } from './entity/employee.entity';
         MediaModule,
     ],
     controllers: [EmployeeController],
-    providers: [EmployeeService, RoleService, RolePermissionService, PermissionGuard],
+    providers: [EmployeeService, RoleService, RolePermissionService, PermissionGuard, EmployeeGateway],
     exports: [EmployeeService],
 })
 export class EmployeeModule {}

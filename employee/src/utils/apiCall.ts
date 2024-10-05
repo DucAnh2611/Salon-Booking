@@ -19,7 +19,7 @@ const axiosInstant = axios.create();
 
 axiosRetry(axiosInstant, { retries: 3 });
 
-const api_base_url = process.env.REACT_APP_BACKEND_HOST || "";
+export const api_base_url = process.env.REACT_APP_BACKEND_HOST || "";
 const api_prefix = process.env.REACT_APP_BACKEND_PREFIX || "";
 export const api_media_url = `${api_base_url}${api_prefix}media/`;
 

@@ -24,11 +24,11 @@ export class OrderBaseService {
                 from.setDate(from.getDate() - 1);
             }
             if (to) {
-                to.setDate(to.getDate() + 1);
+                to.setDate(to.getDate());
             }
         }
 
-        return this.orderBaseRepository.find({
+        const [items, count] = await this.orderBaseRepository.findAndCount({
             where: {
                 ...(from
                     ? to
@@ -47,11 +47,14 @@ export class OrderBaseService {
                 services: true,
             },
             order: {
-                status: SortByEnum.DESC,
+                createdAt: SortByEnum.DESC,
+                status: SortByEnum.ASC,
             },
             take: limit,
             skip: (page - 1) * limit,
         });
+
+        return { count, items, page, limit };
     }
 
     async isOwn(orderId: string, clientId: string) {

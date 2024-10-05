@@ -43,8 +43,6 @@ export default function PermissionListTab() {
         }
     }, [isCalling, isFailure]);
 
-    document.title = "Danh sách quyền hạn";
-
     return (
         <Card>
             <CardHeader>

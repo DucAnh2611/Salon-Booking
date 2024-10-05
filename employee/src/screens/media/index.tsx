@@ -124,8 +124,6 @@ function MediaScreen() {
         handleChangeParam({ key: searchKey });
     }, [searchKey]);
 
-    document.title = "Quản lý file phương tiện";
-
     return (
         <Card className="h-fit flex flex-col">
             <CardHeader className="pb-3 h-fit">

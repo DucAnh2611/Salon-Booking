@@ -73,11 +73,17 @@ const chartConfig = {
 };
 
 export default function OrderDashboard({ statistic }: IOrderDashboardProps) {
-    const data = statistic.order.orderCountDetail.map((item) => ({
+    let data = statistic.order.orderCountDetail.map((item) => ({
         name: chartConfig[item.status].label,
         fill: chartConfig[item.status].fill,
         "Số lượng": parseInt(item.count),
     }));
+
+    data.push({
+        name: "Tổng",
+        fill: "#ffa600",
+        "Số lượng": statistic.order.orderCount,
+    });
 
     return (
         <Card className="">

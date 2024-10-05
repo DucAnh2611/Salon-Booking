@@ -488,4 +488,80 @@ export const API_URLS = {
             withCredentials: true,
         }),
     },
+    ORGANIZATON: {
+        LIST: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["organization-admin", "list"],
+            }),
+            withCredentials: true,
+        }),
+        DETAIL: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["organization-admin", id],
+            }),
+            withCredentials: true,
+        }),
+        UPDATE: () => ({
+            method: "PUT",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["organization-admin"],
+            }),
+            withCredentials: true,
+        }),
+        CREATE: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["organization-admin"],
+            }),
+            withCredentials: true,
+        }),
+        DELETE: (id: string) => ({
+            method: "DELETE",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["organization-admin", id],
+            }),
+            withCredentials: true,
+        }),
+        SELECT_SHOW: () => ({
+            method: "PUT",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["organization-admin", "show"],
+            }),
+            withCredentials: true,
+        }),
+        CURRENT: () => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["organization-admin", "current"],
+            }),
+            withCredentials: true,
+        }),
+    },
+    JOB: {
+        MY_JOB: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "job", "me"],
+            }),
+            withCredentials: true,
+        }),
+    },
 };

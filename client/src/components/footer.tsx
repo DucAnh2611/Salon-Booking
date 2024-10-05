@@ -1,7 +1,62 @@
-import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
+"use client";
+
+import { ESocketEvent, ESocketMessage } from "@/enum/socket.enum";
+import useSocket from "@/hook/useSocket.hook";
+import { IOrganization } from "@/interface/organization.interface";
+import { currentOrganization } from "@/lib/actions/organization.action";
+import { api_media_url } from "@/lib/apiCall";
+import { joinString } from "@/lib/string";
+import { Facebook, Instagram } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
+import { Fragment, useEffect, useState } from "react";
 
 export default function Footer() {
+    const [organization, SetOrganization] = useState<IOrganization | null>(
+        null
+    );
+
+    const { socket, isConnected } = useSocket();
+
+    const getOrganization = async () => {
+        const { response } = await currentOrganization();
+
+        if (response) {
+            SetOrganization(response.result);
+            if (response.result && response.result.logo) {
+                const link = document.querySelector('link[rel="icon"]');
+                if (link) {
+                    link.setAttribute(
+                        "href",
+                        joinString({
+                            joinString: "",
+                            strings: [api_media_url, response.result.logo.path],
+                        })
+                    );
+                }
+            }
+        }
+    };
+
+    useEffect(() => {
+        getOrganization();
+    }, []);
+
+    useEffect(() => {
+        if (!socket || !isConnected) return;
+
+        if (socket) {
+            socket.emit(ESocketMessage.CLIENT_JOIN_HOST, {});
+
+            socket.on(ESocketEvent.UPDATE_CURRENT_ORGANIZATION, () => {
+                getOrganization();
+            });
+            return () => {
+                socket.off(ESocketEvent.UPDATE_CURRENT_ORGANIZATION);
+            };
+        }
+    }, [socket, isConnected]);
+
     return (
         <footer className="bg-accent text-accent-foreground py-8 border-muted-foreground border-t">
             <div className="container mx-auto px-4">
@@ -48,45 +103,70 @@ export default function Footer() {
                         <h3 className="font-bold text-lg mb-4">
                             Liên Hệ Chúng Tôi
                         </h3>
-                        <p className="text-sm">
-                            123 Đường Chính, Thành Phố, Việt Nam 12345
-                        </p>
-                        <p className="text-sm">Điện thoại: (123) 456-7890</p>
-                        <p className="text-sm">Email: info@example.com</p>
+                        {organization ? (
+                            <Fragment>
+                                <p className="text-sm">{organization.name}</p>
+                                <p className="text-sm">
+                                    Sđt: {organization.phone}
+                                </p>
+                                <p className="text-sm">
+                                    Email: {organization.gmail}
+                                </p>
+                            </Fragment>
+                        ) : (
+                            <Fragment>
+                                <p className="text-sm">
+                                    123 Đường Chính, Thành Phố, Việt Nam 12345
+                                </p>
+                                <p className="text-sm">
+                                    Điện thoại: (123) 456-7890
+                                </p>
+                                <p className="text-sm">
+                                    Email: info@example.com
+                                </p>
+                            </Fragment>
+                        )}
                     </div>
                     <div>
                         <h3 className="font-bold text-lg mb-4">
                             Theo Dõi Chúng Tôi
                         </h3>
                         <div className="flex space-x-4">
-                            <Link
-                                href="#"
-                                className="text-gray-600 hover:text-primary duration-100"
-                            >
-                                <Facebook size={24} />
-                                <span className="sr-only">Facebook</span>
-                            </Link>
-                            <Link
-                                href="#"
-                                className="text-gray-600 hover:text-primary duration-100"
-                            >
-                                <Twitter size={24} />
-                                <span className="sr-only">Twitter</span>
-                            </Link>
-                            <Link
-                                href="#"
-                                className="text-gray-600 hover:text-primary duration-100"
-                            >
-                                <Instagram size={24} />
-                                <span className="sr-only">Instagram</span>
-                            </Link>
-                            <Link
-                                href="#"
-                                className="text-gray-600 hover:text-primary duration-100"
-                            >
-                                <Linkedin size={24} />
-                                <span className="sr-only">LinkedIn</span>
-                            </Link>
+                            {organization?.facebook && (
+                                <Link
+                                    href={organization.facebook}
+                                    className="text-gray-600 hover:text-primary duration-100"
+                                >
+                                    <Facebook size={24} />
+                                    <span className="sr-only">Facebook</span>
+                                </Link>
+                            )}
+                            {organization?.zalo && (
+                                <Link
+                                    href={organization.zalo}
+                                    className="text-gray-600 hover:text-primary duration-100"
+                                >
+                                    <Image
+                                        alt="zalo"
+                                        src={
+                                            "https://upload.wikimedia.org/wikipedia/commons/thumb/9/91/Icon_of_Zalo.svg/1200px-Icon_of_Zalo.svg.png"
+                                        }
+                                        width={100}
+                                        height={100}
+                                        className="h-[25px] w-[25px]"
+                                    />
+                                    <span className="sr-only">Twitter</span>
+                                </Link>
+                            )}
+                            {organization?.instagram && (
+                                <Link
+                                    href={organization.instagram}
+                                    className="text-gray-600 hover:text-primary duration-100"
+                                >
+                                    <Instagram size={24} />
+                                    <span className="sr-only">Instagram</span>
+                                </Link>
+                            )}
                         </div>
                     </div>
                 </div>

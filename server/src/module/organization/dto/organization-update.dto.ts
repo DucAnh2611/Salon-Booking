@@ -1,4 +1,4 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
 
 export class OrganizationUpdateDto {
     @IsNotEmpty()
@@ -9,9 +9,13 @@ export class OrganizationUpdateDto {
     @IsString()
     name: string;
 
-    @IsNotEmpty()
+    @IsOptional()
+    @IsUUID('all')
+    logoId?: string;
+
+    @IsOptional()
     @IsString()
-    logoUrl: string;
+    logoUrl?: string;
 
     @IsNotEmpty()
     @IsString()
@@ -35,6 +39,15 @@ export class OrganizationUpdateDto {
 
     @IsOptional()
     @IsString()
-    @IsString()
     instagram?: string;
+}
+
+export class OrganizationShowDto {
+    @IsNotEmpty()
+    @IsUUID('all')
+    organizationId: string;
+
+    @IsNotEmpty()
+    @IsBoolean()
+    show: boolean;
 }

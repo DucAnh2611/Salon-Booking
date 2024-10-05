@@ -40,6 +40,7 @@ import {
     StaffCancelOrderStateDto,
     StaffUpdateOrderStateDto,
 } from '../dto/order-update.dto';
+import { OrderGateway } from '../gateways/order.gateway';
 
 @Injectable()
 export class OrderAdminService {
@@ -56,6 +57,7 @@ export class OrderAdminService {
         private readonly userService: UserService,
         private readonly bankService: BankService,
         private readonly shiftEmployeeService: ShiftEmployeeService,
+        private readonly orderGateway: OrderGateway,
     ) {}
 
     /** @Order */
@@ -111,6 +113,7 @@ export class OrderAdminService {
             default:
                 break;
         }
+        this.orderGateway.adminUpdateOrder({ orderId: order.id });
 
         return DataSuccessCodeEnum.OK;
     }
@@ -241,6 +244,7 @@ export class OrderAdminService {
                     break;
             }
         }
+        this.orderGateway.adminUpdateOrder({ orderId: order.id });
 
         return DataSuccessCodeEnum.OK;
     }
@@ -284,6 +288,7 @@ export class OrderAdminService {
             userId,
             note,
         });
+        this.orderGateway.adminUpdateOrder({ orderId: orderRefundRequest.orderId });
 
         return DataSuccessCodeEnum.OK;
     }
@@ -317,6 +322,7 @@ export class OrderAdminService {
                 userId,
             }),
         ]);
+        this.orderGateway.adminUpdateOrder({ orderId: order.id });
 
         return DataSuccessCodeEnum.OK;
     }
@@ -336,6 +342,7 @@ export class OrderAdminService {
 
     async orderFinish(orderId: string) {
         const employeeService = await this.orderServiceItemService.getServiceOrder(orderId);
+        this.orderGateway.adminUpdateOrder({ orderId });
 
         return Promise.all(
             employeeService.map(emp =>
@@ -372,10 +379,10 @@ export class OrderAdminService {
 
         const jobLists = await this.orderServiceItemService.employeeJob(
             employeeId,
-            list.map(item => item.id),
+            list.items.map(item => item.id),
         );
 
-        return list.map(item => {
+        const items = list.items.map(item => {
             const jobFind = jobLists.find(job => item.id === job.orderId);
             if (!jobFind) {
                 return item;
@@ -383,8 +390,21 @@ export class OrderAdminService {
             return {
                 ...jobFind,
                 orderStatus: item.status,
+                orderPaid: item.paid,
+                totalPaid: item.totalPaid,
+                orderCode: item.code,
+                total: item.total,
+                clientName: item.name,
+                clientPhone: item.phone,
             };
         });
+
+        return {
+            items,
+            page: list.page,
+            limit: list.limit,
+            count: list.count,
+        };
     }
 
     @Cron(CronExpression.EVERY_MINUTE)
