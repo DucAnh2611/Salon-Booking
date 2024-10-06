@@ -105,7 +105,9 @@ export default function Footer() {
                         </h3>
                         {organization ? (
                             <Fragment>
-                                <p className="text-sm">{organization.name}</p>
+                                <p className="text-sm">
+                                    {organization.address}
+                                </p>
                                 <p className="text-sm">
                                     Sđt: {organization.phone}
                                 </p>
@@ -114,17 +116,7 @@ export default function Footer() {
                                 </p>
                             </Fragment>
                         ) : (
-                            <Fragment>
-                                <p className="text-sm">
-                                    123 Đường Chính, Thành Phố, Việt Nam 12345
-                                </p>
-                                <p className="text-sm">
-                                    Điện thoại: (123) 456-7890
-                                </p>
-                                <p className="text-sm">
-                                    Email: info@example.com
-                                </p>
-                            </Fragment>
+                            <Fragment></Fragment>
                         )}
                     </div>
                     <div>
@@ -136,6 +128,7 @@ export default function Footer() {
                                 <Link
                                     href={organization.facebook}
                                     className="text-gray-600 hover:text-primary duration-100"
+                                    target="_blank"
                                 >
                                     <Facebook size={24} />
                                     <span className="sr-only">Facebook</span>
@@ -145,6 +138,7 @@ export default function Footer() {
                                 <Link
                                     href={organization.zalo}
                                     className="text-gray-600 hover:text-primary duration-100"
+                                    target="_blank"
                                 >
                                     <Image
                                         alt="zalo"
@@ -162,6 +156,7 @@ export default function Footer() {
                                 <Link
                                     href={organization.instagram}
                                     className="text-gray-600 hover:text-primary duration-100"
+                                    target="_blank"
                                 >
                                     <Instagram size={24} />
                                     <span className="sr-only">Instagram</span>

@@ -1,14 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
+import { format } from 'date-fns';
 import { Equal, In, LessThanOrEqual, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
 import { CRON_EXPRESSION } from '../../common/constant/cron.constant';
+import { LOGGER_CONSTANT_NAME } from '../../common/constant/logger.constant';
+import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { combineDateAndTime, isTime1Greater } from '../../shared/utils/parse-time.utils';
+import { EmployeeEntity } from '../employee/entity/employee.entity';
+import { AppLoggerService } from '../logger/logger.service';
 import { OrderServiceItemEntity } from '../order-service-item/entity/order-service-item.entity';
+import { ShiftEntity } from '../shift/entity/shift.entity';
 import { CreateWorkingHourDto } from './dto/working-hour-create.dto';
 import { DeleteWorkingHourDto } from './dto/working-hour-delete.dto';
 import { GetWorkingHourRangeDto, OffWorkingQueryDto } from './dto/working-hour-get.dto';
@@ -17,10 +23,17 @@ import { WorkingHourEntity } from './entity/working-hour.entity';
 
 @Injectable()
 export class WorkingHourService {
+    private readonly logger: AppLoggerService = new AppLoggerService(
+        WorkingHourService.name,
+        LOGGER_CONSTANT_NAME.cron,
+    );
+
     constructor(
         @InjectRepository(WorkingHourEntity) private readonly workingHourRepository: Repository<WorkingHourEntity>,
         @InjectRepository(OrderServiceItemEntity)
         private readonly orderServiceItemRepository: Repository<OrderServiceItemEntity>,
+        @InjectRepository(EmployeeEntity) private readonly employeeRepository: Repository<EmployeeEntity>,
+        @InjectRepository(ShiftEntity) private readonly shiftRepository: Repository<ShiftEntity>,
     ) {}
 
     async getOrderShift(shiftId: string) {
@@ -305,5 +318,80 @@ export class WorkingHourService {
     }
 
     @Cron(CRON_EXPRESSION.EVERY_SUNDAY_START)
-    autoCreateWorkingDate() {}
+    async autoCreateWorkingDate() {
+        const latestWorkingDate = await this.workingHourRepository.findOne({
+            where: {},
+            loadEagerRelations: false,
+            order: { createdAt: SortByEnum.DESC },
+            relations: { shifts: true },
+        });
+
+        if (!latestWorkingDate) return;
+        const start = format(latestWorkingDate.start, 'HH:mm');
+        const end = format(latestWorkingDate.end, 'HH:mm');
+
+        const DAYS = 7; // a week
+        let nextDays = new Array(DAYS).fill(null);
+
+        const admin = await this.employeeRepository.findOne({
+            where: {
+                eRole: {
+                    deletable: false,
+                    title: ROLE_TITLE.admin,
+                },
+            },
+            loadEagerRelations: false,
+        });
+
+        if (!admin) return;
+
+        nextDays = nextDays.map((_, i) => {
+            const workingDate = new Date(latestWorkingDate.date);
+            workingDate.setDate(workingDate.getDate() + i + 1);
+            const working = this.workingHourRepository.create({
+                date: workingDate,
+                start: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${start}:00`),
+                end: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${end}:00`),
+                isOff: false,
+                createdBy: admin.id,
+                updatedBy: admin.id,
+            });
+
+            const shifts = latestWorkingDate.shifts.map(shift => {
+                const shiftStart = format(shift.start, 'HH:mm');
+                const shiftEnd = format(shift.end, 'HH:mm');
+                const shiftBookingStart = format(shift.bookingStart, 'HH:mm');
+                const shiftBookingEnd = format(shift.bookingEnd, 'HH:mm');
+
+                return this.shiftRepository.create({
+                    createdBy: admin.id,
+                    updatedBy: admin.id,
+                    start: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${shiftStart}:00`),
+                    end: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${shiftEnd}:00`),
+                    bookingStart: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${shiftBookingStart}:00`),
+                    bookingEnd: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${shiftBookingEnd}:00`),
+                });
+            });
+            return {
+                working,
+                shifts,
+            };
+        });
+
+        await Promise.all(
+            nextDays.map(async ({ working, shifts }) => {
+                const savedWorking = await this.workingHourRepository.save(working);
+
+                if (!savedWorking) return {};
+
+                const savedShifts = await this.shiftRepository.save(
+                    shifts.map((shift: any) => ({ ...shift, workingHourId: savedWorking.id })),
+                );
+
+                return {};
+            }),
+        );
+
+        this.logger.info(`Auto create ${nextDays.length} working dates`);
+    }
 }

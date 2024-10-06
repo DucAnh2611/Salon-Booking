@@ -1,5 +1,4 @@
 export enum PermissionTargetEnum {
-    VOUCHER = 'VOUCHER',
     MEDIA = 'MEDIA',
 
     PRODUCT = 'PRODUCT',
@@ -26,8 +25,8 @@ export enum PermissionTargetEnum {
     SHIFT = 'SHIFT',
     SHIFT_EMPLOYEE = 'SHIFT_EMPLOYEE',
 
-    ORDER_SERVICE = 'ORDER_SERVICE',
-    ORDER_PRODUCT = 'ORDER_PRODUCT',
+    ORDER = 'ORDER',
+    ORGANIZATION = 'ORGANIZATION',
 }
 
 export enum PermissionActionEnum {

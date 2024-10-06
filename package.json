@@ -8,13 +8,10 @@
     "scripts": {
         "client:i": "cd ./client && npm i",
         "server:i": "cd ./server && npm i",
+        "server:run-seeder": "cd ./server && npm run seed:run",
         "employee:i": "cd ./employee && npm i",
         "client:run-dev": "cd ./client && npm run dev",
         "server:run-dev": "cd ./server && npm run start:dev",
         "employee:run": "cd ./employee && npm start"
-    },
-    "dependencies": {
-        "@nestjs/axios": "^3.0.3",
-        "axios": "^1.7.7"
     }
 }

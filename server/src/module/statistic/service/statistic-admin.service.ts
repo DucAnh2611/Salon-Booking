@@ -53,6 +53,7 @@ export class StatisticAdminService {
         const orderInTime = await this.orderRepo.find({
             where: { ...createWhere, status: In([OrderStatusEnum.FINISH, OrderStatusEnum.RECEIVED]) },
             loadEagerRelations: false,
+            cache: 30 * 1000,
         });
 
         const [sumCashOrder, sumTransactionOrder] = await Promise.all([
@@ -74,18 +75,21 @@ export class StatisticAdminService {
                     ...createWhere,
                 },
                 loadEagerRelations: false,
+                cache: 30 * 1000,
             }),
             this.serviceRepo.count({
                 where: {
                     ...createWhere,
                 },
                 loadEagerRelations: false,
+                cache: 30 * 1000,
             }),
             this.orderRepo.count({
                 where: {
                     ...createWhere,
                 },
                 loadEagerRelations: false,
+                cache: 30 * 1000,
             }),
             sumCashOrder + sumTransactionOrder,
         ]);
@@ -101,12 +105,14 @@ export class StatisticAdminService {
                     startDate: startDate,
                     endDate: endDate,
                 })
+                .cache(30 * 1000)
                 .getRawMany(),
         ]);
 
         const successOrderService = await this.orderRepo.find({
             where: { ...createWhere, type: OrderType.SERVICE, status: OrderStatusEnum.FINISH },
             loadEagerRelations: false,
+            cache: 30 * 1000,
         });
 
         let mostEmployeeBooked = [];
@@ -120,6 +126,7 @@ export class StatisticAdminService {
                 .where('orderService.orderId IN (:...orders)', { orders: successOrderService.map(item => item.id) })
                 .orderBy('COUNT(orderService.id)', 'DESC')
                 .take(10)
+                .cache(30 * 1000)
                 .getRawMany();
 
             mostEmployeeBooked = await Promise.all(
@@ -135,6 +142,7 @@ export class StatisticAdminService {
                                 eRole: true,
                             },
                         },
+                        cache: 30 * 1000,
                     });
                     return {
                         ...employeeOrder,
@@ -164,6 +172,7 @@ export class StatisticAdminService {
                 .where('orderProduct.orderId IN (:...orders)', { orders: successOrderProduct.map(item => item.id) })
                 .orderBy('SUM(orderProduct.quantity)', 'DESC')
                 .take(10)
+                .cache(30 * 1000)
                 .distinct(true);
 
             mostProductSold = await query.getRawMany();
@@ -179,6 +188,7 @@ export class StatisticAdminService {
                             },
                             category: true,
                         },
+                        cache: 30 * 1000,
                     });
                     let typeSnapShot = null;
                     if (productOrder.productTypeId) {
@@ -192,6 +202,7 @@ export class StatisticAdminService {
                                     },
                                 },
                             },
+                            cache: 30 * 1000,
                         });
                     }
 
@@ -217,6 +228,7 @@ export class StatisticAdminService {
                 .where('orderService.orderId IN (:...orders)', { orders: successOrderService.map(item => item.id) })
                 .orderBy('COUNT(orderService.id)', 'DESC')
                 .take(10)
+                .cache(30 * 1000)
                 .getRawMany();
 
             mostServiceBooked = await Promise.all(
@@ -231,6 +243,7 @@ export class StatisticAdminService {
                             },
                             steps: true,
                         },
+                        cache: 30 * 1000,
                     });
                     return {
                         ...serviceOrder,
@@ -258,6 +271,7 @@ export class StatisticAdminService {
                 .andWhere('order.status = :status', { status: OrderStatusEnum.FINISH })
                 .groupBy('EXTRACT(DAY FROM order.createdAt)')
                 .orderBy('day', 'ASC')
+                .cache(30 * 1000)
                 .getRawMany();
 
             inComeProduct = await this.orderRepo
@@ -270,6 +284,7 @@ export class StatisticAdminService {
                 .andWhere('order.status = :status', { status: OrderStatusEnum.RECEIVED })
                 .groupBy('EXTRACT(DAY FROM order.createdAt)')
                 .orderBy('day', 'ASC')
+                .cache(30 * 1000)
                 .getRawMany();
         } else {
             inComeService = await this.orderRepo
@@ -281,6 +296,7 @@ export class StatisticAdminService {
                 .andWhere('order.status = :status', { status: OrderStatusEnum.FINISH })
                 .groupBy('EXTRACT(MONTH FROM order.createdAt)')
                 .orderBy('month', 'ASC')
+                .cache(30 * 1000)
                 .getRawMany();
 
             inComeProduct = await this.orderRepo
@@ -292,6 +308,7 @@ export class StatisticAdminService {
                 .andWhere('order.status = :status', { status: OrderStatusEnum.RECEIVED })
                 .groupBy('EXTRACT(MONTH FROM order.createdAt)')
                 .orderBy('month', 'ASC')
+                .cache(30 * 1000)
                 .getRawMany();
         }
 

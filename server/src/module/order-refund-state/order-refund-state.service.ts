@@ -84,4 +84,13 @@ export class OrderRefundStateService {
         const newRequestStatus = await this.orderRefundStateRepository.save(instance);
         return newRequestStatus;
     }
+    async sytemAddState(requestId: string, state: OrderRefundStatusEnum) {
+        this.orderRefundStateRepository.save(
+            this.orderRefundStateRepository.create({
+                refundRequestId: requestId,
+                status: state,
+                note: 'Yêu cầu hoàn tiền tự động nhân sau 24 giờ.',
+            }),
+        );
+    }
 }

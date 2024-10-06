@@ -5,7 +5,7 @@ import { In, IsNull, LessThanOrEqual, MoreThan, Repository } from 'typeorm';
 import { LOGGER_CONSTANT_NAME } from '../../common/constant/logger.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
-import { OrderRefundRequestStatusEnum } from '../../common/enum/order.enum';
+import { OrderRefundRequestStatusEnum, OrderRefundStatusEnum } from '../../common/enum/order.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { addMinutesToCurrentTime } from '../../shared/utils/date.utils';
@@ -123,7 +123,7 @@ export class OrderRefundRequestService {
             description: note || '',
             updatedBy: userId,
             createdBy: userId,
-            expiredAt: addMinutesToCurrentTime(24),
+            expiredAt: addMinutesToCurrentTime(24 * 60),
         });
 
         const newRequest = await this.orderRefundRequestRepository.save(instance);
@@ -190,6 +190,26 @@ export class OrderRefundRequestService {
         this.logger.info(`Auto expire ${listExpire.length} refund request`);
     }
 
-    @Cron(CronExpression.EVERY_DAY_AT_MIDNIGHT)
-    async receiveRequest() {}
+    @Cron(CronExpression.EVERY_MINUTE)
+    async receiveRequest() {
+        const listApproved = await this.orderRefundRequestRepository.find({
+            where: {
+                status: OrderRefundRequestStatusEnum.APPROVED,
+            },
+            loadEagerRelations: false,
+        });
+        if (!listApproved.length) return;
+
+        Promise.all([
+            this.orderRefundRequestRepository.update(
+                { id: In(listApproved.map(item => item.id)) },
+                { status: OrderRefundRequestStatusEnum.RECEIVED },
+            ),
+            ...listApproved.map(item =>
+                this.orderRefundStateService.sytemAddState(item.id, OrderRefundStatusEnum.RECEIVED),
+            ),
+        ]);
+
+        this.logger.info(`Auto receive ${listApproved.length} refund request`);
+    }
 }
