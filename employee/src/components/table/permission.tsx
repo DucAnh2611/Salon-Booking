@@ -67,6 +67,47 @@ export default function DisplayPermission({
         return !!getInList.actions.find((act) => act.action === action);
     };
 
+    const toggleAllTarget = (target: ETarget) => () => {
+        if (!canToggle || !onToggle) return;
+
+        const getInList = groupListPermissions.find(
+            (item) => item.target === target
+        );
+        const findPermissions = permissions.filter((i) => i.target === target);
+
+        if (!getInList) {
+            findPermissions.forEach((permission) => {
+                onToggle(permission, true);
+            });
+            return;
+        }
+
+        findPermissions.forEach((permission) => {
+            onToggle(permission, false);
+        });
+    };
+
+    const toggleAllAction = (action: EAction) => () => {
+        if (!canToggle || !onToggle) return;
+
+        const getInList = groupListPermissions.find(
+            (item) => !!item.actions.filter((i) => i.action === action).length
+        );
+
+        const findPermissions = permissions.filter((i) => i.action === action);
+
+        if (!getInList) {
+            findPermissions.forEach((permission) => {
+                onToggle(permission, true);
+            });
+            return;
+        }
+
+        findPermissions.forEach((permission) => {
+            onToggle(permission, false);
+        });
+    };
+
     const handleToggle = (id: string, select: boolean) => () => {
         if (!canToggle || !id) {
             return;
@@ -97,14 +138,22 @@ export default function DisplayPermission({
                                     Tên quyền hạn
                                 </p>
                             </th>
-                            {Object.values(ACTION_TEXT).map((text) => (
-                                <th
-                                    key={text}
-                                    className="border flex-1 flex items-center justify-center"
-                                >
-                                    {text}
-                                </th>
-                            ))}
+                            {Object.entries(ACTION_TEXT).map(
+                                ([action, text]: [
+                                    action: string,
+                                    text: string
+                                ]) => (
+                                    <th
+                                        key={text}
+                                        className="border flex-1 flex items-center justify-center cursor-pointer"
+                                        onClick={toggleAllAction(
+                                            action as EAction
+                                        )}
+                                    >
+                                        {text}
+                                    </th>
+                                )
+                            )}
                         </tr>
                     </thead>
                     <tbody className="w-full relative z-0">
@@ -113,7 +162,10 @@ export default function DisplayPermission({
                                 key={permission.target}
                                 className="w-full flex h-fit hover:hover-muted group/row"
                             >
-                                <td className="border flex-1 flex items-center justify-start p-5 py-3 min-w-[300px] max-w-[300px] h-fit overflow-hidden group/header box-border group-hover/row:border-primary group-hover/row:border">
+                                <td
+                                    className="border flex-1 flex items-center justify-start p-5 py-3 min-w-[300px] max-w-[300px] h-fit overflow-hidden group/header box-border group-hover/row:border-primary group-hover/row:border cursor-pointer"
+                                    onClick={toggleAllTarget(permission.target)}
+                                >
                                     <p className="w-full text-left text-wrap break-words font-medium text-muted-foreground group-hover/header:text-foreground">
                                         {TARGET_TEXT[permission.target]}
                                     </p>
@@ -123,7 +175,7 @@ export default function DisplayPermission({
                                     isCheck(permission.target, type) ? (
                                         <td
                                             key={permission.target + type}
-                                            className="border hover:bg-green-500 hover:border-green-500 hover:border hover:bg-opacity-10 flex-1 flex items-center justify-center box-border h-auto overflow-hidden"
+                                            className="border hover:bg-green-500 hover:border-green-500 hover:border hover:bg-opacity-10 flex-1 flex items-center justify-center box-border h-auto overflow-hidden bg-green-500 bg-opacity-10"
                                         >
                                             <Button
                                                 variant="ghost"

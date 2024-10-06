@@ -44,6 +44,7 @@
     "cache-manager-redis-yet": "^5.0.0",
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
+    "date-fns": "^4.1.0",
     "decimal.js": "^10.4.3",
     "fs": "^0.0.1-security",
     "handlebars": "^4.7.8",

@@ -17,6 +17,8 @@ export default function TrackingOrderPage() {
 
     if (!detail) return <p>Không có đơn nào phù hợp với mã đơn: {code}</p>;
 
+    document.title = "Chi tiết đơn hàng";
+
     return (
         <div className="w-full flex gap-5 relative">
             <div className="w-full h-fit flex-1">

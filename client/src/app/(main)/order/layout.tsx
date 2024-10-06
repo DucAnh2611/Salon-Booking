@@ -12,8 +12,6 @@ function OrderLayout({ children }: IOrderLayoutProps) {
 
     const previewQuery = search.get("preview");
 
-    document.title = "Danh sách đơn hàng";
-
     return (
         <div className="w-full h-fit py-10 box-border">
             <div className="container px-4 gap-5 flex w-full box-border h-fit">

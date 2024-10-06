@@ -150,7 +150,9 @@ export default function DialogBookingService({
     };
 
     const timeInvalidCurrent = (time: Date) => {
-        return time <= new Date();
+        const currentTime = new Date();
+        currentTime.setMinutes(currentTime.getMinutes() + 15);
+        return time <= currentTime;
     };
 
     const getTimeSlots = (shift: IShift) => {

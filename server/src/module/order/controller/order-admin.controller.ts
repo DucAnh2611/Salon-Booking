@@ -1,5 +1,6 @@
 import { Body, Controller, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ADMIN_ORDER_ROUTE, ROUTER } from '../../../common/constant/router.constant';
+import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
 import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { TargetActionRequire } from '../../../shared/decorator/permission.decorator';
@@ -23,14 +24,14 @@ export class OrderAdminController {
     constructor(private readonly orderAdminService: OrderAdminService) {}
 
     @Post(ADMIN_ORDER_ROUTE.LIST)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.READ] }])
     @UserType(UserTypeEnum.STAFF)
     getOrderProduct(@Body() body: FindOrderAdminDto) {
         return this.orderAdminService.orderList(body);
     }
 
     @Get(ADMIN_ORDER_ROUTE.DETAIL)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.READ] }])
     @UserType(UserTypeEnum.STAFF)
     getOrderProductDetail(@Param() param: GetOrderParamDto) {
         const { id } = param;
@@ -38,7 +39,7 @@ export class OrderAdminController {
         return this.orderAdminService.orderProductDetail(id);
     }
     @Get(ADMIN_ORDER_ROUTE.STATE)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.READ] }])
     @UserType(UserTypeEnum.STAFF)
     trackingState(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { id: orderId } = param;
@@ -47,7 +48,7 @@ export class OrderAdminController {
     }
 
     @Get(ADMIN_ORDER_ROUTE.PRODUCT)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.READ] }])
     @UserType(UserTypeEnum.STAFF)
     trackingProducts(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { id: orderId } = param;
@@ -56,7 +57,7 @@ export class OrderAdminController {
     }
 
     @Get(ADMIN_ORDER_ROUTE.SERVICE)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.READ] }])
     @UserType(UserTypeEnum.STAFF)
     trackingServices(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { id: orderId } = param;
@@ -65,7 +66,7 @@ export class OrderAdminController {
     }
 
     @Get(ADMIN_ORDER_ROUTE.REFUND)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.READ] }])
     @UserType(UserTypeEnum.STAFF)
     trackingRefunds(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { id: orderId } = param;
@@ -74,7 +75,7 @@ export class OrderAdminController {
     }
 
     @Get(ADMIN_ORDER_ROUTE.TRANSACTION)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.READ] }])
     @UserType(UserTypeEnum.STAFF)
     trackingTransaction(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
         const { id: orderId } = param;
@@ -83,7 +84,7 @@ export class OrderAdminController {
     }
 
     @Get(ADMIN_ORDER_ROUTE.ORDER_STATE_LIST)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.READ] }])
     @UserType(UserTypeEnum.STAFF)
     orderStateList(@Req() req: AppRequest, @Query() query: GetOrderStateListQueryDto) {
         const { type } = query;
@@ -92,7 +93,7 @@ export class OrderAdminController {
     }
 
     @Put(ADMIN_ORDER_ROUTE.UPDATE_ORDER_STATE)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.UPDATE] }])
     @UserType(UserTypeEnum.STAFF)
     updateOrderState(@Req() req: AppRequest, @Body() body: StaffUpdateOrderStateDto) {
         const { userId } = req.accessPayload;
@@ -101,7 +102,7 @@ export class OrderAdminController {
     }
 
     @Post(ADMIN_ORDER_ROUTE.APPROVE_ORDER_REFUND)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.UPDATE] }])
     @UserType(UserTypeEnum.STAFF)
     approveOrderRefund(@Req() req: AppRequest, @Body() body: ApprovedRefundRequestDto) {
         const { userId } = req.accessPayload;
@@ -110,7 +111,7 @@ export class OrderAdminController {
     }
 
     @Post(ADMIN_ORDER_ROUTE.DECLINE_ORDER_REFUND)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.UPDATE] }])
     @UserType(UserTypeEnum.STAFF)
     declineOrderRefund(@Req() req: AppRequest, @Body() body: DeclineRefundRequestDto) {
         const { userId } = req.accessPayload;
@@ -119,7 +120,7 @@ export class OrderAdminController {
     }
 
     @Get(ADMIN_ORDER_ROUTE.CREATE_OR_PAYMENT)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.READ] }])
     @UserType(UserTypeEnum.STAFF)
     createQrPayment(@Req() req: AppRequest, @Param() param: GetRequestRefundParamDto) {
         const { userId } = req.accessPayload;

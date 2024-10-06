@@ -28,6 +28,8 @@ export default function Tracking() {
         }
     }, [code]);
 
+    document.title = "Tra cứu đơn hàng";
+
     return (
         <div>
             <div className="flex gap-2">
