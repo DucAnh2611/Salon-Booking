@@ -17,7 +17,6 @@ import {
     getPaginationRowModel,
     useReactTable,
 } from "@tanstack/react-table";
-import { categoryColumnDef } from "../col-def/category";
 import { organizationColumnDef } from "../col-def/organization";
 
 interface IOrganizationDataTableProps {
@@ -101,7 +100,7 @@ export default function OrganizationDataTable({
                         ) : (
                             <TableRow>
                                 <TableCell
-                                    colSpan={categoryColumnDef.length}
+                                    colSpan={organizationColumnDef.length}
                                     className="h-24 text-center border"
                                 >
                                     No results.
