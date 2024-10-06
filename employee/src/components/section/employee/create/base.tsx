@@ -135,14 +135,11 @@ export default function BaseEmployeeCreateSection({
                             render={({ field }) => (
                                 <FormItem className="flex-1">
                                     <FormLabel>
-                                        Tên đệm
+                                        Họ
                                         <RequireField />
                                     </FormLabel>
                                     <FormControl>
-                                        <Input
-                                            placeholder="Tên đệm"
-                                            {...field}
-                                        />
+                                        <Input placeholder="Họ" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>
@@ -154,14 +151,11 @@ export default function BaseEmployeeCreateSection({
                             render={({ field }) => (
                                 <FormItem className="flex-1">
                                     <FormLabel>
-                                        Tên gọi
+                                        Tên
                                         <RequireField />
                                     </FormLabel>
                                     <FormControl>
-                                        <Input
-                                            placeholder="Tên gọi"
-                                            {...field}
-                                        />
+                                        <Input placeholder="Tên" {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

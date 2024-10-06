@@ -209,7 +209,7 @@ function CreateRoleScreen() {
                             )}
                         </div>
                         <div>
-                            <Label>Chức vụ</Label>
+                            <Label>Chức vụ cha</Label>
                             <PopoverSelectParentRole
                                 selected={newRole.parent}
                                 onSelectParent={handleSelectParent}

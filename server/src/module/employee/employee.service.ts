@@ -102,6 +102,8 @@ export class EmployeeService {
                 },
                 eRole: true,
             },
+            take: limit,
+            skip: (page - 1) * limit,
             order: {
                 ...order,
             },

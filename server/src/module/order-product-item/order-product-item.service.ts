@@ -176,6 +176,7 @@ export class OrderProductItemService {
             where: { orderId },
             loadEagerRelations: false,
         });
+
         await Promise.all(
             orderProductItems.map(async item => {
                 const { productId, quantity, productTypeId } = item;

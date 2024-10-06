@@ -152,7 +152,7 @@ export default function BaseEmployeeUpdateSection({
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
                                         <FormLabel>
-                                            Tên đệm
+                                            Họ
                                             <RequireField />
                                         </FormLabel>
                                         <FormControl>
@@ -171,7 +171,7 @@ export default function BaseEmployeeUpdateSection({
                                 render={({ field }) => (
                                     <FormItem className="flex-1">
                                         <FormLabel>
-                                            Tên gọi
+                                            Tên
                                             <RequireField />
                                         </FormLabel>
                                         <FormControl>

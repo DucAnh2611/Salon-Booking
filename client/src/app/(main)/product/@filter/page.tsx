@@ -1,18 +1,16 @@
 "use client";
 
-import SelectCategory from "@/components/select-category";
+import SelectCategoryTree from "@/components/select-category-tree";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
-import useCategory from "@/hook/useCategory.hook";
 import useSearchProduct from "@/hook/useSearchProduct.hook";
 import { ICategory } from "@/interface/category.interface";
 import { Filter, Minus } from "lucide-react";
 import { ChangeEvent, useState } from "react";
 
 export default function FilterProductPage() {
-    const { categoryTree } = useCategory();
-    const { filter, setFilter } = useSearchProduct();
+    const { filter, setFilter, resetFilter } = useSearchProduct();
 
     const [from, SetFrom] = useState<number>(filter.price.from);
     const [to, SetTo] = useState<number>(filter.price.to || 0);
@@ -53,6 +51,10 @@ export default function FilterProductPage() {
         );
     };
 
+    const reset = () => {
+        resetFilter();
+    };
+
     return (
         <div className="w-full h-fit flex flex-col gap-3">
             <div className="box-border w-fullh-fit flex flex-col gap-3">
@@ -69,21 +71,10 @@ export default function FilterProductPage() {
                     <p className="text-base whitespace-nowrap">Danh mục</p>
                 </div>
                 <div className="h-fit flex flex-col gap-2">
-                    {categoryTree.map((category) => (
-                        <SelectCategory
-                            key={category.id}
-                            categoryTree={category}
-                            onSelect={onSelectCategory}
-                            checked={
-                                !!(
-                                    filter.categoryIds &&
-                                    filter.categoryIds.find(
-                                        (i) => i === category.id
-                                    )
-                                )
-                            }
-                        />
-                    ))}
+                    <SelectCategoryTree
+                        selected={filter.categoryIds || []}
+                        onSelect={onSelectCategory}
+                    />
                 </div>
             </div>
 
@@ -131,6 +122,18 @@ export default function FilterProductPage() {
                         </Button>
                     </div>
                 </div>
+            </div>
+
+            <Separator className="my-1" orientation="horizontal" />
+
+            <div className="w-full">
+                <Button
+                    variant="destructive"
+                    onClick={reset}
+                    className="w-full"
+                >
+                    Xóa bộ lọc
+                </Button>
             </div>
         </div>
     );

@@ -21,7 +21,6 @@ function CheckoutLayout({ product, service }: ICartLayoutProps) {
     if (!type) {
         return <p>Type of checkout must be provided!</p>;
     }
-    document.title = "Thanh toán";
 
     return (
         <div className="w-full h-fit py-10 box-border">

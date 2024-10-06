@@ -77,6 +77,8 @@ export default function CheckoutServicePage() {
         form.setValue("paymentType", paymentType);
     }, [paymentType]);
 
+    document.title = "Thanh toán dịch vụ";
+
     return (
         <BookingProvider>
             <div className="w-full">

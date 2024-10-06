@@ -12,6 +12,7 @@ import { Fragment, useEffect, useState } from "react";
 import MediaLoader from "./media-load";
 import { ModeToggle } from "./theme-toggle";
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import UserAuth from "./userAuth";
 
 export default function Navigation() {
@@ -62,7 +63,7 @@ export default function Navigation() {
 
     return (
         <nav className="w-full h-fit box-border border-b z-10 bg-background sticky top-0 left-0">
-            <div className="container px-4 py-3 flex items-center justify-between ">
+            <div className="container px-4 py-3 flex items-center justify-between gap-5 ">
                 <div className="flex gap-10 items-center">
                     <Link
                         href="/"
@@ -115,16 +116,13 @@ export default function Navigation() {
                                 Về chúng tôi
                             </Link>
                         </Button>
-                        <Button variant="ghost" asChild>
-                            <Link
-                                href="#"
-                                className="text-sm font-medium underline-offset-4"
-                                prefetch={false}
-                            >
-                                Liên hệ
-                            </Link>
-                        </Button>
                     </nav>
+                </div>
+                <div className="flex-1">
+                    <Input
+                        placeholder="Sản phẩm"
+                        className="focus-visible:ring-transparent w-[50%]"
+                    />
                 </div>
                 <div className="flex gap-2 items-center">
                     <UserAuth />

@@ -12,7 +12,7 @@ import { deleteCategoryApi } from "@/lib/redux/actions/category.action";
 import { categorySelector } from "@/lib/redux/selector";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
 import { LoaderCircleIcon, Trash2Icon } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface IDeleteCategoryDialogProps {
     item: ICategory;
@@ -24,13 +24,29 @@ export default function DeleteCategoryDialog({
     const { isDeleting, isFailure } = useAppSelector(categorySelector);
     const dispatch = useAppDispatch();
     const [open, SetOpen] = useState<boolean>(false);
+    const [submit, SetSubmit] = useState<boolean>(false);
+
+    const handleOpen = (open: boolean) => {
+        if (open) {
+            SetSubmit(false);
+        }
+
+        SetOpen(open);
+    };
 
     const handleDelete = () => {
+        SetSubmit(true);
         dispatch(deleteCategoryApi([item.id]));
     };
 
+    useEffect(() => {
+        if (submit && !isDeleting && !isFailure) {
+            handleOpen(false);
+        }
+    }, [submit, isDeleting, isFailure]);
+
     return (
-        <Dialog open={open} onOpenChange={SetOpen}>
+        <Dialog open={open} onOpenChange={handleOpen}>
             <DialogTrigger asChild>
                 <Button
                     className="gap-2 w-full justify-start text-destructive px-2"
