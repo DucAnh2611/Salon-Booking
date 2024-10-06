@@ -256,7 +256,7 @@ export class StatisticAdminService {
         }
         let inComeService = [];
         let inComeProduct = [];
-        const groupBy = month ? 'day' : 'month';
+        const groupBy = month ? 'month' : 'year';
 
         const arrayLength = month ? new Date(year, month, 0).getDate() : 12;
 

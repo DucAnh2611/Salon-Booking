@@ -65,7 +65,7 @@ export default function DashboardChart({
                                     const date = new Date(statistic.start);
                                     if (statistic.income.groupBy === "year") {
                                         date.setMonth(value - 1);
-                                        return format(date, "LLLL").slice(0, 3);
+                                        return format(date, "LL");
                                     } else {
                                         date.setDate(value);
                                         return format(date, "dd");
