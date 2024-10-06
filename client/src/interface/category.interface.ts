@@ -9,5 +9,5 @@ export interface ICategory {
 }
 
 export interface ICategoryTree extends ICategory {
-    childrens: ICategoryTree[];
+    haveChildren: boolean;
 }

@@ -9,7 +9,7 @@ import { ParseOrderString } from '../../shared/utils/parse-dynamic-queyry.utils'
 import { MediaEntity } from '../media/entity/media.entity';
 import { MediaTypesEnum } from '../media/enum/media-types.enum';
 import { CreateCategoryDto } from './dto/category-create.dto';
-import { FindCategoryAdminDto } from './dto/category-get.dto';
+import { CategoryTreeDto, FindCategoryAdminDto } from './dto/category-get.dto';
 import { UpdateCategoryDto } from './dto/category-update.dto';
 import { CategoryEntity } from './entity/category.entity';
 
@@ -143,21 +143,35 @@ export class CategoryService {
         return { limit, page, items: findCategory, count };
     }
 
-    async tree() {
+    async tree(body: CategoryTreeDto) {
+        const { parentId } = body;
         const findCategory = await this.categoryRepository.find({
             where: {
-                parentId: IsNull(),
+                parentId: parentId ? parentId : IsNull(),
             },
             loadEagerRelations: false,
             order: {
-                createdAt: SortByEnum.DESC,
+                createdAt: SortByEnum.ASC,
             },
             relations: {
                 image: true,
             },
         });
 
-        return this.buildCategoryTree(findCategory);
+        const mapCanGetChildren = await Promise.all(
+            findCategory.map(async cate => {
+                const childrenCount = await this.categoryRepository.count({
+                    where: { parentId: cate.id },
+                    loadEagerRelations: false,
+                });
+                return {
+                    ...cate,
+                    haveChildren: childrenCount !== 0,
+                };
+            }),
+        );
+
+        return mapCanGetChildren;
     }
 
     async list() {

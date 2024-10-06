@@ -3,8 +3,8 @@ import { ICategory, ICategoryTree } from "@/interface/category.interface";
 import { apiCall } from "../apiCall";
 
 /** @GET_CATEGORY_TREE */
-export const getCategoryTree = async () => {
-    const api = API_URLS.CATEGORY.TREE();
+export const getCategoryTree = async (parentId?: string) => {
+    const api = API_URLS.CATEGORY.TREE(parentId);
 
     const resApi = await apiCall<ICategoryTree[]>({ ...api });
 

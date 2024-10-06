@@ -98,10 +98,9 @@ export default function Page() {
     const getUserInfo = async () => {
         SetIsLoading(true);
         SetUserInfo(null);
+
         const { response } = await getInfo();
         if (response) {
-            getUserInfo();
-
             SetUserInfo(response.result);
             if (response.result.userBase.userAvatar) {
                 setImageUrl(response.result.userBase.userAvatar.path);

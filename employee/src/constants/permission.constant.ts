@@ -12,8 +12,8 @@ export const TARGET_TEXT: Record<ETarget, string> = {
     [ETarget.SERVICE_EMPLOYEE]: "Nhân viên cho dịch vụ",
 
     [ETarget.EMPLOYEE]: "Nhân viên",
-    [ETarget.USER]: "Khách hàng",
-    [ETarget.CLIENT]: "Khách hàng",
+    [ETarget.USER]: "Thông tin người dùng",
+    [ETarget.CLIENT]: "Thông tin khách hàng",
 
     [ETarget.ROLE]: "Chức vụ",
     [ETarget.PERMISSION]: "Quyền hạn",
@@ -21,9 +21,9 @@ export const TARGET_TEXT: Record<ETarget, string> = {
 
     [ETarget.ATTRIBUTE]: "Thuộc tính",
     [ETarget.ATTRIBUTE_VALUE]: "Giá trị thuộc tính",
-    [ETarget.CATEGORY]: "Danh mục sản phẩm",
+    [ETarget.CATEGORY]: "Danh mục",
 
-    [ETarget.WORKING_HOUR]: "Ngày làm việc làm việc",
+    [ETarget.WORKING_HOUR]: "Ngày làm việc",
     [ETarget.SHIFT]: "Ca làm việc",
     [ETarget.SHIFT_EMPLOYEE]: "Nhân viên của ca làm việc",
 

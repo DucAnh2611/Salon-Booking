@@ -11,14 +11,11 @@ import {
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ICategory } from "@/interface/api/category.interface";
-import { IMedia } from "@/interface/api/media.interface";
-import { api_media_url } from "@/utils/apiCall";
 import { ColumnDef } from "@tanstack/react-table";
 import {
     ArrowDownIcon,
     ArrowUpDown,
     ArrowUpIcon,
-    ImageOffIcon,
     MoreHorizontal,
 } from "lucide-react";
 
@@ -46,31 +43,31 @@ export const categoryColumnDef: ColumnDef<ICategory>[] = [
         ),
         size: 10,
     },
-    {
-        header: "Ảnh",
-        accessorKey: "image",
-        cell: ({ cell }) => {
-            const image = cell.getValue() as IMedia | null;
+    // {
+    //     header: "Ảnh",
+    //     accessorKey: "image",
+    //     cell: ({ cell }) => {
+    //         const image = cell.getValue() as IMedia | null;
 
-            return (
-                <div className="w-full flex items-center justify-center">
-                    {image ? (
-                        <img
-                            src={api_media_url + image.path}
-                            alt="category"
-                            className="h-[70px] aspect-square object-cover rounded-md overflow-hidden"
-                        />
-                    ) : (
-                        <div className="h-[70px] aspect-square bg-muted flex items-center justify-center text-muted-foreground">
-                            <ImageOffIcon size={15} />
-                        </div>
-                    )}
-                </div>
-            );
-        },
-        minSize: 80,
-        maxSize: 80,
-    },
+    //         return (
+    //             <div className="w-full flex items-center justify-center">
+    //                 {image ? (
+    //                     <img
+    //                         src={api_media_url + image.path}
+    //                         alt="category"
+    //                         className="h-[70px] aspect-square object-cover rounded-md overflow-hidden"
+    //                     />
+    //                 ) : (
+    //                     <div className="h-[70px] aspect-square bg-muted flex items-center justify-center text-muted-foreground">
+    //                         <ImageOffIcon size={15} />
+    //                     </div>
+    //                 )}
+    //             </div>
+    //         );
+    //     },
+    //     minSize: 80,
+    //     maxSize: 80,
+    // },
     {
         header: ({ column }) => {
             const sort = column.getIsSorted();

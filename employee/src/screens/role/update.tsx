@@ -296,7 +296,7 @@ function UpdateRoleScreen() {
                             )}
                         </div>
                         <div>
-                            <Label>Chức vụ</Label>
+                            <Label>Chức vụ cha</Label>
                             <PopoverSelectParentRole
                                 disabled={!update}
                                 selected={tempUpdate.parent}

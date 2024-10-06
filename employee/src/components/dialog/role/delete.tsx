@@ -7,7 +7,6 @@ import {
     DialogHeader,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { ROUTER_PATH } from "@/constants/router.constant";
 import { IRole, IRoleDetail } from "@/interface/api/role.interface";
 import { deleteRoleApi } from "@/lib/redux/actions/role.action";
 import { categorySelector } from "@/lib/redux/selector";
@@ -32,6 +31,14 @@ export default function DeleteRoleDialog({
     const [open, SetOpen] = useState<boolean>(false);
     const [reload, SetReload] = useState<boolean>(false);
 
+    const handleOpen = (open: boolean) => {
+        if (open) {
+            SetReload(false);
+        }
+
+        SetOpen(open);
+    };
+
     const handleDelete = () => {
         SetReload(true);
         dispatch(deleteRoleApi([item.id]));
@@ -39,12 +46,12 @@ export default function DeleteRoleDialog({
 
     useEffect(() => {
         if (!isFailure && !isDeleting && reload) {
-            navigate(ROUTER_PATH.ROLE);
+            handleOpen(false);
         }
     }, [isFailure, isDeleting, reload]);
 
     return (
-        <Dialog open={open} onOpenChange={SetOpen}>
+        <Dialog open={open} onOpenChange={handleOpen}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent>
                 <DialogHeader>

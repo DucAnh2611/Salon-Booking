@@ -19,7 +19,6 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ICategory } from "@/interface/api/category.interface";
 import { createCategoryApi } from "@/lib/redux/actions/category.action";
@@ -27,7 +26,7 @@ import { categorySelector } from "@/lib/redux/selector";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
 import { createCategorySchema } from "@/schemas/category.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoaderCircleIcon, PlusIcon, XIcon } from "lucide-react";
+import { LoaderCircleIcon, PlusIcon } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -123,7 +122,7 @@ export default function CreateCategoryDialog({}: ICreateCategoryDialogProps) {
 
                 <Separator orientation="horizontal" />
                 <div className="flex flex-col gap-1 w-full">
-                    <div className="grid w-full max-w-sm items-center gap-1">
+                    {/* <div className="grid w-full max-w-sm items-center gap-1">
                         <Label htmlFor="image-new-category">Ảnh danh mục</Label>
                         <Input
                             id="image-new-category"
@@ -163,12 +162,12 @@ export default function CreateCategoryDialog({}: ICreateCategoryDialogProps) {
                                 </Label>
                             )}
                         </div>
-                    </div>
+                    </div> */}
 
                     <PopoverSelectParent
                         onSelectParent={handleSelectParent}
                         selected={select}
-                    ></PopoverSelectParent>
+                    />
 
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(handleSubmit)}>

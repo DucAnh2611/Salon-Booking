@@ -66,6 +66,8 @@ export class ProductService {
             throw new BadRequest({ message: DataErrorCodeEnum.SAME_SKU });
         }
 
+        //check exist sku for product and product types
+
         const savedProduct = await this.productBaseService.save(userId, employeeId, base);
 
         const [savedTypes, savedDetails] = await Promise.all([
@@ -99,6 +101,8 @@ export class ProductService {
         if (sameSku) {
             throw new BadRequest({ message: DataErrorCodeEnum.SAME_SKU });
         }
+
+        //check exist sku for product and product types
 
         const savedProduct = await this.productBaseService.update(userId, employeeId, productId, base);
 

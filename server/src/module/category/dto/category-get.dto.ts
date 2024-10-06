@@ -21,3 +21,9 @@ export class FindCategoryAdminDto extends PaginationQuery {
     @IsString()
     orderBy?: string;
 }
+
+export class CategoryTreeDto {
+    @IsOptional()
+    @IsUUID('all')
+    parentId?: string;
+}

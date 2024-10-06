@@ -1,4 +1,4 @@
-import { Banknote, CheckCircle2, CreditCard, RefreshCcw } from "lucide-react";
+import { Banknote, CheckCircle2, CreditCard } from "lucide-react";
 import { ReactNode } from "react";
 
 export default function Page() {
@@ -28,20 +28,17 @@ export default function Page() {
                         title="Thanh Toán Trực Tuyến An Toàn"
                         description="Tận hưởng sự tiện lợi của thanh toán trực tuyến an toàn. Chúng tôi sử dụng mã hóa tiêu chuẩn công nghiệp để bảo vệ thông tin tài chính của bạn."
                     />
-                    <PolicyCard
-                        icon={
-                            <RefreshCcw className="w-10 h-10 text-purple-500" />
-                        }
-                        title="Thay Đổi Linh Hoạt"
-                        description="Kế hoạch thay đổi, và chúng tôi hiểu điều đó. Bạn có thể dễ dàng thay đổi đặt chỗ của mình, tuân theo chính sách thay đổi linh hoạt của chúng tôi."
-                    />
-                    <PolicyCard
-                        icon={
-                            <Banknote className="w-10 h-10 text-yellow-500" />
-                        }
-                        title="Chính Sách Hoàn Tiền Công Bằng"
-                        description="Sự hài lòng của bạn là ưu tiên của chúng tôi. Nếu bạn không hài lòng với trải nghiệm của mình, chính sách hoàn tiền công bằng của chúng tôi sẽ bảo vệ bạn."
-                    />
+                    <div className="col-span-2 flex items-center justify-center">
+                        <div className="w-1/2">
+                            <PolicyCard
+                                icon={
+                                    <Banknote className="w-10 h-10 text-yellow-500" />
+                                }
+                                title="Chính Sách Hoàn Tiền Công Bằng"
+                                description="Sự hài lòng của bạn là ưu tiên của chúng tôi. Nếu bạn không hài lòng với trải nghiệm của mình, chính sách hoàn tiền công bằng của chúng tôi sẽ bảo vệ bạn."
+                            />
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>

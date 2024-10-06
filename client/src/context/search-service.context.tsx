@@ -10,6 +10,7 @@ interface ISearchProductContext {
         key: T,
         value: IApiSearchService[T]
     ) => void;
+    resetFilter: () => void;
 }
 
 export const SearchServiceContext = createContext<ISearchProductContext>({
@@ -29,6 +30,7 @@ export const SearchServiceContext = createContext<ISearchProductContext>({
         key: T,
         value: IApiSearchService[T]
     ) => {},
+    resetFilter: () => {},
 });
 
 export default function SearchServiceContextProvider({
@@ -54,8 +56,25 @@ export default function SearchServiceContextProvider({
         SetFilter((f) => ({ ...f, page: 1, [key]: value }));
     };
 
+    const resetFilter = () => {
+        SetFilter({
+            key: "",
+            price: {
+                from: 0,
+            },
+            categoryIds: [],
+            page: 1,
+            limit: 20,
+            duration: {
+                from: 0,
+            },
+        });
+    };
+
     return (
-        <SearchServiceContext.Provider value={{ filter, setFilter }}>
+        <SearchServiceContext.Provider
+            value={{ filter, setFilter, resetFilter }}
+        >
             {children}
         </SearchServiceContext.Provider>
     );

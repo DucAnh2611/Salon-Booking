@@ -141,13 +141,14 @@ export class RoleService {
             title,
             description: description || '',
             level: (parent ? parent.level : 0) + 1,
+            parentId: parent ? parentId : null,
             createdBy: userId,
             updatedBy: userId,
             deletable: true,
         });
 
         const addRole = await this.roleRepository.save(instanceRole);
-        const attachPermission = await this.rolePermissionService.attach({ roleId: addRole.id, permissionIds, userId });
+        await this.rolePermissionService.attach({ roleId: addRole.id, permissionIds, userId });
 
         return addRole;
     }

@@ -163,6 +163,7 @@ export const roleReducer = (
                 return {
                     ...state,
                     deleteItems: [],
+                    reload: true,
                     isDeleting: false,
                     isFailure: false,
                 };

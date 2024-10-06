@@ -106,12 +106,16 @@ export const API_URLS = {
         }),
     },
     CATEGORY: {
-        TREE: () => ({
+        TREE: (parentId?: string) => ({
             method: "GET",
             headers: HEADERS.header(),
             endPoint: joinString({
                 joinString: "/",
-                strings: ["category", "client", "tree"],
+                strings: [
+                    "category",
+                    "client",
+                    `tree${parentId ? `?parentId=${parentId}` : " "}`,
+                ],
             }),
             withCredentials: true,
         }),

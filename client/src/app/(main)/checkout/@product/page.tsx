@@ -79,6 +79,8 @@ export default function CheckoutProductPage() {
         form.setValue("paymentType", paymentType);
     }, [paymentType]);
 
+    document.title = "Thanh toán sản phẩm";
+
     return (
         <div className="w-full">
             <div className="">

@@ -19,16 +19,14 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { ICategory } from "@/interface/api/category.interface";
 import { updateCategoryApi } from "@/lib/redux/actions/category.action";
 import { categorySelector } from "@/lib/redux/selector";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
 import { updateCategorySchema } from "@/schemas/category.schema";
-import { api_media_url } from "@/utils/apiCall";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { LoaderCircleIcon, PencilLineIcon, XIcon } from "lucide-react";
+import { LoaderCircleIcon, PencilLineIcon } from "lucide-react";
 import { ChangeEvent, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -142,7 +140,7 @@ export default function UpdateCategoryDialog({
                 </DialogHeader>
                 <Separator orientation="horizontal" />
                 <div className="flex flex-col gap-1 w-full">
-                    <div className="grid w-full max-w-sm items-center gap-1">
+                    {/* <div className="grid w-full max-w-sm items-center gap-1">
                         <Label htmlFor="image-update-category">
                             Ảnh danh mục
                         </Label>
@@ -188,12 +186,12 @@ export default function UpdateCategoryDialog({
                                 </Label>
                             )}
                         </div>
-                    </div>
+                    </div> */}
 
                     <PopoverSelectParent
                         onSelectParent={handleSelectParent}
                         selected={select}
-                    ></PopoverSelectParent>
+                    />
 
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(handleSubmit)}>
