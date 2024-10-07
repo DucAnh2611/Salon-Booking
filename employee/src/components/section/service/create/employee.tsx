@@ -1,3 +1,4 @@
+import MediaLoader from "@/components/media-load";
 import PopoverSelectEmployeeExp from "@/components/popover/employee/select-exp";
 import PopoverSelectMutipleEmployee from "@/components/popover/employee/select-mutiple";
 import { Badge } from "@/components/ui/badge";
@@ -14,7 +15,6 @@ import { EServiceEmployeeExperience } from "@/enum/service.enum";
 import { IEmployee } from "@/interface/api/employee.interface";
 import { IServiceEmployeeCreate } from "@/interface/api/service.interface";
 import { IServiceCreateSectionProps } from "@/interface/service-section.interface";
-import { api_media_url } from "@/utils/apiCall";
 import { useMemo, useState } from "react";
 
 interface ICreateServiceEmployeeSection extends IServiceCreateSectionProps {}
@@ -124,14 +124,13 @@ export default function CreateServiceEmployeeSection({
                                             Loại bỏ
                                         </Button>
                                     </div>
-                                    <img
-                                        src={
-                                            api_media_url +
-                                            e.employee.userBase.userAvatar?.path
-                                        }
-                                        alt="emp"
-                                        className="w-full h-full object-cover group-hover/emp:scale-105 duration-150"
-                                    />
+                                    <div className="w-full h-full object-cover group-hover/emp:scale-105 duration-150">
+                                        <MediaLoader
+                                            media={
+                                                e.employee.userBase.userAvatar
+                                            }
+                                        />
+                                    </div>
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <div className="flex justify-start items-center gap-2">

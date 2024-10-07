@@ -178,7 +178,7 @@ export default function TableProductAttributeUpdate({
                                                     <div className="grid grid-cols-3 flex-1">
                                                         <div className="flex w-full">
                                                             <Input
-                                                                className="rounded-none w-full"
+                                                                className="rounded-none w-full focus-visible:ring-transparent"
                                                                 placeholder="Giá"
                                                                 type="number"
                                                                 value={parseInt(
@@ -216,7 +216,7 @@ export default function TableProductAttributeUpdate({
                                                             </div>
                                                         </div>
                                                         <Input
-                                                            className="rounded-none"
+                                                            className="rounded-none focus-visible:ring-transparent"
                                                             placeholder="Số lượng"
                                                             type="number"
                                                             value={parseInt(
@@ -250,7 +250,7 @@ export default function TableProductAttributeUpdate({
                                                             )}
                                                         />
                                                         <Input
-                                                            className="rounded-none"
+                                                            className="rounded-none focus-visible:ring-transparent"
                                                             placeholder="SKU"
                                                             value={
                                                                 getValue(
@@ -290,7 +290,7 @@ export default function TableProductAttributeUpdate({
                                     <div className="grid grid-cols-3 flex-1">
                                         <div className="flex w-full">
                                             <Input
-                                                className="rounded-none w-full"
+                                                className="rounded-none w-full focus-visible:ring-transparent"
                                                 placeholder="Giá"
                                                 type="number"
                                                 value={parseInt(
@@ -319,7 +319,7 @@ export default function TableProductAttributeUpdate({
                                             </div>
                                         </div>
                                         <Input
-                                            className="rounded-none"
+                                            className="rounded-none focus-visible:ring-transparent"
                                             placeholder="Số lượng"
                                             type="number"
                                             value={parseInt(
@@ -344,7 +344,7 @@ export default function TableProductAttributeUpdate({
                                             )}
                                         />
                                         <Input
-                                            className="rounded-none"
+                                            className="rounded-none focus-visible:ring-transparent"
                                             placeholder="SKU"
                                             value={
                                                 getValue(

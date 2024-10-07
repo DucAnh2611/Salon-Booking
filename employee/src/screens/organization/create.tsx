@@ -20,6 +20,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
+import { ROUTER_PATH } from "@/constants/router.constant";
 import { IMediaTempUpload } from "@/interface/api/media.interface";
 import { IOrganizationCreate } from "@/interface/api/organization.interface";
 import { cn } from "@/lib";
@@ -31,9 +32,10 @@ import { api_media_url } from "@/utils/apiCall";
 import { joinString } from "@/utils/string";
 import { generateUUID } from "@/utils/uuid.utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ImageOff, LoaderCircle, XIcon } from "lucide-react";
+import { ImageOff, LoaderCircle, Undo2, XIcon } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { Link } from "react-router-dom";
 import { z } from "zod";
 
 export default function OrganizationCreateSreen() {
@@ -390,7 +392,18 @@ export default function OrganizationCreateSreen() {
                             </div>
                         </CardContent>
                     </Card>
-                    <div className="w-full justify-end flex">
+                    <div className="w-full justify-end flex gap-2">
+                        <Button
+                            type="button"
+                            className="items-center gap-2 flex"
+                            variant={"outline"}
+                            asChild
+                        >
+                            <Link to={ROUTER_PATH.ORGANIZTAION}>
+                                <Undo2 size={15} />
+                                Quay lại
+                            </Link>
+                        </Button>
                         <Button
                             type="submit"
                             className="items-center gap-2"

@@ -415,10 +415,13 @@ export class OrderAdminService {
         this.orderLogger.info(`Auto cancel ${serviceOrders.length} because of expired confirm date.`);
 
         await Promise.all(
-            serviceOrders.map(order => {
+            serviceOrders.map(async order => {
                 this.orderBaseService.cancelExpiredOrder(order.id);
                 this.orderStateService.addCancelExpired(order.id);
-                this.orderTransactionService.cancelTransactionOrderQueue(order.id);
+                if (order.paymentType === OrderPaymentTypeEnum.BANK) {
+                    await this.orderTransactionService.cancelTransactionOrderQueue(order.id);
+                    this.orderGateway.adminUpdateOrder({ orderId: order.id });
+                }
                 order.services.map(service =>
                     this.shiftEmployeeService.updateStatus(service.employeeId, {
                         shiftId: service.shiftId,

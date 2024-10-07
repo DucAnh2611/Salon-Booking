@@ -90,9 +90,9 @@ export default function OrderServiceItem({
                                     joinString: " ",
                                     strings: [
                                         serviceItem.employee.employee.userBase
-                                            .firstname,
-                                        serviceItem.employee.employee.userBase
                                             .lastname,
+                                        serviceItem.employee.employee.userBase
+                                            .firstname,
                                     ],
                                 })}
                             </p>

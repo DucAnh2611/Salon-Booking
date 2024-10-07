@@ -125,7 +125,7 @@ export default function TableProductAttribute({
                                                     <div className="grid grid-cols-3 flex-1">
                                                         <div className="flex w-full">
                                                             <Input
-                                                                className="rounded-none w-full"
+                                                                className="rounded-none w-full focus-visible:ring-transparent"
                                                                 placeholder="Giá"
                                                                 type="number"
                                                                 onChange={handleOnChange(
@@ -147,7 +147,7 @@ export default function TableProductAttribute({
                                                             </div>
                                                         </div>
                                                         <Input
-                                                            className="rounded-none"
+                                                            className="rounded-none focus-visible:ring-transparent"
                                                             placeholder="Số lượng"
                                                             type="number"
                                                             onChange={handleOnChange(
@@ -165,7 +165,7 @@ export default function TableProductAttribute({
                                                             )}
                                                         />
                                                         <Input
-                                                            className="rounded-none"
+                                                            className="rounded-none focus-visible:ring-transparent"
                                                             placeholder="SKU"
                                                             onChange={handleOnChange(
                                                                 [
@@ -190,7 +190,7 @@ export default function TableProductAttribute({
                                     <div className="grid grid-cols-3 flex-1">
                                         <div className="flex w-full">
                                             <Input
-                                                className="rounded-none w-full"
+                                                className="rounded-none w-full  focus-visible:ring-transparent"
                                                 placeholder="Giá"
                                                 type="number"
                                                 onChange={handleOnChange(
@@ -208,7 +208,7 @@ export default function TableProductAttribute({
                                             </div>
                                         </div>
                                         <Input
-                                            className="rounded-none"
+                                            className="rounded-none  focus-visible:ring-transparent"
                                             placeholder="Số lượng"
                                             type="number"
                                             onChange={handleOnChange(
@@ -222,7 +222,7 @@ export default function TableProductAttribute({
                                             )}
                                         />
                                         <Input
-                                            className="rounded-none"
+                                            className="rounded-none  focus-visible:ring-transparent"
                                             placeholder="SKU"
                                             onChange={handleOnChange(
                                                 [

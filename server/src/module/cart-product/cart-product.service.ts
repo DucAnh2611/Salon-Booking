@@ -9,6 +9,7 @@ import { CartProductItemService } from '../cart-product-item/cart-product-item.s
 import { CreateCartProductItemDto } from '../cart-product-item/dto/cart-product-item-create.dto';
 import { GetCartProductAmountDto } from '../cart-product-item/dto/cart-product-item-get.dto';
 import { UpdateCartProductItemDto } from '../cart-product-item/dto/cart-product-item-update.dto';
+import { ProductTypesEntity } from '../product-types/entity/product-types.entity';
 import { CartProductEntity } from './entity/cart-product.entity';
 
 @Injectable()
@@ -16,6 +17,7 @@ export class CartProductService {
     constructor(
         @InjectRepository(CartProductEntity) private readonly cartProductRepository: Repository<CartProductEntity>,
         private readonly cartProductItemService: CartProductItemService,
+        @InjectRepository(ProductTypesEntity) private readonly productTypeRepository: Repository<ProductTypesEntity>,
     ) {}
 
     async removeCartItems(clientId: string, itemIds: string[]) {
@@ -75,9 +77,41 @@ export class CartProductService {
         const cartProduct = await this.getClientCart(clientId);
         const cartProductDetail = await this.cartProductItemService.get(cartProduct.id);
 
+        const mapIsValid = await Promise.all(
+            cartProductDetail.map(async cartProduct => {
+                const productTypeCount = await this.productTypeRepository.count({
+                    where: { productId: cartProduct.productId },
+                    loadEagerRelations: false,
+                });
+                let available = true;
+                if (!!cartProduct.product.deletedAt) {
+                    available = false;
+                }
+                if (productTypeCount > 0 && !cartProduct.productTypeId) {
+                    available = false;
+                }
+
+                if (cartProduct.productTypeId) {
+                    const productType = await this.productTypeRepository.findOne({
+                        where: { id: cartProduct.productTypeId },
+                        loadEagerRelations: false,
+                    });
+
+                    if (!productType) {
+                        available = false;
+                    }
+                }
+
+                return {
+                    ...cartProduct,
+                    available,
+                };
+            }),
+        );
+
         return {
             ...cartProduct,
-            products: cartProductDetail,
+            products: mapIsValid,
         };
     }
 

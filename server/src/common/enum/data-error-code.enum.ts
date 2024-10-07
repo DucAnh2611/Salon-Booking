@@ -165,4 +165,6 @@ export enum DataErrorCodeEnum {
 
     NOT_EXIST_ORGANIZATION = 'DE131',
     NO_SHOW_ORGANIZATION = 'DE132',
+
+    EXISTED_SKU = 'DE133',
 }

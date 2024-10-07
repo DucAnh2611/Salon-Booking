@@ -132,11 +132,6 @@ export class OrderServiceItemService {
     }
 
     async add(orderId: string, body: CreateOrderServiceItemDto[]) {
-        const checkListService = await this.checkListService(body);
-        if (!checkListService) {
-            throw new BadRequest({ message: DataErrorCodeEnum.INVALID_SERVICE_EMPLOYEE });
-        }
-
         const snapshotList = await Promise.all(body.map(item => this.getSnapshot(item.serviceId, item.employeeId)));
 
         const savedOrderService = await this.orderServiceItemRepository.save(

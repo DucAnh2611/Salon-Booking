@@ -23,6 +23,7 @@ import { EGender } from "@/enum/gender.enum";
 import { IEmployeeDetail } from "@/interface/api/employee.interface";
 import { employeeUpdateFormSchema } from "@/schemas/employee.schema";
 import { api_media_url } from "@/utils/apiCall";
+import { joinString } from "@/utils/string";
 import { XIcon } from "lucide-react";
 import { ChangeEvent, MouseEvent, useEffect, useState } from "react";
 import { UseFormReturn } from "react-hook-form";
@@ -88,6 +89,20 @@ export default function BaseEmployeeUpdateSection({
             SetPreviewUrl(userAvatar ? `${api_media_url}${userAvatar}` : "");
         }
     }, [form]);
+
+    useEffect(() => {
+        SetPreviewUrl(
+            userAvatar
+                ? joinString({
+                      joinString: "",
+                      strings: [api_media_url, userAvatar],
+                  })
+                : ""
+        );
+        SetSelectedBirthday(new Date(employee.userBase.birthday));
+
+        console.log(employee.userBase.birthday);
+    }, [employee]);
 
     return (
         <Card>

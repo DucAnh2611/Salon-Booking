@@ -4,7 +4,7 @@ import useUser from "@/hook/useUser.hook";
 import { logout } from "@/lib/actions/auth.action";
 import { ShoppingCart } from "lucide-react";
 import Link from "next/link";
-import { useSearchParams } from "next/navigation";
+import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
 import {
     DropdownMenu,
@@ -19,7 +19,7 @@ import UserAvatar from "./user-avatar";
 
 export default function UserAuth() {
     const { me, handleLogout } = useUser();
-    const search = useSearchParams();
+    const path = usePathname();
 
     const handleLogoutBtn = async () => {
         const { response } = await logout();
@@ -37,14 +37,10 @@ export default function UserAuth() {
         return (
             <div className="flex gap-2">
                 <Button variant="outline" size="sm" asChild>
-                    <Link href={"/signup?redirect=" + search.toString()}>
-                        Tạo tài khoản
-                    </Link>
+                    <Link href={"/signup?redirect=" + path}>Tạo tài khoản</Link>
                 </Button>
                 <Button variant="default" size="sm" asChild>
-                    <Link href={"/login?redirect=" + search.toString()}>
-                        Đăng nhập
-                    </Link>
+                    <Link href={"/login?redirect=" + path}>Đăng nhập</Link>
                 </Button>
             </div>
         );
