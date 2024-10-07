@@ -12,7 +12,7 @@ import { ChangeEvent, useState } from "react";
 export default function FilterProductPage() {
     const { filter, setFilter, resetFilter } = useSearchProduct();
 
-    const [from, SetFrom] = useState<number>(filter.price.from);
+    const [from, SetFrom] = useState<number>(filter.price.from || 0);
     const [to, SetTo] = useState<number>(filter.price.to || 0);
 
     const handleChangeFrom = (e: ChangeEvent<HTMLInputElement>) => {
@@ -53,6 +53,8 @@ export default function FilterProductPage() {
 
     const reset = () => {
         resetFilter();
+        SetFrom(0);
+        SetTo(0);
     };
 
     return (

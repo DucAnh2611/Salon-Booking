@@ -83,13 +83,18 @@ export default function DialogCreateStepService({
     };
 
     const handleSubmit = () => {
-        if (newStep.name.length) {
+        if (!!newStep.name.length && newStep.description.length >= 20) {
             onCreate({ ...newStep, thumbnailUrl: media ? media.url : "" });
             SetOpen(false);
-        } else {
+        } else if (!newStep.name.length) {
             SetErr({
                 ...err,
                 name: "Tên bước không thể để trống",
+            });
+        } else if (newStep.description.length < 20) {
+            SetErr({
+                ...err,
+                description: "Mô tả ít nhất 20 ký tự",
             });
         }
     };
@@ -196,12 +201,20 @@ export default function DialogCreateStepService({
                             )}
                         </div>
                         <div>
-                            <FormLabel>Mô tả</FormLabel>
+                            <FormLabel>
+                                Mô tả
+                                <RequireField />
+                            </FormLabel>
                             <Textarea
                                 placeholder="Mô tả"
                                 className="resize-none h-[300px]"
                                 onChange={handleOnChange("description")}
                             />
+                            {err.description.length !== 0 && (
+                                <p className="text-xs text-destructive">
+                                    {err.description}
+                                </p>
+                            )}
                         </div>
                     </div>
                     <DialogFooter className="mt-5">

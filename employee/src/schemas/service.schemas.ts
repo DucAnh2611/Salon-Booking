@@ -38,7 +38,7 @@ export const createServiceStepSchema = z.object({
     name: z.string().min(1, { message: ZOD_MESSAGE.require("Tên bước") }),
     description: z
         .string()
-        .min(1, { message: ZOD_MESSAGE.require("Mô tả dịch vụ") }),
+        .min(20, { message: ZOD_MESSAGE.require("Mô tả dịch vụ") }),
     step: z.coerce
         .number({ message: ZOD_MESSAGE.number("Số bước") })
         .int({ message: ZOD_MESSAGE.int("Số bước") })
@@ -91,7 +91,7 @@ export const updateServiceStepSchema = z.object({
     name: z.string().min(1, { message: ZOD_MESSAGE.require("Tên bước") }),
     description: z
         .string()
-        .min(1, { message: ZOD_MESSAGE.require("Mô tả dịch vụ") }),
+        .min(20, { message: ZOD_MESSAGE.require("Mô tả dịch vụ") }),
     step: z.coerce
         .number({ message: ZOD_MESSAGE.number("Số bước") })
         .int({ message: ZOD_MESSAGE.int("Số bước") })

@@ -58,6 +58,7 @@ export default function CreateServiceStepSection({
             },
             []
         );
+
         SetSteps(reArrange);
     };
 
