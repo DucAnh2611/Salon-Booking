@@ -13,6 +13,7 @@ import { toast } from "@/components/ui/use-toast";
 import withoutAuth from "@/hoc/withoutAuth";
 import useUser from "@/hook/useUser.hook";
 import { IFailRequest } from "@/interface/response.interface";
+import { joinString } from "@/lib/string";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 
@@ -26,7 +27,12 @@ function LoginPage() {
     const onSuccessLogin = () => {
         handleLogin();
         const delay = setTimeout(() => {
-            router.push(!!redirect ? `?redirect=${redirect}` : "/");
+            router.push(
+                joinString({
+                    joinString: "/",
+                    strings: [!!redirect ? redirect : "/"],
+                })
+            );
         }, 2000);
 
         return () => {

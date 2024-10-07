@@ -49,8 +49,7 @@ export default function CartProductItem({
                     )}
                 </div>
             </div>
-            {!!productItem.product.deletedAt ||
-            (productItem.productType && !!productItem.productType.deletedAt) ? (
+            {!productItem.available ? (
                 <div className="flex justify-end">
                     <p className="text-sm text-destructive">
                         Sản phẩm đã hoặc kiểu loại sản phẩm đã bị xóa

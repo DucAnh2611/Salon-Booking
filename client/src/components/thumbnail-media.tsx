@@ -31,7 +31,7 @@ export default function ThumbnailMedia({ medias }: IThumbnailMediaProps) {
     }, [items]);
 
     return (
-        <div className="w-full h-full relative">
+        <div className="w-full h-full relative bg-white">
             {items.length &&
                 items.map((media, i) =>
                     media.media ? (
@@ -65,6 +65,9 @@ export default function ThumbnailMedia({ medias }: IThumbnailMediaProps) {
                                             media.media.path,
                                         ],
                                     })}
+                                    autoPlay
+                                    muted
+                                    loop
                                     className={cn("w-full h-full object-cover")}
                                 />
                             )}
@@ -78,7 +81,7 @@ export default function ThumbnailMedia({ medias }: IThumbnailMediaProps) {
                         </div>
                     )
                 )}
-            {items.length && (
+            {!items.length && (
                 <div className="w-full h-full flex items-center justify-center text-white">
                     <ImageOff size={20} />
                 </div>

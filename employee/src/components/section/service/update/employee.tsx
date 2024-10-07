@@ -1,3 +1,4 @@
+import MediaLoader from "@/components/media-load";
 import PopoverSelectEmployeeExp from "@/components/popover/employee/select-exp";
 import PopoverSelectMutipleEmployee from "@/components/popover/employee/select-mutiple";
 import { Badge } from "@/components/ui/badge";
@@ -17,7 +18,6 @@ import {
     IServiceEmployeeDetail,
 } from "@/interface/api/service.interface";
 import { IServiceUpdateSectionProps } from "@/interface/service-section.interface";
-import { api_media_url } from "@/utils/apiCall";
 import { useEffect, useMemo, useState } from "react";
 
 interface IUpdateServiceEmployeeSection extends IServiceUpdateSectionProps {
@@ -140,14 +140,13 @@ export default function UpdateServiceEmployeeSection({
                                             Loại bỏ
                                         </Button>
                                     </div>
-                                    <img
-                                        src={
-                                            api_media_url +
-                                            e.employee.userBase.userAvatar?.path
-                                        }
-                                        alt="emp"
-                                        className="w-full h-full object-cover group-hover/emp:scale-105 duration-150"
-                                    />
+                                    <div className="w-full h-full object-cover group-hover/emp:scale-105 duration-150">
+                                        <MediaLoader
+                                            media={
+                                                e.employee.userBase.userAvatar
+                                            }
+                                        />
+                                    </div>
                                 </div>
                                 <div className="flex flex-col gap-2">
                                     <div className="flex justify-start items-center gap-2">

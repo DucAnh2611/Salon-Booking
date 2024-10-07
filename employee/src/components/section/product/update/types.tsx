@@ -22,7 +22,7 @@ import {
     IProductTypeUpdate,
 } from "@/interface/api/product.interface";
 import { IProductTabUpdateProps } from "@/interface/product-tabs.interface";
-import { useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 
 interface IUpdateProductTypeTabProps extends IProductTabUpdateProps {
     types: IProductTypeInfo[];
@@ -144,7 +144,6 @@ export default function UpdateProductTypeTab({
         SetIsChange(true);
 
         form.clearErrors("types");
-        form.setValue("types.selectAttribute", select);
     };
 
     const handleChangeType = (types: IProductTypeUpdate[]) => {
@@ -220,10 +219,11 @@ export default function UpdateProductTypeTab({
                 ...(sku ? { sku } : {}),
             }))
         );
+        form.setValue("types.selectAttribute", selectedAttr);
         SetIsChange(false);
     };
 
-    useMemo(() => {
+    useEffect(() => {
         SetProductTypes(convertToUpdate(types));
         SetSelectedAttr(detectSelectAttr(types));
     }, [types]);

@@ -15,7 +15,7 @@ export default function MediaLoader<T extends IMedia>({
     return (
         <Fragment>
             {media ? (
-                getMediaType(media.path) ? (
+                getMediaType(media.path) === "image" ? (
                     <Image
                         src={api_media_url + media.path}
                         alt="emp"

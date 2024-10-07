@@ -50,23 +50,28 @@ export class ProductService {
         const { base, details, types } = body;
 
         let sameSku = false;
-        types.types.reduce(
-            (acc: Record<string, number>, curr) => {
-                if (curr.sku) {
-                    if (acc[curr.sku]) {
-                        acc[curr.sku] = acc[curr.sku] + 1;
-                        sameSku = true;
-                    } else acc[curr.sku] = 1;
-                }
-                return acc;
-            },
-            base.sku ? { [base.sku]: 1 } : {},
-        );
+        const skus = [];
+
+        if (base.sku) {
+            skus.push(base.sku);
+        }
+
+        for (const curr of types.types) {
+            const findSku = skus.includes(curr.sku);
+            if (curr.sku && findSku) {
+                sameSku = true;
+                break;
+            }
+            if (curr.sku && !findSku) {
+                skus.push(curr.sku);
+            }
+        }
+
         if (sameSku) {
             throw new BadRequest({ message: DataErrorCodeEnum.SAME_SKU });
         }
 
-        //check exist sku for product and product types
+        await this.productBaseService.existSku(skus);
 
         const savedProduct = await this.productBaseService.save(userId, employeeId, base);
 
@@ -86,23 +91,30 @@ export class ProductService {
         const { base, details, types, productId } = body;
 
         let sameSku = false;
-        types.types.reduce(
-            (acc: Record<string, number>, curr) => {
-                if (curr.sku) {
-                    if (acc[curr.sku]) {
-                        acc[curr.sku] = acc[curr.sku] + 1;
-                        sameSku = true;
-                    } else acc[curr.sku] = 1;
-                }
-                return acc;
-            },
-            base.sku ? { [base.sku]: 1 } : {},
-        );
+        const skus = [];
+
+        if (base.sku) {
+            skus.push({ productId, sku: base.sku });
+        }
+
+        types.types.forEach(curr => {
+            const findSku = skus.find(i => i.sku === curr.sku);
+            if (curr.sku && findSku) {
+                sameSku = true;
+            }
+            if (curr.sku && !findSku) {
+                skus.push({
+                    ...(curr.productTypesId ? { productTypeId: curr.productTypesId } : {}),
+                    sku: curr.sku,
+                });
+            }
+        });
+
         if (sameSku) {
             throw new BadRequest({ message: DataErrorCodeEnum.SAME_SKU });
         }
 
-        //check exist sku for product and product types
+        await this.productBaseService.existSkuNotId(skus);
 
         const savedProduct = await this.productBaseService.update(userId, employeeId, productId, base);
 

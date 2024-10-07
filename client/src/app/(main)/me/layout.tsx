@@ -1,14 +1,9 @@
 import MeNavigation from "@/components/me-nav";
+import withAuth from "@/hoc/withAuth";
 import { ILayoutProps } from "@/interface/layout.interface";
-import { Metadata } from "next";
 
 interface ILayoutMeProps extends ILayoutProps {}
-
-export const metadata: Metadata = {
-    title: "Thông tin cá nhân",
-    description: "Thông tin cá nhân",
-};
-export default function LayoutMe({ children }: ILayoutMeProps) {
+function Layout({ children }: ILayoutMeProps) {
     return (
         <section className="w-full py-5 relative bg-accent dark:bg-background flex-1 min-h-full">
             <div className="container px-4 grid grid-cols-5 gap-3">
@@ -22,3 +17,5 @@ export default function LayoutMe({ children }: ILayoutMeProps) {
         </section>
     );
 }
+
+export default withAuth(Layout);

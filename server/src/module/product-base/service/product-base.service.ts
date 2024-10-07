@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Between, ILike, In, Like, MoreThanOrEqual, Repository } from 'typeorm';
+import { count } from 'console';
+import { Between, ILike, In, Like, MoreThanOrEqual, Not, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../../common/enum/data-success-code.enum';
 import { SortByEnum } from '../../../common/enum/query.enum';
@@ -31,6 +32,74 @@ export class ProductBaseService {
         private readonly mediaService: MediaService,
         private readonly productMediaService: ProductMediaService,
     ) {}
+
+    async existSku(skus: string[]) {
+        const count = await this.productBaseRepository.count({
+            where: [{ sku: In(skus) }, { types: { sku: In(skus) } }],
+            loadEagerRelations: false,
+        });
+
+        if (count) {
+            throw new BadRequest({ message: DataErrorCodeEnum.EXISTED_SKU });
+        }
+    }
+
+    async existSkuNotId(skus: Array<{ productId?: string; sku: string; productTypeId?: string }>) {
+        const counts = await Promise.all(
+            skus.map(async skuItem => {
+                const { productId, sku, productTypeId } = skuItem;
+                let count = 0;
+                if (productId) {
+                    count = await this.productBaseRepository.count({
+                        where: [
+                            {
+                                id: Not(productId),
+                                sku: sku,
+                            },
+                            {
+                                types: { sku },
+                            },
+                        ],
+                        loadEagerRelations: false,
+                    });
+                } else if (productTypeId) {
+                    count = await this.productBaseRepository.count({
+                        where: [
+                            {
+                                sku: sku,
+                            },
+                            {
+                                types: {
+                                    id: Not(productTypeId),
+                                    sku,
+                                },
+                            },
+                        ],
+                        loadEagerRelations: false,
+                    });
+                } else {
+                    count = await this.productBaseRepository.count({
+                        where: [
+                            {
+                                sku: sku,
+                            },
+                            {
+                                types: {
+                                    sku,
+                                },
+                            },
+                        ],
+                        loadEagerRelations: false,
+                    });
+                }
+
+                return count;
+            }),
+        );
+        if (counts.filter(i => !i).length !== count.length) {
+            throw new BadRequest({ message: DataErrorCodeEnum.EXISTED_SKU });
+        }
+    }
 
     async detail(id: string) {
         const product = await this.productBaseRepository.findOne({

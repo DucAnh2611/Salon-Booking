@@ -37,6 +37,7 @@ import { ReturnUrlTransactionPayOsDto } from '../../order-transaction/dto/order-
 import { OrderTransactionService } from '../../order-transaction/order-transaction.service';
 import { ProductBaseEntity } from '../../product-base/entity/product-base.entity';
 import { ProductTypesEntity } from '../../product-types/entity/product-types.entity';
+import { ShiftEmployeeEntity } from '../../shift-employee/entity/shift-employee.entity';
 import { ShiftEmployeeService } from '../../shift-employee/shift-employee.service';
 import { CreateOrderProductDto, CreateOrderServiceDto } from '../dto/order-create.dto';
 import { TrackingDetailOrderDto } from '../dto/order-get.dto';
@@ -243,6 +244,35 @@ export class OrderService {
             this.orderServiceItemService.getTotalAmount(services),
         ]);
 
+        const queryRunner = this.orderBaseService.getQueryRunner();
+
+        await queryRunner.startTransaction();
+
+        try {
+            const shiftEmployeeRepository = queryRunner.manager.getRepository(ShiftEmployeeEntity);
+            await Promise.all(
+                services.map(async service => {
+                    const shiftEmployee = await shiftEmployeeRepository.findOne({
+                        where: { employeeId: service.employeeId, shiftId: service.shiftId },
+                        loadEagerRelations: false,
+                        lock: { mode: 'pessimistic_write' },
+                    });
+                    return shiftEmployeeRepository.update(
+                        { employeeId: service.employeeId, shiftId: service.shiftId },
+                        {
+                            status: ShiftEmployeeStatusEnum.BOOKED,
+                        },
+                    );
+                }),
+            );
+        } catch (e) {
+            console.log(e);
+            await queryRunner.rollbackTransaction();
+            throw new InternalServer();
+        } finally {
+            await queryRunner.release();
+        }
+
         const newOrder = await this.orderBaseService.create(userId, clientId, {
             ...contact,
             paymentType,
@@ -258,15 +288,6 @@ export class OrderService {
                 state: OrderStatusEnum.PENDING,
             }),
         ]);
-
-        await Promise.all(
-            services.map(service =>
-                this.shiftEmployeeService.updateStatus(service.employeeId, {
-                    shiftId: service.shiftId,
-                    status: ShiftEmployeeStatusEnum.BOOKED,
-                }),
-            ),
-        );
 
         if (paymentType === OrderPaymentTypeEnum.BANK) {
             await Promise.all([

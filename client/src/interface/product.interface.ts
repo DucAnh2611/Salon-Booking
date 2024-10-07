@@ -98,6 +98,8 @@ export interface IProductItemCart {
     quantity: number;
 
     createdAt: Date;
+
+    available: boolean;
 }
 
 export interface IProductItemOrder {

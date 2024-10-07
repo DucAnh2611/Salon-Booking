@@ -165,16 +165,28 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
                 <div className="box-border flex items-center gap-5 px-3 py-2 rounded-md border mb-1">
                     <p className="flex-1 break-words whitespace-normal text-sm font-medium">
                         Vui lòng xác nhận đơn hàng trước
-                        <span className="text-primary">
+                        <span className="text-primary ml-2">
                             {format(
                                 order.confirmExpired,
                                 "yyyy/MM/dd HH:mm:ss"
                             )}
                         </span>
                     </p>
-                    <p className="w-fit h-fit py-2 px-3 text-sm border rounded text-primary font-bold">
-                        {timeLeft}
-                    </p>
+                    <div>
+                        <DialogConfirmOrder
+                            onSuccess={onSuccessConfirm}
+                            orderId={order.id}
+                            trigger={
+                                <Button
+                                    className=""
+                                    variant="default"
+                                    disabled={!order.confirmable}
+                                >
+                                    Xác nhận {timeLeft}
+                                </Button>
+                            }
+                        />
+                    </div>
                 </div>
             )}
             {order.confirmExpired &&
