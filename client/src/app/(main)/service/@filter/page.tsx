@@ -84,6 +84,10 @@ export default function FilterProductPage() {
     };
     const reset = () => {
         resetFilter();
+        SetFrom(0);
+        SetTo(0);
+        SetFromDuration(0);
+        SetToDuration(0);
     };
 
     return (

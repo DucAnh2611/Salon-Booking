@@ -17,6 +17,7 @@ import { EGender } from "@/enum/gender.enum";
 import { IEmployee, IUser } from "@/interface/api/employee.interface";
 import { IRole } from "@/interface/api/role.interface";
 import { api_media_url } from "@/utils/apiCall";
+import { joinString } from "@/utils/string";
 import { ColumnDef } from "@tanstack/react-table";
 import {
     ArrowDownIcon,
@@ -108,7 +109,14 @@ export const employeeColumnDef: ColumnDef<IEmployee>[] = [
         cell: ({ cell }) => {
             const userBase = cell.getValue() as IUser;
 
-            return <p>{userBase.firstname + " " + userBase.lastname}</p>;
+            return (
+                <p>
+                    {joinString({
+                        joinString: " ",
+                        strings: [userBase.firstname, userBase.lastname],
+                    })}
+                </p>
+            );
         },
         size: 100,
     },

@@ -17,7 +17,7 @@ import {
     OrderType,
 } from '../../../common/enum/order.enum';
 import { ShiftEmployeeStatusEnum } from '../../../common/enum/shift.enum';
-import { BadRequest } from '../../../shared/exception/error.exception';
+import { BadRequest, InternalServer } from '../../../shared/exception/error.exception';
 import { isSameObject } from '../../../shared/utils/object.utils';
 import { CartProductService } from '../../cart-product/cart-product.service';
 import { CartServiceService } from '../../cart-service/cart-service.service';
@@ -35,6 +35,8 @@ import { OrderServiceItemService } from '../../order-service-item/order-service-
 import { OrderStateService } from '../../order-state/order-state.service';
 import { ReturnUrlTransactionPayOsDto } from '../../order-transaction/dto/order-transaction.get.dto';
 import { OrderTransactionService } from '../../order-transaction/order-transaction.service';
+import { ProductBaseEntity } from '../../product-base/entity/product-base.entity';
+import { ProductTypesEntity } from '../../product-types/entity/product-types.entity';
 import { ShiftEmployeeService } from '../../shift-employee/shift-employee.service';
 import { CreateOrderProductDto, CreateOrderServiceDto } from '../dto/order-create.dto';
 import { TrackingDetailOrderDto } from '../dto/order-get.dto';
@@ -131,6 +133,53 @@ export class OrderService {
             this.orderProductItemService.getTotalAmount(products),
         ]);
 
+        const queryRunner = this.orderBaseService.getQueryRunner();
+
+        await queryRunner.startTransaction();
+
+        try {
+            const productRepository = queryRunner.manager.getRepository(ProductBaseEntity);
+            await Promise.all(
+                products
+                    .filter(item => item.productId && !item.productTypeId)
+                    .map(async item => {
+                        const product = await productRepository.findOne({
+                            where: { id: item.productId },
+                            loadEagerRelations: false,
+                            lock: { mode: 'pessimistic_write' },
+                        });
+
+                        return productRepository.save({ ...product, quantity: product.quantity - item.quantity });
+                    }),
+            );
+
+            const productTypeRepository = queryRunner.manager.getRepository(ProductTypesEntity);
+            await Promise.all(
+                products
+                    .filter(item => item.productId && !!item.productTypeId)
+                    .map(async item => {
+                        const productType = await productTypeRepository.findOne({
+                            where: { id: item.productTypeId },
+                            loadEagerRelations: false,
+                            lock: { mode: 'pessimistic_write' },
+                        });
+
+                        return productTypeRepository.save({
+                            ...productType,
+                            quantity: productType.quantity - item.quantity,
+                        });
+                    }),
+            );
+
+            await queryRunner.commitTransaction();
+        } catch (e) {
+            console.log(e);
+            await queryRunner.rollbackTransaction();
+            throw new InternalServer();
+        } finally {
+            await queryRunner.release();
+        }
+
         const newOrder = await this.orderBaseService.create(userId, clientId, {
             ...contact,
             paymentType,
@@ -157,6 +206,7 @@ export class OrderService {
                 }),
             ]);
         }
+
         if (paymentType === OrderPaymentTypeEnum.BANK) {
             await Promise.all([
                 this.orderBaseService.updateState(newOrder.id, OrderStatusEnum.PENDING_PAYMENT, userId),
@@ -180,7 +230,6 @@ export class OrderService {
                 clientId,
                 products.map(productItem => productItem.itemId),
             ),
-            this.orderProductItemService.updateProductQuantity(newOrder.id),
         ]);
 
         return newOrder;
@@ -573,7 +622,11 @@ export class OrderService {
             throw new BadRequest({ message: DataErrorCodeEnum.ORDER_FORBIDDEN });
         }
 
-        await this.orderBaseService.paidSuccessfull(userId, orderId, order.total);
+        await this.orderBaseService.paidSuccessfull(
+            userId,
+            orderId,
+            order.paymentType === OrderPaymentTypeEnum.CASH ? order.total : order.totalPaid,
+        );
         await this.clientUpdateState(userId, clientId, {
             orderId,
             state: OrderStatusEnum.RECEIVED,

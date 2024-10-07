@@ -16,6 +16,10 @@ import { OrderEntity } from './entity/order-base.entity';
 export class OrderBaseService {
     constructor(@InjectRepository(OrderEntity) private readonly orderBaseRepository: Repository<OrderEntity>) {}
 
+    getQueryRunner() {
+        return this.orderBaseRepository.manager.connection.createQueryRunner();
+    }
+
     async getOrderRange(emploeeId: string, body: GetJobQueryListDto) {
         const { from, limit, page, to } = body;
 
