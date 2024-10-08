@@ -12,6 +12,7 @@ export default function UserAvatar({ user }: IUserAvatarProps) {
             <AvatarImage
                 src={api_media_url + user.userBase.userAvatar?.path}
                 alt="@shadcn"
+                className="object-cover"
             />
             <AvatarFallback>
                 {user.userBase.lastname.charAt(0).toLocaleUpperCase()}
