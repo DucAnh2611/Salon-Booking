@@ -31,7 +31,7 @@ export interface IProductStatistic {
 }
 
 export interface IIncomeStatistic {
-    groupBy: "year" | "month";
+    groupBy: "day" | "month";
     data: IInComeData[];
 }
 
