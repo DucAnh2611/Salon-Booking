@@ -42,13 +42,11 @@ export default function DeleteProductDialog({
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <div className="flex gap-1">
-                        Xóa sản phẩm <b>{product.name}</b>?
-                    </div>
+                    <div className="flex gap-1">Xóa sản phẩm?</div>
                 </DialogHeader>
                 <DialogDescription>
-                    Xóa sản phẩm <b>{product.name}</b> sẽ làm thay đổi các sản
-                    phẩm, kiểu mã của sản phẩm này.
+                    Xóa sản phẩm sẽ làm thay đổi các sản phẩm, kiểu mã của sản
+                    phẩm này.
                 </DialogDescription>
 
                 <DialogFooter>
@@ -75,7 +73,7 @@ export default function DeleteProductDialog({
                                 className="animate-spin"
                             />
                         )}
-                        Xóa <b>{product.name}</b>
+                        Xóa
                     </Button>
                 </DialogFooter>
             </DialogContent>

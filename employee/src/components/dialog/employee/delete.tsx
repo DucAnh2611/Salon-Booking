@@ -53,13 +53,11 @@ export default function DeleteEmployeeDialog({
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <div className="flex gap-1">
-                        Xóa nhân viên<b>{item.userBase.lastname}</b>?
-                    </div>
+                    <div className="flex gap-1">Xóa nhân viên?</div>
                 </DialogHeader>
                 <DialogDescription>
-                    Xóa nhân viên <b>{item.userBase.lastname}</b> sẽ làm thay
-                    đổi một số thông tin hiển thị liên quan tới nhân viên này.
+                    Xóa nhân viên sẽ làm thay đổi một số thông tin hiển thị liên
+                    quan tới nhân viên này.
                 </DialogDescription>
 
                 <DialogFooter>
@@ -86,7 +84,7 @@ export default function DeleteEmployeeDialog({
                                 className="animate-spin"
                             />
                         )}
-                        Xóa <b>{item.userBase.lastname}</b>
+                        Xóa
                     </Button>
                 </DialogFooter>
             </DialogContent>

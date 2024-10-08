@@ -13,7 +13,6 @@ import { cn } from "@/lib";
 import { deleteWorkingHourApi } from "@/lib/redux/actions/working-hour.action";
 import { workingHourSelector } from "@/lib/redux/selector";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
-import { format } from "date-fns";
 import { useEffect, useState } from "react";
 
 interface IToggleOffWorkingDayProps {
@@ -59,11 +58,9 @@ export default function DialogDeleteWorkingDay({
             </DialogTrigger>
             <DialogContent className="w-fit max-w-none">
                 <DialogHeader>
-                    <DialogTitle>Xóa ngày làm việc</DialogTitle>
+                    <DialogTitle>Xóa ngày làm việc?</DialogTitle>
                     <DialogDescription>
-                        Ngày làm việc{" "}
-                        <b>{format(working.date, "dd/MM/yyyy")}</b> sẽ bị xóa
-                        khỏi lịch.
+                        Ngày làm việc sẽ bị xóa khỏi lịch.
                     </DialogDescription>
                 </DialogHeader>
                 <div>
@@ -81,7 +78,7 @@ export default function DialogDeleteWorkingDay({
                             onClick={handleSubmit}
                             className="gap-1"
                         >
-                            Xóa <b>{format(working.date, "dd/MM/yyyy")}</b>
+                            Xóa
                         </Button>
                     </DialogFooter>
                 </div>

@@ -250,7 +250,7 @@ export default function DialogUpdateStepService({
                             </FormLabel>
                             <Textarea
                                 placeholder="Mô tả"
-                                className="resize-none h-[300px]"
+                                className="resize-none h-[150px]"
                                 onChange={handleOnChange("description")}
                                 value={newStep.description}
                             />

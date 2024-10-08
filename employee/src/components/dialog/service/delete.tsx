@@ -42,13 +42,11 @@ export default function DeleteServiceDialog({
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <div className="flex gap-1">
-                        Xóa dịch vụ <b>{service.name}</b>?
-                    </div>
+                    <div className="flex gap-1">Xóa dịch vụ?</div>
                 </DialogHeader>
                 <DialogDescription>
-                    Xóa dịch vụ <b>{service.name}</b> sẽ làm thay đổi các sản
-                    phẩm, kiểu mã của dịch vụ này.
+                    Xóa dịch vụ sẽ làm thay đổi các sản phẩm, kiểu mã của dịch
+                    vụ này.
                 </DialogDescription>
 
                 <DialogFooter>
@@ -75,7 +73,7 @@ export default function DeleteServiceDialog({
                                 className="animate-spin"
                             />
                         )}
-                        Xóa <b>{service.name}</b>
+                        Xóa
                     </Button>
                 </DialogFooter>
             </DialogContent>

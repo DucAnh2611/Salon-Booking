@@ -1,3 +1,5 @@
+"use client";
+
 import MeNavigation from "@/components/me-nav";
 import withAuth from "@/hoc/withAuth";
 import { ILayoutProps } from "@/interface/layout.interface";

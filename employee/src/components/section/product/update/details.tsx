@@ -141,6 +141,10 @@ export default function UpdateProductDetailTab({
 
     useMemo(() => {
         SetProductDetail(details);
+        SetNewDetail({
+            key: "",
+            value: "",
+        });
     }, [details]);
 
     return (

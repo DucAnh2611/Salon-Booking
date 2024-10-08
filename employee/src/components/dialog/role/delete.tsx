@@ -55,13 +55,11 @@ export default function DeleteRoleDialog({
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <div className="flex gap-1">
-                        Xóa chức vụ<b>{item.title}</b>?
-                    </div>
+                    <div className="flex gap-1">Xóa chức vụ?</div>
                 </DialogHeader>
                 <DialogDescription>
-                    Xóa chức vụ <b>{item.title}</b> sẽ làm thay đổi các chức vụ
-                    con của chức vụ này và các nhân viên được gắn chức vụ.
+                    Xóa chức vụ sẽ làm thay đổi các chức vụ con của chức vụ này
+                    và các nhân viên được gắn chức vụ.
                 </DialogDescription>
 
                 <DialogFooter>
@@ -88,7 +86,7 @@ export default function DeleteRoleDialog({
                                 className="animate-spin"
                             />
                         )}
-                        Xóa <b>{item.title}</b>
+                        Xóa
                     </Button>
                 </DialogFooter>
             </DialogContent>

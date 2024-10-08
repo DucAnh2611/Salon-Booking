@@ -78,26 +78,6 @@ export const clientColumnDef: ColumnDef<IClientList>[] = [
         header: "SĐT",
     },
     {
-        id: "phone",
-        header: "Xác thực SĐT",
-        cell: ({ row }) => {
-            const client = row.original;
-
-            return (
-                <Badge
-                    variant={"outline"}
-                    className={cn(
-                        client.phoneVerified
-                            ? "text-green-500 border-green-500"
-                            : "text-red-500 border-red-500"
-                    )}
-                >
-                    {client.phoneVerified ? "Đã xác thực" : "Chưa"}
-                </Badge>
-            );
-        },
-    },
-    {
         id: "name",
         header: "Tên",
         cell: ({ row }) => {
