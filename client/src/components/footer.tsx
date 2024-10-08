@@ -165,12 +165,6 @@ export default function Footer() {
                         </div>
                     </div>
                 </div>
-                <div className="mt-8 border-t border-gray-200 pt-8 text-center">
-                    <p className="text-sm">
-                        &copy; {new Date().getFullYear()} Tên Công Ty Của Bạn.
-                        Đã đăng ký bản quyền.
-                    </p>
-                </div>
             </div>
         </footer>
     );
