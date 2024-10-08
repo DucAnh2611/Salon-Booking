@@ -79,12 +79,6 @@ export default function OrderDashboard({ statistic }: IOrderDashboardProps) {
         "Số lượng": parseInt(item.count),
     }));
 
-    data.push({
-        name: "Tổng",
-        fill: "#ffa600",
-        "Số lượng": statistic.order.orderCount,
-    });
-
     return (
         <Card className="">
             <CardHeader>
@@ -92,10 +86,7 @@ export default function OrderDashboard({ statistic }: IOrderDashboardProps) {
             </CardHeader>
             <CardContent className="px-5 max-h-[200px]">
                 {!!statistic.order.orderCount ? (
-                    <ChartContainer
-                        config={{}}
-                        className="min-h-[300px] w-full max-h-[300px]"
-                    >
+                    <ChartContainer config={{}} className="w-full ">
                         <RadialBarChart
                             data={data}
                             innerRadius="10%"
