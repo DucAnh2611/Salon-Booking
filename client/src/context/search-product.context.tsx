@@ -21,7 +21,7 @@ export const SearchProductContext = createContext<ISearchProductContext>({
         },
         categoryIds: [],
         page: 1,
-        limit: 20,
+        limit: 12,
     },
     setFilter: <T extends keyof IApiSearchProduct>(
         key: T,
