@@ -31,6 +31,12 @@ export default function ServicePage() {
         setFilter("key", e.target.value);
     };
 
+    const handelChangePage = (page: number) => () => {
+        const value = page || 1;
+
+        setFilter("page", value);
+    };
+
     const onSearch = () => {
         setFilter("key", key);
     };
@@ -76,12 +82,14 @@ export default function ServicePage() {
                         size={"icon"}
                         variant="outline"
                         disabled={filter.page <= 1}
+                        onClick={handelChangePage(filter.page - 1)}
                     >
                         <ChevronLeft size={15} />
                     </Button>
                     <Button
                         size={"icon"}
                         variant="outline"
+                        onClick={handelChangePage(filter.page + 1)}
                         disabled={
                             filter.page >= Math.ceil(count / filter.limit)
                         }

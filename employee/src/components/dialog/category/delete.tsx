@@ -58,13 +58,11 @@ export default function DeleteCategoryDialog({
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <div className="flex gap-1">
-                        Xóa danh mục <b>{item.title}</b>?
-                    </div>
+                    <div className="flex gap-1">Xóa danh mục?</div>
                 </DialogHeader>
                 <DialogDescription>
-                    Xóa danh mục <b>{item.title}</b> sẽ làm thay đổi các danh
-                    mục con của danh mục này.
+                    Xóa danh mục sẽ làm thay đổi các danh mục con của danh mục
+                    này.
                 </DialogDescription>
 
                 <DialogFooter>
@@ -91,7 +89,7 @@ export default function DeleteCategoryDialog({
                                 className="animate-spin"
                             />
                         )}
-                        Xóa <b>{item.title}</b>
+                        Xóa
                     </Button>
                 </DialogFooter>
             </DialogContent>

@@ -11,7 +11,6 @@ import { IShift } from "@/interface/api/shift.interface";
 import { deleteShiftApi } from "@/lib/redux/actions/shift.action";
 import { categorySelector } from "@/lib/redux/selector";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
-import { formatTimeToHHMM } from "@/utils/date.utils";
 import { LoaderCircleIcon, Trash2Icon } from "lucide-react";
 import { useState } from "react";
 
@@ -38,23 +37,11 @@ export default function DeleteShiftDialog({ shift }: IDeleteShiftDialogProps) {
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <div className="flex gap-1">
-                        Xóa ca làm{" "}
-                        <b>
-                            {formatTimeToHHMM(shift.start)} -{" "}
-                            {formatTimeToHHMM(shift.end)}
-                        </b>
-                        ?
-                    </div>
+                    <div className="flex gap-1">Xóa ca làm?</div>
                 </DialogHeader>
                 <DialogDescription>
-                    Xóa ca làm{" "}
-                    <b>
-                        {formatTimeToHHMM(shift.start)} -{" "}
-                        {formatTimeToHHMM(shift.end)}
-                    </b>{" "}
-                    sẽ làm thay đổi các thông tin đơn đặt hàng, các thông tin về
-                    nhân viên.
+                    Xóa ca làm sẽ làm thay đổi các thông tin đơn đặt hàng, các
+                    thông tin về nhân viên.
                 </DialogDescription>
 
                 <DialogFooter>
@@ -81,11 +68,7 @@ export default function DeleteShiftDialog({ shift }: IDeleteShiftDialogProps) {
                                 className="animate-spin"
                             />
                         )}
-                        Xóa ca
-                        <b>
-                            {formatTimeToHHMM(shift.start)} -{" "}
-                            {formatTimeToHHMM(shift.end)}
-                        </b>
+                        Xóa ca làm
                     </Button>
                 </DialogFooter>
             </DialogContent>

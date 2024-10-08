@@ -41,7 +41,7 @@ export default function DeleteOrganizationDialog({
                 </Button>
             </DialogTrigger>
             <DialogContent>
-                <DialogHeader>Xóa thông tin doanh nghiệp</DialogHeader>
+                <DialogHeader>Xóa thông tin doanh nghiệp?</DialogHeader>
                 <DialogDescription>
                     Xóa sản phẩm sẽ làm thay đổi các thông tin hiển thị trên
                     trang chủ mua sẵm và hóa đơn.
