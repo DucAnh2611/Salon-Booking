@@ -63,7 +63,7 @@ export default function DashboardChart({
                                 axisLine={false}
                                 tickFormatter={(value: number) => {
                                     const date = new Date(statistic.start);
-                                    if (statistic.income.groupBy === "year") {
+                                    if (statistic.income.groupBy === "month") {
                                         date.setMonth(value - 1);
                                         return format(date, "LL");
                                     } else {
