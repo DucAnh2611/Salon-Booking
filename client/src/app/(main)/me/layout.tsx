@@ -5,6 +5,7 @@ import withAuth from "@/hoc/withAuth";
 import { ILayoutProps } from "@/interface/layout.interface";
 
 interface ILayoutMeProps extends ILayoutProps {}
+
 function Layout({ children }: ILayoutMeProps) {
     return (
         <section className="w-full py-5 relative bg-accent dark:bg-background flex-1 min-h-full">
