@@ -113,7 +113,7 @@ export const employeeColumnDef: ColumnDef<IEmployee>[] = [
                 <p>
                     {joinString({
                         joinString: " ",
-                        strings: [userBase.firstname, userBase.lastname],
+                        strings: [userBase.lastname, userBase.firstname],
                     })}
                 </p>
             );

@@ -22,6 +22,7 @@ export const SearchProductContext = createContext<ISearchProductContext>({
         categoryIds: [],
         page: 1,
         limit: 12,
+        orderBy: "",
     },
     setFilter: <T extends keyof IApiSearchProduct>(
         key: T,
@@ -40,7 +41,8 @@ export default function SearchProductContextProvider({
         },
         categoryIds: [],
         page: 1,
-        limit: 20,
+        limit: 12,
+        orderBy: "",
     });
 
     const setFilter = <T extends keyof IApiSearchProduct>(

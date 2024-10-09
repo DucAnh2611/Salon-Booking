@@ -20,6 +20,23 @@ export class CategoryService {
         @InjectRepository(MediaEntity) private readonly mediaRepository: Repository<MediaEntity>,
     ) {}
 
+    async getAllChildren(ids: string[]): Promise<string[]> {
+        const cateIds = await Promise.all(
+            ids.map(async id => {
+                const child = await this.categoryRepository.find({
+                    where: { parentId: id },
+                    loadEagerRelations: false,
+                });
+
+                const childsIds = await this.getAllChildren(child.map(c => c.id));
+
+                return [id, ...childsIds];
+            }),
+        );
+
+        return cateIds.length ? cateIds[0] : [];
+    }
+
     async buildCategoryTree(parents: CategoryEntity[]) {
         if (!parents.length) {
             return [];

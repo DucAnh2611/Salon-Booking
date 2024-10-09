@@ -1,6 +1,7 @@
 "use client";
 
 import ProductSearchCard from "@/components/product-search-card";
+import SelectSortProduct from "@/components/select-sort-product";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useDebounce from "@/hook/useDebounce.hook";
@@ -35,6 +36,10 @@ export default function ProductPage() {
     const handleChangeKey = (e: ChangeEvent<HTMLInputElement>) => {
         SetKey(e.target.value);
         setFilter("key", e.target.value);
+    };
+
+    const handleChangeSort = (value: string) => {
+        setFilter("orderBy", value);
     };
 
     const onSearch = () => {
@@ -72,8 +77,14 @@ export default function ProductPage() {
                         <Search size={15} />
                         Tìm kiếm
                     </Button>
+                    <div className="w-[200px]">
+                        <SelectSortProduct
+                            orderBy={filter.orderBy || ""}
+                            onChange={handleChangeSort}
+                        />
+                    </div>
                 </div>
-                <div className="flex gap-1 items-center  justify-end">
+                <div className="flex gap-2 items-center  justify-end">
                     <div className="text-sm text-muted-foreground">
                         <span className="text-primary">{filter.page}</span>/
                         <span>{Math.ceil(count / filter.limit)}</span>

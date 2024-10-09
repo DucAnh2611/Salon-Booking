@@ -1,5 +1,6 @@
 "use client";
 
+import SelectSortService from "@/components/select-sort-service";
 import ServiceSearchCard from "@/components/service-search-card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -37,6 +38,10 @@ export default function ServicePage() {
         setFilter("page", value);
     };
 
+    const handleChangeSort = (value: string) => {
+        setFilter("orderBy", value);
+    };
+
     const onSearch = () => {
         setFilter("key", key);
     };
@@ -72,6 +77,12 @@ export default function ServicePage() {
                         <Search size={15} />
                         Tìm kiếm
                     </Button>
+                    <div className="w-[200px]">
+                        <SelectSortService
+                            orderBy={filter.orderBy || ""}
+                            onChange={handleChangeSort}
+                        />
+                    </div>
                 </div>
                 <div className="flex gap-1 items-center  justify-end">
                     <div className="text-sm text-muted-foreground">
