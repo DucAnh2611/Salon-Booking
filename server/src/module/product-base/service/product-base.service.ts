@@ -178,6 +178,14 @@ export class ProductBaseService {
     async find(query: FindProductBaseDto) {
         const { key = '', limit, page, orderBy, price, categoryIds } = query;
 
+        let orderSpilit = ['createdAt', SortByEnum.ASC];
+
+        if (orderBy && orderBy.includes(':')) {
+            orderSpilit = orderBy.split(':');
+        }
+
+        const [field, sort] = orderSpilit;
+
         const [items, count] = await this.productBaseRepository.findAndCount({
             where: {
                 name: ILike(`%${key}%`),
@@ -185,7 +193,7 @@ export class ProductBaseService {
                 ...(categoryIds.length ? { categoryId: In(categoryIds) } : {}),
             },
             loadEagerRelations: false,
-            order: { createdAt: SortByEnum.ASC },
+            order: { [field]: sort },
             relations: {
                 types: true,
             },

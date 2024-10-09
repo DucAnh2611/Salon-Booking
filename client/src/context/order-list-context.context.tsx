@@ -25,7 +25,7 @@ interface IOrderListContext {
 
 export const OrderListContext = createContext<IOrderListContext>({
     orders: [],
-    limit: 0,
+    limit: 8,
     page: 0,
     count: 0,
     filter: {},
@@ -41,7 +41,7 @@ export default function OrderListProviver({ children }: ILayoutProps) {
     const [order, SetOrder] = useState<IListOrderOrder>({});
     const [page, SetPage] = useState<number>(1);
     const [count, SetCount] = useState<number>(0);
-    const [limit, SetLimit] = useState<number>(10);
+    const [limit, SetLimit] = useState<number>(8);
     const [isLoading, SetIsLoading] = useState<boolean>(false);
     const [isError, SetIsError] = useState<boolean>(false);
 

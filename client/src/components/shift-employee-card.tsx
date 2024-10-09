@@ -49,8 +49,8 @@ export default function ShiftEmployeeCard({
                     {joinString({
                         joinString: " ",
                         strings: [
-                            employee.employee.userBase.firstname,
                             employee.employee.userBase.lastname,
+                            employee.employee.userBase.firstname,
                         ],
                     })}
                 </p>

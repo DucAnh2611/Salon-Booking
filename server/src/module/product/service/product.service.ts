@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
 import { BadRequest } from '../../../shared/exception/error.exception';
+import { CategoryService } from '../../category/category.service';
 import { FindProductBaseAdminDto, FindProductBaseDto } from '../../product-base/dto/product-base-get.dto';
 import { ProductBaseService } from '../../product-base/service/product-base.service';
 import { ProductDetailService } from '../../product-detail/product-detail.service';
@@ -14,6 +15,7 @@ export class ProductService {
         private readonly productBaseService: ProductBaseService,
         private readonly productDetailService: ProductDetailService,
         private readonly productTypesService: ProductTypesService,
+        private readonly categoryService: CategoryService,
     ) {}
     async detail(id: string) {
         const productBaseDetail = await this.productBaseService.detail(id);
@@ -41,7 +43,11 @@ export class ProductService {
     }
 
     async find(query: FindProductBaseDto) {
-        const productList = await this.productBaseService.find(query);
+        const { categoryIds = [] } = query;
+
+        const cateIds = await this.categoryService.getAllChildren(categoryIds);
+
+        const productList = await this.productBaseService.find({ ...query, categoryIds: cateIds });
 
         return productList;
     }

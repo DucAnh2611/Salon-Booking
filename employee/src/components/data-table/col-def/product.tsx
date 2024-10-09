@@ -12,7 +12,9 @@ import {
 import { IProduct, IProductMedia } from "@/interface/api/product.interface";
 import { api_media_url } from "@/utils/apiCall";
 import { getMediaType } from "@/utils/media-checker.util";
+import { formatMoney } from "@/utils/money";
 import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
 import {
     ArrowDownIcon,
     ArrowUpDown,
@@ -123,6 +125,13 @@ export const productColumnDef: ColumnDef<IProduct>[] = [
             );
         },
         accessorKey: "name",
+        cell: ({ row }) => {
+            return (
+                <p className="max-w-[150px] w-full break-words whitespace-normal">
+                    {row.original.name}
+                </p>
+            );
+        },
         size: 100,
     },
     {
@@ -177,6 +186,9 @@ export const productColumnDef: ColumnDef<IProduct>[] = [
             );
         },
         accessorKey: "price",
+        cell: ({ row }) => {
+            return <p>{formatMoney(row.original.price)}</p>;
+        },
         size: 100,
     },
     {
@@ -234,7 +246,7 @@ export const productColumnDef: ColumnDef<IProduct>[] = [
         cell: ({ row }) => {
             const time = new Date(row.getValue("createdAt"));
 
-            return <p>{time.toLocaleString()}</p>;
+            return <p>{format(time, "yyyy/MM/dd HH:mm:ss")}</p>;
         },
     },
     {
@@ -265,7 +277,7 @@ export const productColumnDef: ColumnDef<IProduct>[] = [
         cell: ({ row }) => {
             const time = new Date(row.getValue("updatedAt"));
 
-            return <p>{time.toLocaleString()}</p>;
+            return <p>{format(time, "yyyy/MM/dd HH:mm:ss")}</p>;
         },
     },
     {

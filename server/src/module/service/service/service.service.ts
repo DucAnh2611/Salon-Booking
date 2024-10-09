@@ -12,8 +12,14 @@ export class ServiceService {
         private readonly categoryService: CategoryService,
     ) {}
 
-    find(body: FindServiceBaseDto) {
-        return this.serviceBaseService.findClient(body);
+    async find(body: FindServiceBaseDto) {
+        const { categoryIds = [] } = body;
+
+        const cateIds = await this.categoryService.getAllChildren(categoryIds);
+
+        const findRes = await this.serviceBaseService.findClient({ ...body, categoryIds: cateIds });
+
+        return findRes;
     }
 
     feature() {

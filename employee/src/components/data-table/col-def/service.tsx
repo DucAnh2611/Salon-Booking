@@ -12,7 +12,9 @@ import {
 import { IService, IServiceMedia } from "@/interface/api/service.interface";
 import { api_media_url } from "@/utils/apiCall";
 import { getMediaType } from "@/utils/media-checker.util";
+import { formatMoney } from "@/utils/money";
 import { ColumnDef } from "@tanstack/react-table";
+import { format } from "date-fns";
 import {
     ArrowDownIcon,
     ArrowUpDown,
@@ -131,6 +133,9 @@ export const serviceColumnDef: ColumnDef<IService>[] = [
             );
         },
         accessorKey: "price",
+        cell: ({ row }) => {
+            return <p>{formatMoney(row.original.price)}</p>;
+        },
         size: 100,
     },
     {
@@ -188,7 +193,7 @@ export const serviceColumnDef: ColumnDef<IService>[] = [
         cell: ({ row }) => {
             const time = new Date(row.getValue("createdAt"));
 
-            return <p>{time.toLocaleString()}</p>;
+            return <p>{format(time, "yyyy/MM/dd HH:mm:ss")}</p>;
         },
     },
     {
@@ -219,7 +224,7 @@ export const serviceColumnDef: ColumnDef<IService>[] = [
         cell: ({ row }) => {
             const time = new Date(row.getValue("updatedAt"));
 
-            return <p>{time.toLocaleString()}</p>;
+            return <p>{format(time, "yyyy/MM/dd HH:mm:ss")}</p>;
         },
     },
     {

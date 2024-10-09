@@ -43,7 +43,7 @@ export default function SearchServiceContextProvider({
         },
         categoryIds: [],
         page: 1,
-        limit: 20,
+        limit: 12,
         duration: {
             from: 0,
         },

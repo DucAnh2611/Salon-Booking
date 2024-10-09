@@ -71,6 +71,7 @@ export interface IApiSearchService {
     categoryIds?: string[];
     page: number;
     limit: number;
+    orderBy?: string;
 }
 
 export interface IServiceItemSearch extends IService {
