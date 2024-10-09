@@ -34,7 +34,7 @@ export class CategoryService {
             }),
         );
 
-        return cateIds.length ? cateIds[0] : [];
+        return cateIds.flat(1);
     }
 
     async buildCategoryTree(parents: CategoryEntity[]) {
