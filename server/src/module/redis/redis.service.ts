@@ -14,8 +14,8 @@ export class RedisService {
         return this.redisStore.set(name, data, ttl || 0);
     }
 
-    async get(name: string) {
-        return this.redisStore.get(name);
+    async get<T>(name: string) {
+        return this.redisStore.get<T>(name);
     }
 
     async del(name: string) {

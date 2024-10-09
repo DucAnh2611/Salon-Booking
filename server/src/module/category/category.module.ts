@@ -5,6 +5,7 @@ import { PermissionGuard } from '../../shared/guard/permission.guard';
 import { UserTypeGuard } from '../../shared/guard/user-type.guard';
 import { MediaEntity } from '../media/entity/media.entity';
 import { MediaModule } from '../media/media.module';
+import { RedisModule } from '../redis/redis.module';
 import { RolePermissionModule } from '../role-permission/role-permission.module';
 import { RoleModule } from '../role/role.module';
 import { CategoryService } from './category.service';
@@ -13,7 +14,13 @@ import { CategoryController } from './controller/category.controller';
 import { CategoryEntity } from './entity/category.entity';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([CategoryEntity, MediaEntity]), RoleModule, RolePermissionModule, MediaModule],
+    imports: [
+        TypeOrmModule.forFeature([CategoryEntity, MediaEntity]),
+        RoleModule,
+        RolePermissionModule,
+        MediaModule,
+        RedisModule,
+    ],
     controllers: [CategoryAdminController, CategoryController],
     providers: [CategoryService, AccessTokenGuard, UserTypeGuard, PermissionGuard],
     exports: [CategoryService],

@@ -8,6 +8,7 @@ import { BadRequest, InternalServer } from '../../shared/exception/error.excepti
 import { ParseOrderString } from '../../shared/utils/parse-dynamic-queyry.utils';
 import { MediaEntity } from '../media/entity/media.entity';
 import { MediaTypesEnum } from '../media/enum/media-types.enum';
+import { RedisService } from '../redis/redis.service';
 import { CreateCategoryDto } from './dto/category-create.dto';
 import { CategoryTreeDto, FindCategoryAdminDto } from './dto/category-get.dto';
 import { UpdateCategoryDto } from './dto/category-update.dto';
@@ -18,11 +19,17 @@ export class CategoryService {
     constructor(
         @InjectRepository(CategoryEntity) private readonly categoryRepository: Repository<CategoryEntity>,
         @InjectRepository(MediaEntity) private readonly mediaRepository: Repository<MediaEntity>,
+        private readonly redisService: RedisService,
     ) {}
 
     async getAllChildren(ids: string[]): Promise<string[]> {
         const cateIds = await Promise.all(
             ids.map(async id => {
+                const cache = await this.redisService.get<string[]>(id);
+                if (cache) {
+                    return cache;
+                }
+
                 const child = await this.categoryRepository.find({
                     where: { parentId: id },
                     loadEagerRelations: false,
@@ -30,7 +37,11 @@ export class CategoryService {
 
                 const childsIds = await this.getAllChildren(child.map(c => c.id));
 
-                return [id, ...childsIds];
+                const res = [id, ...childsIds];
+
+                this.redisService.set(id, res, 30 * 1000);
+
+                return res;
             }),
         );
 
