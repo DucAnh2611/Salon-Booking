@@ -14,13 +14,7 @@ import { CategoryController } from './controller/category.controller';
 import { CategoryEntity } from './entity/category.entity';
 
 @Module({
-    imports: [
-        TypeOrmModule.forFeature([CategoryEntity, MediaEntity]),
-        RoleModule,
-        RolePermissionModule,
-        MediaModule,
-        RedisModule,
-    ],
+    imports: [TypeOrmModule.forFeature([CategoryEntity, MediaEntity]), RoleModule, RolePermissionModule, MediaModule],
     controllers: [CategoryAdminController, CategoryController],
     providers: [CategoryService, AccessTokenGuard, UserTypeGuard, PermissionGuard],
     exports: [CategoryService],
