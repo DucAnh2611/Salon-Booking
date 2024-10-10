@@ -400,7 +400,7 @@ export default function DialogBookingService({
                                     {!!shiftEmployee.length ? (
                                         shiftEmployee.map((emp) => (
                                             <div
-                                                className="h-fit w-1/2 overflow-hidden cursor-pointer duration-150 active:scale-95"
+                                                className="h-fit w-1/3 shrink-0 overflow-hidden cursor-pointer duration-150 active:scale-95"
                                                 key={
                                                     emp.employeeId + emp.shiftId
                                                 }
