@@ -60,8 +60,12 @@ export default function TransactionCard({
 
     const getAmountRefund = () => {
         if (order) {
-            if (order.status === EOrderStatus.CANCELLED) {
-                return transaction.paidAmount;
+            if (
+                [EOrderStatus.CANCELLED, EOrderStatus.REFUNDED].includes(
+                    order.status
+                )
+            ) {
+                return order.totalPaid;
             } else {
                 if (transaction.status === EOrderPaymentStatus.PAID) {
                     return transaction.paidAmount - transaction.orderAmount;
