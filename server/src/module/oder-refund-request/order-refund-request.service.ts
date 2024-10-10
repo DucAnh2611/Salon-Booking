@@ -5,12 +5,13 @@ import { In, IsNull, LessThanOrEqual, MoreThan, Repository } from 'typeorm';
 import { LOGGER_CONSTANT_NAME } from '../../common/constant/logger.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
-import { OrderRefundRequestStatusEnum } from '../../common/enum/order.enum';
+import { OrderRefundRequestStatusEnum, OrderRefundStatusEnum } from '../../common/enum/order.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { addMinutesToCurrentTime } from '../../shared/utils/date.utils';
 import { BankService } from '../bank/bank.service';
 import { AppLoggerService } from '../logger/logger.service';
+import { OrderEntity } from '../order-base/entity/order-base.entity';
 import { OrderRefundStateService } from '../order-refund-state/order-refund-state.service';
 import { CreateOrderRefundRequestDto } from './dto/order-refund-request-create.dto';
 import { UpdateOrderRefundRequestDto } from './dto/order-refund-request-update.dto';
@@ -23,6 +24,8 @@ export class OrderRefundRequestService {
     constructor(
         @InjectRepository(OrderRefundRequestEntity)
         private readonly orderRefundRequestRepository: Repository<OrderRefundRequestEntity>,
+        @InjectRepository(OrderEntity)
+        private readonly orderBaseRepository: Repository<OrderEntity>,
         private readonly orderRefundStateService: OrderRefundStateService,
         private readonly bankService: BankService,
     ) {}
@@ -198,18 +201,27 @@ export class OrderRefundRequestService {
                 status: OrderRefundRequestStatusEnum.APPROVED,
             },
             loadEagerRelations: false,
+            relations: {
+                order: true,
+            },
         });
         if (!listApproved.length) return;
 
-        // Promise.all([
-        //     this.orderRefundRequestRepository.update(
-        //         { id: In(listApproved.map(item => item.id)) },
-        //         { status: OrderRefundRequestStatusEnum.RECEIVED },
-        //     ),
-        //     ...listApproved.map(item =>
-        //         this.orderRefundStateService.sytemAddState(item.id, OrderRefundStatusEnum.RECEIVED),
-        //     ),
-        // ]);
+        Promise.all([
+            ...listApproved.map(item =>
+                this.orderBaseRepository.update(
+                    { id: item.orderId },
+                    { totalPaid: item.order.totalPaid - item.amount },
+                ),
+            ),
+            this.orderRefundRequestRepository.update(
+                { id: In(listApproved.map(item => item.id)) },
+                { status: OrderRefundRequestStatusEnum.RECEIVED },
+            ),
+            ...listApproved.map(item =>
+                this.orderRefundStateService.sytemAddState(item.id, OrderRefundStatusEnum.RECEIVED),
+            ),
+        ]);
 
         this.logger.info(`Auto receive ${listApproved.length} refund request`);
     }
