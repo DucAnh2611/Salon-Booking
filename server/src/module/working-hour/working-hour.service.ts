@@ -1,11 +1,7 @@
 import { Injectable } from '@nestjs/common';
-import { Cron } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
-import { format } from 'date-fns';
 import { Equal, In, LessThanOrEqual, MoreThan, MoreThanOrEqual, Repository } from 'typeorm';
-import { CRON_EXPRESSION } from '../../common/constant/cron.constant';
 import { LOGGER_CONSTANT_NAME } from '../../common/constant/logger.constant';
-import { ROLE_TITLE } from '../../common/constant/role.constant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
@@ -317,81 +313,81 @@ export class WorkingHourService {
         return DataSuccessCodeEnum.OK;
     }
 
-    @Cron(CRON_EXPRESSION.EVERY_SUNDAY_START)
-    async autoCreateWorkingDate() {
-        const latestWorkingDate = await this.workingHourRepository.findOne({
-            where: {},
-            loadEagerRelations: false,
-            order: { createdAt: SortByEnum.DESC },
-            relations: { shifts: true },
-        });
+    // @Cron(CRON_EXPRESSION.EVERY_SUNDAY_START)
+    // async autoCreateWorkingDate() {
+    //     const latestWorkingDate = await this.workingHourRepository.findOne({
+    //         where: {},
+    //         loadEagerRelations: false,
+    //         order: { createdAt: SortByEnum.DESC },
+    //         relations: { shifts: true },
+    //     });
 
-        if (!latestWorkingDate) return;
-        const start = format(latestWorkingDate.start, 'HH:mm');
-        const end = format(latestWorkingDate.end, 'HH:mm');
+    //     if (!latestWorkingDate) return;
+    //     const start = format(latestWorkingDate.start, 'HH:mm');
+    //     const end = format(latestWorkingDate.end, 'HH:mm');
 
-        const DAYS = 7; // a week
-        let nextDays = new Array(DAYS).fill(null);
+    //     const DAYS = 7; // a week
+    //     let nextDays = new Array(DAYS).fill(null);
 
-        const admin = await this.employeeRepository.findOne({
-            where: {
-                eRole: {
-                    deletable: false,
-                    title: ROLE_TITLE.admin,
-                },
-            },
-            loadEagerRelations: false,
-        });
+    //     const admin = await this.employeeRepository.findOne({
+    //         where: {
+    //             eRole: {
+    //                 deletable: false,
+    //                 title: ROLE_TITLE.admin,
+    //             },
+    //         },
+    //         loadEagerRelations: false,
+    //     });
 
-        if (!admin) return;
+    //     if (!admin) return;
 
-        nextDays = nextDays.map((_, i) => {
-            const workingDate = new Date(latestWorkingDate.date);
-            workingDate.setDate(workingDate.getDate() + i + 1);
-            const working = this.workingHourRepository.create({
-                date: workingDate,
-                start: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${start}:00`),
-                end: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${end}:00`),
-                isOff: false,
-                createdBy: admin.id,
-                updatedBy: admin.id,
-            });
+    //     nextDays = nextDays.map((_, i) => {
+    //         const workingDate = new Date(latestWorkingDate.date);
+    //         workingDate.setDate(workingDate.getDate() + i + 1);
+    //         const working = this.workingHourRepository.create({
+    //             date: workingDate,
+    //             start: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${start}:00`),
+    //             end: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${end}:00`),
+    //             isOff: false,
+    //             createdBy: admin.id,
+    //             updatedBy: admin.id,
+    //         });
 
-            const shifts = latestWorkingDate.shifts.map(shift => {
-                const shiftStart = format(shift.start, 'HH:mm');
-                const shiftEnd = format(shift.end, 'HH:mm');
-                const shiftBookingStart = format(shift.bookingStart, 'HH:mm');
-                const shiftBookingEnd = format(shift.bookingEnd, 'HH:mm');
+    //         const shifts = latestWorkingDate.shifts.map(shift => {
+    //             const shiftStart = format(shift.start, 'HH:mm');
+    //             const shiftEnd = format(shift.end, 'HH:mm');
+    //             const shiftBookingStart = format(shift.bookingStart, 'HH:mm');
+    //             const shiftBookingEnd = format(shift.bookingEnd, 'HH:mm');
 
-                return this.shiftRepository.create({
-                    createdBy: admin.id,
-                    updatedBy: admin.id,
-                    start: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${shiftStart}:00`),
-                    end: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${shiftEnd}:00`),
-                    bookingStart: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${shiftBookingStart}:00`),
-                    bookingEnd: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${shiftBookingEnd}:00`),
-                });
-            });
-            return {
-                working,
-                shifts,
-            };
-        });
+    //             return this.shiftRepository.create({
+    //                 createdBy: admin.id,
+    //                 updatedBy: admin.id,
+    //                 start: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${shiftStart}:00`),
+    //                 end: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${shiftEnd}:00`),
+    //                 bookingStart: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${shiftBookingStart}:00`),
+    //                 bookingEnd: new Date(`${format(workingDate, 'yyyy/MM/dd')} ${shiftBookingEnd}:00`),
+    //             });
+    //         });
+    //         return {
+    //             working,
+    //             shifts,
+    //         };
+    //     });
 
-        await Promise.all(
-            nextDays.map(async ({ working, shifts }) => {
-                const savedWorking = await this.workingHourRepository.save(working);
+    //     await Promise.all(
+    //         nextDays.map(async ({ working, shifts }) => {
+    //             const savedWorking = await this.workingHourRepository.save(working);
 
-                if (!savedWorking) return {};
+    //             if (!savedWorking) return {};
 
-                const savedShifts = await this.shiftRepository.save(
-                    shifts.map((shift: any) => ({ ...shift, workingHourId: savedWorking.id })),
-                );
+    //             const savedShifts = await this.shiftRepository.save(
+    //                 shifts.map((shift: any) => ({ ...shift, workingHourId: savedWorking.id })),
+    //             );
 
-                return {};
-            }),
-        );
+    //             return {};
+    //         }),
+    //     );
 
-        this.logger.info(`Auto create ${nextDays.length} working dates`);
-    }
+    //     this.logger.info(`Auto create ${nextDays.length} working dates`);
+    // }
 }

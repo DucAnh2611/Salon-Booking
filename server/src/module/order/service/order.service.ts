@@ -758,6 +758,7 @@ export class OrderService {
         }
 
         await Promise.all([
+            this.orderBaseService.updateTotalPaid(order.id, order.totalPaid - orderRefundRequest.amount, userId),
             this.orderRefundRequestService.updateRefundRequest({
                 requestId,
                 status: OrderRefundRequestStatusEnum.RECEIVED,
