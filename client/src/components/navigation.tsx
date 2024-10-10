@@ -12,7 +12,6 @@ import { Fragment, useEffect, useState } from "react";
 import MediaLoader from "./media-load";
 import { ModeToggle } from "./theme-toggle";
 import { Button } from "./ui/button";
-import { Input } from "./ui/input";
 import UserAuth from "./userAuth";
 
 export default function Navigation() {
@@ -117,12 +116,6 @@ export default function Navigation() {
                             </Link>
                         </Button>
                     </nav>
-                </div>
-                <div className="flex-1">
-                    <Input
-                        placeholder="Sản phẩm"
-                        className="focus-visible:ring-transparent w-[50%]"
-                    />
                 </div>
                 <div className="flex gap-2 items-center">
                     <UserAuth />
