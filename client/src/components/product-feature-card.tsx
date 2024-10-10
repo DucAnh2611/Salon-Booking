@@ -15,7 +15,7 @@ export default function ProductFeatureCard({
 }: IProductFeatureCardProps) {
     const getProductPriceRange = () => {
         if (!product) return 0;
-        if (!product.types.length) return product.price;
+        if (!product.types.length) return formatMoney(product.price);
 
         let [min, max] = [Infinity, 0];
 
