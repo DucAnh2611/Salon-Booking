@@ -47,6 +47,7 @@ export class MailerService {
             ...options,
             html,
         });
+
         return this;
     }
 
