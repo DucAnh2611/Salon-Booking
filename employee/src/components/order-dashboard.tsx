@@ -1,72 +1,78 @@
 import { ORDER_STATUS } from "@/constants/order.constant";
 import { EOrderStatus } from "@/enum/order.enum";
 import { IStatisticDashboard } from "@/interface/api/dashboard.interface";
-import { Legend, RadialBar, RadialBarChart, Tooltip } from "recharts";
+import { CartesianGrid, RadialBar, RadialBarChart } from "recharts";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
-import { ChartContainer } from "./ui/chart";
+import {
+    ChartContainer,
+    ChartLegend,
+    ChartLegendContent,
+    ChartTooltip,
+    ChartTooltipContent,
+} from "./ui/chart";
 
 interface IOrderDashboardProps {
     statistic: IStatisticDashboard;
 }
 
 const chartConfig = {
-    [EOrderStatus.PENDING]: {
+    [ORDER_STATUS[EOrderStatus.PENDING]]: {
         label: ORDER_STATUS[EOrderStatus.PENDING],
         fill: "#FFD700",
     },
-    [EOrderStatus.PENDING_PAYMENT]: {
+    [ORDER_STATUS[EOrderStatus.PENDING_PAYMENT]]: {
         label: ORDER_STATUS[EOrderStatus.PENDING_PAYMENT],
         fill: "#FFA500",
     },
-    [EOrderStatus.PAID_PAYMENT]: {
+    [ORDER_STATUS[EOrderStatus.PAID_PAYMENT]]: {
         label: ORDER_STATUS[EOrderStatus.PAID_PAYMENT],
         fill: "#9370DB",
     },
-    [EOrderStatus.CONFIRMED]: {
+    [ORDER_STATUS[EOrderStatus.CONFIRMED]]: {
         label: ORDER_STATUS[EOrderStatus.CONFIRMED],
         fill: "#8A2BE2",
     },
-    [EOrderStatus.CALL_CONFIRM]: {
+    [ORDER_STATUS[EOrderStatus.CALL_CONFIRM]]: {
         label: ORDER_STATUS[EOrderStatus.CALL_CONFIRM],
-        fill: "#9932CC",
+        fill: "#421658",
     },
-    [EOrderStatus.PROCESSING]: {
+    [ORDER_STATUS[EOrderStatus.PROCESSING]]: {
         label: ORDER_STATUS[EOrderStatus.PROCESSING],
-        fill: "#32CD32",
+        fill: "#0077ff",
     },
-    [EOrderStatus.SHIPPING]: {
+    [ORDER_STATUS[EOrderStatus.SHIPPING]]: {
         label: ORDER_STATUS[EOrderStatus.SHIPPING],
-        fill: "#228B22",
+        fill: "#003c8b",
     },
-    [EOrderStatus.SHIPPED]: {
+    [ORDER_STATUS[EOrderStatus.SHIPPED]]: {
         label: ORDER_STATUS[EOrderStatus.SHIPPED],
-        fill: "#006400",
+        fill: "#639263",
     },
-    [EOrderStatus.RECEIVED]: {
+    [ORDER_STATUS[EOrderStatus.RECEIVED]]: {
         label: ORDER_STATUS[EOrderStatus.RECEIVED],
         fill: "#008000",
     },
-    [EOrderStatus.ARRIVED]: {
+    [ORDER_STATUS[EOrderStatus.ARRIVED]]: {
         label: ORDER_STATUS[EOrderStatus.ARRIVED],
         fill: "#ADFF2F",
     },
-    [EOrderStatus.ON_SERVICE]: {
+    [ORDER_STATUS[EOrderStatus.ON_SERVICE]]: {
         label: ORDER_STATUS[EOrderStatus.ON_SERVICE],
         fill: "#BA55D3",
     },
-    [EOrderStatus.FINISH]: {
+    [ORDER_STATUS[EOrderStatus.FINISH]]: {
         label: ORDER_STATUS[EOrderStatus.FINISH],
         fill: "#32CD32",
     },
-    [EOrderStatus.CANCELLED]: {
+    [ORDER_STATUS[EOrderStatus.CANCELLED]]: {
         label: ORDER_STATUS[EOrderStatus.CANCELLED],
         fill: "#FF4500",
     },
-    [EOrderStatus.RETURNED]: {
+    [ORDER_STATUS[EOrderStatus.RETURNED]]: {
         label: ORDER_STATUS[EOrderStatus.RETURNED],
         fill: "#DC143C",
     },
-    [EOrderStatus.REFUNDED]: {
+    [ORDER_STATUS[EOrderStatus.REFUNDED]]: {
         label: ORDER_STATUS[EOrderStatus.REFUNDED],
         fill: "#B22222",
     },
@@ -74,19 +80,19 @@ const chartConfig = {
 
 export default function OrderDashboard({ statistic }: IOrderDashboardProps) {
     let data = statistic.order.orderCountDetail.map((item) => ({
-        name: chartConfig[item.status].label,
-        fill: chartConfig[item.status].fill,
+        name: chartConfig[ORDER_STATUS[item.status]].label,
+        fill: chartConfig[ORDER_STATUS[item.status]].fill,
         "Số lượng": parseInt(item.count),
     }));
 
     return (
-        <Card className="">
+        <Card className="h-full">
             <CardHeader>
                 <CardTitle>Thống kê đơn hàng</CardTitle>
             </CardHeader>
-            <CardContent className="px-5 max-h-[200px]">
+            <CardContent className="px-5 h-full">
                 {!!statistic.order.orderCount ? (
-                    <ChartContainer config={{}} className="w-full ">
+                    <ChartContainer config={chartConfig} className="w-full">
                         <RadialBarChart
                             data={data}
                             innerRadius="10%"
@@ -101,16 +107,15 @@ export default function OrderDashboard({ statistic }: IOrderDashboardProps) {
                                 }}
                                 background
                                 dataKey={"Số lượng"}
+                                radius={4}
                             />
-                            <Legend
-                                iconSize={12}
-                                width={200}
-                                height={200}
-                                layout="vertical"
-                                verticalAlign="middle"
-                                align="left"
+                            <ChartTooltip
+                                content={
+                                    <ChartTooltipContent className="w-fit" />
+                                }
                             />
-                            <Tooltip />
+                            <ChartLegend content={<ChartLegendContent />} />
+                            <CartesianGrid vertical={false} horizontal={true} />
                         </RadialBarChart>
                     </ChartContainer>
                 ) : (

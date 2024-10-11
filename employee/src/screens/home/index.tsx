@@ -59,7 +59,7 @@ export function HomeScreen() {
     document.title = "Trang chủ";
 
     return (
-        <div className="w-full h-fit flex gap-5 relative">
+        <div className="w-full h-fit flex gap-5 flex-col relative">
             {isCalling && (
                 <div className="w-full h-full absolute top-0 left-0 z-[2] backdrop-blur-sm">
                     <div className="w-full h-full absolute top-0 left-0 z-[0] bg-foreground opacity-15"></div>
@@ -68,7 +68,8 @@ export function HomeScreen() {
                     </div>
                 </div>
             )}
-            <div className="flex-1 flex flex-col gap-5 h-full justify-start">
+
+            <div className="flex flex-col gap-5 flex-1">
                 <div className="h-fit w-full flex flex-col gap-5">
                     <div className="flex justify-end w-full h-fit gap-3">
                         <div className="w-auto flex gap-1">
@@ -106,7 +107,10 @@ export function HomeScreen() {
                     </div>
                     <SummaryDashboard statistic={statistic} />
                 </div>
-                <div className="h-fit w-full box-border">
+            </div>
+
+            <div className="flex-1 flex gap-5 h-full justify-start">
+                <div className="h-fit box-border flex-1">
                     <DashboardChart
                         selectMonth={selectMonth}
                         statistic={statistic}
@@ -114,11 +118,12 @@ export function HomeScreen() {
                         month={month}
                     />
                 </div>
-            </div>
-            <div className="flex flex-col gap-5 w-[450px] h-fit">
-                <div className="h-fit">
+                <div className="h-fit w-[450px]">
                     <OrderDashboard statistic={statistic} />
                 </div>
+            </div>
+
+            <div className="grid grid-cols-3 gap-5 w-full h-fit">
                 <div className="h-fit">
                     <EmployeeDashboard statistic={statistic} />
                 </div>
