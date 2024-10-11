@@ -72,10 +72,6 @@ const chartConfig = {
         label: ORDER_STATUS[EOrderStatus.RETURNED],
         fill: "#DC143C",
     },
-    [ORDER_STATUS[EOrderStatus.REFUNDED]]: {
-        label: ORDER_STATUS[EOrderStatus.REFUNDED],
-        fill: "#B22222",
-    },
 };
 
 export default function OrderDashboard({ statistic }: IOrderDashboardProps) {

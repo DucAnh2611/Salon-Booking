@@ -29,7 +29,7 @@ const attributeClassOrderState = {
             "bg-yellow-500 border-yellow-500 text-yellow-500 bg-opacity-15",
     },
     purple: {
-        states: [EOrderStatus.RETURNED, EOrderStatus.REFUNDED],
+        states: [EOrderStatus.REFUNDED],
         className:
             "bg-purple-500 border-purple-500 text-purple-500 bg-opacity-15",
     },
@@ -50,7 +50,7 @@ const attributeClassOrderState = {
         className: "bg-green-500 border-green-500 text-green-500 bg-opacity-15",
     },
     red: {
-        states: [EOrderStatus.CANCELLED],
+        states: [EOrderStatus.CANCELLED, EOrderStatus.RETURNED],
         className: "bg-red-500 border-red-500 text-red-500 bg-opacity-15",
     },
 };
