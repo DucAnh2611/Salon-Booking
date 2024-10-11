@@ -73,6 +73,16 @@ export class OrderBaseService {
         return true;
     }
 
+    async updatePaid(orderId: string, paid: boolean, userId: string) {
+        const order = await this.get(orderId);
+        if (!order) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
+        }
+
+        await this.orderBaseRepository.update({ id: orderId }, { paid, updatedBy: userId });
+        return DataSuccessCodeEnum.OK;
+    }
+
     async updateState(orderId: string, state: OrderStatusEnum, userId: string) {
         const order = await this.get(orderId);
         if (!order) {

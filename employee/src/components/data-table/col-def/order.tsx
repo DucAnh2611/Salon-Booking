@@ -152,22 +152,35 @@ export const orderColumnDef: ColumnDef<IOrderList>[] = [
         header: "Thanh toán",
         cell: ({ row }) => {
             const order = row.original;
+
+            if (order.paid) {
+                return (
+                    <Badge
+                        variant={"outline"}
+                        className={cn(
+                            "whitespace-nowrap",
+                            "text-green-500 bg-green-500 border-green-500 bg-opacity-15"
+                        )}
+                    >
+                        "Đã thanh toán
+                    </Badge>
+                );
+            }
+
             return (
                 <Badge
                     variant={"outline"}
                     className={cn(
                         "whitespace-nowrap",
-                        order.paid
-                            ? "text-green-500 bg-green-500 border-green-500 bg-opacity-15"
-                            : order.paymentType === EOrderPaymentType.CASH
+                        order.paymentType === EOrderPaymentType.CASH
                             ? "text-purple-500 bg-purple-500 border-purple-500 bg-opacity-15"
                             : "text-red-500 bg-red-500 border-red-500 bg-opacity-15"
                     )}
                 >
-                    {order.paid
-                        ? "Đã thanh toán"
-                        : order.paymentType === EOrderPaymentType.CASH
-                        ? "Khi nhận hàng"
+                    {order.paymentType === EOrderPaymentType.CASH
+                        ? order.type === EOrderType.PRODUCT
+                            ? "Khi nhận hàng"
+                            : "Trực tiếp"
                         : "Chưa thanh toán"}
                 </Badge>
             );

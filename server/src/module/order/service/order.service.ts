@@ -493,6 +493,14 @@ export class OrderService {
                         state: OrderStatusEnum.PAID_PAYMENT,
                         userId,
                     });
+                    await this.orderBaseService.updateState(orderId, OrderStatusEnum.CONFIRMED, userId);
+
+                    await this.orderStateService.addState({
+                        orderId,
+                        state: OrderStatusEnum.CONFIRMED,
+                        userId,
+                        description: `Đã xác nhận đơn hàng`,
+                    });
                 }
                 break;
             default:
@@ -785,7 +793,10 @@ export class OrderService {
         const isPendingTransaction = await this.orderTransactionService.isTransactionPending(orderId);
         const confirmable =
             order.type === OrderType.SERVICE &&
-            (order.status === OrderStatusEnum.PAID_PAYMENT || order.status === OrderStatusEnum.PENDING);
+            order.status &&
+            [OrderStatusEnum.PAID_PAYMENT, OrderStatusEnum.PENDING].includes(order.status);
+
+        console.log(order.status);
 
         return {
             cancelable: [...CAN_CANCEL_LIST, OrderStatusEnum.CONFIRMED].includes(order.status) && !isPendingTransaction,

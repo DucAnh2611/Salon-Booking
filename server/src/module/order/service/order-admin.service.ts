@@ -237,6 +237,9 @@ export class OrderAdminService {
                     await this.orderOnJob(orderId);
                     break;
                 case OrderStatusEnum.FINISH:
+                    if (order.paymentType === OrderPaymentTypeEnum.CASH) {
+                        await this.orderBaseService.updatePaid(orderId, true, userId);
+                    }
                     await this.orderBaseService.updateTotalPaid(orderId, order.total, userId);
                     await this.orderFinish(orderId);
                     break;
@@ -263,7 +266,7 @@ export class OrderAdminService {
             bankAccount: refundInfo.accountBankNumber,
             bankBin: parseInt(refundInfo.accountBankBin),
             bankName: refundInfo.accountBankName,
-            desc: `HOAN TIEN DON HANG ${order.code} `,
+            desc: `HOAN TIEN DON HANG ${order.code}`,
         });
     }
 

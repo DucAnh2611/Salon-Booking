@@ -88,8 +88,6 @@ export default function NavigationBar() {
                     }
 
                     if (audioRef.current) {
-                        playAudio();
-
                         toast(
                             joinString({
                                 joinString: " ",
@@ -112,9 +110,9 @@ export default function NavigationBar() {
                                     label: "Chi tiết",
                                     onClick: viewDetail(data.orderId),
                                 },
-                                duration: 2000,
                             }
                         );
+                        playAudio();
                     }
                 }
             );
