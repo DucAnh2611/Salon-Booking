@@ -35,7 +35,7 @@ export class NotLockStateGuard implements CanActivate {
                     }
                     break;
                 case LockStateEnum.ORDER:
-                    if (client.lockAccount) {
+                    if (client.lockOrder) {
                         throw new BadRequest({ message: DataErrorCodeEnum.ORDER_LOCK });
                     }
                     break;
