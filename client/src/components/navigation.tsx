@@ -92,7 +92,7 @@ export default function Navigation() {
                             <Link
                                 href="/product"
                                 className="text-sm font-medium underline-offset-4"
-                                prefetch={false}
+                                prefetch={true}
                             >
                                 Sản phẩm
                             </Link>
@@ -101,16 +101,16 @@ export default function Navigation() {
                             <Link
                                 href="/service"
                                 className="text-sm font-medium underline-offset-4"
-                                prefetch={false}
+                                prefetch={true}
                             >
                                 Dịch vụ
                             </Link>
                         </Button>
                         <Button variant="ghost" asChild>
                             <Link
-                                href="#"
+                                href="/about-us"
                                 className="text-sm font-medium underline-offset-4"
-                                prefetch={false}
+                                prefetch={true}
                             >
                                 Về chúng tôi
                             </Link>
