@@ -1,5 +1,6 @@
 import { Body, Controller, Post, Put, UseGuards } from '@nestjs/common';
 import { CLIENT_ADMIN_ROUTE, ROUTER } from '../../../common/constant/router.constant';
+import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
 import { UserTypeEnum } from '../../../common/enum/user.enum';
 import { TargetActionRequire } from '../../../shared/decorator/permission.decorator';
 import { UserType } from '../../../shared/decorator/user-types.decorator';
@@ -17,14 +18,14 @@ export class ClientAdminController {
 
     @Post(CLIENT_ADMIN_ROUTE.LIST)
     @UserType(UserTypeEnum.STAFF)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.CLIENT, action: [PermissionActionEnum.READ] }])
     list(@Body() body: SearchClientDto) {
         return this.clientAdminService.list(body);
     }
 
     @Put(CLIENT_ADMIN_ROUTE.UPDATE_LOCK)
     @UserType(UserTypeEnum.STAFF)
-    @TargetActionRequire([])
+    @TargetActionRequire([{ target: PermissionTargetEnum.CLIENT, action: [PermissionActionEnum.UPDATE] }])
     updateLock(@Body() body: ClientUpdateLockDto) {
         return this.clientAdminService.updateLock(body);
     }

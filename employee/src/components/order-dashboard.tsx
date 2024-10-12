@@ -76,25 +76,29 @@ const chartConfig = {
 
 export default function OrderDashboard({ statistic }: IOrderDashboardProps) {
     let data = statistic.order.orderCountDetail.map((item) => ({
-        name: chartConfig[ORDER_STATUS[item.status]].label,
-        fill: chartConfig[ORDER_STATUS[item.status]].fill,
+        name: chartConfig[ORDER_STATUS[item.status as EOrderStatus]].label,
+        fill: chartConfig[ORDER_STATUS[item.status as EOrderStatus]].fill,
         "Số lượng": parseInt(item.count),
     }));
 
     return (
-        <Card className="h-full">
+        <Card className="h-full flex flex-col">
             <CardHeader>
                 <CardTitle>Thống kê đơn hàng</CardTitle>
             </CardHeader>
-            <CardContent className="px-5 h-full">
+            <CardContent className="px-5 h-full flex flex-1">
                 {!!statistic.order.orderCount ? (
-                    <ChartContainer config={chartConfig} className="w-full">
+                    <ChartContainer
+                        config={chartConfig}
+                        className="w-full flex-1"
+                    >
                         <RadialBarChart
                             data={data}
                             innerRadius="10%"
                             outerRadius="80%"
                             startAngle={180}
                             endAngle={0}
+                            className="h-fit"
                         >
                             <RadialBar
                                 label={{
@@ -110,7 +114,10 @@ export default function OrderDashboard({ statistic }: IOrderDashboardProps) {
                                     <ChartTooltipContent className="w-fit" />
                                 }
                             />
-                            <ChartLegend content={<ChartLegendContent />} />
+                            <ChartLegend
+                                content={<ChartLegendContent />}
+                                className="flex-wrap h-fit w-full"
+                            />
                             <CartesianGrid vertical={false} horizontal={true} />
                         </RadialBarChart>
                     </ChartContainer>

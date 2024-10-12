@@ -118,7 +118,7 @@ export function HomeScreen() {
                         month={month}
                     />
                 </div>
-                <div className="h-fit w-[450px]">
+                <div className="h-full w-[450px]">
                     <OrderDashboard statistic={statistic} />
                 </div>
             </div>

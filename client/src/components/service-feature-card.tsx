@@ -42,7 +42,7 @@ export default function ServiceFeatureCard({
                         </p>
                     </div>
                     <div className="w-full relative">
-                        <p className="whitespace-normal line-clamp-1 text-primary text-sm font-medium w-full text-nowrap text-ellipsis">
+                        <p className="whitespace-normal line-clamp-1 text-primary text-lg font-medium w-full text-nowrap text-ellipsis">
                             {formatMoney(service.price)}
                         </p>
                     </div>

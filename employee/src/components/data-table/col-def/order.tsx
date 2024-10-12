@@ -162,7 +162,7 @@ export const orderColumnDef: ColumnDef<IOrderList>[] = [
                             "text-green-500 bg-green-500 border-green-500 bg-opacity-15"
                         )}
                     >
-                        "Đã thanh toán
+                        Đã thanh toán
                     </Badge>
                 );
             }
