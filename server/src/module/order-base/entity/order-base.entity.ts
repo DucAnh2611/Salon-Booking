@@ -10,7 +10,6 @@ import {
 } from 'typeorm';
 import { ModifyEntity } from '../../../common/enitty/modify.entity';
 import { OrderPaymentTypeEnum, OrderStatusEnum, OrderType } from '../../../common/enum/order.enum';
-import { addMinutesToCurrentTime } from '../../../shared/utils/date.utils';
 import { ClientEntity } from '../../client/entity/client.entity';
 import { OrderRefundRequestEntity } from '../../oder-refund-request/entity/order-refund-request.entity';
 import { OrderProductItemEntity } from '../../order-product-item/entity/order-product-item.entity';
@@ -30,8 +29,6 @@ function generateOrderCode() {
 
     return orderCode;
 }
-
-const EXPIRE_CONFIRM_SERVICE_ORDER = 15;
 
 @Entity('order')
 export class OrderEntity extends ModifyEntity {
@@ -131,8 +128,5 @@ export class OrderEntity extends ModifyEntity {
     @BeforeInsert()
     initDefault() {
         this.code = generateOrderCode();
-        if (this.type === OrderType.SERVICE) {
-            this.confirmExpired = addMinutesToCurrentTime(EXPIRE_CONFIRM_SERVICE_ORDER);
-        }
     }
 }

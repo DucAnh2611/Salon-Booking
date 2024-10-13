@@ -10,7 +10,7 @@ import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
 import { api_media_url } from "@/utils/apiCall";
 import { joinString } from "@/utils/string";
 import { DropdownMenuItem } from "@radix-ui/react-dropdown-menu";
-import { LogOutIcon } from "lucide-react";
+import { LogOutIcon, Settings } from "lucide-react";
 import { useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -165,6 +165,18 @@ export default function NavigationBar() {
                         <DropdownMenuSeparator />
 
                         <DropdownMenuRadioGroup>
+                            <DropdownMenuItem>
+                                <Button
+                                    variant="ghost"
+                                    className="gap-2 justify-start w-full"
+                                    asChild
+                                >
+                                    <a href={"/setting"}>
+                                        <Settings size={15} />
+                                        <p>Cài đặt</p>
+                                    </a>
+                                </Button>
+                            </DropdownMenuItem>
                             <DropdownMenuItem>
                                 <Button
                                     variant="destructive"

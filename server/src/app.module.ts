@@ -28,6 +28,7 @@ import { RolePermissionModule } from './module/role-permission/role-permission.m
 import { RoleModule } from './module/role/role.module';
 import { ScheduleModule } from './module/schedule/schedule.module';
 import { ServiceModule } from './module/service/service.module';
+import { SettingModule } from './module/setting/setting.module';
 import { SocketModule } from './module/socket/socket.module';
 import { StatisticModule } from './module/statistic/statistic.module';
 import { ThirdPartyModule } from './module/thirdparty/thirdparty.module';
@@ -67,6 +68,7 @@ import { AppResponseInterceptor } from './shared/interceptor';
 
         StatisticModule,
         OrganizationModule,
+        SettingModule,
 
         //Third party module
         ThirdPartyModule,

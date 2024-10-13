@@ -16,6 +16,7 @@ import { permissionReducer } from "./permission.reducer";
 import { productReducer } from "./product.reducer";
 import { roleReducer } from "./role.reducer";
 import { serviceReducer } from "./service.reducer";
+import { settingReducer } from "./setting.reducer";
 import { shiftReducer } from "./shift.reducer";
 import { themeReducer } from "./theme.reducer";
 import { workingHourReducer } from "./working-hour.reducer";
@@ -41,6 +42,7 @@ const rootReducer = combineReducers({
     dashboardReducer,
     organizationReducer,
     jobReducer,
+    settingReducer,
 });
 
 export default rootReducer;

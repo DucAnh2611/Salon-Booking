@@ -45,3 +45,5 @@ export const organizationSelector = (state: TRootState) =>
     state.organizationReducer;
 
 export const jobSelector = (state: TRootState) => state.jobReducer;
+
+export const settingSelector = (state: TRootState) => state.settingReducer;

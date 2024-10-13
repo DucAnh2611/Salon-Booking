@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Not, Repository } from 'typeorm';
-import { OTP_EXPIRE, REQUEST_RESET_PASSWORD_EXPIRE } from '../../../common/constant/otp.constant';
 import { REDIS_EMAIL_OTP_FORMAT, REDIS_OTP_FORMAT } from '../../../common/constant/redis.constant';
 import { CLIENT_ROUTE, ROUTER } from '../../../common/constant/router.constant';
 import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
@@ -18,6 +17,7 @@ import { JwtTokenUtil } from '../../../shared/utils/token.utils';
 import { MailService } from '../../mail/mail.service';
 import { MediaService } from '../../media/service/media.service';
 import { RedisService } from '../../redis/redis.service';
+import { SettingService } from '../../setting/setting.service';
 import { UserService } from '../../user/user.service';
 import { CheckResetPasswordSignatureDto } from '../dto/client-get.dto';
 import { ClientResetPasswordDto, ClientUpdateInfoDto } from '../dto/client-update.dto';
@@ -34,6 +34,7 @@ export class ClientService {
         private readonly mailService: MailService,
         private readonly userService: UserService,
         private readonly jwtTokenUtil: JwtTokenUtil,
+        private readonly settingService: SettingService,
     ) {}
 
     async isExistByEmail(email: string) {
@@ -72,10 +73,11 @@ export class ClientService {
             return { token: cache.token };
         }
 
-        const expM = joinString({
-            joinString: '',
-            strings: [REQUEST_RESET_PASSWORD_EXPIRE.time.toString(), REQUEST_RESET_PASSWORD_EXPIRE.unit],
-        });
+        const setting = await this.settingService.get();
+
+        const expM = setting.resetPassword;
+
+        const [_base, time, _unit] = expM.match(/^(\d+)([mhd])$/);
 
         const signature = generateOTP({ length: 12, type: 'mixed' });
         const exp = TimeUtil.toMilisecond({
@@ -99,7 +101,7 @@ export class ClientService {
         await this.mailService.clientForgotPassword({
             email,
             redirectURL: redirectURL,
-            minutes: REQUEST_RESET_PASSWORD_EXPIRE.time,
+            minutes: parseInt(time),
             name: joinString({ joinString: ' ', strings: [client.userBase.lastname, client.userBase.firstname] }),
         });
 
@@ -330,8 +332,13 @@ export class ClientService {
             return { expired: new Date(existedOTP.expired) };
         }
 
+        const setting = await this.settingService.get();
+
         const otp = generateOTP({ length: 6, type: 'number' });
-        const expM = joinString({ joinString: '', strings: [OTP_EXPIRE.time.toString(), OTP_EXPIRE.unit] });
+
+        const expM = setting.otpVerifyEmail;
+
+        const [_base, time, _unit] = expM.match(/^(\d+)([mhd])$/);
         const exp = TimeUtil.toMilisecond({
             time: expM,
         });
@@ -355,7 +362,7 @@ export class ClientService {
         await this.mailService.clientVerifyEmail({
             email: client.email,
             otp,
-            minutes: OTP_EXPIRE.time,
+            minutes: parseInt(time),
             name: joinString({ joinString: ' ', strings: [user.firstname, user.lastname] }),
             redirectURL,
         });

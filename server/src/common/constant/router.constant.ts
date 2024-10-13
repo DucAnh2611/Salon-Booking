@@ -49,6 +49,8 @@ export const ROUTER = {
 
     ORGANIZATION_ADMIN: 'organization-admin',
     ORGANIZATION: 'organization',
+
+    SETTING: 'setting',
 };
 
 export const AUTH_ROUTE = {
@@ -376,4 +378,10 @@ export const ORGANIZATION_ADMIN_ROUTE = {
 
 export const ORGANIZATION_ROUTE = {
     CURRENT: '/current',
+};
+
+export const SETTING_ROUTE = {
+    UPDATE: '',
+    GET: '',
+    RESET: 'reset',
 };

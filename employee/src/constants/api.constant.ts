@@ -564,4 +564,33 @@ export const API_URLS = {
             withCredentials: true,
         }),
     },
+    SETTING: {
+        GET: () => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["setting"],
+            }),
+            withCredentials: true,
+        }),
+        RESET: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["setting", "reset"],
+            }),
+            withCredentials: true,
+        }),
+        UPDATE: () => ({
+            method: "PUT",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["setting"],
+            }),
+            withCredentials: true,
+        }),
+    },
 };

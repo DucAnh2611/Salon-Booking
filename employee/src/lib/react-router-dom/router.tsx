@@ -24,6 +24,7 @@ import UpdateRoleScreen from "@/screens/role/update";
 import ServiceScreen from "@/screens/service";
 import CreateServiceScreen from "@/screens/service/create";
 import UpdateServiceScreen from "@/screens/service/update";
+import SettingScreen from "@/screens/setting";
 import CalendarWorkinghourScreen from "@/screens/working-hour";
 import DetailWorkingHourScreen from "@/screens/working-hour/detail";
 import UpdateWorkingHourScreen from "@/screens/working-hour/update";
@@ -169,6 +170,10 @@ export const router = createBrowserRouter([
                         element: <OrganizationUpdateSreen />,
                     },
                 ],
+            },
+            {
+                path: ROUTER_PATH.SETTING,
+                element: <SettingScreen />,
             },
             {
                 path: "*",

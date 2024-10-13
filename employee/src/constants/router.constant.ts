@@ -12,4 +12,5 @@ export const ROUTER_PATH = {
     ORDER: "/order",
     LOGIN: "/login",
     ORGANIZTAION: "/organization",
+    SETTING: "/setting",
 };

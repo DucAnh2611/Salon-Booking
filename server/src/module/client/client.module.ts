@@ -7,6 +7,7 @@ import { MediaModule } from '../media/media.module';
 import { RedisModule } from '../redis/redis.module';
 import { RolePermissionModule } from '../role-permission/role-permission.module';
 import { RoleModule } from '../role/role.module';
+import { SettingModule } from '../setting/setting.module';
 import { UserModule } from '../user/user.module';
 import { ClientAdminController } from './controller/client-admin.controller';
 import { ClientVerifyController } from './controller/client-verify.controller';
@@ -24,6 +25,7 @@ import { ClientService } from './service/client.service';
         RedisModule,
         RoleModule,
         RolePermissionModule,
+        SettingModule,
     ],
     controllers: [ClientController, ClientVerifyController, ClientAdminController],
     providers: [ClientService, ClientAdminService, JwtService, JwtTokenUtil],

@@ -7,14 +7,19 @@ import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { OrderStatusEnum, OrderType } from '../../common/enum/order.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
+import { TimeUtil } from '../../shared/utils/parse-time.util';
 import { GetJobQueryListDto } from '../order/dto/order-get.dto';
+import { SettingService } from '../setting/setting.service';
 import { CreateOrderBaseDto } from './dto/order-base-create.dto';
 import { FindOrderAdminDto, FindOrderClientDto } from './dto/order-base-get.dto';
 import { OrderEntity } from './entity/order-base.entity';
 
 @Injectable()
 export class OrderBaseService {
-    constructor(@InjectRepository(OrderEntity) private readonly orderBaseRepository: Repository<OrderEntity>) {}
+    constructor(
+        @InjectRepository(OrderEntity) private readonly orderBaseRepository: Repository<OrderEntity>,
+        private readonly settingService: SettingService,
+    ) {}
 
     getQueryRunner() {
         return this.orderBaseRepository.manager.connection.createQueryRunner();
@@ -196,7 +201,7 @@ export class OrderBaseService {
         });
     }
 
-    create(userId: string, clientId: string, body: CreateOrderBaseDto) {
+    async create(userId: string, clientId: string, body: CreateOrderBaseDto) {
         const { address, name, paymentType, phone, total, note, type } = body;
 
         const taxAmount = Math.round(total * TAX_RATE);
@@ -217,8 +222,16 @@ export class OrderBaseService {
             createdBy: userId,
             updatedBy: userId,
             orderDate: new Date(),
+            confirmExpired: null,
             type,
         });
+
+        if (type === OrderType.SERVICE) {
+            const setting = await this.settingService.get();
+            instance.confirmExpired = new Date(
+                new Date().getTime() + TimeUtil.toMilisecond({ time: setting.orderServiceConfirm }),
+            );
+        }
 
         return this.orderBaseRepository.save(instance);
     }
