@@ -9,12 +9,17 @@ import { useEffect, useState } from "react";
 
 function Page() {
     const [step, SetStep] = useState<number>(0);
+    const [init, SetInit] = useState<boolean>(false);
 
     const searchParam = useSearchParams();
 
     useEffect(() => {
+        if (!init) SetInit(true);
         SetStep(parseInt(searchParam.get("step") || "0"));
-    }, [searchParam]);
+        if (!searchParam.get("step") && init) {
+            SetStep(1);
+        }
+    }, [searchParam, init]);
 
     switch (step) {
         case 1:
@@ -34,4 +39,5 @@ function Page() {
             );
     }
 }
+
 export default withoutAuth(Page);

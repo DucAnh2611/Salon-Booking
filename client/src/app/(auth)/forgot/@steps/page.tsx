@@ -7,12 +7,17 @@ import { useEffect, useState } from "react";
 
 export default function Page() {
     const [step, SetStep] = useState<number>(0);
+    const [init, SetInit] = useState<boolean>(false);
 
     const searchParam = useSearchParams();
 
     useEffect(() => {
+        if (!init) SetInit(true);
         SetStep(parseInt(searchParam.get("step") || "0"));
-    }, [searchParam]);
+        if (!searchParam.get("step") && init) {
+            SetStep(1);
+        }
+    }, [searchParam, init]);
 
     useEffect(() => {
         document.title =

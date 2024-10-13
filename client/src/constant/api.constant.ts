@@ -111,7 +111,6 @@ export const API_URLS = {
                 joinString: "/",
                 strings: ["client", `exist?email=${email}`],
             }),
-            withCredentials: true,
         }),
         SEND_RESET_PASSWORD_EMAIL: (email: string) => ({
             method: "GET",
@@ -120,7 +119,6 @@ export const API_URLS = {
                 joinString: "/",
                 strings: ["client", "signature", `send?email=${email}`],
             }),
-            withCredentials: true,
         }),
         CHECK_RESET_PASSWORD_SIGNATURE: (email: string, token: string) => ({
             method: "GET",
@@ -133,7 +131,6 @@ export const API_URLS = {
                     `check?email=${email}&token=${token}`,
                 ],
             }),
-            withCredentials: true,
         }),
         RESET_PASSWORD: () => ({
             method: "PUT",
@@ -142,7 +139,6 @@ export const API_URLS = {
                 joinString: "/",
                 strings: ["client", "reset-password"],
             }),
-            withCredentials: true,
         }),
     },
     CATEGORY: {
