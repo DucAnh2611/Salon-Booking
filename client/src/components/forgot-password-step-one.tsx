@@ -207,7 +207,7 @@ export default function ForgotPasswordStep1() {
                                 </p>
                             </div>
                         )}
-                    {(!!isDebouncingEmail || !!loading) && dEmail && (
+                    {(!!isDebouncingEmail || !!loading) && email && (
                         <div className="space-y-2 rounded-sm border p-2">
                             <div className="flex gap-5">
                                 <Skeleton className="size-12 rounded-full" />
