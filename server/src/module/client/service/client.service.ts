@@ -66,7 +66,7 @@ export class ClientService {
         }
 
         const redisName = `session_rs_pw_${email}`;
-        await this.redisService.del(redisName);
+        // await this.redisService.del(redisName);
         const cache = await this.redisService.get<{ email: string; token: string }>(redisName);
         if (cache) {
             return { token: cache.token };
