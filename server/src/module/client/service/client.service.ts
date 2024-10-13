@@ -197,6 +197,7 @@ export class ClientService {
     async info(clientId: string) {
         const redisName = joinString({ joinString: '_', strings: ['me', 'info', clientId] });
 
+        await this.redisService.del(redisName);
         const getCache = await this.redisService.get(redisName);
         if (getCache) {
             return getCache;

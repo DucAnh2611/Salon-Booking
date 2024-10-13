@@ -8,6 +8,7 @@ import { api_media_url } from "@/lib/apiCall";
 import { joinString } from "@/lib/string";
 import { ScissorsIcon } from "lucide-react";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { Fragment, useEffect, useState } from "react";
 import MediaLoader from "./media-load";
 import { ModeToggle } from "./theme-toggle";
@@ -18,6 +19,8 @@ export default function Navigation() {
     const [organization, SetOrganization] = useState<IOrganization | null>(
         null
     );
+
+    const search = useSearchParams();
 
     const { socket, isConnected } = useSocket();
 
@@ -59,6 +62,21 @@ export default function Navigation() {
             };
         }
     }, [socket, isConnected]);
+
+    useEffect(() => {
+        if (organization && organization.logo) {
+            const link = document.querySelector('link[rel="icon"]');
+            if (link) {
+                link.setAttribute(
+                    "href",
+                    joinString({
+                        joinString: "",
+                        strings: [api_media_url, organization.logo.path],
+                    })
+                );
+            }
+        }
+    }, [search, organization]);
 
     return (
         <nav className="w-full h-fit box-border border-b z-10 bg-background sticky top-0 left-0">
