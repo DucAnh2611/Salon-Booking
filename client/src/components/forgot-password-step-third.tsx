@@ -8,7 +8,7 @@ import {
 import { getTimeDifference } from "@/lib/date";
 import { resetPasswordSchema } from "@/schema/client.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { format } from "date-fns";
+import { format, isValid } from "date-fns";
 import { CircleX, LoaderCircle, Undo2 } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
@@ -62,7 +62,7 @@ export default function ForgotPasswordStep3() {
     });
 
     const handleSubmit = async () => {
-        if (success || submit) return;
+        if (success || submit || !isValid || isExpired) return;
         SetSubmit(true);
         SetSuccess(false);
         const formData = form.getValues();
