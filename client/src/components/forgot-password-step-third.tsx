@@ -278,12 +278,18 @@ export default function ForgotPasswordStep3() {
                                                 )}
                                                 Đổi mật khẩu
                                             </Button>
-                                            <p className="text-xs w-full text-center mt-2">
-                                                Yêu cầu hết hạn trong
-                                                <b className="text-primary ml-1">
-                                                    {timeLeft}
-                                                </b>
-                                            </p>
+                                            {submit && success ? (
+                                                <p className="text-xs w-full text-center text-green-500 mt-2">
+                                                    Đặt lại mật khẩu thành công
+                                                </p>
+                                            ) : (
+                                                <p className="text-xs w-full text-center mt-2">
+                                                    Yêu cầu hết hạn trong
+                                                    <b className="text-primary ml-1">
+                                                        {timeLeft}
+                                                    </b>
+                                                </p>
+                                            )}
                                         </>
                                     )}
                                 </div>
