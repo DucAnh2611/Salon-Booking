@@ -2,7 +2,6 @@ import { IUserBase } from "./user.interface";
 
 export interface IClient {
     id: string;
-    phone: string;
     email: string;
 
     phoneVerified: boolean;
@@ -18,4 +17,19 @@ export interface IClientInfo extends IClient {}
 
 export interface IVerifyEmailResponse {
     expired: Date;
+}
+
+export interface ISendEmailResetpassword {
+    token: string;
+}
+
+export interface ICheckEmailResetpassword {
+    expired: Date;
+}
+
+export interface IApiResetPassword {
+    token: string;
+    email: string;
+    newPassword: string;
+    confirmPassword: string;
 }

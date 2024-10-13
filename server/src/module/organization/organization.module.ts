@@ -14,6 +14,6 @@ import { OrganizationService } from './service/organization.service';
     imports: [TypeOrmModule.forFeature([OrganizationEntity]), RoleModule, RolePermissionModule, MediaModule],
     controllers: [OrganizationAdminController, OrganizationController],
     providers: [OrganizationService, OrganizationAdminService, OrganizationGateway],
-    exports: [],
+    exports: [OrganizationService, OrganizationAdminService],
 })
 export class OrganizationModule {}

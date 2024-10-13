@@ -17,3 +17,8 @@ export class ClientOTPDto {
 export type TokenOTP = {
     email: string;
 };
+
+export type TokenResetPassword = {
+    email: string;
+    signature: string;
+};

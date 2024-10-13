@@ -15,6 +15,7 @@ import { IFailRequest } from "@/interface/response.interface";
 import { joinString } from "@/lib/string";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect } from "react";
 
 function SignupPage() {
     const router = useRouter();
@@ -47,7 +48,10 @@ function SignupPage() {
             duration: 1500,
         });
     };
-    document.title = "Đăng ký";
+
+    useEffect(() => {
+        document.title = "Đăng ký";
+    }, []);
 
     return (
         <Card className="w-fit border-none">

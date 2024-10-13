@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, Not, Repository } from 'typeorm';
-import { OTP_EXPIRE } from '../../../common/constant/otp.constant';
+import { OTP_EXPIRE, REQUEST_RESET_PASSWORD_EXPIRE } from '../../../common/constant/otp.constant';
 import { REDIS_EMAIL_OTP_FORMAT, REDIS_OTP_FORMAT } from '../../../common/constant/redis.constant';
 import { CLIENT_ROUTE, ROUTER } from '../../../common/constant/router.constant';
 import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
@@ -19,9 +19,10 @@ import { MailService } from '../../mail/mail.service';
 import { MediaService } from '../../media/service/media.service';
 import { RedisService } from '../../redis/redis.service';
 import { UserService } from '../../user/user.service';
-import { ClientUpdateInfoDto } from '../dto/client-update.dto';
+import { CheckResetPasswordSignatureDto } from '../dto/client-get.dto';
+import { ClientResetPasswordDto, ClientUpdateInfoDto } from '../dto/client-update.dto';
 import { CreateClientDto } from './../dto/client-create.dto';
-import { TokenOTP } from './../dto/client-otp.dto';
+import { TokenOTP, TokenResetPassword } from './../dto/client-otp.dto';
 import { ClientEntity } from './../entity/client.entity';
 
 @Injectable()
@@ -34,6 +35,129 @@ export class ClientService {
         private readonly userService: UserService,
         private readonly jwtTokenUtil: JwtTokenUtil,
     ) {}
+
+    async isExistByEmail(email: string) {
+        const targetClient = await this.clientRepository.findOne({
+            where: {
+                email: email,
+                userBase: { type: UserTypeEnum.CLIENT },
+            },
+            loadEagerRelations: false,
+            relations: {
+                userBase: {
+                    userAvatar: true,
+                },
+            },
+        });
+
+        return targetClient || null;
+    }
+
+    async sendLinkResetPassword(email: string) {
+        const client = await this.clientRepository.findOne({
+            where: { email: email, userBase: { type: UserTypeEnum.CLIENT } },
+            loadEagerRelations: false,
+            relations: {
+                userBase: true,
+            },
+        });
+        if (!client) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_CLIENT });
+        }
+
+        const redisName = `session_rs_pw_${email}`;
+        await this.redisService.del(redisName);
+        const cache = await this.redisService.get<{ email: string; token: string }>(redisName);
+        if (cache) {
+            return { token: cache.token };
+        }
+
+        const expM = joinString({
+            joinString: '',
+            strings: [REQUEST_RESET_PASSWORD_EXPIRE.time.toString(), REQUEST_RESET_PASSWORD_EXPIRE.unit],
+        });
+
+        const signature = generateOTP({ length: 12, type: 'mixed' });
+        const exp = TimeUtil.toMilisecond({
+            time: expM,
+        });
+
+        const tokenSignature = this.jwtTokenUtil.generateToken<TokenResetPassword>({
+            payload: { email, signature },
+            key: jwtConfig.otp.secret,
+            options: {
+                expiresIn: expM,
+            },
+        });
+        const redirectURL = joinString({
+            joinString: '/',
+            strings: [appConfig.clientUrl, `forgot?step=3&token=${tokenSignature}&email=${email}`],
+        });
+
+        const expired = new Date(Date.now() + exp);
+        await this.redisService.set(redisName, { email, token: tokenSignature, expired }, exp);
+        await this.mailService.clientForgotPassword({
+            email,
+            redirectURL: redirectURL,
+            minutes: REQUEST_RESET_PASSWORD_EXPIRE.time,
+            name: joinString({ joinString: ' ', strings: [client.userBase.lastname, client.userBase.firstname] }),
+        });
+
+        return { token: tokenSignature };
+    }
+
+    async checkSignature({ email, token }: CheckResetPasswordSignatureDto) {
+        const client = await this.clientRepository.findOne({
+            where: { email: email, userBase: { type: UserTypeEnum.CLIENT } },
+            loadEagerRelations: false,
+        });
+        if (!client) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_CLIENT });
+        }
+
+        const redisName = `session_rs_pw_${email}`;
+        const cache = await this.redisService.get<{ email: string; token: string; expired: Date }>(redisName);
+        if (!cache) {
+            throw new BadRequest({ message: DataErrorCodeEnum.EXPIRED_REQUEST_RESET_PASSWORD });
+        }
+        if (!token || token !== cache.token || email !== cache.email) {
+            throw new BadRequest({ message: DataErrorCodeEnum.DISMATCH_RESET_PASSWORD_TOKEN });
+        }
+
+        return { expired: cache.expired };
+    }
+
+    async resetPassword(body: ClientResetPasswordDto) {
+        const { confirmPassword, email, newPassword, token } = body;
+
+        const client = await this.clientRepository.findOne({
+            where: { email: email, userBase: { type: UserTypeEnum.CLIENT } },
+            loadEagerRelations: false,
+        });
+        if (!client) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_CLIENT });
+        }
+
+        const redisName = `session_rs_pw_${email}`;
+        const cache = await this.redisService.get<{ email: string; token: string }>(redisName);
+        if (!cache) {
+            throw new BadRequest({ message: DataErrorCodeEnum.EXPIRED_REQUEST_RESET_PASSWORD });
+        }
+        if (!token || token !== cache.token || email !== cache.email) {
+            throw new BadRequest({ message: DataErrorCodeEnum.DISMATCH_RESET_PASSWORD_TOKEN });
+        }
+
+        if (newPassword !== confirmPassword) {
+            throw new BadRequest({ message: DataErrorCodeEnum.DISMATCH_PASSWORD });
+        }
+
+        await Promise.all([
+            this.userService.update(client.userId, { password: newPassword }),
+            this.redisService.del(redisName),
+        ]);
+
+        return DataSuccessCodeEnum.OK;
+    }
 
     async me(clientId: string) {
         const redisName = joinString({ joinString: '_', strings: ['me', clientId] });

@@ -46,3 +46,44 @@ export const clientUpdateSchema = z.object({
         message: "Giới tính không được lựa chọn",
     }),
 });
+
+export const resetPasswordSchema = z
+    .object({
+        token: z.string(),
+        email: z.string().email({ message: "Không đúng đỊnh dạng email" }),
+        newPassword: z
+            .string()
+            .min(8, "Mật khẩu phải dài ít nhất 8 ký tự")
+            .regex(
+                /[a-z]/,
+                "Mật khẩu phải bao gồm ít nhất 1 chữ cái viết thường"
+            )
+            .regex(/[A-Z]/, "Mật khẩu phải bao gồm ít nhất 1 chữ cái viết hoa")
+            .regex(/[0-9]/, "Mật khẩu ít nhất phải bao gồm 1 chữ số")
+            .regex(
+                /[@$!%*?&#]/,
+                "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt (@$!%*?&#)"
+            ),
+        confirmPassword: z
+            .string()
+            .min(8, "Mật khẩu phải dài ít nhất 8 ký tự")
+            .regex(
+                /[a-z]/,
+                "Mật khẩu phải bao gồm ít nhất 1 chữ cái viết thường"
+            )
+            .regex(/[A-Z]/, "Mật khẩu phải bao gồm ít nhất 1 chữ cái viết hoa")
+            .regex(/[0-9]/, "Mật khẩu ít nhất phải bao gồm 1 chữ số")
+            .regex(
+                /[@$!%*?&#]/,
+                "Mật khẩu phải chứa ít nhất 1 ký tự đặc biệt (@$!%*?&#)"
+            ),
+    })
+    .superRefine(({ newPassword, confirmPassword }, ctx) => {
+        if (newPassword !== confirmPassword) {
+            ctx.addIssue({
+                code: "custom",
+                message: "Mật khẩu xác nhận không trùng khớp.",
+                path: ["confirmPassword"],
+            });
+        }
+    });

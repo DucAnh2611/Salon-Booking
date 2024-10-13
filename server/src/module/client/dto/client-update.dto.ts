@@ -1,5 +1,16 @@
 import { Transform } from 'class-transformer';
-import { IsBoolean, IsDate, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID } from 'class-validator';
+import {
+    IsBoolean,
+    IsDate,
+    IsEmail,
+    IsEnum,
+    IsNotEmpty,
+    IsOptional,
+    IsPhoneNumber,
+    IsString,
+    IsStrongPassword,
+    IsUUID,
+} from 'class-validator';
 import { GenderEnum } from '../../../common/enum/gender.enum';
 
 export class ClientUpdateLockDto {
@@ -37,4 +48,25 @@ export class ClientUpdateInfoDto {
     @IsNotEmpty()
     @IsPhoneNumber('VN')
     phone: string;
+}
+
+export class ClientResetPasswordDto {
+    @IsNotEmpty()
+    @IsString()
+    @IsEmail()
+    email: string;
+
+    @IsNotEmpty()
+    @IsString()
+    token: string;
+
+    @IsNotEmpty()
+    @IsString()
+    @IsStrongPassword()
+    newPassword: string;
+
+    @IsNotEmpty()
+    @IsString()
+    @IsStrongPassword()
+    confirmPassword: string;
 }

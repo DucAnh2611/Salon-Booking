@@ -26,6 +26,8 @@ export default function MediaLoader<T extends IMedia>({
                 ) : (
                     <video
                         src={api_media_url + media.path}
+                        muted
+                        controls
                         className="w-full h-full object-cover"
                     />
                 )

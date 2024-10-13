@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { ChevronLeft, ChevronRight, ImageOff } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import MediaLoader from "./media-load";
 import { Button } from "./ui/button";
 
 interface IServiceDetailMediaProps {
@@ -74,7 +75,7 @@ export default function ServiceDetailMedia({
                                             ],
                                         })}
                                         controls={false}
-                                        autoPlay
+                                        muted
                                         className="w-full h-auto object-cover"
                                     />
                                 )}
@@ -114,34 +115,7 @@ export default function ServiceDetailMedia({
                                 </Button>
                             </>
                         )}
-                        {getMediaType(medias[select].media.path) === "image" ? (
-                            <Image
-                                alt="pre_p_detail"
-                                src={joinString({
-                                    joinString: "",
-                                    strings: [
-                                        api_media_url,
-                                        medias[select].media.path,
-                                    ],
-                                })}
-                                width={1000}
-                                height={1000}
-                                className="w-full h-full object-contain"
-                            />
-                        ) : (
-                            <video
-                                src={joinString({
-                                    joinString: "",
-                                    strings: [
-                                        api_media_url,
-                                        medias[select].media.path,
-                                    ],
-                                })}
-                                controls={false}
-                                autoPlay
-                                className="w-full h-full object-contain"
-                            />
-                        )}
+                        <MediaLoader media={medias[select].media} />
                     </div>
                 )}
             </div>

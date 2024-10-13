@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Query, Req, Res, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
 import { CLIENT_ROUTE, ROUTER } from '../../../common/constant/router.constant';
 import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
@@ -9,7 +9,9 @@ import { UserType } from '../../../shared/decorator/user-types.decorator';
 import { BadRequest } from '../../../shared/exception/error.exception';
 import { AccessTokenClientGuard } from '../../../shared/guard/accessToken.guard';
 import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
+import { CheckResetPasswordSignatureDto, GetQueryCheckEmailDto } from '../dto/client-get.dto';
 import { ClientOTPDto, ClientOTPTokenDto } from '../dto/client-otp.dto';
+import { ClientResetPasswordDto } from '../dto/client-update.dto';
 import { ClientService } from '../service/client.service';
 
 @Controller(ROUTER.CLIENT)
@@ -56,5 +58,27 @@ export class ClientVerifyController {
         }
 
         return res.redirect(`${appConfig.clientUrl}`);
+    }
+
+    @Get(CLIENT_ROUTE.EXIST)
+    existEmail(@Query() query: GetQueryCheckEmailDto) {
+        const { email } = query;
+        return this.clientService.isExistByEmail(email);
+    }
+
+    @Get(CLIENT_ROUTE.SEND_RESET_PASSWORD_EMAIL)
+    async sendEmailSignature(@Query() query: GetQueryCheckEmailDto) {
+        const { email } = query;
+        return this.clientService.sendLinkResetPassword(email);
+    }
+
+    @Get(CLIENT_ROUTE.CHECK_RESET_PASSWORD_SIGNATURE)
+    checkEmailSignature(@Query() query: CheckResetPasswordSignatureDto) {
+        return this.clientService.checkSignature(query);
+    }
+
+    @Put(CLIENT_ROUTE.RESET_PASSWORD)
+    resetPassword(@Body() body: ClientResetPasswordDto) {
+        return this.clientService.resetPassword(body);
     }
 }

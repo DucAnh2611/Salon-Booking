@@ -149,8 +149,8 @@ export default function Page() {
             onSuccess();
         } else {
             toast({
-                title: "Thành công",
-                description: "Cập nhật thông tin thành công",
+                title: "Thất bại",
+                description: "Cập nhật thông tin thất bại",
                 variant: "destructive",
                 duration: 1500,
             });

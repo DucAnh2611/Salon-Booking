@@ -45,3 +45,19 @@ export class SearchClientDto extends PaginationQuery {
     @Type(() => OrderSearchClientDto)
     order: OrderSearchClientDto;
 }
+
+export class CheckResetPasswordSignatureDto {
+    @IsNotEmpty()
+    @IsString()
+    email: string;
+
+    @IsNotEmpty()
+    @IsString()
+    token: string;
+}
+
+export class GetQueryCheckEmailDto {
+    @IsNotEmpty()
+    @IsString()
+    email: string;
+}

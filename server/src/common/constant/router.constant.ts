@@ -110,6 +110,10 @@ export const CLIENT_ROUTE = {
     ME: 'me',
     INFO: 'me/i',
     UPDATE: 'me/',
+    EXIST: 'exist',
+    SEND_RESET_PASSWORD_EMAIL: '/signature/send',
+    CHECK_RESET_PASSWORD_SIGNATURE: '/signature/check',
+    RESET_PASSWORD: '/reset-password',
 
     VERIFY_EMAIL: 'verify-email',
     VERIFY_EMAIL_OTP: 'verify-email-otp',

@@ -7,6 +7,7 @@ import { localStorageSet } from "@/lib/localStr";
 import { loginSchema } from "@/schema/auth.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -134,6 +135,14 @@ export default function LoginForm({ onSuccess, onFail }: ILoginFormProps) {
                                 </FormItem>
                             )}
                         />
+                    </div>
+                    <div className="w-full flex justify-start mt-2">
+                        <Link
+                            href={"forgot"}
+                            className="w-fit text-xs text-primary hover:underline"
+                        >
+                            Quên mật khẩu?
+                        </Link>
                     </div>
                     <div className="w-full mt-5">
                         <Button className="w-full" type="submit">

@@ -104,6 +104,46 @@ export const API_URLS = {
             }),
             withCredentials: true,
         }),
+        EXIST: (email: string) => ({
+            method: "GET",
+            headers: HEADERS.header_form(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["client", `exist?email=${email}`],
+            }),
+            withCredentials: true,
+        }),
+        SEND_RESET_PASSWORD_EMAIL: (email: string) => ({
+            method: "GET",
+            headers: HEADERS.header_form(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["client", "signature", `send?email=${email}`],
+            }),
+            withCredentials: true,
+        }),
+        CHECK_RESET_PASSWORD_SIGNATURE: (email: string, token: string) => ({
+            method: "GET",
+            headers: HEADERS.header_form(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: [
+                    "client",
+                    "signature",
+                    `check?email=${email}&token=${token}`,
+                ],
+            }),
+            withCredentials: true,
+        }),
+        RESET_PASSWORD: () => ({
+            method: "PUT",
+            headers: HEADERS.header_form(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["client", "reset-password"],
+            }),
+            withCredentials: true,
+        }),
     },
     CATEGORY: {
         TREE: (parentId?: string) => ({

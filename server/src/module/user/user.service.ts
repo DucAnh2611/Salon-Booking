@@ -59,8 +59,10 @@ export class UserService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_USER });
         }
 
+        const { password: _p, ...userInfo } = user;
+
         const newUserInfo: UserEntity = this.userRepository.create({
-            ...user,
+            ...userInfo,
             ...body,
         });
 
