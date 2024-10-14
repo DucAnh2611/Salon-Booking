@@ -3,17 +3,12 @@ import { IsNotEmpty, IsNumber, IsPositive, IsString } from 'class-validator';
 
 export class BankCreateQuickLinkQRDto {
     @IsNotEmpty()
-    @Type(() => Number)
-    @IsNumber()
-    bankBin: number;
+    @IsString()
+    bankCode: string;
 
     @IsNotEmpty()
     @IsString()
     bankAccount: string;
-
-    @IsNotEmpty()
-    @IsString()
-    bankName: string;
 
     @IsNotEmpty()
     @Type(() => Number)

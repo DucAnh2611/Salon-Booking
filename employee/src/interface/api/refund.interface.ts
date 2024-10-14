@@ -27,7 +27,7 @@ export interface IRefund {
 }
 
 export interface IApiApproveRefund {
-    mediaUrl: string;
+    mediaUrl?: string;
     requestId: string;
     note?: string;
     bankTransactionCode: string;

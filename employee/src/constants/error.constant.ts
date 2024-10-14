@@ -165,7 +165,7 @@ export const DATA_ERROR_CODE: Record<EDataErrorCode, string> = {
     DE122: "Nhân viên không sẵn sàng",
     DE123: "Nhân viên dịch vụ bị trùng lặp",
     DE124: "Yêu cầu hoàn tiền đã được phê duyệt",
-    DE125: "Tài khoản bị khóa",
+    DE125: "Tài khoản đã bị khóa",
     DE126: "Khả năng tạo đơn hàng bị khóa",
     DE127: "Email hoặc số điện thoại đã tồn tại",
     DE128: "Số điện thoại nhân viên bị trùng lặp",
@@ -174,4 +174,13 @@ export const DATA_ERROR_CODE: Record<EDataErrorCode, string> = {
     DE131: "Thông tin doanh nghiệp không tồn tại",
     DE132: "Không thể hiển thị thông tin doanh nghiệp",
     DE133: "SKU đã tồn tại",
+
+    [EDataErrorCode.EXPIRED_REQUEST_RESET_PASSWORD]:
+        "Hết thời gian đặt lại mật khẩu.",
+    [EDataErrorCode.DISMATCH_RESET_PASSWORD_TOKEN]:
+        "Thông tin xác thực đặt lại mật khẩu không khớp",
+    [EDataErrorCode.DISMATCH_PASSWORD]: "Mật khẩu không giống nhau",
+    [EDataErrorCode.NOT_EXIST_SETTING]: "Không tồn tại thông tin cài đặt",
+    [EDataErrorCode.NOT_EXIST_REFUND_TRANSACTION]:
+        "Không tồn tại giao dịch hoàn tiền",
 };

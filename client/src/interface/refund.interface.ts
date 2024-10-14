@@ -36,8 +36,8 @@ export interface IRefundCreate {
     orderId: string;
     transactionId?: string;
     amount: number;
-    accountName: string;
     accountNumber: string;
     accountBankBin: string;
+    accountBankCode: string;
     note: string;
 }

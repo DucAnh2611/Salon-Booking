@@ -63,8 +63,8 @@ export default function DialogCreateRefund({
         defaultValues: {
             amount: 0,
             bankAccount: "",
+            bankCode: "",
             bankBin: "",
-            bankName: "",
             desc: "",
         },
         resolver: zodResolver(createRefundRequestSchema),
@@ -77,23 +77,19 @@ export default function DialogCreateRefund({
     const onSelectBank = (bank: IBank | null) => {
         SetSelected(bank);
 
+        form.setValue("bankCode", bank ? bank.code : "");
         form.setValue("bankBin", bank ? bank.bin : "");
-        form.setValue("bankName", "");
         form.setValue("bankAccount", "");
-    };
-
-    const test = () => {
-        console.log(form.getValues());
     };
 
     const onSubmit = async () => {
         if (!confirm) return;
-        const { amount, bankAccount, bankBin, bankName, desc } =
+        const { amount, bankAccount, bankCode, bankBin, desc } =
             form.getValues();
 
         const body: IRefundCreate = {
             accountBankBin: bankBin.toString(),
-            accountName: bankName,
+            accountBankCode: bankCode,
             accountNumber: bankAccount,
             amount: amount,
             note: desc || `HOAN TIEN DON HANG ${order.code}`,
@@ -195,25 +191,6 @@ export default function DialogCreateRefund({
                                             />
                                             <FormField
                                                 control={form.control}
-                                                name="bankName"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormLabel>
-                                                            Tên tài khoản
-                                                            <RequireField />
-                                                        </FormLabel>
-                                                        <FormControl>
-                                                            <Input
-                                                                placeholder="Tên tài khoản"
-                                                                {...field}
-                                                            />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <FormField
-                                                control={form.control}
                                                 name="desc"
                                                 render={({ field }) => (
                                                     <FormItem>
@@ -275,7 +252,6 @@ export default function DialogCreateRefund({
                                             <Button
                                                 type="submit"
                                                 disabled={!confirm}
-                                                onClick={test}
                                             >
                                                 Gửi yêu cầu
                                             </Button>

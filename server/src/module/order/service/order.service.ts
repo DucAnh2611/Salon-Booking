@@ -748,7 +748,7 @@ export class OrderService {
             orderId,
             transactionId: body.transactionId,
             accountBankBin: body.accountBankBin,
-            accountName: body.accountName,
+            accountBankCode: body.accountBankCode,
             accountNumber: body.accountNumber,
             note: body.note,
             amount: amount,

@@ -108,7 +108,7 @@ export class OrderRefundRequestService {
     }
 
     async initRefundRequest(userId: string, body: CreateOrderRefundRequestDto) {
-        const { orderId, amount, accountBankBin, accountName, accountNumber, transactionId, note } = body;
+        const { orderId, amount, accountBankBin, accountBankCode, accountNumber, transactionId, note } = body;
 
         const currentRequest = await this.getPendingRequest(orderId, transactionId);
         if (currentRequest.length) {
@@ -120,7 +120,7 @@ export class OrderRefundRequestService {
             transactionId: transactionId || null,
             amount,
             accountBankBin: accountBankBin,
-            accountBankName: accountName,
+            accountBankCode: accountBankCode,
             accountBankNumber: accountNumber,
             status: OrderRefundRequestStatusEnum.PENDING,
             description: note || '',

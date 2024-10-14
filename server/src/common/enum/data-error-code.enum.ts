@@ -173,4 +173,5 @@ export enum DataErrorCodeEnum {
     DISMATCH_PASSWORD = 'DE136',
 
     NOT_EXIST_SETTING = 'DE137',
+    NOT_EXIST_REFUND_TRANSACTION = 'DE138',
 }

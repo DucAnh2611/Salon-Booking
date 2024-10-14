@@ -160,4 +160,11 @@ export enum EDataErrorCode {
     DE131 = "Thông tin doanh nghiệp không tồn tại",
     DE132 = "Không thể hiển thị thông tin doanh nghiệp",
     DE133 = "SKU đã tồn tại",
+
+    DE134 = "Hết thời gian đặt lại mật khẩu.",
+    DE135 = "Thông tin xác thực đặt lại mật khẩu không khớp",
+    DE136 = "Mật khẩu không giống nhau",
+
+    DE137 = "Không tồn tại thông tin cài đặt",
+    DE138 = "Không tồn tại giao dịch hoàn tiền",
 }

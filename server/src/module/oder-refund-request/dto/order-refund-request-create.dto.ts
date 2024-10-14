@@ -17,15 +17,15 @@ export class CreateOrderRefundRequestDto {
 
     @IsNotEmpty()
     @IsString()
-    accountName: string;
-
-    @IsNotEmpty()
-    @IsString()
     accountNumber: string;
 
     @IsNotEmpty()
     @IsString()
     accountBankBin: string;
+
+    @IsNotEmpty()
+    @IsString()
+    accountBankCode: string;
 
     @IsOptional()
     @IsString()

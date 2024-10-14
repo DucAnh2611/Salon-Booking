@@ -120,12 +120,6 @@ export default function RefundRequestCard({ refund }: IRefundRequestCardProps) {
                     </div>
 
                     <div className="flex gap-2 text-sm  w-full">
-                        <span className="font-medium">Tên tài khoản:</span>
-
-                        <span className="">{refund.accountBankName}</span>
-                    </div>
-
-                    <div className="flex gap-2 text-sm  w-full">
                         <span className="font-medium">Ghi chú:</span>
 
                         <span className="">

@@ -16,3 +16,8 @@ export const THIRD_PARTY_VIETQR = {
     BANKS: 'banks',
     QUICK_QR: 'generate',
 };
+
+export const THIRD_PARTY_SEPAY = {
+    PAYMENT_QR: 'img',
+    TRANSACTION_LIST: 'userapi/transactions/list',
+};

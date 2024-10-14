@@ -147,11 +147,7 @@ export default function DialogApprovedRefund({
                     <div className="max-w-[300px]">
                         <Label>Mã QR</Label>
                         {qr ? (
-                            <img
-                                src={qr.qrDataURL}
-                                alt="qr"
-                                className="h-auto w-auto"
-                            />
+                            <img src={qr} alt="qr" className="h-auto w-auto" />
                         ) : (
                             <div className="w-[300px] h-[300px] flex items-center justify-center bg-yellow-500 bg-opacity-15 text-yellow-500 border-yellow-500">
                                 <LoaderCircle
@@ -173,7 +169,6 @@ export default function DialogApprovedRefund({
                                             <FormItem>
                                                 <FormLabel>
                                                     Ảnh xác thực
-                                                    <RequireField />
                                                 </FormLabel>
                                                 <FormControl>
                                                     <SelectMedia

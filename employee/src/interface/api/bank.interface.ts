@@ -15,9 +15,4 @@ export interface IBankQuickQr {
     data: IQuickQr;
 }
 
-export interface IQuickQr {
-    acpId?: number;
-    accountName?: string;
-    qrCode: string;
-    qrDataURL: string;
-}
+export type IQuickQr = string;

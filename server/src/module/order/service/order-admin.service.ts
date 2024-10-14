@@ -264,8 +264,7 @@ export class OrderAdminService {
         return this.bankService.createQrPayment({
             amount: refundInfo.amount,
             bankAccount: refundInfo.accountBankNumber,
-            bankBin: parseInt(refundInfo.accountBankBin),
-            bankName: refundInfo.accountBankName,
+            bankCode: refundInfo.accountBankCode,
             desc: `HOAN TIEN DON HANG ${order.code}`,
         });
     }
@@ -306,10 +305,22 @@ export class OrderAdminService {
         }
         const order = await this.orderBaseService.get(orderRefundRequest.orderId);
 
-        const { accountBankBin, accountBankName, accountBankNumber, amount } = orderRefundRequest;
+        const transactionRef = await this.bankService.getTransactionReference({
+            reference_number: bankTransactionCode,
+            amount_out: orderRefundRequest.amount,
+            limit: 1,
+        });
+
+        const find = transactionRef.find(i => i.reference_number === bankTransactionCode);
+
+        if (!find) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_REFUND_TRANSACTION });
+        }
+
+        const { accountBankCode, accountBankNumber, amount } = orderRefundRequest;
 
         await Promise.all([
-            this.bankService.removeQr(`${accountBankBin}_${accountBankNumber}_${accountBankName}_${amount}`),
+            this.bankService.removeQr(`${accountBankCode}_${accountBankNumber}_${amount}`),
             this.orderRefundRequestService.updateRefundRequest({
                 requestId,
                 status: OrderRefundRequestStatusEnum.APPROVED,
@@ -321,7 +332,18 @@ export class OrderAdminService {
                 bankTransactionCode,
                 mediaId,
                 mediaUrl,
-                note,
+                note: `Mã tham chiếu: ${find.reference_number}
+                    Ngân hàng: ${find.bank_brand_name}
+                    Số tiền: ${Number(find.amount_out).toLocaleString('vi-VN', {
+                        style: 'currency',
+                        currency: 'VND',
+                    })}
+                    Mô tả: ${find.transaction_content}
+                    Thời gian: ${find.transaction_date}
+
+                    Chuyển từ: ${find.account_number}
+                    Ghi chú từ nhân viên: ${note || 'Không có'}`,
+
                 userId,
             }),
         ]);

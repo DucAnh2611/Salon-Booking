@@ -8,9 +8,7 @@ export const approvedRefundRequestSchema = z.object({
     bankTransactionCode: z
         .string()
         .min(5, { message: ZOD_MESSAGE.min(5, "Mã chuyển tiền ngân hàng") }),
-    mediaUrl: z
-        .string()
-        .min(1, { message: ZOD_MESSAGE.require("Ảnh xác thực") }),
+    mediaUrl: z.string().optional(),
     note: z.string().optional(),
 });
 

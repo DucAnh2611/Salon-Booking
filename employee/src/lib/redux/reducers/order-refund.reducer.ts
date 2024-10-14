@@ -41,7 +41,7 @@ export const orderRefundReducer = (
                 return {
                     ...state,
                     isApproving: false,
-                    isFailure: false,
+                    isFailure: true,
                 };
             }
             return state;

@@ -46,11 +46,11 @@ export class OrderRefundRequestEntity extends BaseEntity {
     @Column('varchar', { length: 50 })
     accountBankBin: string;
 
-    @Column('varchar', { length: 50 })
-    accountBankNumber: string;
+    @Column('varchar', { nullable: true })
+    accountBankCode: string;
 
     @Column('varchar', { length: 50 })
-    accountBankName: string;
+    accountBankNumber: string;
 
     @CreateDateColumn({ type: 'timestamp with time zone' })
     createdAt: Date;
