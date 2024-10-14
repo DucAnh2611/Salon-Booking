@@ -213,11 +213,23 @@ export class ServiceBaseService {
     }
 
     async feature() {
+        const query: Array<{ id: string; count: number }> = await this.orderServiceItemRepository
+            .createQueryBuilder('os')
+            .innerJoinAndSelect('os.service', 's')
+            .innerJoinAndSelect('os.order', 'o')
+            .select('os.serviceId', 'id')
+            .addSelect('COUNT(os.serviceId)', 'count')
+            .groupBy('os.serviceId')
+            .orderBy('COUNT(os.serviceId)', 'DESC')
+            .where('s.deletedAt IS NULL')
+            .andWhere('o.status = :status', { status: OrderStatusEnum.FINISH })
+            .take(4)
+            .getRawMany();
+
         const items = await this.seriviceBaseRepository.find({
-            where: {},
+            where: { id: In(query.map(item => item.id)) },
             loadEagerRelations: false,
             order: { createdAt: SortByEnum.DESC },
-            take: 4,
         });
 
         const mapMedia = await Promise.all(
@@ -227,10 +239,7 @@ export class ServiceBaseService {
                     where: { serviceId: item.id },
                     loadEagerRelations: false,
                 });
-                const bookingCounts = await this.orderServiceItemRepository.count({
-                    where: { serviceId: item.id, order: { status: Not(In([OrderStatusEnum.CANCELLED])) } },
-                    loadEagerRelations: false,
-                });
+                const bookingCounts = query.find(i => i.id === item.id)?.count || 0;
 
                 return {
                     ...item,

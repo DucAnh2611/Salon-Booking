@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
-import { SortByEnum } from '../../../common/enum/query.enum';
+import { OrderStatusEnum } from '../../../common/enum/order.enum';
 import { BadRequest } from '../../../shared/exception/error.exception';
 import { CategoryService } from '../../category/category.service';
 import { OrderProductItemEntity } from '../../order-product-item/entity/order-product-item.entity';
@@ -25,12 +25,22 @@ export class ProductBaseClientService {
         return this.productBaseRepository.findOne({ where: { id }, loadEagerRelations: false });
     }
     async featured() {
+        const query: Array<{ id: string; count: number }> = await this.orderProductItemRepository
+            .createQueryBuilder('op')
+            .innerJoinAndSelect('op.product', 'p')
+            .innerJoinAndSelect('op.order', 'o')
+            .select('op.productId', 'id')
+            .addSelect('SUM(op.quantity)', 'count')
+            .groupBy('op.productId')
+            .orderBy('SUM(op.quantity)', 'DESC')
+            .where('p.deletedAt IS NULL')
+            .andWhere('o.status = :status', { status: OrderStatusEnum.RECEIVED })
+            .take(4)
+            .getRawMany();
+
         const items = await this.productBaseRepository.find({
-            where: {},
+            where: { id: In(query.map(i => i.id)) },
             loadEagerRelations: false,
-            take: 4,
-            skip: 0,
-            order: { createdAt: SortByEnum.DESC },
             relations: {
                 types: true,
                 productMedia: {
@@ -42,7 +52,7 @@ export class ProductBaseClientService {
         const mapMedia = await Promise.all(
             items.map(async item => {
                 const media = await this.productMediaService.getListDetailForProduct(item.id);
-                const buyingCounts = await this.orderProductItemRepository.sum('quantity', { productId: item.id });
+                const buyingCounts = query.find(i => i.id === item.id)?.count || 0;
 
                 return {
                     ...item,
