@@ -21,6 +21,14 @@ export class OrderBaseService {
         private readonly settingService: SettingService,
     ) {}
 
+    getOrderAndService(orderId: string) {
+        return this.orderBaseRepository.findOne({
+            where: { id: orderId },
+            loadEagerRelations: false,
+            relations: { services: true },
+        });
+    }
+
     getQueryRunner() {
         return this.orderBaseRepository.manager.connection.createQueryRunner();
     }

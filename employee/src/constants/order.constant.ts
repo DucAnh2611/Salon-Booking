@@ -15,7 +15,7 @@ export const ORDER_PAYMENT_TYPE: Record<EOrderPaymentType, string> = {
 };
 
 export const ORDER_STATUS: Record<EOrderStatus, string> = {
-    [EOrderStatus.PENDING]: "Tạo dơn hàng",
+    [EOrderStatus.PENDING]: "Tạo đơn hàng",
     [EOrderStatus.PENDING_PAYMENT]: "Đợi thanh toán",
     [EOrderStatus.PAID_PAYMENT]: "Thanh toán thành công",
 

@@ -449,6 +449,15 @@ export const API_URLS = {
             }),
             withCredentials: true,
         }),
+        EXPIRED_ORDER: (id: string) => ({
+            method: "POST",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "expired", id],
+            }),
+            withCredentials: true,
+        }),
     },
     PROVINCE: {
         LIST_PROVINCE: () => ({

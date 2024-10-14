@@ -3,20 +3,24 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import useOrderTracking from "@/hook/useOrderTracking.hook";
+import { joinString } from "@/lib/string";
 import { List, Search } from "lucide-react";
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
-import { KeyboardEvent, useEffect } from "react";
+import { KeyboardEvent, useEffect, useState } from "react";
 
 export default function Tracking() {
     const router = useRouter();
     const { setCode } = useOrderTracking();
     const search = useSearchParams();
 
+    const [searchCode, SetSearchCode] = useState<string>("");
+
     const code = search.get("code");
 
     const handleKeyDown = (e: KeyboardEvent<HTMLInputElement>) => {
         const newCode = e.currentTarget.value;
+        SetSearchCode(newCode);
         if (e.key === "Enter" && !!newCode && newCode !== code) {
             router.push(`/tracking?code=${e.currentTarget.value}`);
         }
@@ -25,6 +29,7 @@ export default function Tracking() {
     useEffect(() => {
         if (code) {
             setCode(code);
+            SetSearchCode(code);
         }
     }, [code]);
 
@@ -45,9 +50,16 @@ export default function Tracking() {
                     onKeyDown={handleKeyDown}
                     className="flex-2"
                 />
-                <Button className="gap-2 flex-1">
-                    <Search size={15} />
-                    Tra cứu
+                <Button className="gap-2 flex-1" asChild>
+                    <Link
+                        href={joinString({
+                            joinString: "",
+                            strings: ["/tracking?code=", searchCode],
+                        })}
+                    >
+                        <Search size={15} />
+                        Tra cứu
+                    </Link>
                 </Button>
             </div>
         </div>

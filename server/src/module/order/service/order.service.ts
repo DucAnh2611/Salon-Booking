@@ -317,6 +317,44 @@ export class OrderService {
         return newOrder;
     }
 
+    async clientExpiredOrder(userId: string, clientId: string, orderId: string) {
+        const order = await this.orderBaseService.getOrderAndService(orderId);
+        if (!order) {
+            throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
+        }
+
+        const isOwn = await this.orderBaseService.isOwn(orderId, clientId);
+        if (!isOwn) {
+            throw new BadRequest({ message: DataErrorCodeEnum.ORDER_FORBIDDEN });
+        }
+
+        if (
+            order.status !== OrderStatusEnum.CONFIRMED &&
+            new Date(order.confirmExpired).getTime() <= new Date().getTime()
+        ) {
+            await Promise.all([
+                this.orderBaseService.cancelExpiredOrder(order.id),
+                this.orderStateService.addCancelExpired(order.id),
+                ...order.services.map(service =>
+                    this.shiftEmployeeService.updateStatus(service.employeeId, {
+                        shiftId: service.shiftId,
+                        status: ShiftEmployeeStatusEnum.AVAILABLE,
+                    }),
+                ),
+            ]);
+
+            if (order.paymentType === OrderPaymentTypeEnum.BANK) {
+                this.orderTransactionService.cancelTransactionOrderQueue(order.id);
+            }
+            this.orderGateway.adminUpdateOrder({ orderId: order.id });
+            this.orderGateway.clientUpdateOrder({ orderId: order.id });
+
+            return DataSuccessCodeEnum.OK;
+        } else {
+            throw new BadRequest({ message: DataErrorCodeEnum.CAN_NOT_CANCEL_ORDER });
+        }
+    }
+
     async clientCancelOrder(userId: string, clientId: string, body: ClientCancelOrderStateDto) {
         const { orderId, reason } = body;
 
@@ -675,6 +713,10 @@ export class OrderService {
         if (!isOwn) {
             throw new BadRequest({ message: DataErrorCodeEnum.ORDER_FORBIDDEN });
         }
+
+        if (order.status !== OrderStatusEnum.PENDING) {
+            throw new BadRequest({ message: DataErrorCodeEnum.INVALID_ORDER_STATE });
+        }
         await this.orderBaseService.updateState(orderId, OrderStatusEnum.CONFIRMED, userId);
 
         await this.orderStateService.addState({
@@ -795,8 +837,6 @@ export class OrderService {
             order.type === OrderType.SERVICE &&
             order.status &&
             [OrderStatusEnum.PAID_PAYMENT, OrderStatusEnum.PENDING].includes(order.status);
-
-        console.log(order.status);
 
         return {
             cancelable: [...CAN_CANCEL_LIST, OrderStatusEnum.CONFIRMED].includes(order.status) && !isPendingTransaction,

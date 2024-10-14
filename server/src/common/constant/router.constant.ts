@@ -304,6 +304,7 @@ export const CLIENT_ORDER_ROUTE = {
     RECEIVE_ORDER: ':id/receive',
     RETURN_ORDER: ':id/return',
     CANCEL_ORDER: 'cancel',
+    EXPIRED_ORDER: 'expired/:id',
 
     CREATE_REQUEST_REFUND: 'refund/',
     CANCEL_REQUEST_REFUND: 'refund/cancel',

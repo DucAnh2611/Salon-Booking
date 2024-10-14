@@ -421,16 +421,18 @@ export class OrderAdminService {
             serviceOrders.map(async order => {
                 this.orderBaseService.cancelExpiredOrder(order.id);
                 this.orderStateService.addCancelExpired(order.id);
-                if (order.paymentType === OrderPaymentTypeEnum.BANK) {
-                    await this.orderTransactionService.cancelTransactionOrderQueue(order.id);
-                    this.orderGateway.adminUpdateOrder({ orderId: order.id });
-                }
                 order.services.map(service =>
                     this.shiftEmployeeService.updateStatus(service.employeeId, {
                         shiftId: service.shiftId,
                         status: ShiftEmployeeStatusEnum.AVAILABLE,
                     }),
                 );
+
+                if (order.paymentType === OrderPaymentTypeEnum.BANK) {
+                    this.orderTransactionService.cancelTransactionOrderQueue(order.id);
+                }
+                this.orderGateway.adminUpdateOrder({ orderId: order.id });
+                this.orderGateway.clientUpdateOrder({ orderId: order.id });
             }),
         );
     }

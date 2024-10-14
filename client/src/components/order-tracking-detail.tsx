@@ -10,6 +10,7 @@ import { ESocketEvent, ESocketMessage } from "@/enum/socket.enum";
 import useOrderTracking from "@/hook/useOrderTracking.hook";
 import useSocket from "@/hook/useSocket.hook";
 import { IOrderDetail } from "@/interface/order.interface";
+import { expiredOrderService } from "@/lib/actions/order.action";
 import { getPaymentLinkProduct } from "@/lib/actions/transaction.action";
 import { getTimeDifference } from "@/lib/date";
 import { formatMoney } from "@/lib/money";
@@ -73,6 +74,23 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
         }
     };
 
+    const expiredOrder = async (id: string) => {
+        const { response } = await expiredOrderService(id);
+
+        if (response) {
+            reload("order");
+            reload("state");
+            reload("transaction");
+            reload("refund");
+        } else {
+            toast({
+                title: "Thất bại",
+                description: "Không thể tự dộng hủy đơn hàng.",
+                variant: "destructive",
+            });
+        }
+    };
+
     const onSuccessCancel = () => {
         reload("order");
         reload("state");
@@ -114,6 +132,7 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
                     );
                     if (minutes <= 0 && seconds <= 0) {
                         SetIsExpired(true);
+                        expiredOrder(order.id);
                     }
                 }, 1000);
 
@@ -476,21 +495,23 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
                             }
                         />
                     )}
-                    {order.confirmable && (
-                        <DialogConfirmOrder
-                            onSuccess={onSuccessConfirm}
-                            orderId={order.id}
-                            trigger={
-                                <Button
-                                    className="w-full"
-                                    variant="default"
-                                    disabled={!order.confirmable}
-                                >
-                                    Xác nhận đơn hàng
-                                </Button>
-                            }
-                        />
-                    )}
+                    {order.confirmable &&
+                        order.confirmExpired &&
+                        !isExpired && (
+                            <DialogConfirmOrder
+                                onSuccess={onSuccessConfirm}
+                                orderId={order.id}
+                                trigger={
+                                    <Button
+                                        className="w-full"
+                                        variant="default"
+                                        disabled={!order.confirmable}
+                                    >
+                                        Xác nhận đơn hàng
+                                    </Button>
+                                }
+                            />
+                        )}
                     {order.receivable && (
                         <DialogReceiveOrder
                             onSuccess={onSuccessReceive}

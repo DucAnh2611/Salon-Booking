@@ -166,6 +166,15 @@ export class OrderController {
         return this.orderService.getPaymentLink(orderId, userId, clientId, 'S');
     }
 
+    @Post(CLIENT_ORDER_ROUTE.EXPIRED_ORDER)
+    @UserType(UserTypeEnum.CLIENT)
+    expiredOrder(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
+        const { clientId, userId } = req.accessPayload;
+        const { id: orderId } = param;
+
+        return this.orderService.clientExpiredOrder(userId, clientId, orderId);
+    }
+
     @Post(CLIENT_ORDER_ROUTE.CANCEL_ORDER)
     @UserType(UserTypeEnum.CLIENT)
     cancelOrder(@Req() req: AppRequest, @Body() body: ClientCancelOrderStateDto) {

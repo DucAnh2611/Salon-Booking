@@ -185,3 +185,14 @@ export const placeOrderService = async (body: IPlaceOrderService) => {
 
     return resApi;
 };
+
+/** @EXPIRED_ORDER */
+export const expiredOrderService = async (id: string) => {
+    const api = API_URLS.ORDER.EXPIRED_ORDER(id);
+
+    const resApi = await apiCall({
+        ...api,
+    });
+
+    return resApi;
+};
