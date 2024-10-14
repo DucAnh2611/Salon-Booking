@@ -88,6 +88,7 @@ export class UserEntity extends BaseEntity {
     @BeforeUpdate()
     async hashPassword() {
         if (this.password) {
+            console.log(this.password);
             this.password = await HashPasswordUtil.hashPassword(this.password);
         }
     }

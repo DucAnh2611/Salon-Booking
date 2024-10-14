@@ -82,12 +82,6 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
             reload("state");
             reload("transaction");
             reload("refund");
-        } else {
-            toast({
-                title: "Thất bại",
-                description: "Không thể tự dộng hủy đơn hàng.",
-                variant: "destructive",
-            });
         }
     };
 
