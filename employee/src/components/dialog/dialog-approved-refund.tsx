@@ -1,8 +1,14 @@
 import { API_URLS } from "@/constants/api.constant";
+import { ESocketEvent, ESocketMessage } from "@/enum/socket.enum";
+import useSocket from "@/hooks/useSocket";
 import { IQuickQr } from "@/interface/api/bank.interface";
 import { IMediaTempUpload } from "@/interface/api/media.interface";
+import { IWebhookRefundResult } from "@/interface/api/order-refund.interface";
 import { IApiApproveRefund } from "@/interface/api/refund.interface";
-import { approveOrderRefund } from "@/lib/redux/actions/order-refund.action";
+import {
+    approveOrderRefund,
+    getOrderRefund,
+} from "@/lib/redux/actions/order-refund.action";
 import { orderRefundSelector } from "@/lib/redux/selector";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
 import { approvedRefundRequestSchema } from "@/schemas/order-refund.schema";
@@ -21,6 +27,7 @@ import { Button } from "../ui/button";
 import {
     Dialog,
     DialogContent,
+    DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
@@ -40,6 +47,8 @@ import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { toast } from "../ui/use-toast";
 
+const TIME_RECHECK = 10;
+
 interface IDialogApprovedRefundProps {
     trigger: ReactNode;
     requestId: string;
@@ -51,7 +60,8 @@ export default function DialogApprovedRefund({
     requestId,
     onSuccess,
 }: IDialogApprovedRefundProps) {
-    const { isApproving, isFailure } = useAppSelector(orderRefundSelector);
+    const { isApproving, isFailure, detail } =
+        useAppSelector(orderRefundSelector);
     const dispath = useAppDispatch();
 
     const [sessionId, SetSessionId] = useState<string>(generateUUID());
@@ -59,6 +69,9 @@ export default function DialogApprovedRefund({
     const [mediaUrls, SetMediaUrls] = useState<IMediaTempUpload[]>([]);
     const [submit, SetSubmit] = useState<boolean>(false);
     const [qr, SetQr] = useState<IQuickQr | null>(null);
+    const [getRefundData, SetGetRefundData] = useState<boolean>(false);
+    const [recheckRemain, SetRecheckRemain] = useState<number>(TIME_RECHECK);
+    const { socket, isConnected } = useSocket();
 
     const form = useForm<z.infer<typeof approvedRefundRequestSchema>>({
         defaultValues: {
@@ -76,6 +89,12 @@ export default function DialogApprovedRefund({
 
         if (response) {
             SetQr(response.result);
+            if (response.result.referenceCode) {
+                form.setValue(
+                    "bankTransactionCode",
+                    response.result.referenceCode
+                );
+            }
         } else {
             SetQr(null);
             toast({
@@ -85,9 +104,32 @@ export default function DialogApprovedRefund({
                 duration: 2000,
             });
         }
+        SetGetRefundData(true);
+    };
+
+    const getRequestRefund = (requestId: string) => {
+        dispath(getOrderRefund(requestId));
+    };
+
+    const checkRequest = async (requestId: string) => {
+        SetGetRefundData(false);
+        const api = API_URLS.REFUND.CHECK(requestId);
+        const { response } = await apiCall<IWebhookRefundResult>({ ...api });
+
+        if (response) {
+            if (response.result) {
+                form.setValue(
+                    "bankTransactionCode",
+                    response.result.referenceCode
+                );
+            }
+        }
+        SetGetRefundData(true);
+        SetRecheckRemain(TIME_RECHECK);
     };
 
     const handleSubmit = () => {
+        if (submit || !qr || isApproving || !qr.qrLink) return;
         SetSubmit(true);
         const formData = form.getValues();
 
@@ -112,11 +154,23 @@ export default function DialogApprovedRefund({
         if (open) {
             form.reset();
             form.setValue("requestId", requestId);
+
             getRequestQr(requestId);
+            getRequestRefund(requestId);
+
+            SetGetRefundData(false);
+            SetRecheckRemain(TIME_RECHECK);
             SetQr(null);
             SetSubmit(false);
             SetSessionId(generateUUID());
             SetMediaUrls([]);
+        } else {
+            SetGetRefundData(false);
+            if (socket && detail && isConnected) {
+                socket.emit(ESocketMessage.LEAVE_REFUND_REQUEST, {
+                    code: detail.code,
+                });
+            }
         }
         SetOpen(open);
     };
@@ -135,30 +189,103 @@ export default function DialogApprovedRefund({
         }
     }, [isApproving, submit, isFailure]);
 
+    useEffect(() => {
+        if (!socket || !isConnected) return;
+        if (socket && detail) {
+            socket.emit(ESocketMessage.LISTEN_REFUND_REQUEST, {
+                code: detail.code,
+            });
+
+            socket.on(
+                ESocketEvent.SUCCESS_REFUND_REQUEST,
+                (data: { code: string; referenceCode: string }) => {
+                    if (data.code === detail.code) {
+                        SetGetRefundData(false);
+                        form.setValue(
+                            "bankTransactionCode",
+                            data.referenceCode
+                        );
+                    }
+                }
+            );
+
+            return () => {
+                socket.off(ESocketEvent.SUCCESS_REFUND_REQUEST);
+            };
+        }
+    }, [qr, socket, isConnected]);
+
+    useEffect(() => {
+        if (qr && getRefundData) {
+            const interval = setInterval(() => {
+                const r = recheckRemain;
+                SetRecheckRemain(r - 1);
+
+                if (r === 0) {
+                    checkRequest(requestId);
+                }
+            }, 1000);
+
+            return () => {
+                clearInterval(interval);
+            };
+        }
+    }, [qr, recheckRemain, getRefundData]);
+
     return (
         <Dialog open={open} onOpenChange={handleOpen}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
-            <DialogContent className="max-w-none w-fit">
+            <DialogContent className="max-w-none w-[700px]">
                 <DialogHeader>
                     <DialogTitle>Xác nhận hoàn tiền</DialogTitle>
+                    <DialogDescription>
+                        Sau khi quét mã QR, nhân viên không được thay đổi các
+                        thông tin chuyển khoản (Nội dung chuyển khoản, số tiền)
+                    </DialogDescription>
                 </DialogHeader>
                 <Separator orientation="horizontal" />
                 <div className="flex gap-3">
-                    <div className="max-w-[300px]">
-                        <Label>Mã QR</Label>
-                        {qr ? (
-                            <img src={qr} alt="qr" className="h-auto w-auto" />
-                        ) : (
-                            <div className="w-[300px] h-[300px] flex items-center justify-center bg-yellow-500 bg-opacity-15 text-yellow-500 border-yellow-500">
-                                <LoaderCircle
-                                    size={20}
-                                    className="animate-spin"
-                                />
-                            </div>
-                        )}
+                    <div className="w-fit flex flex-col gap-2">
+                        <div className="max-w-[300px]">
+                            {detail && (
+                                <div className="w-auto flex gap-2 items-center">
+                                    <Label>Mã yêu cầu</Label>
+                                    <p className="text-primary font-bold text-sm">
+                                        {detail.code}
+                                    </p>
+                                </div>
+                            )}
+                            {qr ? (
+                                <>
+                                    <img
+                                        src={qr.qrLink}
+                                        alt="qr"
+                                        className="h-auto w-auto"
+                                    />
+                                </>
+                            ) : (
+                                <div className="w-[300px] h-[300px] flex items-center justify-center bg-yellow-500 bg-opacity-15 text-yellow-500 border-yellow-500">
+                                    <LoaderCircle
+                                        size={20}
+                                        className="animate-spin"
+                                    />
+                                </div>
+                            )}
+                            {getRefundData && (
+                                <div className="w-auto">
+                                    <p className="text-xs">
+                                        Tự động kiểm tra sau
+                                        <b className="mx-1 text-primary">
+                                            {recheckRemain}
+                                        </b>
+                                        giây.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
                     </div>
 
-                    <div className="w-[300px]">
+                    <div className="flex-1">
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(handleSubmit)}>
                                 <div>
@@ -279,7 +406,9 @@ export default function DialogApprovedRefund({
                                         </Button>
                                         <Button
                                             type="submit"
-                                            disabled={isApproving}
+                                            disabled={
+                                                isApproving || !qr || !detail
+                                            }
                                             className="gap-2 items-center"
                                         >
                                             {isApproving && (

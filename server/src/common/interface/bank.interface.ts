@@ -30,7 +30,9 @@ export interface BankQuickQrApi {
     data: QuickQr;
 }
 
-export type BankPaymentQrSePay = string;
+export type BankPaymentQrSePay = {
+    qrLink: string;
+};
 export interface QuickQr {
     acpId?: number;
     accountName?: string;

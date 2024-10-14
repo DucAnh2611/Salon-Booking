@@ -3,6 +3,7 @@ import { Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { firstValueFrom, map } from 'rxjs';
 import { THIRD_PARTY_SEPAY, THIRD_PARTY_VIETQR } from '../../common/constant/router-third-party';
+import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import {
     Bank,
     BankListApi,
@@ -13,6 +14,7 @@ import {
 import { thirdPartyConfig } from '../../config/third-party';
 import { joinString } from '../../shared/utils/string';
 import { RedisService } from '../redis/redis.service';
+import { WebhookRefundResultDto } from '../webhook/dto/webhook-post.dto';
 import { BankCreateQuickLinkQRDto } from './dto/bank-create.dto';
 import { TransactionRefund } from './dto/bank-get.dto';
 
@@ -62,13 +64,15 @@ export class BankService {
     }
 
     async createQrPayment(body: BankCreateQuickLinkQRDto) {
-        const { amount, bankAccount, bankCode, desc } = body;
+        const { amount, bankAccount, bankCode, desc, code } = body;
 
         const redisCheck = (await this.redisService.get(
             `${bankCode}_${bankAccount}_${amount}`,
         )) as BankPaymentQrSePay | null;
         if (redisCheck) {
-            return redisCheck;
+            const refundTransaction = await this.redisService.get<WebhookRefundResultDto | undefined>(code);
+
+            return { ...redisCheck, ...(refundTransaction ? { referenceCode: refundTransaction.referenceCode } : {}) };
         }
 
         const qrLink = joinString({
@@ -84,16 +88,28 @@ export class BankService {
                         `acc=${bankAccount}`,
                         `bank=${bankCode}`,
                         `amount=${amount}`,
-                        `des=${desc}`,
+                        `des=${joinString({ joinString: ' ', strings: [`[${code}]`, desc] })}`,
                         `template=compact`,
                     ],
                 }),
             ],
         });
 
-        this.redisService.set(`${bankCode}_${bankAccount}_${amount}`, qrLink, 60 * 60 * 1000);
+        this.redisService.set(`${bankCode}_${bankAccount}_${amount}`, { qrLink }, 60 * 60 * 1000);
 
-        return qrLink;
+        return { qrLink };
+    }
+
+    async removeRefundTransaction(code: string) {
+        await this.redisService.del(code);
+        return DataSuccessCodeEnum.OK;
+    }
+
+    getRefundTransaction(code: string) {
+        return this.redisService.get<{
+            code: string;
+            referenceCode: string;
+        } | null>(code);
     }
 
     async getTransactionReference(body: TransactionRefund) {

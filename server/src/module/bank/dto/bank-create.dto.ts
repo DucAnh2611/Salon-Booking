@@ -11,6 +11,10 @@ export class BankCreateQuickLinkQRDto {
     bankAccount: string;
 
     @IsNotEmpty()
+    @IsString()
+    code: string;
+
+    @IsNotEmpty()
     @Type(() => Number)
     @IsNumber()
     @IsPositive()

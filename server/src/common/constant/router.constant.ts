@@ -51,6 +51,7 @@ export const ROUTER = {
     ORGANIZATION: 'organization',
 
     SETTING: 'setting',
+    WEBHOOK: 'webhook',
 };
 
 export const AUTH_ROUTE = {
@@ -326,6 +327,8 @@ export const ADMIN_ORDER_ROUTE = {
     ORDER_STATE_LIST: 'order-state/list',
     UPDATE_ORDER_STATE: 'order-state/',
 
+    RECHECK_ORDER_REFUND: 'order-refund/recheck/:id',
+    GET_ORDER_REFUND: 'order-refund/:id',
     APPROVE_ORDER_REFUND: 'order-refund/approve',
     DECLINE_ORDER_REFUND: 'order-refund/decline',
     CREATE_OR_PAYMENT: 'order-refund/create-qr/:id',
@@ -387,4 +390,8 @@ export const SETTING_ROUTE = {
     UPDATE: '',
     GET: '',
     RESET: 'reset',
+};
+
+export const WEBHOOK_ROUTE = {
+    SEPAY_REFUND: 'sepay/refund',
 };

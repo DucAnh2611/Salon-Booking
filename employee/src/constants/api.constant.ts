@@ -449,6 +449,24 @@ export const API_URLS = {
         }),
     },
     REFUND: {
+        GET: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "order-refund", id],
+            }),
+            withCredentials: true,
+        }),
+        CHECK: (id: string) => ({
+            method: "GET",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "order-refund", "recheck", id],
+            }),
+            withCredentials: true,
+        }),
         APPROVE: () => ({
             method: "POST",
             headers: HEADERS.DEFAULT_HEADER,

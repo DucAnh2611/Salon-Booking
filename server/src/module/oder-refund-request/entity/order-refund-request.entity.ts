@@ -10,6 +10,8 @@ import {
 } from 'typeorm';
 import { BaseEntity } from '../../../common/enitty/base.entity';
 import { OrderRefundRequestStatusEnum } from '../../../common/enum/order.enum';
+import { generateOTP } from '../../../shared/utils/otp.utils';
+import { joinString } from '../../../shared/utils/string';
 import { OrderEntity } from '../../order-base/entity/order-base.entity';
 import { OrderRefundStateEntity } from '../../order-refund-state/entity/order-refund-state.entity';
 import { OrderTransactionEntity } from '../../order-transaction/entity/order-transaction.entity';
@@ -24,6 +26,12 @@ export class OrderRefundRequestEntity extends BaseEntity {
 
     @Column('uuid', { nullable: true })
     transactionId: string;
+
+    @Column('varchar', { length: 10, nullable: true })
+    code: string;
+
+    @Column('varchar', { nullable: true })
+    reference: string;
 
     @Column('integer')
     amount: number;
@@ -86,5 +94,9 @@ export class OrderRefundRequestEntity extends BaseEntity {
     @BeforeInsert()
     createExpire() {
         this.expiredAt = new Date(Date.now() + EXPIRE_REQUEST_MINUTES * 60 * 1000);
+        this.code = joinString({
+            joinString: '',
+            strings: ['TRX', generateOTP({ length: 7, type: 'mixed' }).toUpperCase()],
+        });
     }
 }

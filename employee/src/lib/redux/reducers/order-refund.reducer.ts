@@ -15,13 +15,64 @@ const inititalState: IInitialStateOrderRefund = {
     isFailure: false,
     isApproving: false,
     isDeclining: false,
+    detail: null,
 };
 
 export const orderRefundReducer = (
     state = inititalState,
     action: IDispatchDedicateRedux & IActionDedicateOrderRefund
 ): typeof inititalState => {
+    const { state: actionState, type, ...props } = action;
     switch (action.type) {
+        case EReduxType.GET_ORDER_REFUND:
+            if (isCallingApi(action)) {
+                return {
+                    ...state,
+                    isCalling: true,
+                    isFailure: false,
+                };
+            }
+            if (isSuccessfulApiCall(action)) {
+                return {
+                    ...state,
+                    ...props,
+                    isCalling: false,
+                    isFailure: false,
+                };
+            }
+            if (isFailedApiCall(action)) {
+                return {
+                    ...state,
+                    isCalling: false,
+                    isFailure: true,
+                };
+            }
+            return state;
+
+        case EReduxType.DECLINE_ORDER_REFUND:
+            if (isCallingApi(action)) {
+                return {
+                    ...state,
+                    isDeclining: true,
+                    isFailure: false,
+                };
+            }
+            if (isSuccessfulApiCall(action)) {
+                return {
+                    ...state,
+                    isDeclining: false,
+                    isFailure: false,
+                };
+            }
+            if (isFailedApiCall(action)) {
+                return {
+                    ...state,
+                    isDeclining: false,
+                    isFailure: true,
+                };
+            }
+            return state;
+
         case EReduxType.APPROVE_ORDER_REFUND:
             if (isCallingApi(action)) {
                 return {
@@ -45,6 +96,7 @@ export const orderRefundReducer = (
                 };
             }
             return state;
+
         default:
             return state;
     }

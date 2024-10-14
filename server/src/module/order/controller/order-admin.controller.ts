@@ -92,6 +92,24 @@ export class OrderAdminController {
         return this.orderAdminService.listOrderState(type);
     }
 
+    @Get(ADMIN_ORDER_ROUTE.RECHECK_ORDER_REFUND)
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.READ] }])
+    @UserType(UserTypeEnum.STAFF)
+    recheckOrderRefund(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
+        const { id } = param;
+
+        return this.orderAdminService.checkResultRefund(id);
+    }
+
+    @Get(ADMIN_ORDER_ROUTE.GET_ORDER_REFUND)
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.READ] }])
+    @UserType(UserTypeEnum.STAFF)
+    getOrderRefund(@Req() req: AppRequest, @Param() param: GetOrderParamDto) {
+        const { id } = param;
+
+        return this.orderAdminService.getRefundRequest(id);
+    }
+
     @Put(ADMIN_ORDER_ROUTE.UPDATE_ORDER_STATE)
     @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.UPDATE] }])
     @UserType(UserTypeEnum.STAFF)

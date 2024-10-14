@@ -15,4 +15,7 @@ export interface IBankQuickQr {
     data: IQuickQr;
 }
 
-export type IQuickQr = string;
+export interface IQuickQr {
+    qrLink: string;
+    referenceCode?: string;
+}

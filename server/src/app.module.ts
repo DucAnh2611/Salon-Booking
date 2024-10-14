@@ -32,6 +32,7 @@ import { SettingModule } from './module/setting/setting.module';
 import { SocketModule } from './module/socket/socket.module';
 import { StatisticModule } from './module/statistic/statistic.module';
 import { ThirdPartyModule } from './module/thirdparty/thirdparty.module';
+import { WebhookModule } from './module/webhook/webhook.module';
 import { AppResponseInterceptor } from './shared/interceptor';
 
 @Module({
@@ -69,6 +70,7 @@ import { AppResponseInterceptor } from './shared/interceptor';
         StatisticModule,
         OrganizationModule,
         SettingModule,
+        WebhookModule,
 
         //Third party module
         ThirdPartyModule,

@@ -253,6 +253,24 @@ export class OrderAdminService {
     }
 
     /** @Order_Refund_Request */
+    async getRefundRequest(requestId: string) {
+        const orderRefundRequest = await this.orderRefundRequestService.getByRequestId(requestId);
+        if (orderRefundRequest.status !== OrderRefundRequestStatusEnum.PENDING) {
+            throw new BadRequest({ message: DataErrorCodeEnum.REFUND_REQUEST_MUST_BE_PENDING });
+        }
+
+        return orderRefundRequest;
+    }
+
+    async checkResultRefund(requestId: string) {
+        const orderRefundRequest = await this.orderRefundRequestService.getByRequestId(requestId);
+        if (orderRefundRequest.status !== OrderRefundRequestStatusEnum.PENDING) {
+            throw new BadRequest({ message: DataErrorCodeEnum.REFUND_REQUEST_MUST_BE_PENDING });
+        }
+
+        return this.bankService.getRefundTransaction(orderRefundRequest.code);
+    }
+
     async createQr(requestId: string) {
         const refundInfo = await this.orderRefundRequestService.getByRequestId(requestId);
         if (!refundInfo) {
@@ -266,6 +284,7 @@ export class OrderAdminService {
             bankAccount: refundInfo.accountBankNumber,
             bankCode: refundInfo.accountBankCode,
             desc: `HOAN TIEN DON HANG ${order.code}`,
+            code: refundInfo.code,
         });
     }
 
@@ -299,10 +318,10 @@ export class OrderAdminService {
         const { requestId, bankTransactionCode, mediaUrl, mediaId, note } = body;
 
         const [orderRefundRequest] = await Promise.all([this.orderRefundRequestService.getByRequestId(requestId)]);
-
         if (orderRefundRequest.status !== OrderRefundRequestStatusEnum.PENDING) {
             throw new BadRequest({ message: DataErrorCodeEnum.REFUND_REQUEST_MUST_BE_PENDING });
         }
+
         const order = await this.orderBaseService.get(orderRefundRequest.orderId);
 
         const transactionRef = await this.bankService.getTransactionReference({
@@ -317,14 +336,16 @@ export class OrderAdminService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_REFUND_TRANSACTION });
         }
 
-        const { accountBankCode, accountBankNumber, amount } = orderRefundRequest;
+        const { accountBankCode, accountBankNumber, amount, code } = orderRefundRequest;
 
         await Promise.all([
             this.bankService.removeQr(`${accountBankCode}_${accountBankNumber}_${amount}`),
+            this.bankService.removeRefundTransaction(code),
             this.orderRefundRequestService.updateRefundRequest({
                 requestId,
                 status: OrderRefundRequestStatusEnum.APPROVED,
                 userId,
+                reference: bankTransactionCode,
             }),
             this.orderRefundStateService.addState({
                 requestId: requestId,
@@ -379,6 +400,7 @@ export class OrderAdminService {
         );
     }
 
+    /** @Actions */
     async availableActions(orderId: string) {
         const order = await this.orderBaseService.get(orderId);
         if (!order) {

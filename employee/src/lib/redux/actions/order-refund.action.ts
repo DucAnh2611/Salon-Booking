@@ -5,12 +5,36 @@ import {
     isDispatchFailed,
     isDispatchSuccess,
 } from "@/helpers/dispatchDedicate";
+import { IOrderRefundRequest } from "@/interface/api/order-refund.interface";
 import {
     IApiApproveRefund,
     IApiDeclineRefund,
 } from "@/interface/api/refund.interface";
+import { IActionDedicateOrderRefund } from "@/interface/redux/oder-refund.interface";
 import { apiCall } from "@/utils/apiCall";
 import { TAppDispatch } from "../store";
+
+/** @GET_ORDER_REFUND */
+const getOrderRefundType = EReduxType.GET_ORDER_REFUND;
+export const getOrderRefund =
+    (id: string) => async (dispatch: TAppDispatch) => {
+        const api = API_URLS.REFUND.GET(id);
+
+        dispatch(isDispatchCalling(getOrderRefundType));
+
+        const { response } = await apiCall<IOrderRefundRequest>({ ...api });
+
+        if (response) {
+            dispatch(
+                isDispatchSuccess<IActionDedicateOrderRefund>(
+                    getOrderRefundType,
+                    { detail: response.result }
+                )
+            );
+        } else {
+            dispatch(isDispatchFailed(getOrderRefundType));
+        }
+    };
 
 /** @APPROVE_ORDER_REFUND */
 const approveOrderRefundType = EReduxType.APPROVE_ORDER_REFUND;
