@@ -1,5 +1,6 @@
 "use client";
 
+import Ripple from "@/components/ui/ripple";
 import { toast } from "@/components/ui/use-toast";
 import { EOrderTransactionReturnPayos } from "@/enum/order.enum";
 import {
@@ -112,5 +113,12 @@ export default function CancelTransaction({
         }
     }, [search, mount]);
 
-    return <p>Đang xử lý...</p>;
+    return (
+        <div className="w-full h-full relative flex items-center justify-center">
+            <p className="z-10 whitespace-pre-wrap text-center text-xl font-medium tracking-tighter text-foreground">
+                Đang thanh toán
+            </p>
+            <Ripple />
+        </div>
+    );
 }

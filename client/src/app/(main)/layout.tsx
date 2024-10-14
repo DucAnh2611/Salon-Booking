@@ -13,7 +13,9 @@ export default function RootLayout({
             <CartProductProvider>
                 <CartServiceProvider>
                     <Navigation />
-                    <div className="w-full flex-1 h-fit">{children}</div>
+                    <div className="w-full flex-1 h-fit relative">
+                        {children}
+                    </div>
                     <Footer />
                 </CartServiceProvider>
             </CartProductProvider>

@@ -1,5 +1,8 @@
 import { FadeText } from "@/components/magicui/fade-text";
 import GridPattern from "@/components/magicui/grid-pattern";
+import { Button } from "@/components/ui/button";
+import Ripple from "@/components/ui/ripple";
+import SparklesText from "@/components/ui/sparkles-text";
 import { cn } from "@/lib/utils";
 import Image from "next/image";
 import Link from "next/link";
@@ -7,15 +10,16 @@ import Link from "next/link";
 export default function HomeHero() {
     return (
         <section className="w-full py-32 relative ">
-            <div className="container px-4 md:px-6">
+            <div className="container px-4 md:px-6 relative z-[1]">
                 <div className="flex gap-12">
                     <div className="flex flex-col justify-center space-y-4 flex-1">
                         <div className="space-y-4">
-                            <FadeText
-                                className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
-                                direction="right"
-                                framerProps={{
-                                    show: { transition: { delay: 0 } },
+                            <SparklesText
+                                className="text-3xl !font-bold tracking-tighter sm:text-5xl xl:text-6xl/none"
+                                sparklesCount={15}
+                                colors={{
+                                    first: "hsl(var(--primary))",
+                                    second: "hsl(var(--primary))",
                                 }}
                                 text="Nâng tầm vẻ đẹp của bạn tại My Salon"
                             />
@@ -33,20 +37,19 @@ export default function HomeHero() {
                             />
                         </div>
                         <div className="flex flex-col gap-2 min-[400px]:flex-row">
-                            <Link
-                                href="/service"
-                                className="inline-flex h-10 items-center justify-center rounded-md bg-primary px-8 text-sm font-medium text-primary-foreground shadow transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                                prefetch={false}
+                            <Button
+                                asChild
+                                className="shadow-lg shadow-primary"
                             >
-                                Đặt lịch ngay
-                            </Link>
-                            <Link
-                                href="/product"
-                                className="inline-flex h-10 items-center justify-center rounded-md border border-input bg-background px-8 text-sm font-medium shadow-sm transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50"
-                                prefetch={false}
-                            >
-                                Mua sản phẩm
-                            </Link>
+                                <Link href="/service" prefetch={false}>
+                                    Đặt lịch ngay
+                                </Link>
+                            </Button>
+                            <Button variant={"outline"} asChild>
+                                <Link href="/product" prefetch={false}>
+                                    Mua sản phẩm
+                                </Link>
+                            </Button>
                         </div>
                     </div>
                     <div className="size-[600px] aspect-video overflow-hidden rounded-xl object-cover">
@@ -70,9 +73,10 @@ export default function HomeHero() {
                 x={-1}
                 y={-1}
                 className={cn(
-                    "[mask-image:radial-gradient(500px_circle_at_center,white,transparent)] z-[-1]"
+                    "[mask-image:radial-gradient(500px_circle_at_center,white,transparent)] z-[-1] dark:hidden"
                 )}
             />
+            <Ripple className="z-[0] hidden dark:block" />
         </section>
     );
 }

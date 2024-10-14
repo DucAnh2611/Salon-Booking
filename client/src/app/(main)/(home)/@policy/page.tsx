@@ -1,3 +1,4 @@
+import SparklesText from "@/components/ui/sparkles-text";
 import { Banknote, CheckCircle2, CreditCard } from "lucide-react";
 import { ReactNode } from "react";
 
@@ -5,10 +6,17 @@ export default function Page() {
     return (
         <section className="w-full py-12 md:py-24 lg:py-32 bg-accent">
             <div className="container px-4 md:px-6 mx-auto">
-                <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl text-center mb-8 capitalize">
-                    Chính sách của chúng tôi
-                </h2>
-                <p className="text-xl text-gray-600 dark:text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+                <SparklesText
+                    className="text-3xl !font-bold tracking-tighter sm:text-5xl w-full text-center"
+                    sparklesCount={5}
+                    colors={{
+                        first: "hsl(var(--primary))",
+                        second: "hsl(var(--primary))",
+                    }}
+                    text="
+                    Chính sách của chúng tôi"
+                />
+                <p className="text-xl text-gray-600 dark:text-gray-400 text-center mb-12 max-w-2xl mx-auto mt-5">
                     Chúng tôi cam kết mang đến cho bạn trải nghiệm đặt chỗ suôn
                     sẻ và đáng tin cậy. Dưới đây là những chính sách chính được
                     thiết kế với sự hài lòng của bạn làm ưu tiên hàng đầu.
@@ -55,7 +63,7 @@ function PolicyCard({
     description: string;
 }) {
     return (
-        <div className="p-6 rounded-lg shadow-lg hover:shadow-xl duration-100 hover:-translate-y-2 bg-background dark:hover:shadow-2xl">
+        <div className="p-6 rounded-lg shadow-lg hover:shadow-xl dark:hover:shadow-primary duration-100 hover:-translate-y-2 bg-background dark:hover:shadow-2xl ">
             <div className="flex items-center mb-4">
                 {icon}
                 <h3 className="text-xl font-semibold ml-4">{title}</h3>
