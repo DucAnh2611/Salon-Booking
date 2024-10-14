@@ -257,6 +257,15 @@ export const API_URLS = {
             }),
             withCredentials: true,
         }),
+        COUNT_PRODUCT: () => ({
+            method: "GET",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["cart-product", "count"],
+            }),
+            withCredentials: true,
+        }),
         GET_PRODUCT_AMOUNT: () => ({
             method: "POST",
             headers: HEADERS.header(),
@@ -300,6 +309,16 @@ export const API_URLS = {
             endPoint: joinString({
                 joinString: "/",
                 strings: ["cart-service", "me"],
+            }),
+            withCredentials: true,
+        }),
+
+        COUNT_SERVICE: () => ({
+            method: "GET",
+            headers: HEADERS.header(),
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["cart-service", "count"],
             }),
             withCredentials: true,
         }),

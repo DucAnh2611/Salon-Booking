@@ -266,6 +266,7 @@ export const CART_ROUTE = {
 
 export const CART_PRODUCT_ROUTE = {
     GET: 'me',
+    COUNT: 'count',
     CART_AMOUNT: 'amount',
     ADD: '',
     UPDATE: '',
@@ -274,6 +275,7 @@ export const CART_PRODUCT_ROUTE = {
 
 export const CART_SERVICE_ROUTE = {
     GET: 'me',
+    COUNT: 'count',
     CART_AMOUNT: 'amount',
     ADD: '',
     DELETE: ':id',

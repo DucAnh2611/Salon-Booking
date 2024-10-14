@@ -91,3 +91,21 @@ export const deleteServiceCart = async (id: string) => {
 
     return resApi;
 };
+
+/** @COUNT_CART_PRODUCT */
+export const countCartProduct = async () => {
+    const api = API_URLS.CART.COUNT_PRODUCT();
+
+    const resApi = await apiCall<number>({ ...api });
+
+    return resApi;
+};
+
+/**  @COUNT_CART_SERVICE */
+export const countCartService = async () => {
+    const api = API_URLS.CART.COUNT_SERVICE();
+
+    const resApi = await apiCall<number>({ ...api });
+
+    return resApi;
+};

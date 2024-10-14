@@ -1,5 +1,6 @@
 "use client";
 
+import useCartProduct from "@/hook/useCartProduct.hook";
 import { IAttribute, IAttributeValue } from "@/interface/attribute.interface";
 import { IApiAddProductCart } from "@/interface/cart.interface";
 import {
@@ -52,6 +53,7 @@ export default function ProductTypeSelect({
     const [selectAttributeValue, SetSelectAttributeValue] = useState<
         Record<number, { aId: string; vId: string }>
     >({});
+    const { getCount } = useCartProduct();
 
     const form = useForm<z.infer<typeof addProductToCartSchema>>({
         resolver: zodResolver(addProductToCartSchema),
@@ -108,6 +110,8 @@ export default function ProductTypeSelect({
                 description: error.message,
                 variant: "destructive",
             };
+        } else {
+            getCount();
         }
 
         toast(toastContent);

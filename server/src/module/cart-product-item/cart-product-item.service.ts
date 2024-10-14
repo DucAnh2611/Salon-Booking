@@ -122,6 +122,10 @@ export class CartProductItemService {
         return true;
     }
 
+    count(cartProductId: string) {
+        return this.cartProductItemRepository.count({ where: { cartProductId }, loadEagerRelations: false });
+    }
+
     get(cartProductId: string) {
         return this.cartProductItemRepository.find({
             where: { cartProductId },

@@ -69,6 +69,11 @@ export class CartServiceService {
         };
     }
 
+    async count(clientId: string) {
+        const cart = await this.getClientCart(clientId);
+        return this.cartServiceItemService.count(cart.id);
+    }
+
     async get(clientId: string) {
         const cart = await this.getClientCart(clientId);
         const cartDetail = await this.cartServiceItemService.get(cart.id);

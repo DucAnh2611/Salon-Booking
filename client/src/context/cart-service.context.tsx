@@ -5,11 +5,15 @@ import useDebounce from "@/hook/useDebounce.hook";
 import { ICartService, ICartServiceAmount } from "@/interface/cart.interface";
 import { ILayoutProps } from "@/interface/layout.interface";
 import { IServiceItemCartBooking } from "@/interface/service.interface";
-import { getServiceCartAmount } from "@/lib/actions/cart.action";
+import {
+    countCartService,
+    getServiceCartAmount,
+} from "@/lib/actions/cart.action";
 import { createContext, useEffect, useState } from "react";
 
 interface ICartServiceContext {
     cart: ICartService | null;
+    count: number;
     cartAmount: ICartServiceAmount;
     selectItems: IServiceItemCartBooking[];
     paymentType: EOrderPaymentType;
@@ -17,10 +21,12 @@ interface ICartServiceContext {
     setCart: (cart: ICartService | null) => void;
     setSelectItems: (items: IServiceItemCartBooking[]) => void;
     setPaymentType: (type: EOrderPaymentType) => void;
+    getCount: () => void;
 }
 
 export const CartServiceContext = createContext<ICartServiceContext>({
     cart: null,
+    count: 0,
     cartAmount: {
         tax: 0,
         cartAmount: 0,
@@ -33,6 +39,7 @@ export const CartServiceContext = createContext<ICartServiceContext>({
     setCart: (cart: ICartService | null) => {},
     setSelectItems: (items: IServiceItemCartBooking[]) => {},
     setPaymentType: (type: EOrderPaymentType) => {},
+    getCount: () => {},
 });
 
 export default function CartServiceProvider({ children }: ILayoutProps) {
@@ -46,6 +53,7 @@ export default function CartServiceProvider({ children }: ILayoutProps) {
         taxAmount: 0,
         total: 0,
     });
+    const [count, SetCount] = useState<number>(0);
     const [paymentType, SetPaymentType] = useState<EOrderPaymentType>(
         EOrderPaymentType.CASH
     );
@@ -65,6 +73,16 @@ export default function CartServiceProvider({ children }: ILayoutProps) {
 
     const setPaymentType = (type: EOrderPaymentType) => {
         SetPaymentType(type);
+    };
+
+    const getCount = async () => {
+        const { response } = await countCartService();
+
+        if (response) {
+            SetCount(response.result);
+        } else {
+            SetCount(0);
+        }
     };
 
     useEffect(() => {
@@ -105,12 +123,14 @@ export default function CartServiceProvider({ children }: ILayoutProps) {
         <CartServiceContext.Provider
             value={{
                 cart,
+                count,
                 cartAmount,
                 selectItems,
                 paymentType,
                 setPaymentType,
                 setSelectItems,
                 setCart,
+                getCount,
                 loadingCartAmount: isLoadingCartAmount,
             }}
         >

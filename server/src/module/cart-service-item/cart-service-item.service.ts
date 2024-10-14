@@ -53,6 +53,10 @@ export class CartServiceItemService {
         return find.length > 0;
     }
 
+    count(cartServiceId: string) {
+        return this.cartServiceItemRepository.count({ where: { cartServiceId }, loadEagerRelations: false });
+    }
+
     async get(cartServiceId: string) {
         return this.cartServiceItemRepository.find({
             where: { cartServiceId },

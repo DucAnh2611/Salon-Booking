@@ -23,6 +23,14 @@ export class CartProductController {
         return this.cartProductService.get(clientId);
     }
 
+    @Get(CART_PRODUCT_ROUTE.COUNT)
+    @UserType(UserTypeEnum.CLIENT)
+    count(@Req() req: AppRequest) {
+        const { clientId } = req.accessPayload;
+
+        return this.cartProductService.count(clientId);
+    }
+
     @Post(CART_PRODUCT_ROUTE.CART_AMOUNT)
     @UserType(UserTypeEnum.CLIENT)
     cartAmount(@Req() req: AppRequest, @Body() body: GetCartProductAmountDto) {

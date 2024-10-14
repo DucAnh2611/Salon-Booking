@@ -23,7 +23,8 @@ export default function DialogDeleteItemProductCart({
     trigger,
     item,
 }: IDialogDeleteItemProductCartProps) {
-    const { selectItems, cart, setCart, setSelectItems } = useCartProduct();
+    const { selectItems, cart, setCart, setSelectItems, getCount } =
+        useCartProduct();
     const [open, SetOpen] = useState<boolean>(false);
 
     const handleDelete = async () => {
@@ -41,6 +42,7 @@ export default function DialogDeleteItemProductCart({
                 description: "Đã xóa sản phẩm khỏi giỏ hàng",
             });
             SetOpen(false);
+            getCount();
         } else {
             toast({
                 title: "Xóa thất bại",

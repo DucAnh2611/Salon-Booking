@@ -1,5 +1,6 @@
 "use client";
 
+import useCartService from "@/hook/useCartService.hook";
 import { IApiAddServiceCart } from "@/interface/cart.interface";
 import { IServiceDetail } from "@/interface/service.interface";
 import { addServiceCart } from "@/lib/actions/cart.action";
@@ -18,6 +19,8 @@ interface IAddServiceCartProps {
 }
 
 export default function AddServiceCart({ service }: IAddServiceCartProps) {
+    const { getCount } = useCartService();
+
     const form = useForm<z.infer<typeof addServiceToCart>>({
         resolver: zodResolver(addServiceToCart),
         defaultValues: {
@@ -38,6 +41,7 @@ export default function AddServiceCart({ service }: IAddServiceCartProps) {
                 description: "Thêm dịch vụ vào giỏ hàng thành công",
                 duration: 1500,
             });
+            getCount();
         } else {
             toast({
                 title: "Thêm thất bại",
