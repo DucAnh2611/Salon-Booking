@@ -33,17 +33,7 @@ export default function CartProductItemTab({}: ICartProductItemTabProps) {
 
     const selectAll = (check: CheckedState) => {
         if (!cart.products.length) return;
-        setSelectItems(
-            check
-                ? cart.products.filter(
-                      (p) =>
-                          !p.product.deletedAt ||
-                          (p.productType &&
-                              !p.product.deletedAt &&
-                              !p.productType.deletedAt)
-                  )
-                : []
-        );
+        setSelectItems(check ? cart.products.filter((p) => p.available) : []);
     };
 
     const isItemSelect = (i: IProductItemCart) => {
@@ -129,11 +119,7 @@ export default function CartProductItemTab({}: ICartProductItemTabProps) {
                         <div className="flex justify-between w-full border-b p-2 box-border">
                             <div className="flex gap-2 items-center">
                                 <Checkbox
-                                    disabled={
-                                        !!productItem.product.deletedAt ||
-                                        (productItem.productType &&
-                                            !!productItem.productType.deletedAt)
-                                    }
+                                    disabled={!productItem.available}
                                     id={productItem.id}
                                     checked={isItemSelect(productItem)}
                                     onCheckedChange={handleSelectItems(

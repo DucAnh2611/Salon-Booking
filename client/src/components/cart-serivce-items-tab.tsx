@@ -32,7 +32,9 @@ export default function CartServiceItemTab() {
 
     const selectAll = (check: CheckedState) => {
         if (!cart.services.length) return;
-        setSelectItems(check ? cart.services : []);
+        setSelectItems(
+            check ? cart.services.filter((i) => !i.service.deletedAt) : []
+        );
     };
 
     const isItemSelect = (i: IServiceItemCart) => {
