@@ -41,6 +41,7 @@ export class ProductBaseClientService {
         const items = await this.productBaseRepository.find({
             where: { id: In(query.map(i => i.id)) },
             loadEagerRelations: false,
+            take: 4,
             relations: {
                 types: true,
                 productMedia: {
@@ -62,7 +63,7 @@ export class ProductBaseClientService {
             }),
         );
 
-        return mapMedia;
+        return mapMedia.sort((a, b) => a.buyingCounts - b.buyingCounts);
     }
 
     async inStock(id: string) {

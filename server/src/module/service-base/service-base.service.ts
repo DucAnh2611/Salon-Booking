@@ -229,6 +229,7 @@ export class ServiceBaseService {
         const items = await this.seriviceBaseRepository.find({
             where: { id: In(query.map(item => item.id)) },
             loadEagerRelations: false,
+            take: 4,
             order: { createdAt: SortByEnum.DESC },
         });
 
@@ -250,7 +251,7 @@ export class ServiceBaseService {
             }),
         );
 
-        return mapMedia;
+        return mapMedia.sort((a, b) => a.bookingCounts - b.bookingCounts);
     }
 
     async find(query: FindServiceAdminDto) {

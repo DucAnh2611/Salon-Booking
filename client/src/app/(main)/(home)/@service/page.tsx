@@ -9,12 +9,19 @@ export default async function MainService() {
     }
 
     return (
-        <div className="flex gap-5 justify-center pt-3">
-            {response.result.map((s) => (
-                <div key={s.id} className="w-[300px]">
-                    <ServiceFeatureCard service={s} />
-                </div>
-            ))}
+        <div className="flex w-full justify-center">
+            <div
+                className="grid gap-5 pt-3"
+                style={{
+                    gridTemplateColumns: `repeat(${response.result.length}, minmax(0, 1fr))`,
+                }}
+            >
+                {response.result.map((s) => (
+                    <div key={s.id} className="w-[300px]">
+                        <ServiceFeatureCard service={s} />
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }

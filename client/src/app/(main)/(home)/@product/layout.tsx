@@ -10,7 +10,7 @@ export default function ProductMainLayout({
     return (
         <section className="w-full py-32 relative h-auto bg-accent">
             <div className="container px-4 grid grid-flow-row gap-5">
-                <div className="flex flex-col gap-3">
+                <div className="flex flex-col gap-3 w-full">
                     <div className="space-y-2 flex items-center flex-col w-full">
                         <SparklesText
                             className="text-3xl !font-bold tracking-tighter sm:text-5xl"

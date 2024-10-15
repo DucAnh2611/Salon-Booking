@@ -9,12 +9,19 @@ export default async function MainProduct() {
     }
 
     return (
-        <div className="flex gap-5 justify-center pt-3">
-            {response.result.map((p) => (
-                <div key={p.id} className="w-[300px] h-fit">
-                    <ProductFeatureCard product={p} />
-                </div>
-            ))}
+        <div className="flex w-full justify-center">
+            <div
+                className="grid gap-5 pt-3"
+                style={{
+                    gridTemplateColumns: `repeat(${response.result.length}, minmax(0, 1fr))`,
+                }}
+            >
+                {response.result.map((p) => (
+                    <div key={p.id} className="w-[300px] h-fit">
+                        <ProductFeatureCard product={p} />
+                    </div>
+                ))}
+            </div>
         </div>
     );
 }
