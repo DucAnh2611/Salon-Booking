@@ -21,7 +21,7 @@ export default function HomeHero() {
                                     first: "hsl(var(--primary))",
                                     second: "hsl(var(--primary))",
                                 }}
-                                text="Nâng tầm vẻ đẹp của bạn tại My Salon"
+                                text="Nâng tầm vẻ đẹp của bạn"
                             />
                             <FadeText
                                 className="max-w-[600px] text-muted-foreground md:text-xl"
