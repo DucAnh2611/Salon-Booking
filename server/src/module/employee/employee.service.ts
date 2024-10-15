@@ -28,6 +28,19 @@ export class EmployeeService {
         private readonly employeeGateway: EmployeeGateway,
     ) {}
 
+    async isAdmin(id: string) {
+        const employee = await this.employeeRepository.findOne({
+            where: { id, eRole: { deletable: false, title: ROLE_TITLE.admin } },
+            loadEagerRelations: false,
+        });
+
+        if (!employee) {
+            throw new BadRequest({ message: DataErrorCodeEnum.INVALID_ROLE });
+        }
+
+        return true;
+    }
+
     async getMyInfo(id: string) {
         const inf = await this.employeeRepository.findOne({
             where: { id },

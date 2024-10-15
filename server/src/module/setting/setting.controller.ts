@@ -1,6 +1,7 @@
-import { Body, Controller, Get, Post, Put, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Post, Put, Req, UseGuards } from '@nestjs/common';
 import { ROUTER, SETTING_ROUTE } from '../../common/constant/router.constant';
 import { UserTypeEnum } from '../../common/enum/user.enum';
+import { AppRequest } from '../../common/interface/custom-request.interface';
 import { TargetActionRequire } from '../../shared/decorator/permission.decorator';
 import { UserType } from '../../shared/decorator/user-types.decorator';
 import { AccessTokenGuard } from '../../shared/guard/accessToken.guard';
@@ -17,8 +18,9 @@ export class SettingController {
     @Post(SETTING_ROUTE.RESET)
     @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([])
-    reset() {
-        return this.settingService.reset();
+    reset(@Req() req: AppRequest) {
+        const { employeeId } = req.accessPayload;
+        return this.settingService.reset(employeeId);
     }
 
     @Get(SETTING_ROUTE.GET)
@@ -31,7 +33,8 @@ export class SettingController {
     @Put(SETTING_ROUTE.UPDATE)
     @UserType(UserTypeEnum.STAFF)
     @TargetActionRequire([])
-    update(@Body() body: SettingUpdateDto) {
-        return this.settingService.update(body);
+    update(@Req() req: AppRequest, @Body() body: SettingUpdateDto) {
+        const { employeeId } = req.accessPayload;
+        return this.settingService.update(employeeId, body);
     }
 }
