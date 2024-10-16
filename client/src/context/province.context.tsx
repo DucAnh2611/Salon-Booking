@@ -51,6 +51,7 @@ interface IProvinceContextProps {
         selected: TSelectParam<T>
     ) => void;
     setStreet: (st: string) => void;
+    reset: () => void;
 }
 
 type TSearchType = "d" | "p" | "w";
@@ -95,6 +96,7 @@ export const ProvinceContext = createContext<IProvinceContextProps>({
         selected: TSelectParam<T>
     ) => {},
     setStreet: (st: string) => {},
+    reset: () => {},
 });
 
 export default function ProvinceProvider({ children }: ILayoutProps) {
@@ -126,6 +128,37 @@ export default function ProvinceProvider({ children }: ILayoutProps) {
         failed: false,
     });
     const [street, SetStreet] = useState<string>("");
+
+    const reset = () => {
+        SetStreet("");
+        SetProvince({
+            provinces: [],
+            search: {
+                q: "",
+            },
+            loading: false,
+            selected: null,
+            failed: false,
+        });
+        SetDistrict({
+            districts: [],
+            search: {
+                q: "",
+            },
+            loading: false,
+            selected: null,
+            failed: false,
+        });
+        SetWard({
+            wards: [],
+            search: {
+                q: "",
+            },
+            loading: false,
+            selected: null,
+            failed: false,
+        });
+    };
 
     const getProvinceList = async () => {
         SetProvince((p) => ({
@@ -257,7 +290,15 @@ export default function ProvinceProvider({ children }: ILayoutProps) {
 
     return (
         <ProvinceContext.Provider
-            value={{ province, district, ward, street, setStreet, setSelected }}
+            value={{
+                province,
+                district,
+                ward,
+                street,
+                setStreet,
+                setSelected,
+                reset,
+            }}
         >
             {children}
         </ProvinceContext.Provider>

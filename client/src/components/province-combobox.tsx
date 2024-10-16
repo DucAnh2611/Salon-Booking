@@ -34,6 +34,14 @@ export default function ProvinceCombobox() {
         setSelected("p", province);
     };
 
+    const handleOpen = (open: boolean) => {
+        if (open) {
+            SetKey("");
+            SetSearchList(provinces);
+        }
+        setOpen(open);
+    };
+
     useEffect(() => {
         const value = debouncedValue;
         if (!value) {
@@ -41,14 +49,14 @@ export default function ProvinceCombobox() {
             return;
         }
         SetSearchList((list) =>
-            provinces.filter((item) =>
+            list.filter((item) =>
                 item.name.toLowerCase().includes(value.toLowerCase())
             )
         );
     }, [debouncedValue]);
 
     return (
-        <Popover open={open} onOpenChange={setOpen}>
+        <Popover open={open} onOpenChange={handleOpen}>
             <PopoverTrigger asChild>
                 <Button
                     variant="outline"

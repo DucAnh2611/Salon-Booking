@@ -12,18 +12,18 @@ export const THIRD_PARTY_OPEN_PROVINCE = {
     GET_WARD: 'w/:code',
 };
 
-export const THIRD_PARTY_VN_PUBLIC_API = {
-    LIST_PROVINCE: 'provinces/getAll',
-    SEARCH_PROVINCE: 'provinces/getAll',
-    GET_PROVINCE: 'provinces/:code',
+export const THIRD_PARTY_BACKUP_PROVINCE = {
+    LIST_PROVINCE: 'location/provinces?size=63',
+    SEARCH_PROVINCE: 'location/provinces',
+    GET_PROVINCE: 'location/provinces',
 
-    LIST_DISTRICT: 'districts/getAll',
-    SEARCH_DISTRICT: 'district/getByProvince/',
-    GET_DISTRICT: 'district/:code',
+    LIST_DISTRICT: 'location/districts?size=100&provinceId=:code',
+    SEARCH_DISTRICT: 'location/district?size=100',
+    GET_DISTRICT: 'location/district/:code',
 
-    LIST_WARD: 'w',
-    SEARCH_WARD: 'w/search/',
-    GET_WARD: 'w/:code',
+    LIST_WARD: 'location/wards?size=100&districtId=:code',
+    SEARCH_WARD: 'location/w/search/',
+    GET_WARD: 'location/w/:code',
 };
 
 export const THIRD_PARTY_VIETQR = {

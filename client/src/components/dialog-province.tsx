@@ -24,6 +24,7 @@ export default function DialogSelectProvince({
         district: { selected: dSelected },
         ward: { selected: wSelected },
         street,
+        reset,
     } = useProvince();
     const { setContact, contact } = useCartProductContact();
     const [open, SetOpen] = useState<boolean>(false);
@@ -50,8 +51,12 @@ export default function DialogSelectProvince({
         }
     };
 
+    const handleOpen = (open: boolean) => {
+        SetOpen(open);
+    };
+
     return (
-        <Dialog open={open} onOpenChange={SetOpen}>
+        <Dialog open={open} onOpenChange={handleOpen}>
             <DialogTrigger asChild>{trigger}</DialogTrigger>
             <DialogContent className="max-w-none w-fit">
                 <div className="w-[500px]">

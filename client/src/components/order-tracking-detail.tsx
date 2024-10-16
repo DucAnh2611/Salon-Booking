@@ -145,7 +145,6 @@ export default function OrderTrackingDetail({}: IOrderTrackingDetailProps) {
         if (!socket || !isConnected) return;
 
         if (socket) {
-            console.log(socket);
             if (order) {
                 socket.emit(ESocketMessage.CLIENT_TRACKING_ORDER, {
                     orderId: order.id,

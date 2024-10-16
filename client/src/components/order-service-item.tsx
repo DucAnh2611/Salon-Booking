@@ -135,14 +135,6 @@ export default function OrderServiceItem({
                                 {formatMoney(serviceItem.service.price)}
                             </span>
                         </div>
-                        <div className="w-full grid grid-cols-2">
-                            <span className="font-medium text-sm text-primary col-span-1">
-                                Tổng tạm tính
-                            </span>
-                            <span className="font-medium text-sm col-span-1 text-right">
-                                {formatMoney(serviceItem.service.price)}
-                            </span>
-                        </div>
                     </div>
                 </div>
             )}
