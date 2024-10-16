@@ -8,6 +8,7 @@ import {
     CalendarIcon,
     ChevronLeft,
     ChevronRight,
+    LoaderCircle,
     RotateCcw,
     XIcon,
 } from "lucide-react";
@@ -32,7 +33,7 @@ export default function SheetMyJob({ trigger }: ISheetMyJobProps) {
     const dispatch = useAppDispatch();
     const { reload, jobs, count, isCalling } = useAppSelector(jobSelector);
     const [limit, SetLimit] = useState<number>(10);
-    const [page, SetPage, pageV] = useDebounce<number>(1);
+    const [page, SetPage, pageV, pageDebouncing] = useDebounce<number>(1);
     const [from, SetFrom, fromV] = useDebounce<Date | undefined>(undefined);
     const [to, SetTo, toV] = useDebounce<Date | undefined>(undefined);
 
@@ -105,10 +106,10 @@ export default function SheetMyJob({ trigger }: ISheetMyJobProps) {
                         </div>
                     </div>
                 </SheetHeader>
-                <div className="flex-1 flex flex-col gap-5 overflow-hidden">
-                    <div className="flex flex-col flex-1 overflow-hidden">
+                <div className="flex-1 flex flex-col gap-5 overflow-hidden relative">
+                    <div className="flex flex-col flex-1 overflow-hidden relative z-[0]">
                         {!!jobs.length ? (
-                            <ScrollArea className="pr-3 h-full">
+                            <ScrollArea className="pr-3 h-full ">
                                 {jobs.map((job) => (
                                     <div key={job.id}>
                                         <JobCard job={job} />
@@ -117,6 +118,18 @@ export default function SheetMyJob({ trigger }: ISheetMyJobProps) {
                             </ScrollArea>
                         ) : (
                             <p>Không có công việc</p>
+                        )}
+                        {(isCalling || pageDebouncing) && (
+                            <div className="absolute top-0 left-0 w-full h-full z-[1] backdrop-blur-sm">
+                                <div className="w-full h-full absolute top-0 left-0 bg-muted-foreground opacity-25 " />
+                                <div className="flex relative z-[1] h-full w-full text-xs items-center justify-center gap-2">
+                                    <LoaderCircle
+                                        size={15}
+                                        className="animate-spin"
+                                    />
+                                    <p>Đang tải</p>
+                                </div>
+                            </div>
                         )}
                     </div>
 
@@ -211,7 +224,7 @@ export default function SheetMyJob({ trigger }: ISheetMyJobProps) {
                                 </span>
                                 <span>/</span>
                                 <span>{count}</span>
-                                <span>Bản ghi</span>
+                                <span>Công việc</span>
                             </div>
                             <div className="flex gap-2 flex-1">
                                 <Button
