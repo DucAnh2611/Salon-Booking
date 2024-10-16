@@ -102,7 +102,16 @@ export class OrderBaseService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
         }
 
-        await this.orderBaseRepository.update({ id: orderId }, { status: state, updatedBy: userId });
+        await this.orderBaseRepository.update(
+            { id: orderId },
+            {
+                status: state,
+                updatedBy: userId,
+                ...(state === OrderStatusEnum.CALL_CONFIRM && order.type === OrderType.SERVICE && order.confirmExpired
+                    ? { confirmExpired: null }
+                    : {}),
+            },
+        );
         return DataSuccessCodeEnum.OK;
     }
 
