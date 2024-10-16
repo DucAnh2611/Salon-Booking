@@ -17,7 +17,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "./ui/popover";
 
 export default function ProvinceCombobox() {
     const {
-        province: { provinces, selected, loading },
+        province: { provinces, selected, loading, failed },
         setSelected,
     } = useProvince();
     const [open, setOpen] = useState<boolean>(false);
@@ -92,6 +92,8 @@ export default function ProvinceCombobox() {
                                         {province.name}
                                     </CommandItem>
                                 ))
+                            ) : failed ? (
+                                <></>
                             ) : (
                                 <CommandItem>
                                     <LoaderIcon

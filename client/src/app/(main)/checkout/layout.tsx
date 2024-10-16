@@ -2,7 +2,6 @@
 
 import CartProductContactProvider from "@/context/cart-product-contact.context";
 import CartServiceContactProvider from "@/context/cart-service-contact.context";
-import ProvinceProvider from "@/context/province.context";
 import withAuth from "@/hoc/withAuth";
 import { ILayoutProps } from "@/interface/layout.interface";
 import { useSearchParams } from "next/navigation";
@@ -26,12 +25,10 @@ function CheckoutLayout({ product, service }: ICartLayoutProps) {
         <div className="w-full h-fit py-10 box-border">
             <CartProductContactProvider>
                 <CartServiceContactProvider>
-                    <ProvinceProvider>
-                        <div className="container px-4 gap-5 flex w-full box-border h-fit">
-                            {type === "service" && service}
-                            {type === "product" && product}
-                        </div>
-                    </ProvinceProvider>
+                    <div className="container px-4 gap-5 flex w-full box-border h-fit">
+                        {type === "service" && service}
+                        {type === "product" && product}
+                    </div>
                 </CartServiceContactProvider>
             </CartProductContactProvider>
         </div>

@@ -12,7 +12,7 @@ interface IProvinceGroupProps {}
 
 export default function ProvinceGroup({}: IProvinceGroupProps) {
     const {
-        province: { selected: pSelected },
+        province: { selected: pSelected, failed: pFailed },
         district: { selected: dSelected },
         ward: { selected: wSelected },
         street,
@@ -50,6 +50,20 @@ export default function ProvinceGroup({}: IProvinceGroupProps) {
                         value={street}
                         onChange={handleChangeStreet}
                     />
+                )}
+                {pFailed && (
+                    <>
+                        <p className="text-sm italic primary">
+                            *Lấy thông tin thành phố thất bại, vui lòng nhập địa
+                            chỉ của bạn.
+                        </p>
+                        <Input
+                            placeholder="Địa chỉ"
+                            className="focus-visible:ring-transparent w-full"
+                            value={street}
+                            onChange={handleChangeStreet}
+                        />
+                    </>
                 )}
                 {pSelected && dSelected && wSelected && street && (
                     <div className="w-full">

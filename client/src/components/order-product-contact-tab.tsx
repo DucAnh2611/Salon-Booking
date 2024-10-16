@@ -32,6 +32,7 @@ export default function OrderProductContactTab({
     } = useCartProductContact();
 
     useEffect(() => {
+        console.log(district, province, street, ward);
         form.setValue(
             "contact.address",
             district && province && ward && street
@@ -44,6 +45,8 @@ export default function OrderProductContactTab({
                           province.name,
                       ],
                   })
+                : street
+                ? street
                 : ""
         );
     }, [district, province, street, ward]);

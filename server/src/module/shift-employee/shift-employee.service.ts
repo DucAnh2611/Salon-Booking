@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { SortByEnum } from '../../common/enum/query.enum';
 import { ShiftEmployeeStatusEnum } from '../../common/enum/shift.enum';
 import { BadRequest } from '../../shared/exception/error.exception';
 import { ServiceEntity } from '../service-base/entity/service.entity';
@@ -77,9 +78,11 @@ export class ShiftEmployeeService {
             where: {
                 shiftId: shift.id,
                 employee: In(serviceEmployees.map(e => e.employeeId)),
-                status: ShiftEmployeeStatusEnum.AVAILABLE,
             },
             loadEagerRelations: false,
+            order: {
+                status: SortByEnum.ASC,
+            },
             relations: {
                 employee: {
                     userBase: {
@@ -92,10 +95,12 @@ export class ShiftEmployeeService {
         const mapExp = await Promise.all(
             shiftEmployess.map(emp => {
                 const serviceEmployee = serviceEmployees.find(se => se.employeeId === emp.employeeId);
+                const selectable = emp.status === ShiftEmployeeStatusEnum.AVAILABLE;
 
                 return {
                     ...emp,
                     experience: serviceEmployee.experience,
+                    selectable,
                 };
             }),
         );

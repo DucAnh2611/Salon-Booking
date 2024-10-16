@@ -58,7 +58,7 @@ export class BankService {
 
         list = res.data;
 
-        this.redisService.set(this.keyRedis, res.data, 1000 * 60 * 60);
+        this.redisService.set(this.keyRedis, res.data);
 
         return list;
     }

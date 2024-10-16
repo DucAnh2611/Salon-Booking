@@ -1,3 +1,4 @@
+import { toast } from "@/components/ui/use-toast";
 import { ILayoutProps } from "@/interface/layout.interface";
 import {
     IDistrict,
@@ -21,6 +22,7 @@ interface IProvinceContext {
     search: IProvinceSearchQuery;
     selected: IProvince | null;
     loading: boolean;
+    failed: boolean;
 }
 
 interface IDistrictContext {
@@ -28,6 +30,7 @@ interface IDistrictContext {
     search: IDistrictSearchQuery;
     selected: IDistrict | null;
     loading: boolean;
+    failed: boolean;
 }
 
 interface IWardContext {
@@ -35,6 +38,7 @@ interface IWardContext {
     search: IWardSearchQuery;
     selected: IWard | null;
     loading: boolean;
+    failed: boolean;
 }
 
 interface IProvinceContextProps {
@@ -65,6 +69,7 @@ export const ProvinceContext = createContext<IProvinceContextProps>({
         },
         selected: null,
         loading: false,
+        failed: false,
     },
     district: {
         districts: [],
@@ -73,6 +78,7 @@ export const ProvinceContext = createContext<IProvinceContextProps>({
         },
         selected: null,
         loading: false,
+        failed: false,
     },
     ward: {
         wards: [],
@@ -81,6 +87,7 @@ export const ProvinceContext = createContext<IProvinceContextProps>({
         },
         selected: null,
         loading: false,
+        failed: false,
     },
     street: "",
     setSelected: <T extends TSearchType>(
@@ -98,6 +105,7 @@ export default function ProvinceProvider({ children }: ILayoutProps) {
         },
         loading: false,
         selected: null,
+        failed: false,
     });
     const [district, SetDistrict] = useState<IDistrictContext>({
         districts: [],
@@ -106,6 +114,7 @@ export default function ProvinceProvider({ children }: ILayoutProps) {
         },
         loading: false,
         selected: null,
+        failed: false,
     });
     const [ward, SetWard] = useState<IWardContext>({
         wards: [],
@@ -114,6 +123,7 @@ export default function ProvinceProvider({ children }: ILayoutProps) {
         },
         loading: false,
         selected: null,
+        failed: false,
     });
     const [street, SetStreet] = useState<string>("");
 
@@ -134,6 +144,17 @@ export default function ProvinceProvider({ children }: ILayoutProps) {
                 provinces: response.result,
                 loading: false,
             }));
+        } else {
+            toast({
+                title: "Thất bại",
+                description: "Lấy thông tin thành phố thất bại.",
+                duration: 2000,
+                variant: "destructive",
+            });
+            SetProvince((p) => ({
+                ...p,
+                failed: true,
+            }));
         }
     };
 
@@ -153,6 +174,17 @@ export default function ProvinceProvider({ children }: ILayoutProps) {
                 districts: response.result,
                 loading: false,
             }));
+        } else {
+            toast({
+                title: "Thất bại",
+                description: "Lấy thông tin quận huyện",
+                duration: 2000,
+                variant: "destructive",
+            });
+            SetDistrict((p) => ({
+                ...p,
+                failed: true,
+            }));
         }
     };
 
@@ -166,6 +198,17 @@ export default function ProvinceProvider({ children }: ILayoutProps) {
                 ...p,
                 wards: response.result,
                 loading: false,
+            }));
+        } else {
+            toast({
+                title: "Thất bại",
+                description: "Lấy thông tin phường xã thất bại",
+                duration: 2000,
+                variant: "destructive",
+            });
+            SetWard((p) => ({
+                ...p,
+                failed: true,
             }));
         }
     };

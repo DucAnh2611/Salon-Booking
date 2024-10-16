@@ -10,21 +10,30 @@ import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
 import BookingProvider from "@/context/booking.context";
 import { EOrderPaymentType } from "@/enum/order.enum";
+import useCartProduct from "@/hook/useCartProduct.hook";
 import useCartService from "@/hook/useCartService.hook";
 import { IPlaceOrderService } from "@/interface/order.interface";
 import { placeOrderService } from "@/lib/actions/order.action";
 import { placeOrderServiceSchema } from "@/schema/order.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export default function CheckoutServicePage() {
     const router = useRouter();
-    const { selectItems, paymentType, setSelectItems } = useCartService();
+    const {
+        selectItems,
+        paymentType,
+        setSelectItems,
+        getCount: getCountService,
+    } = useCartService();
+    const { getCount: getCountProduct } = useCartProduct();
+    const [placing, SetPlacing] = useState<boolean>(false);
+    const [redirecting, SetRedirecting] = useState<boolean>(false);
 
     const form = useForm<z.infer<typeof placeOrderServiceSchema>>({
         defaultValues: {
@@ -40,6 +49,8 @@ export default function CheckoutServicePage() {
     });
 
     const handleSubmit = async () => {
+        if (placing) return;
+        SetPlacing(true);
         const bodySubmit: IPlaceOrderService = form.getValues();
 
         const { response, error } = await placeOrderService(bodySubmit);
@@ -50,6 +61,10 @@ export default function CheckoutServicePage() {
                 duration: 1000,
             });
             setSelectItems([]);
+            SetRedirecting(true);
+            getCountService();
+            getCountProduct();
+
             router.push(`/tracking?code=${response.result.code}`);
         } else {
             toast({
@@ -58,6 +73,7 @@ export default function CheckoutServicePage() {
                 variant: "destructive",
             });
         }
+        SetPlacing(true);
     };
 
     useMemo(() => {
@@ -141,9 +157,16 @@ export default function CheckoutServicePage() {
 
                                             <div className="w-full flex gap-2">
                                                 <Button
-                                                    className="w-full !py-3 h-fit text-base"
+                                                    className="w-full !py-3 h-fit text-base gap-2"
                                                     type="submit"
+                                                    disabled={placing}
                                                 >
+                                                    {placing && (
+                                                        <LoaderCircle
+                                                            size={15}
+                                                            className="animate-spin"
+                                                        />
+                                                    )}
                                                     Đặt đơn
                                                 </Button>
                                             </div>

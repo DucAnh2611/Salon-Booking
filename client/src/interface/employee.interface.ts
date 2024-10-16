@@ -15,4 +15,5 @@ export interface IEmployeeShift {
 
     status: EShiftEmployeeStatus;
     experience: EServiceEmployeeExperience;
+    selectable: boolean;
 }

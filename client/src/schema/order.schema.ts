@@ -1,10 +1,15 @@
 import { EOrderPaymentType } from "@/enum/order.enum";
 import { z } from "zod";
 
+const vietnamPhoneRegex = /^(03|05|07|08|09)(\d{1,3} ?){3}\d{3}$/;
+
 export const placeOrderContact = z.object({
-    name: z.string().min(1),
-    address: z.string().min(1),
-    phone: z.string().min(1),
+    name: z.string().min(1, { message: "Tên khách hàng là bắt buộc" }),
+    address: z.string().min(1, { message: "Địa chỉ nhận hàng là bắt buộc" }),
+    phone: z
+        .string()
+        .min(1, { message: "số điện thoại ngưỜi nhận là bắt buộc" })
+        .regex(vietnamPhoneRegex, "Số điện thoại không đúng định dạng"),
     note: z.string().default("").optional(),
 });
 
@@ -36,12 +41,15 @@ export const cancelRefundSchema = z.object({
 
 export const cancelTransactioncSchema = z.object({
     transactionId: z.string().min(1),
-    note: z.string().min(1),
+    note: z.string().min(1, { message: "Ghi chú là bắt buộc" }),
 });
 
 export const placeOrderServiceContact = z.object({
-    name: z.string().min(1),
-    phone: z.string().min(1),
+    name: z.string().min(1, { message: "Tên khách hàng là bắt buộc" }),
+    phone: z
+        .string()
+        .min(1, { message: "Số điện thoại khách hàng là bắt buộc" })
+        .regex(vietnamPhoneRegex, "Số điện thoại không đúng định dạng"),
     note: z.string().default("").optional(),
 });
 

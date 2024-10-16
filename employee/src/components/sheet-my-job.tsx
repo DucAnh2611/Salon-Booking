@@ -4,7 +4,13 @@ import { myJob } from "@/lib/redux/actions/job.action";
 import { jobSelector } from "@/lib/redux/selector";
 import { useAppDispatch, useAppSelector } from "@/lib/redux/store";
 import { format } from "date-fns";
-import { CalendarIcon, RotateCcw, XIcon } from "lucide-react";
+import {
+    CalendarIcon,
+    ChevronLeft,
+    ChevronRight,
+    RotateCcw,
+    XIcon,
+} from "lucide-react";
 import { ReactNode, useEffect, useState } from "react";
 import DatePicker from "./date-picker";
 import JobCard from "./job-card";
@@ -24,11 +30,15 @@ interface ISheetMyJobProps {
 
 export default function SheetMyJob({ trigger }: ISheetMyJobProps) {
     const dispatch = useAppDispatch();
-    const { reload, jobs, isCalling, isFailure } = useAppSelector(jobSelector);
-    const [page, SetPage] = useState<number>(1);
-    const [limit, SetLimit] = useState<number>(20);
+    const { reload, jobs, count, isCalling } = useAppSelector(jobSelector);
+    const [limit, SetLimit] = useState<number>(10);
+    const [page, SetPage, pageV] = useDebounce<number>(1);
     const [from, SetFrom, fromV] = useDebounce<Date | undefined>(undefined);
     const [to, SetTo, toV] = useDebounce<Date | undefined>(undefined);
+
+    const handleChangePage = (page: number) => () => {
+        SetPage(page || 1);
+    };
 
     const handleSelectDate = (type: "from" | "to") => (date: Date | null) => {
         let setter = undefined;
@@ -54,7 +64,7 @@ export default function SheetMyJob({ trigger }: ISheetMyJobProps) {
 
     const handleReload = () => {
         dispatch(
-            myJob({ ...(from && { from }), ...(to && { to }), page, limit })
+            myJob({ ...(from && { from }), ...(to && { to }), page: 1, limit })
         );
     };
 
@@ -192,6 +202,34 @@ export default function SheetMyJob({ trigger }: ISheetMyJobProps) {
                                         Xóa
                                     </Button>
                                 )}
+                            </div>
+                        </div>
+                        <div className=" flex gap-2 w-full items-center">
+                            <div className="text-xs flex gap-1 w-[100px]">
+                                <span className="text-primary">
+                                    {jobs.length + (pageV - 1) * limit}
+                                </span>
+                                <span>/</span>
+                                <span>{count}</span>
+                                <span>Bản ghi</span>
+                            </div>
+                            <div className="flex gap-2 flex-1">
+                                <Button
+                                    className="gap-2 flex-1"
+                                    disabled={pageV <= 1}
+                                    variant="outline"
+                                    onClick={handleChangePage(pageV - 1)}
+                                >
+                                    <ChevronLeft size={15} /> Trang trước
+                                </Button>
+                                <Button
+                                    className="gap-2 flex-1"
+                                    disabled={pageV >= Math.ceil(count / limit)}
+                                    variant="outline"
+                                    onClick={handleChangePage(pageV + 1)}
+                                >
+                                    <ChevronRight size={15} /> Trang sau
+                                </Button>
                             </div>
                         </div>
                     </div>

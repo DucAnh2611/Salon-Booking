@@ -8,22 +8,32 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "@/components/ui/use-toast";
+import ProvinceProvider from "@/context/province.context";
 import { EOrderPaymentType } from "@/enum/order.enum";
 import useCartProduct from "@/hook/useCartProduct.hook";
+import useCartService from "@/hook/useCartService.hook";
 import { IPlaceOrderProduct } from "@/interface/order.interface";
 import { placeOrderProduct } from "@/lib/actions/order.action";
 import { placeOrderProductSchema } from "@/schema/order.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ChevronLeft } from "lucide-react";
+import { ChevronLeft, LoaderCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
 export default function CheckoutProductPage() {
     const router = useRouter();
-    const { selectItems, paymentType, setSelectItems } = useCartProduct();
+    const {
+        selectItems,
+        paymentType,
+        setSelectItems,
+        getCount: getCountProduct,
+    } = useCartProduct();
+    const { getCount: getCountService } = useCartService();
+    const [placing, SetPlacing] = useState<boolean>(false);
+    const [redirecting, SetRedirecting] = useState<boolean>(false);
 
     const form = useForm<z.infer<typeof placeOrderProductSchema>>({
         defaultValues: {
@@ -40,6 +50,8 @@ export default function CheckoutProductPage() {
     });
 
     const handleSubmit = async () => {
+        if (placing) return;
+        SetPlacing(true);
         const bodySubmit: IPlaceOrderProduct = form.getValues();
         const { response, error } = await placeOrderProduct(bodySubmit);
 
@@ -50,6 +62,9 @@ export default function CheckoutProductPage() {
                 duration: 1000,
             });
             setSelectItems([]);
+            SetRedirecting(true);
+            getCountService();
+            getCountProduct();
 
             router.push(`/tracking?code=${response.result.code}`);
         } else {
@@ -59,6 +74,7 @@ export default function CheckoutProductPage() {
                 variant: "destructive",
             });
         }
+        SetPlacing(false);
     };
 
     useMemo(() => {
@@ -83,80 +99,95 @@ export default function CheckoutProductPage() {
 
     return (
         <div className="w-full">
-            <div className="">
-                <div className="mb-2">
-                    <Button
-                        className="w-fit gap-2"
-                        type="button"
-                        variant="outline"
-                        asChild
-                    >
-                        <Link href={"cart?type=product"}>
-                            <ChevronLeft size={15} />
-                            Quay lại giỏ hàng
-                        </Link>
-                    </Button>
-                </div>
-                <div>
-                    {!!selectItems.length ? (
-                        <Form {...form}>
-                            <form
-                                className="flex gap-5 w-full h-fit"
-                                onSubmit={form.handleSubmit(handleSubmit)}
-                            >
-                                <Card className="flex-1 box-border h-fit">
-                                    <CardHeader className="p-4">
-                                        <CardTitle>
-                                            Danh sách sản phẩm
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <Separator
-                                        className=""
-                                        orientation="horizontal"
-                                    />
-                                    <CardContent className="p-4">
-                                        <OrderProductItemTab />
-                                    </CardContent>
-                                </Card>
+            <ProvinceProvider>
+                <div className="">
+                    <div className="mb-2">
+                        <Button
+                            className="w-fit gap-2"
+                            type="button"
+                            variant="outline"
+                            asChild
+                        >
+                            <Link href={"cart?type=product"}>
+                                <ChevronLeft size={15} />
+                                Quay lại giỏ hàng
+                            </Link>
+                        </Button>
+                    </div>
+                    <div>
+                        {!!selectItems.length ? (
+                            <Form {...form}>
+                                <form
+                                    className="flex gap-5 w-full h-fit"
+                                    onSubmit={form.handleSubmit(handleSubmit)}
+                                >
+                                    <Card className="flex-1 box-border h-fit">
+                                        <CardHeader className="p-4">
+                                            <CardTitle>
+                                                Danh sách sản phẩm
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <Separator
+                                            className=""
+                                            orientation="horizontal"
+                                        />
+                                        <CardContent className="p-4">
+                                            <OrderProductItemTab />
+                                        </CardContent>
+                                    </Card>
 
-                                <Card className="flex-1 box-border h-fit">
-                                    <CardHeader className="p-4">
-                                        <CardTitle>
-                                            Thông tin đặt hàng
-                                        </CardTitle>
-                                    </CardHeader>
-                                    <Separator
-                                        className=""
-                                        orientation="horizontal"
-                                    />
-                                    <CardContent className="p-4">
-                                        <OrderProductContactTab form={form} />
-                                    </CardContent>
-                                </Card>
+                                    <Card className="flex-1 box-border h-fit">
+                                        <CardHeader className="p-4">
+                                            <CardTitle>
+                                                Thông tin đặt hàng
+                                            </CardTitle>
+                                        </CardHeader>
+                                        <Separator
+                                            className=""
+                                            orientation="horizontal"
+                                        />
+                                        <CardContent className="p-4">
+                                            <OrderProductContactTab
+                                                form={form}
+                                            />
+                                        </CardContent>
+                                    </Card>
 
-                                <div className="w-[400px] h-auto">
-                                    <div className="w-full h-fit flex-col flex gap-5 sticky top-5 left-0 ">
-                                        <OrderProductAmount />
+                                    <div className="w-[400px] h-auto">
+                                        <div className="w-full h-fit flex-col flex gap-5 sticky top-5 left-0 ">
+                                            <OrderProductAmount />
 
-                                        <div className="w-full flex gap-2">
-                                            <Button
-                                                className="w-full !py-3 h-fit text-base"
-                                                type="submit"
-                                            >
-                                                Đặt đơn
-                                            </Button>
+                                            <div className="w-full flex gap-2">
+                                                <Button
+                                                    className="w-full !py-3 h-fit text-base gap-2"
+                                                    type="submit"
+                                                    disabled={placing}
+                                                >
+                                                    {placing && (
+                                                        <LoaderCircle
+                                                            size={15}
+                                                            className="animate-spin"
+                                                        />
+                                                    )}
+                                                    Đặt đơn
+                                                </Button>
+                                            </div>
                                         </div>
                                     </div>
-                                </div>
-                            </form>
-                        </Form>
-                    ) : (
-                        <div>
-                            <p>Không có sản phẩm nào được chọn</p>
-                        </div>
-                    )}
+                                </form>
+                            </Form>
+                        ) : redirecting ? (
+                            <div>
+                                <p>Đang chuyển hướng...</p>
+                            </div>
+                        ) : (
+                            <div>
+                                <p>Không có sản phẩm nào được chọn</p>
+                            </div>
+                        )}
+                    </div>
                 </div>
-            </div>
+            </ProvinceProvider>
         </div>
     );
 }

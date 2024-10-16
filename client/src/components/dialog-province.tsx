@@ -20,7 +20,7 @@ export default function DialogSelectProvince({
     trigger,
 }: IDialogSelectProvinceProps) {
     const {
-        province: { selected: pSelected },
+        province: { selected: pSelected, failed: pFailed },
         district: { selected: dSelected },
         ward: { selected: wSelected },
         street,
@@ -33,7 +33,10 @@ export default function DialogSelectProvince({
     };
 
     const handleConfirm = () => {
-        if (pSelected && dSelected && wSelected && street) {
+        if (
+            (pSelected && dSelected && wSelected && street) ||
+            (pFailed && street)
+        ) {
             SetOpen(false);
             setContact({
                 ...contact,
@@ -67,10 +70,11 @@ export default function DialogSelectProvince({
                                 onClick={handleConfirm}
                                 disabled={
                                     !(
-                                        pSelected &&
-                                        dSelected &&
-                                        wSelected &&
-                                        street
+                                        (pSelected &&
+                                            dSelected &&
+                                            wSelected &&
+                                            street) ||
+                                        (pFailed && street)
                                     )
                                 }
                             >

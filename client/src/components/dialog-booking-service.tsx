@@ -10,6 +10,7 @@ import {
     getShiftBookingTime,
     getShiftEmployeeBooking,
 } from "@/lib/actions/shift.action";
+import { cn } from "@/lib/utils";
 import { format } from "date-fns";
 import { ReactNode, useEffect, useState } from "react";
 import DatePicker from "./date-picker";
@@ -126,12 +127,21 @@ export default function DialogBookingService({
     };
 
     const handleSelectEmployee = (employee: IEmployeeShift) => () => {
-        setEmployee(
-            bookingEmployee &&
-                bookingEmployee.employeeId === employee.employeeId
-                ? undefined
-                : employee
-        );
+        if (employee.selectable) {
+            setEmployee(
+                bookingEmployee &&
+                    bookingEmployee.employeeId === employee.employeeId
+                    ? undefined
+                    : employee
+            );
+        } else {
+            toast({
+                title: "Thất bại",
+                description: "Nhân viên hiện chưa sẵn sàng",
+                variant: "destructive",
+                duration: 1000,
+            });
+        }
     };
 
     const handleOpen = (open: boolean) => {
@@ -396,11 +406,16 @@ export default function DialogBookingService({
                                     Nhân viên
                                     <RequireField />
                                 </Label>
-                                <div className="w-full flex gap-2 overflow-x-auto">
+                                <div className="w-full flex gap-2 overflow-x-auto py-1">
                                     {!!shiftEmployee.length ? (
                                         shiftEmployee.map((emp) => (
                                             <div
-                                                className="h-fit w-1/3 shrink-0 overflow-hidden cursor-pointer duration-150 active:scale-95"
+                                                className={cn(
+                                                    "h-fit w-[40%] shrink-0 overflow-hidden duration-150 active:scale-95",
+                                                    emp.selectable
+                                                        ? " cursor-pointer"
+                                                        : " cursor-default"
+                                                )}
                                                 key={
                                                     emp.employeeId + emp.shiftId
                                                 }
@@ -429,7 +444,7 @@ export default function DialogBookingService({
                         )}
                     </div>
                     <DialogFooter>
-                        <div className="flex w-full justify-end gap-2">
+                        <div className="flex w-full justify-end gap-2 mt-2">
                             <Button
                                 onClick={() => {
                                     handleOpen(false);
