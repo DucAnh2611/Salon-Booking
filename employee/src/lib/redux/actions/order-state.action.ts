@@ -6,7 +6,10 @@ import {
     isDispatchFailed,
     isDispatchSuccess,
 } from "@/helpers/dispatchDedicate";
-import { IApiUpdateOrderState } from "@/interface/api/order-state.interface";
+import {
+    IApiCancelKeepFeeOrder,
+    IApiUpdateOrderState,
+} from "@/interface/api/order-state.interface";
 import { IActionDedicateOrderState } from "@/interface/redux/order-state.interface";
 import { apiCall } from "@/utils/apiCall";
 import { TAppDispatch } from "../store";
@@ -51,5 +54,22 @@ export const updateOrderState =
             dispatch(isDispatchSuccess(updateOrderStateType));
         } else {
             dispatch(isDispatchFailed(updateOrderStateType));
+        }
+    };
+
+/** @CANCEL_KEEP_FEE */
+const cancelKeepFeeType = EReduxType.CANCEL_KEEP_FEE;
+export const cancelKeepFee =
+    (body: IApiCancelKeepFeeOrder) => async (dispatch: TAppDispatch) => {
+        const api = API_URLS.ORDER_STATE.CANCEL_KEEP_FEE();
+
+        dispatch(isDispatchCalling(cancelKeepFeeType));
+
+        const { response } = await apiCall({ ...api, payload: body });
+
+        if (response) {
+            dispatch(isDispatchSuccess(cancelKeepFeeType));
+        } else {
+            dispatch(isDispatchFailed(cancelKeepFeeType));
         }
     };

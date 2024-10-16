@@ -22,11 +22,11 @@ const chartConfig = {
     },
     [ORDER_STATUS[EOrderStatus.PENDING_PAYMENT]]: {
         label: ORDER_STATUS[EOrderStatus.PENDING_PAYMENT],
-        fill: "#FFA500",
+        fill: "#ffc04c",
     },
     [ORDER_STATUS[EOrderStatus.PAID_PAYMENT]]: {
         label: ORDER_STATUS[EOrderStatus.PAID_PAYMENT],
-        fill: "#9370DB",
+        fill: "#c3a6ff",
     },
     [ORDER_STATUS[EOrderStatus.CONFIRMED]]: {
         label: ORDER_STATUS[EOrderStatus.CONFIRMED],
@@ -71,6 +71,10 @@ const chartConfig = {
     [ORDER_STATUS[EOrderStatus.RETURNED]]: {
         label: ORDER_STATUS[EOrderStatus.RETURNED],
         fill: "#DC143C",
+    },
+    [ORDER_STATUS[EOrderStatus.CANCELLED_KEEP_FEE]]: {
+        label: ORDER_STATUS[EOrderStatus.CANCELLED_KEEP_FEE],
+        fill: "#810b23",
     },
 };
 

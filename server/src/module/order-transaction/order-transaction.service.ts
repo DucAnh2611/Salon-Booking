@@ -8,7 +8,7 @@ import { LOGGER_CONSTANT_NAME } from '../../common/constant/logger.constant';
 import { FAIL_STATE_LIST } from '../../common/constant/order.contant';
 import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
 import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
-import { OrderPaymentStatusEnum } from '../../common/enum/order.enum';
+import { OrderPaymentStatusEnum, OrderStatusEnum } from '../../common/enum/order.enum';
 import { SortByEnum } from '../../common/enum/query.enum';
 import { appConfig } from '../../config/app.config';
 import { payosConfig } from '../../config/payos.config';
@@ -238,7 +238,11 @@ export class OrderTransactionService {
                 if (tran.paidAmount !== tran.orderAmount && tran.paidAmount > 0) {
                     canCreateRefundFinal = await this.orderRefundRequestService.canCreateRefund(tran.orderId, tran.id);
                 }
-                if (tran.paidAmount >= tran.orderAmount && FAIL_STATE_LIST.includes(tran.order.status)) {
+                if (
+                    tran.paidAmount >= tran.orderAmount &&
+                    tran.order.status !== OrderStatusEnum.CANCELLED_KEEP_FEE &&
+                    FAIL_STATE_LIST.includes(tran.order.status)
+                ) {
                     canCreateRefundFinal = true;
                 }
 

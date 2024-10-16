@@ -326,6 +326,7 @@ export const ADMIN_ORDER_ROUTE = {
 
     ORDER_STATE_LIST: 'order-state/list',
     UPDATE_ORDER_STATE: 'order-state/',
+    CANCEL_KEEP_FEE: 'order-state/cancel-keep-fee',
 
     RECHECK_ORDER_REFUND: 'order-refund/recheck/:id',
     GET_ORDER_REFUND: 'order-refund/:id',

@@ -34,6 +34,7 @@ export const ORDER_STATUS: Record<EOrderStatus, string> = {
     [EOrderStatus.CANCELLED]: "Đã hủy",
     [EOrderStatus.RETURNED]: "Đã hoàn đơn",
     [EOrderStatus.REFUNDED]: "Đã hoàn tiền",
+    [EOrderStatus.CANCELLED_KEEP_FEE]: "Hủy đơn giữ phí",
 };
 
 export const ORDER_TYPE: Record<EOrderType, string> = {
@@ -75,4 +76,11 @@ export const ORDER_REFUND_STATUS: Record<EOrderRefundStatus, string> = {
 export const REASON_CANCEL_REFUND: ICancelRefundReason[] = [
     { id: "RS_01", value: "Sai thông tin tài khoản nhận tiền" },
     { id: "RS_02", value: "Khác" },
+];
+
+export const REASON_CANCEL_ORDER: ICancelRefundReason[] = [
+    { id: "RS_01", value: "Sai thông tin đơn hàng" },
+    { id: "RS_02", value: "Khách hàng không tới sau khi đã gọi điện xác nhận" },
+    { id: "RS_03", value: "Khách hàng muốn hủy đơn" },
+    { id: "RS_04", value: "Khác" },
 ];

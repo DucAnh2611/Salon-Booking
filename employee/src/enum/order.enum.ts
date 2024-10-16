@@ -23,6 +23,7 @@ export enum EOrderStatus {
     FINISH = "FINISH",
 
     CANCELLED = "CANCELLED",
+    CANCELLED_KEEP_FEE = "CANCELLED_KEEP_FEE",
     RETURNED = "RETURNED",
     REFUNDED = "REFUNDED",
 }

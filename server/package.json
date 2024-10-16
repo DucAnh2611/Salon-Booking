@@ -37,7 +37,7 @@
     "@nestjs/typeorm": "^10.0.2",
     "@nestjs/websockets": "^10.4.4",
     "@ngrok/ngrok": "^1.4.1",
-    "@payos/node": "^1.0.8",
+    "@payos/node": "^1.0.10",
     "axios": "^1.7.7",
     "bcrypt": "^5.1.1",
     "bull": "^4.16.3",

@@ -6,18 +6,19 @@ import { Select, SelectContent, SelectItem, SelectTrigger } from "../ui/select";
 interface ISelectCancelRefundProps {
     onSelect: (value: ICancelRefundReason | null) => void;
     value: ICancelRefundReason | null;
+    reasons?: ICancelRefundReason[];
 }
 
 export default function SelectCancelRefundReason({
     value,
     onSelect,
+    reasons = REASON_CANCEL_REFUND,
 }: ISelectCancelRefundProps) {
     const [valueSelected, SetValueSelected] =
         useState<ICancelRefundReason | null>(null);
 
     const handleChangeStatus = (value: string) => {
-        const getReason =
-            REASON_CANCEL_REFUND.find((i) => i.id === value) || null;
+        const getReason = reasons.find((i) => i.id === value) || null;
 
         onSelect(getReason);
         SetValueSelected(getReason);
@@ -37,7 +38,7 @@ export default function SelectCancelRefundReason({
             </SelectTrigger>
             <SelectContent>
                 <SelectItem value={"no"}>Không</SelectItem>
-                {REASON_CANCEL_REFUND.map((reason) => (
+                {reasons.map((reason) => (
                     <SelectItem value={reason.id} key={reason.id}>
                         {reason.value}
                     </SelectItem>

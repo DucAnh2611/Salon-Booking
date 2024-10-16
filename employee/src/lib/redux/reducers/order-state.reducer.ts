@@ -74,6 +74,31 @@ export const orderStateReducer = (
                 };
             }
             return state;
+
+        case EReduxType.CANCEL_KEEP_FEE:
+            if (isCallingApi(action)) {
+                return {
+                    ...state,
+                    isUpdating: true,
+                    isFailure: false,
+                };
+            }
+            if (isSuccessfulApiCall(action)) {
+                return {
+                    ...state,
+                    isUpdating: false,
+                    isFailure: false,
+                };
+            }
+            if (isFailedApiCall(action)) {
+                return {
+                    ...state,
+                    isUpdating: false,
+                    isFailure: true,
+                };
+            }
+            return state;
+
         default:
             return state;
     }

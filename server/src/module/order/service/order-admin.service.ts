@@ -2,10 +2,10 @@ import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { LOGGER_CONSTANT_NAME } from '../../../common/constant/logger.constant';
 import {
-    CAN_CANCEL_LIST,
     CAN_FINISH_LIST,
     CAN_NOT_UPDATE_STATE_LIST,
     CAN_RETURN_LIST,
+    EMPLOYEE_CAN_CANCEL_LIST,
     FAIL_STATE_LIST,
     ORDER_STATE_PRODUCT,
     ORDER_STATE_SERVICE,
@@ -73,32 +73,11 @@ export class OrderAdminService {
         if (!cancelable) {
             throw new BadRequest({ message: DataErrorCodeEnum.CAN_NOT_CANCEL_ORDER });
         }
-
-        if (order.paymentType === OrderPaymentTypeEnum.BANK) {
-            const pendingTransaction = await this.orderTransactionService.isTransactionPending(orderId);
-            if (pendingTransaction) {
-                const paymentInfo = await this.orderTransactionService.getTransactionState(
-                    pendingTransaction.paymentId,
-                );
-                if (!paymentInfo) {
-                    throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_PAYMENT_TRANSACTION });
-                }
-
-                const paidTransaction = paymentInfo.amountPaid;
-
-                await this.orderTransactionService.cancelTransaction(
-                    pendingTransaction.id,
-                    paidTransaction,
-                    paymentInfo.transactions,
-                );
-            }
-        }
-
         await Promise.all([
-            this.orderBaseService.updateState(orderId, OrderStatusEnum.CANCELLED, userId),
+            this.orderBaseService.updateState(orderId, OrderStatusEnum.CANCELLED_KEEP_FEE, userId),
             this.orderStateService.addState({
                 orderId,
-                state: OrderStatusEnum.CANCELLED,
+                state: OrderStatusEnum.CANCELLED_KEEP_FEE,
                 description: reason,
                 userId,
             }),
@@ -109,11 +88,13 @@ export class OrderAdminService {
                 await this.orderProductItemService.restock(order.id);
                 break;
             case OrderType.SERVICE:
+                await this.orderServiceItemService.setAvailableEmployeeOrder(order.id);
                 break;
             default:
                 break;
         }
-        this.orderGateway.adminUpdateOrder({ orderId: order.id });
+
+        this.orderGateway.clientUpdateOrder({ orderId: order.id });
 
         return DataSuccessCodeEnum.OK;
     }
@@ -417,7 +398,7 @@ export class OrderAdminService {
         return {
             updateState,
             showUnPaid,
-            cancelable: CAN_CANCEL_LIST.includes(order.status),
+            cancelable: EMPLOYEE_CAN_CANCEL_LIST.includes(order.status) && order.type === OrderType.SERVICE,
         };
     }
 

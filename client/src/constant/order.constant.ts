@@ -34,6 +34,7 @@ export const ORDER_STATUS: Record<EOrderStatus, string> = {
     [EOrderStatus.CANCELLED]: "Đã hủy",
     [EOrderStatus.RETURNED]: "Đã hoàn đơn",
     [EOrderStatus.REFUNDED]: "Đã hoàn tiền",
+    [EOrderStatus.CANCELLED_KEEP_FEE]: "Hủy đơn giữ phí",
 };
 
 export const ORDER_TYPE: Record<EOrderType, string> = {

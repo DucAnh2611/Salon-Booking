@@ -23,11 +23,18 @@ export const ORDER_STATE_SERVICE: Record<'normal' | 'cancel', Record<'staff' | '
 
 export const CAN_CANCEL_LIST = [OrderStatusEnum.PENDING, OrderStatusEnum.PENDING_PAYMENT, OrderStatusEnum.PAID_PAYMENT];
 
+export const EMPLOYEE_CAN_CANCEL_LIST = [OrderStatusEnum.CONFIRMED, OrderStatusEnum.CALL_CONFIRM];
+
 export const CAN_RETURN_LIST = [OrderStatusEnum.SHIPPED];
 
 export const CAN_FINISH_LIST = [OrderStatusEnum.FINISH];
 
-export const FAIL_STATE_LIST = [OrderStatusEnum.RETURNED, OrderStatusEnum.REFUNDED, OrderStatusEnum.CANCELLED];
+export const FAIL_STATE_LIST = [
+    OrderStatusEnum.RETURNED,
+    OrderStatusEnum.REFUNDED,
+    OrderStatusEnum.CANCELLED,
+    OrderStatusEnum.CANCELLED_KEEP_FEE,
+];
 
 export const CAN_NOT_UPDATE_STATE_LIST = [
     ...CAN_CANCEL_LIST,

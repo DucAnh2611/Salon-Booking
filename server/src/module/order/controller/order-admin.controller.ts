@@ -15,7 +15,12 @@ import {
     GetOrderStateListQueryDto,
     GetRequestRefundParamDto,
 } from '../dto/order-get.dto';
-import { ApprovedRefundRequestDto, DeclineRefundRequestDto, StaffUpdateOrderStateDto } from '../dto/order-update.dto';
+import {
+    ApprovedRefundRequestDto,
+    DeclineRefundRequestDto,
+    StaffCancelOrderStateDto,
+    StaffUpdateOrderStateDto,
+} from '../dto/order-update.dto';
 import { OrderAdminService } from '../service/order-admin.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
@@ -28,6 +33,14 @@ export class OrderAdminController {
     @UserType(UserTypeEnum.STAFF)
     getOrderProduct(@Body() body: FindOrderAdminDto) {
         return this.orderAdminService.orderList(body);
+    }
+
+    @Post(ADMIN_ORDER_ROUTE.CANCEL_KEEP_FEE)
+    @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.UPDATE] }])
+    @UserType(UserTypeEnum.STAFF)
+    cancelKeepFee(@Req() req: AppRequest, @Body() body: StaffCancelOrderStateDto) {
+        const { userId } = req.accessPayload;
+        return this.orderAdminService.staffCancelOrder(userId, body);
     }
 
     @Get(ADMIN_ORDER_ROUTE.DETAIL)

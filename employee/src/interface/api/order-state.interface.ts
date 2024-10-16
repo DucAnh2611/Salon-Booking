@@ -14,3 +14,8 @@ export interface IApiUpdateOrderState {
     state: EOrderStatus;
     description?: string;
 }
+
+export interface IApiCancelKeepFeeOrder {
+    orderId: string;
+    reason: string;
+}

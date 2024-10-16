@@ -447,6 +447,15 @@ export const API_URLS = {
             }),
             withCredentials: true,
         }),
+        CANCEL_KEEP_FEE: () => ({
+            method: "POST",
+            headers: HEADERS.DEFAULT_HEADER,
+            endPoint: joinString({
+                joinString: "/",
+                strings: ["order", "staff", "order-state", "cancel-keep-fee"],
+            }),
+            withCredentials: true,
+        }),
     },
     REFUND: {
         GET: (id: string) => ({

@@ -166,7 +166,7 @@ export class OrderBaseService {
             take: limit,
             skip: (page - 1) * limit,
             order: {
-                ...(Object.entries(order).length ? order : { createdAt: SortByEnum.ASC }),
+                ...(Object.entries(order).length ? order : { createdAt: SortByEnum.DESC }),
             },
         });
     }
