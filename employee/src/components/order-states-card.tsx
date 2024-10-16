@@ -44,7 +44,7 @@ export default function OrderStatesCard() {
 
     return (
         <div className="w-full h-fit flex flex-col gap-5">
-            {base && base.cancelable && (
+            {base && base.cancelable && base.cancelType !== "none" && (
                 <div className="flex gap-3 bg-background border border-destructive rounded p-3 items-center justify-between">
                     <p className="text-sm text-muted-foreground">
                         Khách hàng không có mặt hoặc muốn hủy đơn?
@@ -52,10 +52,13 @@ export default function OrderStatesCard() {
                     <DialogCancelOrder
                         trigger={
                             <Button variant={"destructive"}>
-                                Hủy đơn giữ phí
+                                {base.cancelType === "no_refund"
+                                    ? "Hủy đơn giữ phí"
+                                    : "Hủy đơn"}
                             </Button>
                         }
                         orderId={base.id}
+                        type={base.cancelType}
                         onSuccess={onSuccessCancelOrder}
                     />
                 </div>

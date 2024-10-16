@@ -69,7 +69,6 @@ export default function DialogApprovedRefund({
     const [mediaUrls, SetMediaUrls] = useState<IMediaTempUpload[]>([]);
     const [submit, SetSubmit] = useState<boolean>(false);
     const [qr, SetQr] = useState<IQuickQr | null>(null);
-    const [getRefundData, SetGetRefundData] = useState<boolean>(false);
     const [recheckRemain, SetRecheckRemain] = useState<number>(TIME_RECHECK);
     const { socket, isConnected } = useSocket();
 
@@ -104,7 +103,6 @@ export default function DialogApprovedRefund({
                 duration: 2000,
             });
         }
-        SetGetRefundData(true);
     };
 
     const getRequestRefund = (requestId: string) => {
@@ -112,7 +110,6 @@ export default function DialogApprovedRefund({
     };
 
     const checkRequest = async (requestId: string) => {
-        SetGetRefundData(false);
         const api = API_URLS.REFUND.CHECK(requestId);
         const { response } = await apiCall<IWebhookRefundResult>({ ...api });
 
@@ -124,7 +121,6 @@ export default function DialogApprovedRefund({
                 );
             }
         }
-        SetGetRefundData(true);
         SetRecheckRemain(TIME_RECHECK);
     };
 
@@ -158,14 +154,12 @@ export default function DialogApprovedRefund({
             getRequestQr(requestId);
             getRequestRefund(requestId);
 
-            SetGetRefundData(false);
             SetRecheckRemain(TIME_RECHECK);
             SetQr(null);
             SetSubmit(false);
             SetSessionId(generateUUID());
             SetMediaUrls([]);
         } else {
-            SetGetRefundData(false);
             if (socket && detail && isConnected) {
                 socket.emit(ESocketMessage.LEAVE_REFUND_REQUEST, {
                     code: detail.code,
@@ -200,7 +194,6 @@ export default function DialogApprovedRefund({
                 ESocketEvent.SUCCESS_REFUND_REQUEST,
                 (data: { code: string; referenceCode: string }) => {
                     if (data.code === detail.code) {
-                        SetGetRefundData(false);
                         form.setValue(
                             "bankTransactionCode",
                             data.referenceCode
@@ -216,12 +209,12 @@ export default function DialogApprovedRefund({
     }, [qr, socket, isConnected]);
 
     useEffect(() => {
-        if (qr && getRefundData) {
+        if (qr) {
             const interval = setInterval(() => {
                 const r = recheckRemain;
                 SetRecheckRemain(r - 1);
 
-                if (r === 0) {
+                if (r === 1) {
                     checkRequest(requestId);
                 }
             }, 1000);
@@ -230,7 +223,7 @@ export default function DialogApprovedRefund({
                 clearInterval(interval);
             };
         }
-    }, [qr, recheckRemain, getRefundData]);
+    }, [qr, recheckRemain]);
 
     return (
         <Dialog open={open} onOpenChange={handleOpen}>
@@ -271,17 +264,15 @@ export default function DialogApprovedRefund({
                                     />
                                 </div>
                             )}
-                            {getRefundData && (
-                                <div className="w-auto">
-                                    <p className="text-xs">
-                                        Tự động kiểm tra sau
-                                        <b className="mx-1 text-primary">
-                                            {recheckRemain}
-                                        </b>
-                                        giây.
-                                    </p>
-                                </div>
-                            )}
+                            <div className="w-auto">
+                                <p className="text-xs">
+                                    Tự động kiểm tra sau
+                                    <b className="mx-1 text-primary">
+                                        {recheckRemain}
+                                    </b>
+                                    giây.
+                                </p>
+                            </div>
                         </div>
                     </div>
 

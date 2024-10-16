@@ -6,6 +6,7 @@ import {
     isDispatchFailed,
     isDispatchSuccess,
 } from "@/helpers/dispatchDedicate";
+import { TOrderCancel } from "@/interface/api/order-detail.interface";
 import {
     IApiCancelKeepFeeOrder,
     IApiUpdateOrderState,
@@ -60,8 +61,9 @@ export const updateOrderState =
 /** @CANCEL_KEEP_FEE */
 const cancelKeepFeeType = EReduxType.CANCEL_KEEP_FEE;
 export const cancelKeepFee =
-    (body: IApiCancelKeepFeeOrder) => async (dispatch: TAppDispatch) => {
-        const api = API_URLS.ORDER_STATE.CANCEL_KEEP_FEE();
+    (type: TOrderCancel, body: IApiCancelKeepFeeOrder) =>
+    async (dispatch: TAppDispatch) => {
+        const api = API_URLS.ORDER_STATE.CANCEL_KEEP_FEE(type);
 
         dispatch(isDispatchCalling(cancelKeepFeeType));
 

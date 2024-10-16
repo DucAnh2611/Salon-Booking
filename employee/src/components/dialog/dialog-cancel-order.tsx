@@ -1,4 +1,5 @@
 import { REASON_CANCEL_ORDER } from "@/constants/order.constant";
+import { TOrderCancel } from "@/interface/api/order-detail.interface";
 import { IApiCancelKeepFeeOrder } from "@/interface/api/order-state.interface";
 import { ICancelRefundReason } from "@/interface/cancel-reason.interface";
 import { cancelKeepFee } from "@/lib/redux/actions/order-state.action";
@@ -36,6 +37,7 @@ import { Separator } from "../ui/separator";
 interface IDialogCancelOrderProps {
     trigger: ReactNode;
     orderId: string;
+    type: TOrderCancel;
     onSuccess: () => void;
 }
 
@@ -43,6 +45,7 @@ export default function DialogCancelOrder({
     trigger,
     orderId,
     onSuccess,
+    type,
 }: IDialogCancelOrderProps) {
     const { isFailure, isUpdating } = useAppSelector(orderStateSelector);
     const dispatch = useAppDispatch();
@@ -81,7 +84,7 @@ export default function DialogCancelOrder({
             ...formData,
         };
 
-        dispatch(cancelKeepFee(body));
+        dispatch(cancelKeepFee(type, body));
     };
 
     const handleOpen = (open: boolean) => {
@@ -111,7 +114,7 @@ export default function DialogCancelOrder({
                 <DialogHeader>
                     <DialogTitle>Hủy đơn</DialogTitle>
                     <DialogDescription>
-                        Khi hủy đơn giữ phí, nếu khách hàng đã thanh toán, không
+                        Khi hủy đơn giữ phí, nếu khách hàng đã thanh toán không
                         thể hoàn tiền.
                     </DialogDescription>
                 </DialogHeader>

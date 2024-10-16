@@ -41,6 +41,7 @@ import {
     StaffUpdateOrderStateDto,
 } from '../dto/order-update.dto';
 import { OrderGateway } from '../gateways/order.gateway';
+import { OrderCancelType } from '../interface/order.interface';
 
 @Injectable()
 export class OrderAdminService {
@@ -61,7 +62,7 @@ export class OrderAdminService {
     ) {}
 
     /** @Order */
-    async staffCancelOrder(userId: string, body: StaffCancelOrderStateDto) {
+    async staffCancelOrder(type: OrderCancelType, userId: string, body: StaffCancelOrderStateDto) {
         const { orderId, reason } = body;
 
         const order = await this.orderBaseService.get(orderId);
@@ -69,15 +70,21 @@ export class OrderAdminService {
             throw new BadRequest({ message: DataErrorCodeEnum.NOT_EXIST_ORDER });
         }
 
-        const { cancelable } = await this.availableActions(orderId);
-        if (!cancelable) {
+        const { cancelable, cancelType } = await this.availableActions(orderId);
+        if (!cancelable || cancelType !== type || cancelType === 'none') {
             throw new BadRequest({ message: DataErrorCodeEnum.CAN_NOT_CANCEL_ORDER });
         }
+        let state = OrderStatusEnum.CANCELLED;
+
+        if (cancelType === 'no_refund') {
+            state = OrderStatusEnum.CANCELLED_KEEP_FEE;
+        }
+
         await Promise.all([
-            this.orderBaseService.updateState(orderId, OrderStatusEnum.CANCELLED_KEEP_FEE, userId),
+            this.orderBaseService.updateState(orderId, state, userId),
             this.orderStateService.addState({
                 orderId,
-                state: OrderStatusEnum.CANCELLED_KEEP_FEE,
+                state: state,
                 description: reason,
                 userId,
             }),
@@ -395,10 +402,13 @@ export class OrderAdminService {
             !CAN_RETURN_LIST.includes(order.status) &&
             !CAN_FINISH_LIST.includes(order.status);
 
+        const cancelable = EMPLOYEE_CAN_CANCEL_LIST.includes(order.status) && order.type === OrderType.SERVICE;
+
         return {
             updateState,
             showUnPaid,
-            cancelable: EMPLOYEE_CAN_CANCEL_LIST.includes(order.status) && order.type === OrderType.SERVICE,
+            cancelable,
+            cancelType: cancelable ? (order.status === OrderStatusEnum.CONFIRMED ? 'refundable' : 'no_refund') : 'none',
         };
     }
 

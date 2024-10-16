@@ -1,5 +1,6 @@
 import { EFileType } from "@/enum/media.enum";
 import { EOrderType } from "@/enum/order.enum";
+import { TOrderCancel } from "@/interface/api/order-detail.interface";
 import { joinString } from "@/utils/string";
 
 const HEADERS = {
@@ -447,12 +448,17 @@ export const API_URLS = {
             }),
             withCredentials: true,
         }),
-        CANCEL_KEEP_FEE: () => ({
+        CANCEL_KEEP_FEE: (type: TOrderCancel) => ({
             method: "POST",
             headers: HEADERS.DEFAULT_HEADER,
             endPoint: joinString({
                 joinString: "/",
-                strings: ["order", "staff", "order-state", "cancel-keep-fee"],
+                strings: [
+                    "order",
+                    "staff",
+                    "order-state",
+                    `cancel?type=${type}`,
+                ],
             }),
             withCredentials: true,
         }),

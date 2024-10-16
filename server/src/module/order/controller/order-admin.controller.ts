@@ -21,6 +21,7 @@ import {
     StaffCancelOrderStateDto,
     StaffUpdateOrderStateDto,
 } from '../dto/order-update.dto';
+import { OrderCancelQueryDto } from '../interface/order.interface';
 import { OrderAdminService } from '../service/order-admin.service';
 
 @UseGuards(AccessTokenGuard, UserTypeGuard, PermissionGuard)
@@ -38,9 +39,11 @@ export class OrderAdminController {
     @Post(ADMIN_ORDER_ROUTE.CANCEL_KEEP_FEE)
     @TargetActionRequire([{ target: PermissionTargetEnum.ORDER, action: [PermissionActionEnum.UPDATE] }])
     @UserType(UserTypeEnum.STAFF)
-    cancelKeepFee(@Req() req: AppRequest, @Body() body: StaffCancelOrderStateDto) {
+    cancelKeepFee(@Req() req: AppRequest, @Query() query: OrderCancelQueryDto, @Body() body: StaffCancelOrderStateDto) {
         const { userId } = req.accessPayload;
-        return this.orderAdminService.staffCancelOrder(userId, body);
+        const { type } = query;
+
+        return this.orderAdminService.staffCancelOrder(type, userId, body);
     }
 
     @Get(ADMIN_ORDER_ROUTE.DETAIL)
