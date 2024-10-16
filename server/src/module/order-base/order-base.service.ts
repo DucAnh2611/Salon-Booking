@@ -107,7 +107,7 @@ export class OrderBaseService {
             {
                 status: state,
                 updatedBy: userId,
-                ...(state === OrderStatusEnum.CALL_CONFIRM && order.type === OrderType.SERVICE && order.confirmExpired
+                ...(state === OrderStatusEnum.CONFIRMED && order.type === OrderType.SERVICE && order.confirmExpired
                     ? { confirmExpired: null }
                     : {}),
             },
