@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
-import { OrderRefundStatusEnum } from '../../../common/enum/order.enum';
+import { OrderRefundStatusEnum } from '../../../enum/order.enum';
 
 export class CreateOrderRefundStateDto {
     @IsNotEmpty()

@@ -1,5 +1,5 @@
 import { FindOptionsWhere } from 'typeorm';
-import { TBaseExist } from '../../../common/type/exist.type';
+import { TBaseExist } from '../../../type/exist.type';
 import { ClientEntity } from '../../client/entity/client.entity';
 import { ETypeExistAuth } from '../enum/auth.enum';
 

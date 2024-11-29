@@ -1,4 +1,4 @@
-import { OrderType } from '../../../common/enum/order.enum';
+import { OrderType } from '../../../enum/order.enum';
 
 export interface PlaceOrderMessage {
     orderType: OrderType;

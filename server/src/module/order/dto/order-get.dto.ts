@@ -1,7 +1,7 @@
 import { Transform } from 'class-transformer';
 import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
-import { OrderType } from '../../../common/enum/order.enum';
-import { PaginationQuery } from '../../../common/type/query.type';
+import { OrderType } from '../../../enum/order.enum';
+import { PaginationQuery } from '../../../type/query.type';
 
 export class GetOrderParamDto {
     @IsNotEmpty()

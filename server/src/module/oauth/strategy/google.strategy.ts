@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { Strategy, VerifyCallback } from 'passport-google-oauth20';
-import { OAUTH_CONSTANT } from '../../../common/constant/oauth.constant';
-import { OAUTH_ROUTE, ROUTER } from '../../../common/constant/router.constant';
+import { OAUTH_CONSTANT } from '../../../constant/oauth.constant';
+import { OAUTH_ROUTE, ROUTER } from '../../../constant/router.constant';
 import { appConfig } from '../../../config/app.config';
 import { oauthConfig } from '../../../config/oauth.config';
 

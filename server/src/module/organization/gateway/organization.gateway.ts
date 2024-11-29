@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
-import { SocketEventEnum } from '../../../common/enum/socket.enum';
+import { SocketEventEnum } from '../../../enum/socket.enum';
 
 @Injectable()
 @WebSocketGateway({ cors: true })

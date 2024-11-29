@@ -1,8 +1,8 @@
 import { Controller, Get, Req, UseGuards } from '@nestjs/common';
-import { OAUTH_ROUTE, ROUTER } from '../../common/constant/router.constant';
-import { AppRequestOAuth } from '../../common/interface/custom-request.interface';
-import { FacebookOAuthGuard } from '../../shared/guard/facebook-oauth.guard';
-import { GoogleOAuthGuard } from '../../shared/guard/google-oauth.guard';
+import { OAUTH_ROUTE, ROUTER } from '../../constant/router.constant';
+import { FacebookOAuthGuard } from '../../guard/facebook-oauth.guard';
+import { GoogleOAuthGuard } from '../../guard/google-oauth.guard';
+import { AppRequestOAuth } from '../../interface/custom-request.interface';
 
 @Controller(ROUTER.OAUTH)
 export class OAuthController {

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { OrderStatusEnum } from '../../common/enum/order.enum';
-import { SortByEnum } from '../../common/enum/query.enum';
+import { OrderStatusEnum } from '../../enum/order.enum';
+import { SortByEnum } from '../../enum/query.enum';
 import { CreateOrderStateDto } from './dto/order-state-create.entity';
 import { OrderStateEntity } from './entity/order-state.entity';
 

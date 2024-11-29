@@ -1,15 +1,16 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Equal, ILike, In, Not, Repository } from 'typeorm';
-import { ROLE_TITLE } from '../../common/constant/role.constant';
-import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
-import { BadRequest } from '../../shared/exception/error.exception';
+import { ROLE_TITLE } from '../../constant/role.constant';
+import { DataErrorCodeEnum } from '../../enum/data-error-code.enum';
+import { BadRequest } from '../../exception/error.exception';
 import { RolePermissionService } from '../role-permission/role-permission.service';
 import { CreateRoleDto } from './dto/create-role.dto';
 import { FindRoleDto } from './dto/get-role.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RoleEntity } from './entity/role.entity';
 import { TRoleGetRoleQuery } from './type/role.type';
+//'../../enum/data-error-code.enum'
 
 @Injectable()
 export class RoleService {

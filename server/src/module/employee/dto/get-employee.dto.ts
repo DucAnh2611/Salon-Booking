@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
-import { PaginationQuery } from '../../../common/type/query.type';
+import { PaginationQuery } from '../../../type/query.type';
 
 export class FindEmployeeQueryDto extends PaginationQuery {
     @IsOptional()

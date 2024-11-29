@@ -1,5 +1,5 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { CLIENT_CATEGORY_ROUTE, ROUTER } from '../../../common/constant/router.constant';
+import { CLIENT_CATEGORY_ROUTE, ROUTER } from '../../../constant/router.constant';
 import { CategoryService } from '../category.service';
 import { CategoryTreeDto } from '../dto/category-get.dto';
 

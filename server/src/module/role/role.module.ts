@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PermissionGuard } from '../../shared/guard/permission.guard';
-import { UserTypeGuard } from '../../shared/guard/user-type.guard';
+import { PermissionGuard } from '../../guard/permission.guard';
+import { UserTypeGuard } from '../../guard/user-type.guard';
 import { RedisModule } from '../redis/redis.module';
 import { RolePermissionEntity } from '../role-permission/entity/role-permission.entity';
 import { RolePermissionService } from '../role-permission/role-permission.service';

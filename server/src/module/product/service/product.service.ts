@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
-import { BadRequest } from '../../../shared/exception/error.exception';
+import { DataErrorCodeEnum } from '../../../enum/data-error-code.enum';
+import { BadRequest } from '../../../exception/error.exception';
 import { CategoryService } from '../../category/category.service';
 import { FindProductBaseAdminDto, FindProductBaseDto } from '../../product-base/dto/product-base-get.dto';
 import { ProductBaseService } from '../../product-base/service/product-base.service';

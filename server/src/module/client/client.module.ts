@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { JwtTokenUtil } from '../../shared/utils/token.utils';
+import { JwtTokenUtil } from '../../utils/token.utils';
 import { MailModule } from '../mail/mail.module';
 import { MediaModule } from '../media/media.module';
 import { RedisModule } from '../redis/redis.module';

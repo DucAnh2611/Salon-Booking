@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
-import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
-import { SortByEnum } from '../../common/enum/query.enum';
-import { BadRequest } from '../../shared/exception/error.exception';
+import { DataErrorCodeEnum } from '../../enum/data-error-code.enum';
+import { SortByEnum } from '../../enum/query.enum';
+import { BadRequest } from '../../exception/error.exception';
 import { EmployeeService } from '../employee/employee.service';
 import { ServiceBaseService } from '../service-base/service-base.service';
 import { BodyCreateServiceEmployeeDto, ServiceEmployeeDto } from './dto/service-employee-create.dto';

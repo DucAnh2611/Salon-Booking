@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
-import { PermissionTargetEnum } from '../../../common/enum/permission.enum';
+import { PermissionTargetEnum } from '../../../enum/permission.enum';
 
 export type GetPermissionTargetDto = {
     roleId: string;

@@ -1,6 +1,6 @@
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { BaseEntity } from '../../../common/enitty/base.entity';
-import { toSlug } from '../../../shared/utils/toSlug.utils';
+import { BaseEntity } from '../../../enitty/base.entity';
+import { toSlug } from '../../../utils/toSlug.utils';
 import { ProductBaseEntity } from '../../product-base/entity/product-base.entity';
 
 @Entity('product_detail')

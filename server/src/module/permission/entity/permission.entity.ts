@@ -1,6 +1,6 @@
 import { Column, DeleteDateColumn, Entity, OneToMany } from 'typeorm';
-import { BaseEntity } from '../../../common/enitty/base.entity';
-import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
+import { BaseEntity } from '../../../enitty/base.entity';
+import { PermissionActionEnum, PermissionTargetEnum } from '../../../enum/permission.enum';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
 
 @Entity('permission')

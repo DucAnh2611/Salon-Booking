@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { DataSuccessCodeEnum } from '../../enum/data-success-code.enum';
 import { RedisService } from '../redis/redis.service';
 import { WebhookRefundResultDto } from './dto/webhook-post.dto';
 import { WebhookGateway } from './webhook.gateway';

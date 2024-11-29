@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
-import { LOGGER_CONSTANT_NAME } from '../../../common/constant/logger.constant';
+import { LOGGER_CONSTANT_NAME } from '../../../constant/logger.constant';
 import {
     CAN_FINISH_LIST,
     CAN_NOT_UPDATE_STATE_LIST,
@@ -9,18 +9,18 @@ import {
     FAIL_STATE_LIST,
     ORDER_STATE_PRODUCT,
     ORDER_STATE_SERVICE,
-} from '../../../common/constant/order.contant';
-import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
-import { DataSuccessCodeEnum } from '../../../common/enum/data-success-code.enum';
+} from '../../../constant/order.contant';
+import { DataErrorCodeEnum } from '../../../enum/data-error-code.enum';
+import { DataSuccessCodeEnum } from '../../../enum/data-success-code.enum';
 import {
     OrderPaymentTypeEnum,
     OrderRefundRequestStatusEnum,
     OrderRefundStatusEnum,
     OrderStatusEnum,
     OrderType,
-} from '../../../common/enum/order.enum';
-import { ShiftEmployeeStatusEnum } from '../../../common/enum/shift.enum';
-import { BadRequest } from '../../../shared/exception/error.exception';
+} from '../../../enum/order.enum';
+import { ShiftEmployeeStatusEnum } from '../../../enum/shift.enum';
+import { BadRequest } from '../../../exception/error.exception';
 import { BankService } from '../../bank/bank.service';
 import { AppLoggerService } from '../../logger/logger.service';
 import { OrderRefundRequestService } from '../../oder-refund-request/order-refund-request.service';

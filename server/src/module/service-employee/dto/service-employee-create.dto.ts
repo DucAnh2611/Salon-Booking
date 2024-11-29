@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsUUID, ValidateNested } from 'class-validator';
-import { ServiceEmployeeExperienceEnum } from '../../../common/enum/service.enum';
+import { ServiceEmployeeExperienceEnum } from '../../../enum/service.enum';
 
 export class ServiceEmployeeDto {
     @IsNotEmpty()

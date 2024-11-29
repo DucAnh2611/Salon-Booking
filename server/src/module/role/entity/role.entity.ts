@@ -1,5 +1,5 @@
 import { Column, DeleteDateColumn, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { ModifyEntity } from '../../../common/enitty/modify.entity';
+import { ModifyEntity } from '../../../enitty/modify.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { RolePermissionEntity } from '../../role-permission/entity/role-permission.entity';
 

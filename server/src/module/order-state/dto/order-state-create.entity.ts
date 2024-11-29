@@ -1,5 +1,5 @@
 import { IsEnum, IsNotEmpty, IsString, IsUUID } from 'class-validator';
-import { OrderStatusEnum } from '../../../common/enum/order.enum';
+import { OrderStatusEnum } from '../../../enum/order.enum';
 
 export class CreateOrderStateDto {
     @IsNotEmpty()

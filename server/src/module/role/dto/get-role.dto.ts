@@ -1,6 +1,6 @@
 import { IsNotEmpty, IsOptional, IsString, IsUUID } from 'class-validator';
-import { DEFAULT_VALUE_VALIDATOR } from '../../../common/constant/entity.constant';
-import { PaginationQuery } from '../../../common/type/query.type';
+import { DEFAULT_VALUE_VALIDATOR } from '../../../constant/entity.constant';
+import { PaginationQuery } from '../../../type/query.type';
 
 export class FindRoleDto extends PaginationQuery {
     @IsOptional()

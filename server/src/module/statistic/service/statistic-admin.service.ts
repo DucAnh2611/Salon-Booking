@@ -6,7 +6,7 @@ import {
     OrderPaymentTypeEnum,
     OrderStatusEnum,
     OrderType,
-} from '../../../common/enum/order.enum';
+} from '../../../enum/order.enum';
 import { ClientEntity } from '../../client/entity/client.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { OrderEntity } from '../../order-base/entity/order-base.entity';

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { CLIENT_SERVICE_ROUTE, ROUTER } from '../../../common/constant/router.constant';
+import { CLIENT_SERVICE_ROUTE, ROUTER } from '../../../constant/router.constant';
 import { FindServiceBaseDto } from '../../service-base/dto/service-base-get.dto';
 import { GetServiceParamDto } from '../dto/service-get.dto';
 import { ServiceService } from '../service/service.service';

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { SOCKET_HOST } from '../../../common/constant/socket.constant';
-import { SocketEventEnum, SocketMessageEnum } from '../../../common/enum/socket.enum';
+import { SOCKET_HOST } from '../../../constant/socket.constant';
+import { SocketEventEnum, SocketMessageEnum } from '../../../enum/socket.enum';
 import { ClientTrackingMessage, PlaceOrderMessage } from '../interface/order-gateway.interface';
 
 @Injectable()

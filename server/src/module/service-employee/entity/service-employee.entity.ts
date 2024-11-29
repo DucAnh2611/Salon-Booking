@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { ModifyOnlyEntity } from '../../../common/enitty/modify.entity';
-import { ServiceEmployeeExperienceEnum } from '../../../common/enum/service.enum';
+import { ModifyOnlyEntity } from '../../../enitty/modify.entity';
+import { ServiceEmployeeExperienceEnum } from '../../../enum/service.enum';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { ServiceEntity } from '../../service-base/entity/service.entity';
 

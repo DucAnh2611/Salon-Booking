@@ -3,7 +3,7 @@ import * as fs from 'fs';
 import Handlebars from 'handlebars';
 import * as nodemailer from 'nodemailer';
 import SMTPTransport from 'nodemailer/lib/smtp-transport';
-import { TSendMail } from '../../common/type/mail.type';
+import { TSendMail } from '../../type/mail.type';
 import { mailerConfig, TEMPLATE_PATH } from '../../config/mailer.config';
 
 @Injectable()

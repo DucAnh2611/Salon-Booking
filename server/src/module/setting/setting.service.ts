@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { SETTING_DEFAULT } from '../../common/constant/setting.constant';
-import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
 import { settingConfig } from '../../config/setting.config';
-import { joinString } from '../../shared/utils/string';
+import { SETTING_DEFAULT } from '../../constant/setting.constant';
+import { DataSuccessCodeEnum } from '../../enum/data-success-code.enum';
+import { joinString } from '../../utils/string';
 import { EmployeeService } from '../employee/employee.service';
 import { RedisService } from '../redis/redis.service';
 import { SettingUpdateDto } from './dto/setting-update.dto';

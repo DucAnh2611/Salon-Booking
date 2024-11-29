@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { BaseEntity } from '../../../common/enitty/base.entity';
-import { OrderRefundStatusEnum } from '../../../common/enum/order.enum';
+import { BaseEntity } from '../../../enitty/base.entity';
+import { OrderRefundStatusEnum } from '../../../enum/order.enum';
 import { MediaEntity } from '../../media/entity/media.entity';
 import { OrderRefundRequestEntity } from '../../oder-refund-request/entity/order-refund-request.entity';
 import { UserEntity } from '../../user/entity/user.entity';

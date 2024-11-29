@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
-import { SocketEventEnum, SocketMessageEnum } from '../../common/enum/socket.enum';
+import { SocketEventEnum, SocketMessageEnum } from '../../enum/socket.enum';
 import { ListenRefund, SuccessRefund } from './interface/webhook-gateway';
 
 @Injectable()

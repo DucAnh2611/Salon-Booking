@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { PermissionGuard } from '../../shared/guard/permission.guard';
-import { UserTypeGuard } from '../../shared/guard/user-type.guard';
+import { PermissionGuard } from '../../guard/permission.guard';
+import { UserTypeGuard } from '../../guard/user-type.guard';
 import { RolePermissionModule } from '../role-permission/role-permission.module';
 import { RoleModule } from '../role/role.module';
 import { PermissionEntity } from './entity/permission.entity';

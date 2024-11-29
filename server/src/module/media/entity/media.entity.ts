@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { ModifyEntity } from '../../../common/enitty/modify.entity';
+import { ModifyEntity } from '../../../enitty/modify.entity';
 import { CategoryEntity } from '../../category/entity/category.entity';
 import { OrderRefundStateEntity } from '../../order-refund-state/entity/order-refund-state.entity';
 import { OrganizationEntity } from '../../organization/entity/organization.entity';

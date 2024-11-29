@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { DataSuccessCodeEnum } from '../../../common/enum/data-success-code.enum';
-import { SortByEnum } from '../../../common/enum/query.enum';
+import { DataSuccessCodeEnum } from '../../../enum/data-success-code.enum';
+import { SortByEnum } from '../../../enum/query.enum';
 import { SearchClientDto } from '../dto/client-get.dto';
 import { ClientUpdateLockDto } from '../dto/client-update.dto';
 import { ClientEntity } from '../entity/client.entity';

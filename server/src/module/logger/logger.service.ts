@@ -1,6 +1,6 @@
 import { Injectable, LoggerService, Optional } from '@nestjs/common';
-import { LOGGER_CONSTANT_LEVEL } from '../../common/constant/logger.constant';
-import { WinstonLoggerFileEnum } from '../../common/enum/logger-winston.enum';
+import { LOGGER_CONSTANT_LEVEL } from '../../constant/logger.constant';
+import { WinstonLoggerFileEnum } from '../../enum/logger-winston.enum';
 import { WinstonLoggerFile } from './winston/logger-type.winston';
 
 @Injectable()

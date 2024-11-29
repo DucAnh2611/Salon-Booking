@@ -1,16 +1,16 @@
 import { Body, Controller, Get, Put, Request, UploadedFile, UseGuards, UseInterceptors } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { FORMDATA_FIELD_MEDIA } from '../../../common/constant/file.constants';
-import { CLIENT_ROUTE, ROUTER } from '../../../common/constant/router.constant';
-import { LockStateEnum } from '../../../common/enum/lock-state.enum';
-import { UserTypeEnum } from '../../../common/enum/user.enum';
-import { AppRequest } from '../../../common/interface/custom-request.interface';
 import { multerOptions } from '../../../config/multer.configs';
-import { NotLockState } from '../../../shared/decorator/not-lock-state.decorator';
-import { UserType } from '../../../shared/decorator/user-types.decorator';
-import { AccessTokenClientGuard } from '../../../shared/guard/accessToken.guard';
-import { NotLockStateGuard } from '../../../shared/guard/not-lock-state.guard';
-import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
+import { FORMDATA_FIELD_MEDIA } from '../../../constant/file.constants';
+import { CLIENT_ROUTE, ROUTER } from '../../../constant/router.constant';
+import { NotLockState } from '../../../decorator/not-lock-state.decorator';
+import { UserType } from '../../../decorator/user-types.decorator';
+import { LockStateEnum } from '../../../enum/lock-state.enum';
+import { UserTypeEnum } from '../../../enum/user.enum';
+import { AccessTokenClientGuard } from '../../../guard/accessToken.guard';
+import { NotLockStateGuard } from '../../../guard/not-lock-state.guard';
+import { UserTypeGuard } from '../../../guard/user-type.guard';
+import { AppRequest } from '../../../interface/custom-request.interface';
 import { ClientUpdateInfoDto } from '../dto/client-update.dto';
 import { ClientService } from '../service/client.service';
 

@@ -8,8 +8,8 @@ import {
     OneToMany,
     UpdateDateColumn,
 } from 'typeorm';
-import { ModifyEntity } from '../../../common/enitty/modify.entity';
-import { OrderPaymentTypeEnum, OrderStatusEnum, OrderType } from '../../../common/enum/order.enum';
+import { ModifyEntity } from '../../../enitty/modify.entity';
+import { OrderPaymentTypeEnum, OrderStatusEnum, OrderType } from '../../../enum/order.enum';
 import { ClientEntity } from '../../client/entity/client.entity';
 import { OrderRefundRequestEntity } from '../../oder-refund-request/entity/order-refund-request.entity';
 import { OrderProductItemEntity } from '../../order-product-item/entity/order-product-item.entity';

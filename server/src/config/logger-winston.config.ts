@@ -5,9 +5,9 @@ import 'winston-daily-rotate-file';
 import { DailyRotateFileTransportOptions } from 'winston-daily-rotate-file';
 import * as Transport from 'winston-transport';
 import { ConsoleTransportOptions } from 'winston/lib/winston/transports';
-import { winstonColorConsole } from '../common/constant/logger.constant';
-import { WinstonLoggerConfigType } from '../common/type/logger-winston.type';
-import { WinstonPrintfFormat } from '../common/util/winston-print.utils';
+import { winstonColorConsole } from '../constant/logger.constant';
+import { WinstonLoggerConfigType } from '../type/logger-winston.type';
+import { WinstonPrintfFormat } from '../utils/winston-print.utils';
 
 const env = dotenv.config().parsed;
 

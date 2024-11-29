@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Not, Repository } from 'typeorm';
-import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
-import { OrderStatusEnum } from '../../../common/enum/order.enum';
-import { BadRequest } from '../../../shared/exception/error.exception';
+import { DataErrorCodeEnum } from '../../../enum/data-error-code.enum';
+import { OrderStatusEnum } from '../../../enum/order.enum';
+import { BadRequest } from '../../../exception/error.exception';
 import { CategoryService } from '../../category/category.service';
 import { OrderProductItemEntity } from '../../order-product-item/entity/order-product-item.entity';
 import { ProductMediaService } from '../../product-media/product-media.service';

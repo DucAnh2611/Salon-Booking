@@ -1,5 +1,5 @@
 import { Entity, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { CreateOnlyEntity } from '../../../common/enitty/create.entity';
+import { CreateOnlyEntity } from '../../../enitty/create.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { PermissionEntity } from '../../permission/entity/permission.entity';
 import { RoleEntity } from '../../role/entity/role.entity';

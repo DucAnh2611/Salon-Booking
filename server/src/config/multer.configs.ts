@@ -2,10 +2,10 @@ import { MulterOptions } from '@nestjs/platform-express/multer/interfaces/multer
 import { Request } from 'express';
 import { diskStorage } from 'multer';
 import { extname, join } from 'path';
-import { DataErrorCodeEnum } from '../common/enum/data-error-code.enum';
-import { FILE_UNIT } from '../common/enum/files.enum';
-import { BadRequest } from '../shared/exception/error.exception';
-import { convertToBytes } from '../shared/utils/file.utils';
+import { DataErrorCodeEnum } from '../enum/data-error-code.enum';
+import { FILE_UNIT } from '../enum/files.enum';
+import { BadRequest } from '../exception/error.exception';
+import { convertToBytes } from '../utils/file.utils';
 import { appConfig } from './app.config';
 
 export const multerBaseDir = appConfig.baseDir + process.env.MULTER_DEST;

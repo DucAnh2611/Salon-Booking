@@ -1,7 +1,7 @@
-import { ROLE_TITLE } from '../../../../common/constant/role.constant';
-import { GenderEnum } from '../../../../common/enum/gender.enum';
-import { PermissionActionEnum, PermissionTargetEnum } from '../../../../common/enum/permission.enum';
-import { UserTypeEnum } from '../../../../common/enum/user.enum';
+import { ROLE_TITLE } from '../../../../constant/role.constant';
+import { GenderEnum } from '../../../../enum/gender.enum';
+import { PermissionActionEnum, PermissionTargetEnum } from '../../../../enum/permission.enum';
+import { UserTypeEnum } from '../../../../enum/user.enum';
 import { CreatePermissionDto } from '../../../permission/dto/create-permission.dto';
 import { TSeedData, TSeedRolePermisison } from '../type/seed.type';
 

@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
-import { ModifyEntity } from '../../../common/enitty/modify.entity';
-import { EmployeeStatusEnum } from '../../../common/enum/employee.enum';
+import { ModifyEntity } from '../../../enitty/modify.entity';
+import { EmployeeStatusEnum } from '../../../enum/employee.enum';
 import { AttributeEntity } from '../../attribute/entity/attribute.entity';
 import { CategoryEntity } from '../../category/entity/category.entity';
 import { OrderServiceItemEntity } from '../../order-service-item/entity/order-service-item.entity';

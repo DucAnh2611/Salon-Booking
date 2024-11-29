@@ -1,8 +1,8 @@
 import { Transform, Type } from 'class-transformer';
 import { IsBoolean, IsDate, IsEnum, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { OrderPaymentTypeEnum, OrderStatusEnum, OrderType } from '../../../common/enum/order.enum';
-import { SortByEnum } from '../../../common/enum/query.enum';
-import { PaginationQuery } from '../../../common/type/query.type';
+import { OrderPaymentTypeEnum, OrderStatusEnum, OrderType } from '../../../enum/order.enum';
+import { SortByEnum } from '../../../enum/query.enum';
+import { PaginationQuery } from '../../../type/query.type';
 
 export class FindOrderClientFilterDto {
     @IsOptional()

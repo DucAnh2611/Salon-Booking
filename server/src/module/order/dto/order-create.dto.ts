@@ -10,7 +10,7 @@ import {
     IsUUID,
     ValidateNested,
 } from 'class-validator';
-import { OrderPaymentTypeEnum } from '../../../common/enum/order.enum';
+import { OrderPaymentTypeEnum } from '../../../enum/order.enum';
 import { CreateOrderProductItemDto } from '../../order-product-item/dto/order-product-item-create.dto';
 import { CreateOrderServiceItemDto } from '../../order-service-item/dto/order-service-item-create.dto';
 

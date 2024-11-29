@@ -1,6 +1,6 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne } from 'typeorm';
-import { BaseEntity } from '../../../common/enitty/base.entity';
-import { OrderStatusEnum } from '../../../common/enum/order.enum';
+import { BaseEntity } from '../../../enitty/base.entity';
+import { OrderStatusEnum } from '../../../enum/order.enum';
 import { OrderEntity } from '../../order-base/entity/order-base.entity';
 import { UserEntity } from '../../user/entity/user.entity';
 

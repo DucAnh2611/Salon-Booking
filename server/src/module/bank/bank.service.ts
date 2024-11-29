@@ -2,17 +2,17 @@ import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { AxiosRequestConfig } from 'axios';
 import { firstValueFrom, map } from 'rxjs';
-import { THIRD_PARTY_SEPAY, THIRD_PARTY_VIETQR } from '../../common/constant/router-third-party';
-import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
+import { thirdPartyConfig } from '../../config/third-party';
+import { THIRD_PARTY_SEPAY, THIRD_PARTY_VIETQR } from '../../constant/router-third-party';
+import { DataSuccessCodeEnum } from '../../enum/data-success-code.enum';
 import {
     Bank,
     BankListApi,
     BankPaymentQrSePay,
     BankTransactionListApi,
     SePayTransaction,
-} from '../../common/interface/bank.interface';
-import { thirdPartyConfig } from '../../config/third-party';
-import { joinString } from '../../shared/utils/string';
+} from '../../interface/bank.interface';
+import { joinString } from '../../utils/string';
 import { RedisService } from '../redis/redis.service';
 import { WebhookRefundResultDto } from '../webhook/dto/webhook-post.dto';
 import { BankCreateQuickLinkQRDto } from './dto/bank-create.dto';

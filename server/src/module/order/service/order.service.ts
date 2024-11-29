@@ -5,9 +5,9 @@ import {
     CAN_RETURN_LIST,
     ORDER_STATE_PRODUCT,
     ORDER_STATE_SERVICE,
-} from '../../../common/constant/order.contant';
-import { DataErrorCodeEnum } from '../../../common/enum/data-error-code.enum';
-import { DataSuccessCodeEnum } from '../../../common/enum/data-success-code.enum';
+} from '../../../constant/order.contant';
+import { DataErrorCodeEnum } from '../../../enum/data-error-code.enum';
+import { DataSuccessCodeEnum } from '../../../enum/data-success-code.enum';
 import {
     OrderPaymentStatusEnum,
     OrderPaymentTypeEnum,
@@ -15,10 +15,10 @@ import {
     OrderRefundStatusEnum,
     OrderStatusEnum,
     OrderType,
-} from '../../../common/enum/order.enum';
-import { ShiftEmployeeStatusEnum } from '../../../common/enum/shift.enum';
-import { BadRequest, InternalServer } from '../../../shared/exception/error.exception';
-import { isSameObject } from '../../../shared/utils/object.utils';
+} from '../../../enum/order.enum';
+import { ShiftEmployeeStatusEnum } from '../../../enum/shift.enum';
+import { BadRequest, InternalServer } from '../../../exception/error.exception';
+import { isSameObject } from '../../../utils/object.utils';
 import { CartProductService } from '../../cart-product/cart-product.service';
 import { CartServiceService } from '../../cart-service/cart-service.service';
 import {

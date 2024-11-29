@@ -1,12 +1,12 @@
 import { Body, Controller, Get, Post, Put, Req, UseGuards } from '@nestjs/common';
-import { ROUTER, SETTING_ROUTE } from '../../common/constant/router.constant';
-import { UserTypeEnum } from '../../common/enum/user.enum';
-import { AppRequest } from '../../common/interface/custom-request.interface';
-import { TargetActionRequire } from '../../shared/decorator/permission.decorator';
-import { UserType } from '../../shared/decorator/user-types.decorator';
-import { AccessTokenGuard } from '../../shared/guard/accessToken.guard';
-import { PermissionGuard } from '../../shared/guard/permission.guard';
-import { UserTypeGuard } from '../../shared/guard/user-type.guard';
+import { ROUTER, SETTING_ROUTE } from '../../constant/router.constant';
+import { TargetActionRequire } from '../../decorator/permission.decorator';
+import { UserType } from '../../decorator/user-types.decorator';
+import { UserTypeEnum } from '../../enum/user.enum';
+import { AccessTokenGuard } from '../../guard/accessToken.guard';
+import { PermissionGuard } from '../../guard/permission.guard';
+import { UserTypeGuard } from '../../guard/user-type.guard';
+import { AppRequest } from '../../interface/custom-request.interface';
 import { SettingUpdateDto } from './dto/setting-update.dto';
 import { SettingService } from './setting.service';
 

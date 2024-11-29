@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
-import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
-import { BadRequest } from '../../shared/exception/error.exception';
+import { DataErrorCodeEnum } from '../../enum/data-error-code.enum';
+import { DataSuccessCodeEnum } from '../../enum/data-success-code.enum';
+import { BadRequest } from '../../exception/error.exception';
 import { CreateAttributeValueDto } from './dto/attribute-value-create.dto';
 import { UpdateTypeAttributeValueDto } from './dto/type-attribute-value-update.dto';
 import { AttributeValueEntity } from './entity/attribute-value.entity';

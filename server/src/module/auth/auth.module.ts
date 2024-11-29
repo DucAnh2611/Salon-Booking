@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { CookieModule } from '../../shared/global/cookie/cookie.module';
-import { JwtTokenUtil } from '../../shared/utils/token.utils';
+import { CookieModule } from '../../global/cookie/cookie.module';
+import { JwtTokenUtil } from '../../utils/token.utils';
 import { ClientModule } from '../client/client.module';
 import { EmployeeEntity } from '../employee/entity/employee.entity';
 import { MailModule } from '../mail/mail.module';

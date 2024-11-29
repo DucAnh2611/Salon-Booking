@@ -1,5 +1,5 @@
-import { PermissionActionEnum, PermissionTargetEnum } from '../../../../common/enum/permission.enum';
-import { UserTypeEnum } from '../../../../common/enum/user.enum';
+import { PermissionActionEnum, PermissionTargetEnum } from '../../../../enum/permission.enum';
+import { UserTypeEnum } from '../../../../enum/user.enum';
 import { EmployeeEntity } from '../../../employee/entity/employee.entity';
 import { CreatePermissionDto } from '../../../permission/dto/create-permission.dto';
 import { CreateUserDto } from '../../../user/dto/create-user.dto';

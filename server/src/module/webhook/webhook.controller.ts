@@ -1,9 +1,9 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
-import { ROUTER, WEBHOOK_ROUTE } from '../../common/constant/router.constant';
-import { AppRequestWebhookRefund } from '../../common/interface/custom-request.interface';
 import { webhookConfig } from '../../config/webhook.config';
-import { ApiKey } from '../../shared/decorator/api.decorator';
-import { ApiKeyGuard } from '../../shared/guard/api-key.guard';
+import { ROUTER, WEBHOOK_ROUTE } from '../../constant/router.constant';
+import { ApiKey } from '../../decorator/api.decorator';
+import { ApiKeyGuard } from '../../guard/api-key.guard';
+import { AppRequestWebhookRefund } from '../../interface/custom-request.interface';
 import { WebhookService } from './webhook.service';
 
 @UseGuards(ApiKeyGuard)

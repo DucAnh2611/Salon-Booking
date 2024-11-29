@@ -1,10 +1,10 @@
 import { Exclude, Expose } from 'class-transformer';
 import { BeforeInsert, BeforeUpdate, Column, Entity, JoinColumn, ManyToOne, OneToMany, OneToOne } from 'typeorm';
-import { DEFAULT_VALUE_ENTITY } from '../../../common/constant/entity.constant';
-import { BaseEntity } from '../../../common/enitty/base.entity';
-import { GenderEnum } from '../../../common/enum/gender.enum';
-import { UserTypeEnum } from '../../../common/enum/user.enum';
-import { HashPasswordUtil } from '../../../shared/utils/hash-password.utils';
+import { DEFAULT_VALUE_ENTITY } from '../../../constant/entity.constant';
+import { BaseEntity } from '../../../enitty/base.entity';
+import { GenderEnum } from '../../../enum/gender.enum';
+import { UserTypeEnum } from '../../../enum/user.enum';
+import { HashPasswordUtil } from '../../../utils/hash-password.utils';
 import { ClientEntity } from '../../client/entity/client.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { MediaEntity } from '../../media/entity/media.entity';

@@ -1,5 +1,5 @@
 import { Controller, Get, Param, Query } from '@nestjs/common';
-import { PROVINCE_ROUTE, ROUTER } from '../../common/constant/router.constant';
+import { PROVINCE_ROUTE, ROUTER } from '../../constant/router.constant';
 import {
     GetDistrictCodeParams,
     GetProvinceCodeParams,

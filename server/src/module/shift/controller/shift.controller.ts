@@ -1,9 +1,9 @@
 import { Body, Controller, Post, UseGuards } from '@nestjs/common';
-import { ROUTER, SHIFT_ROUTE } from '../../../common/constant/router.constant';
-import { UserTypeEnum } from '../../../common/enum/user.enum';
-import { UserType } from '../../../shared/decorator/user-types.decorator';
-import { AccessTokenClientGuard } from '../../../shared/guard/accessToken.guard';
-import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
+import { ROUTER, SHIFT_ROUTE } from '../../../constant/router.constant';
+import { UserType } from '../../../decorator/user-types.decorator';
+import { UserTypeEnum } from '../../../enum/user.enum';
+import { AccessTokenClientGuard } from '../../../guard/accessToken.guard';
+import { UserTypeGuard } from '../../../guard/user-type.guard';
 import { GetShiftFromBookingTimeDto } from '../dto/shift-get.dto';
 import { ShiftService } from '../shift.service';
 

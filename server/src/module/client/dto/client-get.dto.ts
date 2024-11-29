@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsBoolean, IsNotEmpty, IsOptional, IsString, ValidateNested } from 'class-validator';
-import { SortByEnum } from '../../../common/enum/query.enum';
-import { PaginationQuery } from '../../../common/type/query.type';
+import { SortByEnum } from '../../../enum/query.enum';
+import { PaginationQuery } from '../../../type/query.type';
 
 export class FilterSearchClientDto {
     @IsOptional()

@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
-import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
-import { BadRequest } from '../../shared/exception/error.exception';
+import { DataErrorCodeEnum } from '../../enum/data-error-code.enum';
+import { DataSuccessCodeEnum } from '../../enum/data-success-code.enum';
+import { BadRequest } from '../../exception/error.exception';
 import { ProductBaseService } from '../product-base/service/product-base.service';
 import { CreateProductDetailDto, ProductDetailDto } from './dto/product-detail-create.dto';
 import { ProductDetailExistDto, UpdateProductDetailDto } from './dto/product-detail-update.dto';

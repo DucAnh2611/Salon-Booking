@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
-import { SortByEnum } from '../../common/enum/query.enum';
 import { multerConfig } from '../../config/multer.configs';
-import { BadRequest } from '../../shared/exception/error.exception';
+import { DataErrorCodeEnum } from '../../enum/data-error-code.enum';
+import { SortByEnum } from '../../enum/query.enum';
+import { BadRequest } from '../../exception/error.exception';
 import { MediaService } from '../media/service/media.service';
 import { BodyCreateServiceMediaDto, ServiceMediaDto } from './dto/service-media-create.dto';
 import { BodyUpdateServiceMediaDto } from './dto/service-media-update.dto';

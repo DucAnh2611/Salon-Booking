@@ -2,9 +2,9 @@ import { Body, Controller, Get, Param, Post, Res, UploadedFile, UseGuards, UseIn
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { createReadStream } from 'fs';
-import { MEDIA_ROUTE, ROUTER } from '../../../common/constant/router.constant';
 import { multerOptions } from '../../../config/multer.configs';
-import { AccessTokenGuard } from '../../../shared/guard/accessToken.guard';
+import { MEDIA_ROUTE, ROUTER } from '../../../constant/router.constant';
+import { AccessTokenGuard } from '../../../guard/accessToken.guard';
 import { CreateTempMediaDto } from '../dto/media-create.dto';
 import { MediaService } from '../service/media.service';
 

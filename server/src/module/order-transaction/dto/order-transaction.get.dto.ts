@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsBoolean, IsEnum, IsNotEmpty, IsNumber, IsString } from 'class-validator';
-import { OrderTransactionReturnPayos } from '../../../common/enum/order.enum';
+import { OrderTransactionReturnPayos } from '../../../enum/order.enum';
 
 export class ReturnUrlTransactionPayOsDto {
     @IsNotEmpty()

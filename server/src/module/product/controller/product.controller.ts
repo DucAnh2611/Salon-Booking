@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
-import { CLIENT_PRODUCT_ROUTE, ROUTER } from '../../../common/constant/router.constant';
+import { CLIENT_PRODUCT_ROUTE, ROUTER } from '../../../constant/router.constant';
 import { FindProductBaseDto } from '../../product-base/dto/product-base-get.dto';
 import { GetProductDetailParamDto } from '../../product-detail/dto/product-detail-get.dto';
 import { GetProductInStockQueryDto } from '../dto/product-get.dto';

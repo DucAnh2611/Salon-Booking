@@ -1,6 +1,6 @@
 import { Type } from 'class-transformer';
 import { IsEnum, IsNotEmpty, IsUUID, ValidateNested } from 'class-validator';
-import { ShiftEmployeeStatusEnum } from '../../../common/enum/shift.enum';
+import { ShiftEmployeeStatusEnum } from '../../../enum/shift.enum';
 
 export class ShiftEmployeeDto {
     @IsNotEmpty()

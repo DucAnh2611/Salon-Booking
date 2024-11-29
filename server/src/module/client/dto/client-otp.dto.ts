@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsString, Length } from 'class-validator';
-import { OTP_EMAIL_LENGTH } from '../../../common/constant/otp.constant';
+import { OTP_EMAIL_LENGTH } from '../../../constant/otp.constant';
 
 export class ClientOTPTokenDto {
     @IsString()

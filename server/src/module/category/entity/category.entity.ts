@@ -1,5 +1,5 @@
 import { Column, Entity, JoinColumn, ManyToOne, OneToMany } from 'typeorm';
-import { ModifyEntity } from '../../../common/enitty/modify.entity';
+import { ModifyEntity } from '../../../enitty/modify.entity';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { MediaEntity } from '../../media/entity/media.entity';
 import { ProductBaseEntity } from '../../product-base/entity/product-base.entity';

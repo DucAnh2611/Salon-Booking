@@ -1,5 +1,5 @@
 import { Controller, Get } from '@nestjs/common';
-import { ORGANIZATION_ROUTE, ROUTER } from '../../../common/constant/router.constant';
+import { ORGANIZATION_ROUTE, ROUTER } from '../../../constant/router.constant';
 import { OrganizationService } from '../service/organization.service';
 
 @Controller(ROUTER.ORGANIZATION)

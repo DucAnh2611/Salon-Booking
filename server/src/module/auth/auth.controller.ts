@@ -1,16 +1,17 @@
 import { Body, Controller, Get, Post, Req, Res, SerializeOptions, UseGuards } from '@nestjs/common';
 import { Response } from 'express';
-import { AUTH_ROUTE, ROUTER } from '../../common/constant/router.constant';
-import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
-import { AppRequest } from '../../common/interface/custom-request.interface';
 import { cookieConfig } from '../../config/cookie.config';
 import { jwtConfig } from '../../config/jwt.config';
-import { CookieService } from '../../shared/global/cookie/cookie.service';
-import { RefreshTokenClientGuard, RefreshTokenGuard } from '../../shared/guard/refreshToken.guard';
-import { TimeUtil } from '../../shared/utils/parse-time.util';
+import { AUTH_ROUTE, ROUTER } from '../../constant/router.constant';
+import { DataSuccessCodeEnum } from '../../enum/data-success-code.enum';
+import { CookieService } from '../../global/cookie/cookie.service';
+import { RefreshTokenClientGuard, RefreshTokenGuard } from '../../guard/refreshToken.guard';
+import { AppRequest } from '../../interface/custom-request.interface';
+import { TimeUtil } from '../../utils/parse-time.util';
 import { RegisterClientDto } from '../client/dto/client-create.dto';
 import { AuthService } from './auth.service';
 import { LoginClientDto, LoginEmpDto } from './dto/auth-login.dto';
+
 @SerializeOptions({ groups: ['auth'] })
 @Controller(ROUTER.AUTH)
 export class AuthController {

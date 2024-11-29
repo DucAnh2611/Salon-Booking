@@ -1,5 +1,5 @@
 import { IsNotEmpty, IsUUID } from 'class-validator';
-import { PaginationQuery } from '../../../common/type/query.type';
+import { PaginationQuery } from '../../../type/query.type';
 
 export class OrganizationGetParamDto {
     @IsNotEmpty()

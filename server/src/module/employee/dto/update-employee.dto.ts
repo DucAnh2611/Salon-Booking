@@ -1,6 +1,6 @@
 import { Transform } from 'class-transformer';
 import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsPhoneNumber, IsString, IsUUID } from 'class-validator';
-import { GenderEnum } from '../../../common/enum/gender.enum';
+import { GenderEnum } from '../../../enum/gender.enum';
 
 export class UpdateEmployeeDto {
     @IsNotEmpty()

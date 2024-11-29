@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { LOGGER_CONSTANT_NAME } from '../../../common/constant/logger.constant';
+import { LOGGER_CONSTANT_NAME } from '../../../constant/logger.constant';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { AppLoggerService } from '../../logger/logger.service';
 import { CreatePermissionDto } from '../../permission/dto/create-permission.dto';

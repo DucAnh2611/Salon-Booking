@@ -1,9 +1,9 @@
 import { HttpService } from '@nestjs/axios';
 import { Injectable } from '@nestjs/common';
 import { firstValueFrom, map } from 'rxjs';
-import { THIRD_PARTY_BACKUP_PROVINCE } from '../../common/constant/router-third-party';
 import { thirdPartyConfig } from '../../config/third-party';
-import { InternalServer } from '../../shared/exception/error.exception';
+import { THIRD_PARTY_BACKUP_PROVINCE } from '../../constant/router-third-party';
+import { InternalServer } from '../../exception/error.exception';
 import {
     GetDistrictCodeParams,
     GetProvinceCodeParams,

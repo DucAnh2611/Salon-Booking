@@ -1,14 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { IsNull, Like, Repository } from 'typeorm';
-import { DataErrorCodeEnum } from '../../common/enum/data-error-code.enum';
-import { DataSuccessCodeEnum } from '../../common/enum/data-success-code.enum';
-import { SortByEnum } from '../../common/enum/query.enum';
-import { BadRequest, InternalServer } from '../../shared/exception/error.exception';
-import { ParseOrderString } from '../../shared/utils/parse-dynamic-queyry.utils';
+import { DataErrorCodeEnum } from '../../enum/data-error-code.enum';
+import { DataSuccessCodeEnum } from '../../enum/data-success-code.enum';
+import { SortByEnum } from '../../enum/query.enum';
+import { BadRequest, InternalServer } from '../../exception/error.exception';
+import { ParseOrderString } from '../../utils/parse-dynamic-queyry.utils';
 import { MediaEntity } from '../media/entity/media.entity';
 import { MediaTypesEnum } from '../media/enum/media-types.enum';
-import { RedisService } from '../redis/redis.service';
 import { CreateCategoryDto } from './dto/category-create.dto';
 import { CategoryTreeDto, FindCategoryAdminDto } from './dto/category-get.dto';
 import { UpdateCategoryDto } from './dto/category-update.dto';
@@ -24,7 +23,6 @@ export class CategoryService {
     async getAllChildren(ids: string[]): Promise<string[]> {
         const cateIds = await Promise.all(
             ids.map(async id => {
-
                 const child = await this.categoryRepository.find({
                     where: { parentId: id },
                     loadEagerRelations: false,

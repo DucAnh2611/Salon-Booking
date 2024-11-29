@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ROUTER, VIETQR_ROUTE } from '../../common/constant/router.constant';
+import { ROUTER, VIETQR_ROUTE } from '../../constant/router.constant';
 import { BankService } from './bank.service';
 import { BankCreateQuickLinkQRDto } from './dto/bank-create.dto';
 

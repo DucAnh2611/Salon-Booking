@@ -1,7 +1,7 @@
 import { Type } from 'class-transformer';
 import { IsNotEmpty, IsNumber, IsOptional, IsPositive, IsString, IsUUID, ValidateNested } from 'class-validator';
-import { DEFAULT_VALUE_VALIDATOR } from '../../../common/constant/entity.constant';
-import { PaginationQuery } from '../../../common/type/query.type';
+import { DEFAULT_VALUE_VALIDATOR } from '../../../constant/entity.constant';
+import { PaginationQuery } from '../../../type/query.type';
 
 export class FindServiceByPriceDto {
     @IsNotEmpty()

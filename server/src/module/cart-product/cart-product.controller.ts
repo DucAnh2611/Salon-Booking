@@ -1,10 +1,10 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
-import { CART_PRODUCT_ROUTE, ROUTER } from '../../common/constant/router.constant';
-import { UserTypeEnum } from '../../common/enum/user.enum';
-import { AppRequest } from '../../common/interface/custom-request.interface';
-import { UserType } from '../../shared/decorator/user-types.decorator';
-import { AccessTokenClientGuard } from '../../shared/guard/accessToken.guard';
-import { UserTypeGuard } from '../../shared/guard/user-type.guard';
+import { CART_PRODUCT_ROUTE, ROUTER } from '../../constant/router.constant';
+import { UserType } from '../../decorator/user-types.decorator';
+import { UserTypeEnum } from '../../enum/user.enum';
+import { AccessTokenClientGuard } from '../../guard/accessToken.guard';
+import { UserTypeGuard } from '../../guard/user-type.guard';
+import { AppRequest } from '../../interface/custom-request.interface';
 import { CreateCartProductItemDto } from '../cart-product-item/dto/cart-product-item-create.dto';
 import { GetCartProductAmountDto, GetCartProductParamDto } from '../cart-product-item/dto/cart-product-item-get.dto';
 import { UpdateCartProductItemDto } from '../cart-product-item/dto/cart-product-item-update.dto';

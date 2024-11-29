@@ -1,11 +1,11 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, Req, UseGuards } from '@nestjs/common';
-import { ORGANIZATION_ADMIN_ROUTE, ROUTER } from '../../../common/constant/router.constant';
-import { PermissionActionEnum, PermissionTargetEnum } from '../../../common/enum/permission.enum';
-import { AppRequest } from '../../../common/interface/custom-request.interface';
-import { TargetActionRequire } from '../../../shared/decorator/permission.decorator';
-import { AccessTokenGuard } from '../../../shared/guard/accessToken.guard';
-import { PermissionGuard } from '../../../shared/guard/permission.guard';
-import { UserTypeGuard } from '../../../shared/guard/user-type.guard';
+import { ORGANIZATION_ADMIN_ROUTE, ROUTER } from '../../../constant/router.constant';
+import { TargetActionRequire } from '../../../decorator/permission.decorator';
+import { PermissionActionEnum, PermissionTargetEnum } from '../../../enum/permission.enum';
+import { AccessTokenGuard } from '../../../guard/accessToken.guard';
+import { PermissionGuard } from '../../../guard/permission.guard';
+import { UserTypeGuard } from '../../../guard/user-type.guard';
+import { AppRequest } from '../../../interface/custom-request.interface';
 import { OrganizationCreateDto } from '../dto/organization-create.dto';
 import { OrganizationGetParamDto, OrganizationListDto } from '../dto/organization-get.dto';
 import { OrganizationShowDto, OrganizationUpdateDto } from '../dto/organization-update.dto';

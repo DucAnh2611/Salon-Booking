@@ -1,6 +1,6 @@
 import * as winston from 'winston';
-import { WinstonLoggerFileEnum } from '../../../common/enum/logger-winston.enum';
-import { WinstonLoggerConfigType } from '../../../common/type/logger-winston.type';
+import { WinstonLoggerFileEnum } from '../../../enum/logger-winston.enum';
+import { WinstonLoggerConfigType } from '../../../type/logger-winston.type';
 import {
     winstonLoggerConfig,
     winstonLoggerFileConfig,

@@ -11,7 +11,7 @@ import {
     IsStrongPassword,
     IsUUID,
 } from 'class-validator';
-import { GenderEnum } from '../../../common/enum/gender.enum';
+import { GenderEnum } from '../../../enum/gender.enum';
 
 export class ClientUpdateLockDto {
     @IsNotEmpty()

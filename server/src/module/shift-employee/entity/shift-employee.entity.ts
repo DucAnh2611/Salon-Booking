@@ -1,6 +1,6 @@
 import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryColumn } from 'typeorm';
-import { ModifyOnlyEntity } from '../../../common/enitty/modify.entity';
-import { ShiftEmployeeStatusEnum } from '../../../common/enum/shift.enum';
+import { ModifyOnlyEntity } from '../../../enitty/modify.entity';
+import { ShiftEmployeeStatusEnum } from '../../../enum/shift.enum';
 import { EmployeeEntity } from '../../employee/entity/employee.entity';
 import { ShiftEntity } from '../../shift/entity/shift.entity';
 

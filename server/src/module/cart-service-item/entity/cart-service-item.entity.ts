@@ -1,5 +1,5 @@
 import { Column, CreateDateColumn, Entity, JoinColumn, ManyToOne, UpdateDateColumn } from 'typeorm';
-import { BaseEntity } from '../../../common/enitty/base.entity';
+import { BaseEntity } from '../../../enitty/base.entity';
 import { CartServiceEntity } from '../../cart-service/entity/cart-service.entity';
 import { ServiceEntity } from '../../service-base/entity/service.entity';
 

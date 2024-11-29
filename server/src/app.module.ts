@@ -2,16 +2,15 @@ import { APP_FILTER, APP_INTERCEPTOR } from '@nestjs/core';
 
 import { ClassSerializerInterceptor, Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { AuthModule } from './module/auth/auth.module';
-import { DatabaseModule } from './module/database/database.module';
-
-import { AppExceptionFilter } from './shared/exception';
-
 import { ScheduleModule as CronModule } from '@nestjs/schedule';
+import { AppExceptionFilter } from './exception';
+import { AppResponseInterceptor } from './interceptor';
 import { AttributeModule } from './module/attribute/attribute.module';
+import { AuthModule } from './module/auth/auth.module';
 import { CartModule } from './module/cart/cart.module';
 import { CategoryModule } from './module/category/category.module';
 import { ClientModule } from './module/client/client.module';
+import { DatabaseModule } from './module/database/database.module';
 import { EmployeeModule } from './module/employee/employee.module';
 import { I18nAppModule } from './module/i18n/i18n.module';
 import { AppLoggerModule } from './module/logger/logger.module';
@@ -33,7 +32,6 @@ import { SocketModule } from './module/socket/socket.module';
 import { StatisticModule } from './module/statistic/statistic.module';
 import { ThirdPartyModule } from './module/thirdparty/thirdparty.module';
 import { WebhookModule } from './module/webhook/webhook.module';
-import { AppResponseInterceptor } from './shared/interceptor';
 
 @Module({
     imports: [
